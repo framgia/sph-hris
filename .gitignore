@@ -1,0 +1,7 @@
+**/data
+**/log
+**/secrets
+
+.env.client
+.env.api
+.env.db

@@ -1,0 +1,49 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: ./api
+    ports:
+      - 5257:5257
+      - 7201:7201
+    env_file:
+      - .env.api
+    volumes:
+      - ./api:/src
+    networks:
+      - prac-hris
+    depends_on:
+      - db
+  client:
+    build:
+      context: ./client
+    ports:
+      - 3000:3000
+    env_file:
+      - .env.client
+    networks:
+      - prac-hris
+    depends_on:
+      - api
+    volumes:
+      - ./client:/usr/src/app
+      - /usr/src/app/node_modules
+      - /usr/src/app/.next
+  db:
+    image: 'mcr.microsoft.com/mssql/server:2022-latest'
+    user: root
+    ports:
+      - '1433:1433'
+    restart: always
+    volumes:
+      - ./data:/var/opt/mssql/data
+      - ./log:/var/opt/mssql/log
+      - ./secrets:/var/opt/mssql/secrets
+    env_file:
+      - .env.db
+    networks:
+      - prac-hris
+networks:
+  prac-hris:
+    driver: bridge
