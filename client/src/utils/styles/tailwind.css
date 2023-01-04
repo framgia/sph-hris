@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .default-scrollbar {
+    @apply scrollbar-thin scrollbar-thumb-slate-500 scrollbar-thumb-rounded-md;
+  }
+}
