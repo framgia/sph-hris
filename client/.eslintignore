@@ -1,0 +1,9 @@
+node_modules
+.next
+\*.config.js
+.github
+
+# typescript
+
+\*.tsbuildinfo
+next-env.d.ts
