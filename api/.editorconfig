@@ -1,0 +1,11 @@
+root = true
+
+[*.cs]
+dotnet_diagnostic.IDE0005.severity = warning
+dotnet_style_namespace_match_folder = true
+dotnet_sort_system_directives_first = true
+insert_final_newline = true
+tab_width = 4
+indent_style = space
+indent_size = tab
+trim_trailing_whitespace = true

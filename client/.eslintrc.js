@@ -7,13 +7,19 @@ module.exports = {
   overrides: [],
   parserOptions: {
     ecmaVersion: 'latest',
-    sourceType: 'module'
+    sourceType: 'module',
+    project: './tsconfig.json'
   },
   plugins: ['react'],
-  rules: {},
+  rules: {
+    'no-console': 'error',
+    'eol-last': ['error', 'always'],
+    'no-duplicate-imports': 'error',
+    '@typescript-eslint/consistent-type-definitions': 'off'
+  },
   settings: {
     react: {
-      version: 'latest'
+      version: 'detect'
     }
   }
 }
