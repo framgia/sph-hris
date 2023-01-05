@@ -18,29 +18,20 @@ const UserMenuDropDown: FC<Props> = (props): JSX.Element => {
     className = 'shrink-0 outline-none active:scale-95'
   } = props
 
-  const switchPositions = (position: string) => {
-    switch (position) {
-      case 'right':
-        return 'bottom-0 -right-48 origin-bottom-right'
-      case 'top':
-        return '-top-20 right-8 origin-top'
-      case 'bottom':
-        return 'top-10 right-0'
-    }
-  }
-
   const menu = 'relative z-20 flex w-full text-left'
   const menuItems = classNames(
     'absolute flex w-44 flex-col divide-y divide-slate-200 overflow-hidden rounded-lg',
     'bg-white py-1 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none',
-    switchPositions(position)
+    position === 'bottom' && 'top-10 right-0',
+    position === 'right' && 'bottom-0 -right-48 origin-bottom-right',
+    position === 'top' && '-top-20 right-8 origin-top'
   )
   const menuItemButton = 'flex items-center space-x-2 px-3 py-2 text-xs hover:text-slate-700'
   const menuItemButtonIcon = 'h-4 w-4 stroke-0.5'
 
   return (
     <Menu as="div" className={menu}>
-      <Menu.Button className={`${className}`}>{children}</Menu.Button>
+      <Menu.Button className={className}>{children}</Menu.Button>
       <MenuTransition>
         <Menu.Items className={menuItems}>
           <Menu.Item>

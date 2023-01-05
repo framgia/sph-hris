@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { FC } from 'react'
+import React, { FC } from 'react'
 
 const UnderConstructionPage: FC = (): JSX.Element => {
   return (

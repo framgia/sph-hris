@@ -6,7 +6,7 @@ import useLocalStorageState from 'use-local-storage-state'
 import Drawer from '~/components/organisms/Drawer'
 import Header from '~/components/organisms/Header'
 
-const Sidebar = dynamic(() => import('~/components/organisms/Sidebar'), { ssr: false })
+const Sidebar = dynamic(async () => await import('~/components/organisms/Sidebar'), { ssr: false })
 
 type Props = {
   metaTitle: string

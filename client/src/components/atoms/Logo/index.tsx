@@ -5,11 +5,11 @@ import classNames from 'classnames'
 import Text from './../Text'
 
 type Props = {
-  isOpen?: boolean
+  isOpen?: boolean | undefined
   href?: string
 }
 
-const Logo: FC<Props> = ({ isOpen, href = '/' }): JSX.Element => {
+const Logo: FC<Props> = ({ isOpen = true, href = '/' }): JSX.Element => {
   return (
     <Link
       href={href}
@@ -22,7 +22,7 @@ const Logo: FC<Props> = ({ isOpen, href = '/' }): JSX.Element => {
       <Text theme="md" color="amber" weight="bold">
         Sun*
       </Text>
-      <Text theme="md" weight="bold" className={`${!isOpen && 'hidden'} duration-200`}>
+      <Text theme="md" weight="bold" className={classNames('duration-200', !isOpen && 'hidden')}>
         HRIS
       </Text>
     </Link>
