@@ -1,6 +1,5 @@
-import React from 'react'
 import { Transition } from '@headlessui/react'
-import { Fragment, FC, ReactNode } from 'react'
+import React, { Fragment, FC, ReactNode } from 'react'
 
 type Props = {
   children: ReactNode

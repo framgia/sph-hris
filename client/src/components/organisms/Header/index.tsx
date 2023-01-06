@@ -14,7 +14,7 @@ import Button from '~/components/atoms/Buttons/Button'
 import UserMenuDropDown from '~/components/molecules/UserMenuDropdown'
 import NotificationPopover from '~/components/molecules/NotificationPopOver'
 
-const Tooltip = dynamic(() => import('rc-tooltip'), { ssr: false })
+const Tooltip = dynamic(async () => await import('rc-tooltip'), { ssr: false })
 
 type Props = {
   actions: {

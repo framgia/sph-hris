@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { ISidebarLink } from '~/utils/interfaces'
 import ButtonLink from '~/components/atoms/Buttons/ButtonLink'
 
-const Tooltip = dynamic(() => import('rc-tooltip'), { ssr: false })
+const Tooltip = dynamic(async () => await import('rc-tooltip'), { ssr: false })
 
 type Props = {
   isOpen: boolean

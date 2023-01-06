@@ -76,7 +76,12 @@ const Drawer: FC<Props> = (props): JSX.Element => {
                 alt="user-avatar"
                 rounded="full"
               />
-              <div className={`${!isOpenDrawer && 'hidden'} text-left text-xs duration-200`}>
+              <div
+                className={classNames(
+                  'text-left text-xs duration-200',
+                  !isOpenDrawer ? 'hidden' : null
+                )}
+              >
                 <h3 className="font-semibold line-clamp-1">Joshua Galit</h3>
                 <small className="subpixel-antialiased line-clamp-1">
                   Sun Asterisk Philippines
@@ -84,7 +89,10 @@ const Drawer: FC<Props> = (props): JSX.Element => {
               </div>
             </div>
             <ChevronRight
-              className={`${!isOpenDrawer && 'hidden'} h-7 w-7 shrink-0 stroke-0.5 duration-200`}
+              className={classNames(
+                'h-7 w-7 shrink-0 stroke-0.5 duration-200',
+                !isOpenDrawer ? 'hidden' : null
+              )}
             />
           </UserMenuDropDown>
           <button

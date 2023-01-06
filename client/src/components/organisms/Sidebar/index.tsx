@@ -61,7 +61,9 @@ const Sidebar: FC<Props> = (props): JSX.Element => {
             'py-2 outline-none hover:text-slate-700'
           )}
         >
-          <ChevronsLeft className={`stroke-0.5 ${!isOpenSidebar && 'rotate-180'}`} />
+          <ChevronsLeft
+            className={classNames('stroke-0.5', !isOpenSidebar ? 'rotate-180' : null)}
+          />
           {isOpenSidebar && <p className="text-xs uppercase">collapse</p>}
         </button>
       </section>
