@@ -7,6 +7,7 @@ const Text = w.p(``, {
       slate: 'text-slate-800'
     },
     size: {
+      xs: 'text-xs',
       sm: 'text-sm',
       base: 'text-base',
       md: 'text-2xl',

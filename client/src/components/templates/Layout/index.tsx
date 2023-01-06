@@ -65,7 +65,7 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
             }}
           />
         </div>
-        <main className="flex flex-1 flex-col">
+        <main className="flex flex-1 flex-col overflow-hidden">
           {/* Header navigation */}
           <Header
             {...{
@@ -79,7 +79,7 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
             }}
           />
           {/* Dynamic Content */}
-          {children}
+          <div className="overflow-hidden">{children}</div>
         </main>
         {/* Time In Drawer */}
         <TimeInDrawer
@@ -105,7 +105,9 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
 
 // Main Wrapper of Home Authenticated User
 const Wrapper = ({ children }: { children: ReactNode }): JSX.Element => (
-  <div className="flex min-h-screen overflow-hidden bg-slate-100 text-slate-800">{children}</div>
+  <div className="flex h-screen min-h-screen overflow-hidden bg-slate-100 text-slate-800">
+    {children}
+  </div>
 )
 
 export default Layout

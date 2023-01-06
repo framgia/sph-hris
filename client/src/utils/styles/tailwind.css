@@ -4,6 +4,6 @@
 
 @layer components {
   .default-scrollbar {
-    @apply scrollbar-thin scrollbar-thumb-slate-500 scrollbar-thumb-rounded-md;
+    @apply scrollbar-thin scrollbar-thumb-slate-400 scrollbar-thumb-rounded-md;
   }
 }
