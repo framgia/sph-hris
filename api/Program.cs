@@ -18,10 +18,12 @@ builder.Services.AddGraphQLServer()
 
 builder.Services.AddGraphQLServer()
     .AddMutationType(q => q.Name("Mutation"))
-    .AddType<TimeInMutation>();
+    .AddType<TimeInMutation>()
+    .AddType<TimeOutMutation>();
 
 builder.Services.AddPooledDbContextFactory<HrisContext>(o => o.UseSqlServer(connectionString));
 builder.Services.AddScoped<TimeInService>();
+builder.Services.AddScoped<TimeOutService>();
 var app = builder.Build();
 
 app.UseRouting();
