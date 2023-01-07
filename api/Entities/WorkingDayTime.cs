@@ -9,7 +9,9 @@ namespace api.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int EmployeeScheduleId { get; set; }
+        public string? Day { get; set; }
         public TimeSpan From { get; set; }
         public TimeSpan To { get; set; }
+        public EmployeeSchedule EmployeeSchedule { get; set; } = default!;
     }
 }

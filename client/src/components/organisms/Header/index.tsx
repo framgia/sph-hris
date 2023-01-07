@@ -1,8 +1,11 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import classNames from 'classnames'
 import { Menu } from 'react-feather'
 import { useRouter } from 'next/router'
+import moment from 'moment'
+import useUserQuery from '~/hooks/useUserQuery'
+import { parse } from 'iso8601-duration'
 
 import Text from '~/components/atoms/Text'
 import Avatar from '~/components/atoms/Avatar'
@@ -35,6 +38,51 @@ const Header: FC<Props> = (props): JSX.Element => {
       handleToggleTimeOutDrawer
     }
   } = props
+
+  const { handleUserQuery } = useUserQuery()
+  const { data, status } = handleUserQuery()
+
+  const [seconds, setSeconds] = useState(0)
+  useEffect(() => {
+    if (
+      status === 'success' &&
+      data.userById.timeEntry.timeIn !== null &&
+      data.userById.timeEntry.timeOut === null
+    ) {
+      setRunning(true)
+      const now = moment(new Date()).format('DD/MM/YYYY HH:mm:ss')
+      setSeconds(0)
+      if (data.userById.timeEntry.timeIn !== null) {
+        const timeObj = parse(data?.userById.timeEntry.timeIn.timeHour)
+        const then = `${moment(new Date(data?.userById.timeEntry.date)).format('DD/MM/YYYY')} ${
+          timeObj.hours as number
+        }:${timeObj.minutes as number}:${timeObj.seconds as number}`
+        const temp = moment
+          .utc(moment(new Date(now)).diff(moment(new Date(then))))
+          .format('HH:mm:ss')
+        setSeconds(moment.duration(temp).asSeconds())
+      }
+    }
+  }, [status, data])
+  const [time, setTime] = useState<string | number>(() => {
+    return '0 UTC'
+  })
+  const [running, setRunning] = useState(false)
+  useEffect(() => {
+    setTime(seconds)
+  }, [seconds])
+
+  useEffect(() => {
+    let interval: string | number | NodeJS.Timeout | undefined
+    if (running) {
+      interval = setInterval(() => {
+        setTime((prevTime) => (prevTime as number) + 1)
+      }, 1000)
+    } else if (!running) {
+      clearInterval(interval)
+    }
+    return () => clearInterval(interval)
+  }, [running])
 
   const router = useRouter()
 
@@ -74,8 +122,14 @@ const Header: FC<Props> = (props): JSX.Element => {
       <section className="flex items-center space-x-10">
         <div className="flex items-center space-x-2">
           {/* Timer */}
-          <Text theme="base" color="slate">
-            00:00:00
+          <Text
+            className={`${time.toString().includes('UTC') ? 'invisible' : 'visible'}`}
+            theme="base"
+            color="slate"
+          >
+            <span>{`0${Math.floor((time as number) / (60 * 60))}`.slice(-2)}:</span>
+            <span>{`0${Math.floor(((time as number) % (60 * 60)) / 60)}`.slice(-2)}:</span>
+            <span>{`0${(time as number) % 60}`.slice(-2)}</span>
           </Text>
           {/* Clock In Button */}
           <Tooltip
@@ -83,7 +137,13 @@ const Header: FC<Props> = (props): JSX.Element => {
             overlay="Clock In"
             arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
           >
-            <Button onClick={handleToggleTimeInDrawer}>
+            <Button
+              disabled={
+                data?.userById.timeEntry.timeIn !== null ||
+                data.userById.employeeSchedule.workingDayTimes.length < 1
+              }
+              onClick={handleToggleTimeInDrawer}
+            >
               <ClockInIcon className="h-7 w-7 fill-current" />
             </Button>
           </Tooltip>

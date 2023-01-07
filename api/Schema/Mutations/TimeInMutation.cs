@@ -11,9 +11,9 @@ namespace api.Schema.Mutations
         {
             _timeInService = timeInService;
         }
-        public async Task<string> CreateTimeEntry(TimeInRequest timeIn)
+        public async Task<string> UpdateTimeIn(TimeInRequest timeIn)
         {
-            return await _timeInService.Create(timeIn);
+            return await _timeInService.Update(timeIn);
         }
     }
 }

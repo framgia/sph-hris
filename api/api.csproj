@@ -11,5 +11,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.1" />
     <PackageReference Include="HotChocolate.AspNetCore" Version="12.15.2" />
     <PackageReference Include="HotChocolate.Data.EntityFramework" Version="12.15.2" />
+    <PackageReference Include="LiteX.Storage.Local" Version="9.0.0"/>
+    <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17"/>
   </ItemGroup>
 </Project>

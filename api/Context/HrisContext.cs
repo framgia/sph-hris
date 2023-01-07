@@ -16,6 +16,7 @@ public partial class HrisContext : DbContext
     public DbSet<Time> Times { get; set; } = default!;
     public DbSet<EmployeeSchedule> EmployeeSchedules { get; set; } = default!;
     public DbSet<WorkingDayTime> WorkingDayTimes { get; set; } = default!;
+    public DbSet<Media> Medias { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

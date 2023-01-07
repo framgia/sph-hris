@@ -10,5 +10,6 @@ namespace api.Entities
         public int Id { get; set; }
         public TimeSpan TimeHour { get; set; }
         public string? Remarks { get; set; }
+        public ICollection<Media>? Media { get; set; }
     }
 }

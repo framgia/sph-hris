@@ -9,12 +9,42 @@ namespace api.Seeders
             Id = 1,
             Name = "Morning Shift"
         };
-        public static WorkingDayTime workingDayTime = new WorkingDayTime
-        {
-            Id = 1,
-            EmployeeScheduleId = employeeSchedule.Id,
-            From = TimeSpan.FromHours(9),
-            To = TimeSpan.FromHours(6)
+        public static List<WorkingDayTime> workingDayTime = new List<WorkingDayTime>(){
+            new WorkingDayTime {
+                Id = 1,
+                EmployeeScheduleId = employeeSchedule.Id,
+                Day="Monday",
+                From = TimeSpan.FromHours(9),
+                To = TimeSpan.FromHours(6)
+            },
+            new WorkingDayTime {
+                Id = 2,
+                EmployeeScheduleId = employeeSchedule.Id,
+                Day="Tuesday",
+                From = TimeSpan.FromHours(9),
+                To = TimeSpan.FromHours(6)
+            },
+            new WorkingDayTime {
+                Id = 3,
+                EmployeeScheduleId = employeeSchedule.Id,
+                Day="Wednesday",
+                From = TimeSpan.FromHours(9),
+                To = TimeSpan.FromHours(6)
+            },
+            new WorkingDayTime {
+                Id = 4,
+                EmployeeScheduleId = employeeSchedule.Id,
+                Day="Thursday",
+                From = TimeSpan.FromHours(9),
+                To = TimeSpan.FromHours(6)
+            },
+            new WorkingDayTime {
+                Id = 5,
+                EmployeeScheduleId = employeeSchedule.Id,
+                Day="Friday",
+                From = TimeSpan.FromHours(9),
+                To = TimeSpan.FromHours(6)
+            },
         };
         public static User[] users()
         {
