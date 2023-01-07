@@ -28,10 +28,11 @@ namespace api.Services
                     await context.SaveChangesAsync();
                     var timeEntry = await context.TimeEntries
                     .Include(i => i.TimeIn)
-                    .FirstAsync(x => x.Id == timeout.TimeEntryId);
+                    .Where(x => x.Id == timeout.TimeEntryId)
+                    .FirstAsync();
                     timeEntry.TimeOutId = time.Entity.Id;
-                    timeEntry.WorkedHours = time.Entity.TimeHour.Subtract(timeEntry.TimeIn?.TimeHour ?? DateTime.Now.TimeOfDay).Subtract(TimeSpan.FromHours(1));
-                    timeEntry.TrackedHours = timeEntry.EndTime.Subtract(timeEntry.StartTime).Subtract(TimeSpan.FromHours(1));
+                    timeEntry.WorkedHours = time.Entity.TimeHour.Subtract(timeEntry.TimeIn?.TimeHour ?? DateTime.Now.TimeOfDay);
+                    timeEntry.TrackedHours = timeEntry.EndTime.Subtract(timeEntry.StartTime);
                     context.TimeEntries.Update(timeEntry);
                     await context.SaveChangesAsync();
 

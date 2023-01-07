@@ -4,7 +4,6 @@ import classNames from 'classnames'
 import { Menu } from 'react-feather'
 import { useRouter } from 'next/router'
 import moment from 'moment'
-import useUserQuery from '~/hooks/useUserQuery'
 import { parse } from 'iso8601-duration'
 
 import Text from '~/components/atoms/Text'
@@ -17,6 +16,7 @@ import Button from '~/components/atoms/Buttons/Button'
 import LegendTooltip from '~/components/molecules/LegendTooltip'
 import UserMenuDropDown from '~/components/molecules/UserMenuDropdown'
 import NotificationPopover from '~/components/molecules/NotificationPopOver'
+import useUserQuery from '~/hooks/useUserQuery'
 
 const Tooltip = dynamic(async () => await import('rc-tooltip'), { ssr: false })
 
@@ -44,6 +44,8 @@ const Header: FC<Props> = (props): JSX.Element => {
 
   const [seconds, setSeconds] = useState(0)
   useEffect(() => {
+    setRunning(false)
+    setTime(0)
     if (
       status === 'success' &&
       data.userById.timeEntry.timeIn !== null &&
@@ -163,7 +165,14 @@ const Header: FC<Props> = (props): JSX.Element => {
             overlay="Clock Out"
             arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
           >
-            <Button onClick={handleToggleTimeOutDrawer}>
+            <Button
+              disabled={
+                data?.userById.timeEntry.timeIn === null ||
+                (data?.userById.timeEntry.timeIn !== null &&
+                  data?.userById.timeEntry.timeOut !== null)
+              }
+              onClick={handleToggleTimeOutDrawer}
+            >
               <ClockOutIcon className="h-7 w-7 fill-current" />
             </Button>
           </Tooltip>
