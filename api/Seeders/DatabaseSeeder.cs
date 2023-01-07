@@ -14,36 +14,36 @@ namespace api.Seeders
                 Id = 1,
                 EmployeeScheduleId = employeeSchedule.Id,
                 Day="Monday",
-                From = TimeSpan.FromHours(9),
-                To = TimeSpan.FromHours(6)
+                From = new TimeSpan(9, 30, 0),
+                To = new TimeSpan(18, 30, 0)
             },
             new WorkingDayTime {
                 Id = 2,
                 EmployeeScheduleId = employeeSchedule.Id,
                 Day="Tuesday",
-                From = TimeSpan.FromHours(9),
-                To = TimeSpan.FromHours(6)
+                From = new TimeSpan(9, 30, 0),
+                To = new TimeSpan(18, 30, 0)
             },
             new WorkingDayTime {
                 Id = 3,
                 EmployeeScheduleId = employeeSchedule.Id,
                 Day="Wednesday",
-                From = TimeSpan.FromHours(9),
-                To = TimeSpan.FromHours(6)
+                From = new TimeSpan(9, 30, 0),
+                To = new TimeSpan(18, 30, 0)
             },
             new WorkingDayTime {
                 Id = 4,
                 EmployeeScheduleId = employeeSchedule.Id,
                 Day="Thursday",
-                From = TimeSpan.FromHours(9),
-                To = TimeSpan.FromHours(6)
+                From = new TimeSpan(9, 30, 0),
+                To = new TimeSpan(18, 30, 0)
             },
             new WorkingDayTime {
                 Id = 5,
                 EmployeeScheduleId = employeeSchedule.Id,
                 Day="Friday",
-                From = TimeSpan.FromHours(9),
-                To = TimeSpan.FromHours(6)
+                From = new TimeSpan(9, 30, 0),
+                To = new TimeSpan(18, 30, 0)
             },
         };
         public static User[] users()

@@ -1,11 +1,17 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { X } from 'react-feather'
 import classNames from 'classnames'
 import TextareaAutosize from 'react-textarea-autosize'
+import { serialize } from 'tinyduration'
+import { toast } from 'react-hot-toast'
+import moment from 'moment'
 
 import Text from '~/components/atoms/Text'
 import Avatar from '~/components/atoms/Avatar'
 import DrawerTemplate from '~/components/templates/DrawerTemplate'
+import useUserQuery from '~/hooks/useUserQuery'
+import useTimeOutMutation from '~/hooks/useTimeOutMutation'
+import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 
 type Props = {
   isOpenTimeOutDrawer: boolean
@@ -19,6 +25,35 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
     isOpenTimeOutDrawer,
     actions: { handleToggleTimeOutDrawer }
   } = props
+
+  const [remarks, setRemarks] = useState('')
+
+  const { handleUserQuery } = useUserQuery()
+  const { handleTimeOutMutation } = useTimeOutMutation()
+  const { data } = handleUserQuery()
+  const timeOutMutation = handleTimeOutMutation()
+
+  const handleSaveTimeOut = (): void => {
+    const time = moment(new Date())
+    timeOutMutation.mutate({
+      userId: data?.userById.id as number,
+      timeEntryId: data?.userById.timeEntry.id as number,
+      timeHour: serialize({
+        hours: time.hours(),
+        minutes: time.minutes(),
+        seconds: time.seconds()
+      }),
+      remarks
+    })
+  }
+
+  useEffect(() => {
+    if (timeOutMutation.isSuccess) {
+      setRemarks('')
+      handleToggleTimeOutDrawer()
+      toast.success('Time Out Successful')
+    }
+  }, [timeOutMutation.status])
 
   return (
     <DrawerTemplate
@@ -48,23 +83,31 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
           />
           <div>
             <Text theme="md" size="sm" weight="bold">
-              Joshua Galit
+              {data?.userById.name}
             </Text>
-            <p className="text-[11px] leading-tight text-slate-500">Clocking from GMT +8</p>
-            <p className="text-[11px] leading-tight text-slate-500">Last in a few seconds ago</p>
-            <p className="text-[11px] leading-tight text-slate-500">Split time: 12:00 am</p>
+            <p className="text-[11px] leading-tight text-slate-500">
+              Clocking from {Intl.DateTimeFormat().resolvedOptions().timeZone}
+            </p>
+            <p className="text-[11px] leading-tight text-slate-500">
+              {moment(new Date()).format('dddd, MMMM Do YYYY')}
+            </p>
+            <p className="text-[11px] leading-tight text-slate-500">
+              Schedule: {data?.userById.employeeSchedule.name}
+            </p>
           </div>
         </div>
         {/* Error Message */}
-        <div
-          className={classNames(
-            'relative flex items-center justify-center rounded-md border border-rose-400',
-            ' bg-rose-50 py-2.5 px-4 shadow-md shadow-slate-200'
-          )}
-        >
-          <X className="absolute left-4 h-4 w-4 rounded-full bg-rose-500 p-0.5 text-white" />
-          <p className="text-xs font-medium text-rose-500">Something went wrong</p>
-        </div>
+        {timeOutMutation.isError && (
+          <div
+            className={classNames(
+              'relative flex items-center justify-center rounded-md border border-rose-400',
+              ' bg-rose-50 py-2.5 px-4 shadow-md shadow-slate-200'
+            )}
+          >
+            <X className="absolute left-4 h-4 w-4 rounded-full bg-rose-500 p-0.5 text-white" />
+            <p className="text-xs font-medium text-rose-500">Something went wrong</p>
+          </div>
+        )}
         {/* Remarks */}
         <div className="form-group space-y-2">
           <div>
@@ -72,6 +115,9 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
               <span className="text-xs text-slate-500">Remarks</span>
               <TextareaAutosize
                 id="remarks"
+                value={remarks}
+                disabled={timeOutMutation.isLoading}
+                onChange={(e) => setRemarks(e.target.value)}
                 className={classNames(
                   'm-0 block min-h-[20vh] w-full rounded placeholder:font-light placeholder:text-slate-400',
                   'border border-solid border-slate-300 bg-white bg-clip-padding focus:ring-primary',
@@ -99,12 +145,14 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
           </button>
           <button
             type="button"
-            onClick={handleToggleTimeOutDrawer}
+            disabled={timeOutMutation.isLoading}
+            onClick={handleSaveTimeOut}
             className={classNames(
               'flex items-center justify-center rounded-md border active:scale-95',
               'w-24 border-dark-primary bg-primary text-xs text-white outline-none hover:bg-dark-primary'
             )}
           >
+            {timeOutMutation.isLoading && <SpinnerIcon className=" mr-2 fill-gray-500" />}
             Save
           </button>
         </div>
