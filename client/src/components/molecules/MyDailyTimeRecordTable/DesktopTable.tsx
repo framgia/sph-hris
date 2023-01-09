@@ -62,7 +62,7 @@ const DesktopTable: FC<Props> = ({ table, isLoading }): JSX.Element => {
                     <tr
                       key={row.id}
                       className={classNames(
-                        'group hover:bg-white hover:shadow-md hover:shadow-slate-200',
+                        'group hover:bg-white hover:shadow-md  hover:shadow-slate-200',
                         row.original.status === WorkStatus.VACATION_LEAVE
                           ? 'bg-amber-50 hover:bg-amber-50'
                           : '',

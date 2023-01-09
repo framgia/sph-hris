@@ -5,12 +5,11 @@ import { Clock, Edit } from 'react-feather'
 import { createColumnHelper } from '@tanstack/react-table'
 
 import Chip from '~/components/atoms/Chip'
+import { IMyDTR } from '~/utils/interfaces'
 import SortIcon from '~/utils/icons/SortIcon'
-import Avatar from '~/components/atoms/Avatar'
-import { IDTRManagement } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/Button'
 
-const columnHelper = createColumnHelper<IDTRManagement>()
+const columnHelper = createColumnHelper<IMyDTR>()
 
 const CellHeader = ({ label }: { label: string }): JSX.Element => {
   return (
@@ -22,29 +21,17 @@ const CellHeader = ({ label }: { label: string }): JSX.Element => {
 }
 
 export const columns = [
-  columnHelper.accessor('name', {
-    header: () => <CellHeader label="Name" />,
-    footer: (info) => info.column.id,
-    cell: (props) => (
-      <div className="flex items-center space-x-2">
-        <Avatar
-          src={`https://placeimg.com/640/480/abstract/${props.row.id}`}
-          size="base"
-          rounded="full"
-        />
-        <div className="flex flex-col items-start">
-          <h1 className="font-semibold">{props.getValue()}</h1>
-          <small className="text-slate-500">Web Developer</small>
-        </div>
-      </div>
-    )
+  columnHelper.accessor((row) => row.date, {
+    id: 'Date',
+    header: () => <CellHeader label="Date" />,
+    footer: (info) => info.column.id
   }),
   columnHelper.accessor((row) => row.time_in, {
     id: 'Time In',
     header: () => <CellHeader label="Time In" />,
     footer: (info) => info.column.id,
     cell: (props) => (
-      <div className="relative flex">
+      <div className="relative flex ">
         {/* Actual Time In Data */}
         <span>{props.row.original.time_in}</span>
         {/* Status */}

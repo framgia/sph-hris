@@ -21,7 +21,7 @@ const UserMenuDropDown: FC<Props> = (props): JSX.Element => {
   const menu = 'relative z-20 flex w-full text-left'
   const menuItems = classNames(
     'absolute flex w-44 flex-col divide-y divide-slate-200 overflow-hidden rounded-md',
-    'bg-white py-1 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none',
+    'bg-white py-1 shadow-xl shadow-slate-200 ring-1 ring-black ring-opacity-5 focus:outline-none',
     position === 'bottom' && 'top-10 right-0',
     position === 'right' && 'bottom-0 -right-48 origin-bottom-right',
     position === 'top' && '-top-20 right-8 origin-top'

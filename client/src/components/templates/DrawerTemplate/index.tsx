@@ -21,7 +21,7 @@ const DrawerTemplate: FC<Props> = (props): JSX.Element => {
       <div
         className={classNames(
           'flex h-full max-w-[280px] shrink-0 flex-col border-r border-slate-200',
-          'fixed top-0 z-50 w-full bg-white shadow-lg transition-all duration-300',
+          'fixed top-0 z-50 w-full bg-white shadow-lg shadow-slate-300 transition-all duration-300',
           isOpen ? 'z-50 translate-x-0' : '-translate-x-full'
         )}
       >
@@ -32,7 +32,7 @@ const DrawerTemplate: FC<Props> = (props): JSX.Element => {
         {!isOpen && (
           <div
             onClick={handleToggle}
-            className="fixed inset-0 z-40 cursor-default bg-black/10"
+            className="fixed inset-0 z-40 cursor-default bg-slate-900/10"
           ></div>
         )}
       </>

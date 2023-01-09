@@ -56,7 +56,12 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
           </div>
         </div>
         {/* Error Message */}
-        <div className="relative flex items-center justify-center rounded-md border border-rose-400 bg-rose-50 py-2.5 px-4 shadow-md">
+        <div
+          className={classNames(
+            'relative flex items-center justify-center rounded-md border border-rose-400',
+            ' bg-rose-50 py-2.5 px-4 shadow-md shadow-slate-200'
+          )}
+        >
           <X className="absolute left-4 h-4 w-4 rounded-full bg-rose-500 p-0.5 text-white" />
           <p className="text-xs font-medium text-rose-500">Something went wrong</p>
         </div>

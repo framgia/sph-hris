@@ -27,7 +27,7 @@ const TimeSheetFilterDropdown: FC<Props> = (props): JSX.Element => {
           className={classNames(
             'absolute top-8 right-0 flex w-80 flex-col overflow-hidden rounded-md',
             'flex flex-col bg-white shadow-xl ring-1 ring-black',
-            'ring-opacity-5 focus:outline-none'
+            'shadow-slate-200 ring-opacity-5 focus:outline-none'
           )}
         >
           <main className="flex flex-col space-y-4 px-5 py-4">
