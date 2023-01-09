@@ -12,6 +12,9 @@ module.exports = {
       colors: {
         primary: '#75c55e',
         'dark-primary': '#65ad51'
+      },
+      fontSize: {
+        xxs: '0.60rem'
       }
     }
   },

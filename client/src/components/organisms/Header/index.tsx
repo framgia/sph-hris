@@ -11,6 +11,7 @@ import { sidebarLinks } from '~/utils/constants'
 import ClockInIcon from '~/utils/icons/ClockInIcon'
 import ClockOutIcon from '~/utils/icons/ClockOutIcon'
 import Button from '~/components/atoms/Buttons/Button'
+import LegendTooltip from '~/components/molecules/LegendTooltip'
 import UserMenuDropDown from '~/components/molecules/UserMenuDropdown'
 import NotificationPopover from '~/components/molecules/NotificationPopOver'
 
@@ -58,10 +59,15 @@ const Header: FC<Props> = (props): JSX.Element => {
           </Button>
         </div>
         {/* Header Title */}
-        <h1 className="hidden text-lg font-semibold text-slate-700 md:block">
-          {sidebarLinks?.my_nav.map((my) => my.href === router.asPath && my.name)}
-          {sidebarLinks?.management.map((my) => my.href === router.asPath && my.name)}
-        </h1>
+        <div className="hidden md:block">
+          <div className="flex items-center space-x-2">
+            <h1 className="text-lg font-semibold text-slate-700">
+              {sidebarLinks?.my_nav.map((my) => my.href === router.asPath && my.name)}
+              {sidebarLinks?.management.map((my) => my.href === router.asPath && my.name)}
+            </h1>
+            {router.pathname === '/dtr-management' && <LegendTooltip />}
+          </div>
+        </div>
       </section>
 
       {/* User Actions */}

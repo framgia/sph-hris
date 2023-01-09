@@ -3,7 +3,7 @@ import type { AppProps } from 'next/app'
 
 import '~/utils/styles/globals.css'
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
+const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   return <Component {...pageProps} />
 }
 

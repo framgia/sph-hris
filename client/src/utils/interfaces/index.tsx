@@ -7,3 +7,17 @@ export interface ISidebarLink {
   href: string
   Icon: IconName | any
 }
+
+export interface IDTRManagement {
+  id: number
+  name: string
+  time_in: string
+  time_out: string
+  start_time: string
+  end_time: string
+  work_hours: number
+  late: number
+  undertime: number
+  overtime: number
+  status: string
+}

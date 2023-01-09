@@ -14,16 +14,19 @@ type Props = {
 const NotificationPopover: FC<Props> = ({ className }): JSX.Element => {
   const panel = classNames(
     'absolute right-0 mt-2 w-72 origin-top-right divide-y divide-gray-200 overflow-hidden',
-    'rounded-lg border border-slate-200 bg-white shadow-lg focus:outline-none'
+    'rounded-md border border-slate-200 bg-white shadow-lg focus:outline-none'
   )
   const main = 'default-scrollbar max-h-[25vh] min-h-[25vh] py-2'
 
   return (
-    <Popover className="z-z-20 relative">
+    <Popover className="relative z-20">
       {({ open }) => (
         <>
-          <Popover.Button className="flex cursor-pointer items-center outline-none active:scale-95">
-            <Bell className="text-slate-400" fill={open ? 'currentColor' : 'transparent'} />
+          <Popover.Button className="flex cursor-pointer items-center rounded-full p-1 outline-none active:scale-95">
+            <Bell
+              className="h-[22px] w-[22px] text-slate-400"
+              fill={open ? 'currentColor' : 'transparent'}
+            />
           </Popover.Button>
           <PopoverTransition>
             <Popover.Panel className={panel}>

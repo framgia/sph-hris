@@ -30,14 +30,14 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
       }}
     >
       {/* Header */}
-      <header className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+      <header className="flex items-center justify-between border-b border-slate-200 px-6 py-3">
         <h1 className="text-base font-medium text-slate-900">Confirm Time In</h1>
         <button onClick={handleToggleTimeInDrawer} className="active:scale-95">
           <X className="h-6 w-6 stroke-0.5 text-slate-400" />
         </button>
       </header>
       {/* Body */}
-      <div className="flex flex-col space-y-3 px-4 py-2">
+      <div className="flex flex-col space-y-3 px-6 py-2">
         {/* User */}
         <div className="flex items-center space-x-3 border-b border-slate-200 py-3">
           <Avatar
@@ -71,7 +71,7 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
                   'm-0 block min-h-[20vh] w-full rounded placeholder:text-slate-400',
                   'border border-solid border-slate-300 bg-white bg-clip-padding focus:ring-primary',
                   'resize-none px-3 py-1.5 text-sm font-normal text-slate-700 transition focus:border-primary',
-                  'ease-in-out focus:border-blue-600 focus:bg-white focus:text-slate-700 focus:outline-none'
+                  'ease-in-out focus:border-primary focus:bg-white focus:text-slate-700 focus:outline-none'
                 )}
                 placeholder="Message..."
               />
@@ -96,7 +96,7 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
       </div>
       {/* Footer Options */}
       <section className="mt-auto border-t border-slate-200">
-        <div className="flex justify-end py-2 px-4">
+        <div className="flex justify-end py-2 px-6">
           <button
             type="button"
             onClick={handleToggleTimeInDrawer}

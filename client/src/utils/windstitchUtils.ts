@@ -1,4 +1,5 @@
 export const rounded = {
+  none: 'none',
   default: 'rounded',
   sm: 'rounded-sm',
   md: 'rounded-md',

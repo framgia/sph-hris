@@ -4,14 +4,7 @@ module.exports = {
     es2021: true
   },
   extends: ['plugin:react/recommended', 'standard-with-typescript', 'prettier'],
-  overrides: [
-    {
-      files: ['*.jsx', '*.tsx'],
-      rules: {
-        '@typescript-eslint/explicit-module-boundary-types': ['off']
-      }
-    }
-  ],
+  overrides: [],
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
@@ -22,8 +15,7 @@ module.exports = {
     'no-console': 'error',
     'eol-last': ['error', 'always'],
     'no-duplicate-imports': 'error',
-    '@typescript-eslint/consistent-type-definitions': 'off',
-    '@typescript-eslint/explicit-function-return-type': 'off'
+    '@typescript-eslint/consistent-type-definitions': 'off'
   },
   settings: {
     react: {
