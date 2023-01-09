@@ -20,12 +20,19 @@ type Props = {
   actions: {
     handleToggleDrawer: () => void
     handleToggleSidebar: () => void
+    handleToggleTimeInDrawer: () => void
+    handleToggleTimeOutDrawer: () => void
   }
 }
 
 const Header: FC<Props> = (props): JSX.Element => {
   const {
-    actions: { handleToggleSidebar, handleToggleDrawer }
+    actions: {
+      handleToggleSidebar,
+      handleToggleDrawer,
+      handleToggleTimeInDrawer,
+      handleToggleTimeOutDrawer
+    }
   } = props
 
   const router = useRouter()
@@ -70,7 +77,7 @@ const Header: FC<Props> = (props): JSX.Element => {
             overlay="Clock In"
             arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
           >
-            <Button>
+            <Button onClick={handleToggleTimeInDrawer}>
               <ClockInIcon className="h-7 w-7 fill-current" />
             </Button>
           </Tooltip>
@@ -90,7 +97,7 @@ const Header: FC<Props> = (props): JSX.Element => {
             overlay="Clock Out"
             arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
           >
-            <Button>
+            <Button onClick={handleToggleTimeOutDrawer}>
               <ClockOutIcon className="h-7 w-7 fill-current" />
             </Button>
           </Tooltip>

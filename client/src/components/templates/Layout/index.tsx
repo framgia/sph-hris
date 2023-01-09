@@ -7,6 +7,12 @@ import Drawer from '~/components/organisms/Drawer'
 import Header from '~/components/organisms/Header'
 
 const Sidebar = dynamic(async () => await import('~/components/organisms/Sidebar'), { ssr: false })
+const TimeInDrawer = dynamic(async () => await import('~/components/organisms/TimeInDrawer'), {
+  ssr: false
+})
+const TimeOutDrawer = dynamic(async () => await import('~/components/organisms/TimeOutDrawer'), {
+  ssr: false
+})
 
 type Props = {
   metaTitle: string
@@ -17,10 +23,21 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
   const [isOpenSidebar, setIsOpenSidebar] = useLocalStorageState('sidebarToggle', {
     defaultValue: true
   })
+  const [isOpenTimeInDrawer, setIsOpenTimeInDrawer] = useLocalStorageState('timeInDrawerToggle', {
+    defaultValue: false
+  })
+  const [isOpenTimeOutDrawer, setIsOpenTimeOutDrawer] = useLocalStorageState(
+    'timeOutDrawerToggle',
+    {
+      defaultValue: false
+    }
+  )
   const [isOpenDrawer, setIsOpenDrawer] = useState<boolean>(false)
 
   const handleToggleDrawer = (): void => setIsOpenDrawer(!isOpenDrawer)
   const handleToggleSidebar = (): void => setIsOpenSidebar(!isOpenSidebar)
+  const handleToggleTimeInDrawer = (): void => setIsOpenTimeInDrawer(!isOpenTimeInDrawer)
+  const handleToggleTimeOutDrawer = (): void => setIsOpenTimeOutDrawer(!isOpenTimeOutDrawer)
 
   return (
     <>
@@ -55,13 +72,32 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
               isOpenSidebar,
               actions: {
                 handleToggleDrawer,
-                handleToggleSidebar
+                handleToggleSidebar,
+                handleToggleTimeInDrawer,
+                handleToggleTimeOutDrawer
               }
             }}
           />
           {/* Dynamic Content */}
           {children}
         </main>
+        {/* Time In Drawer */}
+        <TimeInDrawer
+          {...{
+            isOpenTimeInDrawer,
+            actions: {
+              handleToggleTimeInDrawer
+            }
+          }}
+        />
+        <TimeOutDrawer
+          {...{
+            isOpenTimeOutDrawer,
+            actions: {
+              handleToggleTimeOutDrawer
+            }
+          }}
+        />
       </Wrapper>
     </>
   )

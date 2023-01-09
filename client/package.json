@@ -19,6 +19,7 @@
     "react-dom": "18.2.0",
     "react-feather": "^2.0.10",
     "react-icons": "^4.7.1",
+    "react-textarea-autosize": "^8.4.0",
     "use-local-storage-state": "^18.1.2",
     "windstitch": "^0.3.0"
   },
