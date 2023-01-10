@@ -14,16 +14,20 @@ var connectionString = $"Data Source={dbHost};Initial Catalog={dbName};User ID={
 
 builder.Services.AddGraphQLServer()
     .AddQueryType(q => q.Name("Query"))
-    .AddType<UserQuery>();
+    .AddType<UserQuery>()
+    .AddType<TimeSheetQuery>();
 
 builder.Services.AddGraphQLServer()
     .AddMutationType(q => q.Name("Mutation"))
     .AddType<TimeInMutation>()
     .AddType<TimeOutMutation>();
 
+builder.Services.AddGraphQLServer().AddProjections().AddFiltering().AddSorting();
+
 builder.Services.AddPooledDbContextFactory<HrisContext>(o => o.UseSqlServer(connectionString));
 builder.Services.AddScoped<TimeInService>();
 builder.Services.AddScoped<TimeOutService>();
+builder.Services.AddScoped<TimeSheetService>();
 var app = builder.Build();
 
 app.UseRouting();

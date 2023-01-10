@@ -26,7 +26,13 @@ public partial class HrisContext : DbContext
             DatabaseSeeder.workingDayTime
         );
         modelBuilder.Entity<User>().HasData(
-            DatabaseSeeder.user
+            DatabaseSeeder.users()
+        );
+        modelBuilder.Entity<Time>().HasData(
+            DatabaseSeeder.times()
+        );
+        modelBuilder.Entity<TimeEntry>().HasData(
+            DatabaseSeeder.timeEntries()
         );
     }
 
