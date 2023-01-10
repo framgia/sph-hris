@@ -15,7 +15,7 @@ const SummaryMenuDropdown: FC<Props> = (props): JSX.Element => {
 
   const menuItems = classNames(
     'absolute flex w-44 flex-col divide-y divide-slate-200 overflow-hidden rounded-md',
-    'bg-white py-1 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none top-8 right-0'
+    'bg-white py-1 shadow-xl shadow-slate-200 ring-1 ring-black ring-opacity-5 focus:outline-none top-8 right-0'
   )
 
   return (

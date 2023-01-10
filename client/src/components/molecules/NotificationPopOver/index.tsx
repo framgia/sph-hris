@@ -14,7 +14,7 @@ type Props = {
 const NotificationPopover: FC<Props> = ({ className }): JSX.Element => {
   const panel = classNames(
     'absolute right-0 mt-2 w-72 origin-top-right divide-y divide-gray-200 overflow-hidden',
-    'rounded-md border border-slate-200 bg-white shadow-lg focus:outline-none'
+    'rounded-md border border-slate-200 bg-white shadow-xl shadow-slate-300 focus:outline-none'
   )
   const main = 'default-scrollbar max-h-[25vh] min-h-[25vh] py-2'
 

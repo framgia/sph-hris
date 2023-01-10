@@ -11,22 +11,22 @@ import React, { Dispatch, FC, SetStateAction, useState } from 'react'
 
 import DesktopTable from './DesktopTable'
 import FooterTable from './../FooterTable'
+import { IMyDTR } from '~/utils/interfaces'
 import MobileDisclose from './MobileDisclose'
 import { fuzzyFilter } from '~/utils/fuzzyFilter'
-import { IDTRManagement } from '~/utils/interfaces'
 
 type Props = {
-  data: IDTRManagement[]
-  columns: Array<ColumnDef<IDTRManagement, any>>
+  data: IMyDTR[]
+  columns: Array<ColumnDef<IMyDTR, any>>
   globalFilter: string
   setGlobalFilter: Dispatch<SetStateAction<string>>
 }
 
-const DTRTable: FC<Props> = (props): JSX.Element => {
-  const { data: dtrManagementData, columns, globalFilter, setGlobalFilter } = props
+const MyDTRTable: FC<Props> = (props): JSX.Element => {
+  const { data: myDailyTimeData, columns, globalFilter, setGlobalFilter } = props
 
   const [sorting, setSorting] = useState<SortingState>([])
-  const [data] = useState(() => [...dtrManagementData])
+  const [data] = useState(() => [...myDailyTimeData])
 
   const table = useReactTable({
     data,
@@ -82,4 +82,4 @@ const DTRTable: FC<Props> = (props): JSX.Element => {
   )
 }
 
-export default DTRTable
+export default MyDTRTable

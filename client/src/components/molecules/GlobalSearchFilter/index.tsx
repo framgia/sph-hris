@@ -27,7 +27,7 @@ const GlobalSearchFilter: FC<Props> = (props): JSX.Element => {
 
   return (
     <div className="group flex items-center space-x-2">
-      <Search className="storke-0.5 h-5 w-5 text-slate-400 group-focus-within:text-amber-500" />
+      <Search className="h-5 w-5 text-slate-400 group-focus-within:text-amber-500" />
       <input
         type="text"
         className={classNames(

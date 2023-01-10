@@ -21,3 +21,17 @@ export interface IDTRManagement {
   overtime: number
   status: string
 }
+
+export interface IMyDTR {
+  id: number
+  date: string
+  time_in: string
+  time_out: string
+  start_time: string
+  end_time: string
+  work_hours: number
+  late: number
+  undertime: number
+  overtime: number
+  status: string
+}
