@@ -1,4 +1,5 @@
 using api.Entities;
+using api.Entities.DTO;
 using api.Services;
 
 namespace api.Schema.Queries
