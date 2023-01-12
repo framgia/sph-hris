@@ -18,6 +18,11 @@ namespace api.Schema.Queries
             return await _timeSheetService.GetById(id);
         }
 
+        public async Task<List<TimeEntry>?> GetTimeEntriesByEmployeeId(int id)
+        {
+            return await _timeSheetService.GetTimeEntriesByEmployeeId(id);
+        }
+
         public async Task<List<TimeEntryDTO>> GetTimeEntries()
         {
             return await _timeSheetService.GetAll();
