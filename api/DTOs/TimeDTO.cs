@@ -1,4 +1,6 @@
-namespace api.Entities
+using api.Entities;
+
+namespace api.DTOs
 {
     public class TimeDTO : Time
     {

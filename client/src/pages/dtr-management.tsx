@@ -5,16 +5,23 @@ import { MoreHorizontal } from 'react-feather'
 
 import FilterIcon from '~/utils/icons/FilterIcon'
 import Layout from '~/components/templates/Layout'
-import { dtrManagementData } from '~/utils/constants'
 import DTRTable from '~/components/molecules/DTRManagementTable'
 import LegendTooltip from '~/components/molecules/LegendTooltip'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import { columns } from '~/components/molecules/DTRManagementTable/columns'
 import SummaryMenuDropdown from '~/components/molecules/SummaryMenuDropdown'
 import TimeSheetFilterDropdown from '~/components/molecules/TimeSheetFilterDropdown'
+import { getAllEmployeeTimesheet, IAllTimeSheet } from '~/graphql/queries/timesheetQueries'
+import { mapDTRManagement } from '~/utils/mapping/dtrManagementMap'
 
 const DTRManagement: NextPage = (): JSX.Element => {
   const [globalFilter, setGlobalFilter] = useState<string>('')
+  const { data, error, isLoading } = getAllEmployeeTimesheet()
+  const timesheets: IAllTimeSheet = data as IAllTimeSheet
+
+  if (isLoading) return <h1>Loading...</h1>
+
+  if (error != null) return <h1>Error...</h1>
 
   return (
     <Layout metaTitle="DTR Management">
@@ -62,7 +69,7 @@ const DTRManagement: NextPage = (): JSX.Element => {
         </header>
         <DTRTable
           {...{
-            data: dtrManagementData,
+            data: mapDTRManagement(timesheets.timeEntries),
             columns,
             globalFilter,
             setGlobalFilter
