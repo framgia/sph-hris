@@ -20,7 +20,8 @@ builder.Services.AddGraphQLServer()
 builder.Services.AddGraphQLServer()
     .AddMutationType(q => q.Name("Mutation"))
     .AddType<TimeInMutation>()
-    .AddType<TimeOutMutation>();
+    .AddType<TimeOutMutation>()
+    .AddType<SigninMutation>();
 
 builder.Services.AddGraphQLServer().AddProjections().AddFiltering().AddSorting();
 
@@ -28,14 +29,14 @@ builder.Services.AddPooledDbContextFactory<HrisContext>(o => o.UseSqlServer(conn
 builder.Services.AddScoped<TimeInService>();
 builder.Services.AddScoped<TimeOutService>();
 builder.Services.AddScoped<TimeSheetService>();
+builder.Services.AddScoped<SigninService>();
+// builder.Services.AddScoped<UserService>();
+
 var app = builder.Build();
 
 app.UseRouting();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapGraphQL();
-});
+app.UseEndpoints(endpoints => endpoints.MapGraphQL());
 
 app.MapGet("/", () => "Hello World!");
 
