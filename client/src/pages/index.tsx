@@ -4,7 +4,11 @@ import type { NextPage } from 'next'
 import Layout from '~/components/templates/Layout'
 import UnderConstructionPage from '~/components/pages/UnderContructionPage'
 
-const Index: NextPage = (): JSX.Element => {
+type Props = {
+  cookies: string | null
+}
+
+const Index: NextPage<Props> = (): JSX.Element => {
   return (
     <Layout metaTitle="Home">
       <UnderConstructionPage />
