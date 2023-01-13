@@ -1,7 +1,8 @@
 import { NextPage } from 'next'
 import classNames from 'classnames'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { MoreHorizontal } from 'react-feather'
+import { toast } from 'react-hot-toast'
 
 import FilterIcon from '~/utils/icons/FilterIcon'
 import Layout from '~/components/templates/Layout'
@@ -19,9 +20,20 @@ const DTRManagement: NextPage = (): JSX.Element => {
   const { data, error, isLoading } = getAllEmployeeTimesheet()
   const timesheets: IAllTimeSheet = data as IAllTimeSheet
 
-  if (isLoading) return <h1>Loading...</h1>
+  useEffect(() => {
+    let toastId
+    if (isLoading) {
+      toastId = toast.loading('Loading...')
+    } else if (!isLoading) {
+      toast.dismiss(toastId)
+    }
+  }, [isLoading])
 
-  if (error != null) return <h1>Error...</h1>
+  useEffect(() => {
+    if (error != null) {
+      toast.error('There is an error!', { duration: 3000 })
+    }
+  }, [error])
 
   return (
     <Layout metaTitle="DTR Management">
@@ -67,14 +79,18 @@ const DTRManagement: NextPage = (): JSX.Element => {
             </SummaryMenuDropdown>
           </div>
         </header>
-        <DTRTable
-          {...{
-            data: mapDTRManagement(timesheets?.timeEntries),
-            columns,
-            globalFilter,
-            setGlobalFilter
-          }}
-        />
+        {!isLoading ? (
+          <DTRTable
+            {...{
+              data: mapDTRManagement(timesheets.timeEntries),
+              columns,
+              globalFilter,
+              setGlobalFilter
+            }}
+          />
+        ) : (
+          <React.Fragment></React.Fragment>
+        )}
       </section>
     </Layout>
   )

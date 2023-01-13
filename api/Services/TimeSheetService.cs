@@ -18,7 +18,7 @@ namespace api.Services
             return new TimeEntryDTO(timeEntry);
         }
 
-        public async Task<List<TimeEntry>?> GetTimeEntriesByEmployeeId(int id)
+        public async Task<List<TimeEntryDTO>?> GetTimeEntriesByEmployeeId(int id)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
@@ -27,6 +27,7 @@ namespace api.Services
                     .Include(entry => entry.TimeOut)
                     .Include(entry => entry.User)
                     .Where(c => c.UserId == id)
+                    .Select(x => ToTimeEntryDTO(x))
                     .ToListAsync();
             }
         }

@@ -1,15 +1,39 @@
 import { NextPage } from 'next'
 import classNames from 'classnames'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { toast } from 'react-hot-toast'
 
-import { myDTRData } from '~/utils/constants'
 import Layout from '~/components/templates/Layout'
 import MyDTRTable from '~/components/molecules/MyDailyTimeRecordTable'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import { columns } from '~/components/molecules/MyDailyTimeRecordTable/columns'
+import { getEmployeeTimesheet, IEmployeeTimeSheet } from '~/hooks/useTimesheetQuery'
+import { mapDTRData } from '~/utils/mapping/myDTRMap'
+import useUserQuery from '~/hooks/useUserQuery'
 
 const MyDailyTimeRecord: NextPage = (): JSX.Element => {
   const [globalFilter, setGlobalFilter] = useState<string>('')
+
+  const { handleUserQuery } = useUserQuery()
+  const user = handleUserQuery()
+
+  const { data, error, isLoading } = getEmployeeTimesheet(user.data?.userById.id as number)
+  const timesheets: IEmployeeTimeSheet = data as IEmployeeTimeSheet
+
+  useEffect(() => {
+    let toastId
+    if (isLoading) {
+      toastId = toast.loading('Loading...')
+    } else if (!isLoading) {
+      toast.dismiss(toastId)
+    }
+  }, [isLoading])
+
+  useEffect(() => {
+    if (error != null) {
+      toast.error('There is an error!', { duration: 3000 })
+    }
+  }, [error])
 
   return (
     <Layout metaTitle="My Daily Time Record">
@@ -31,14 +55,18 @@ const MyDailyTimeRecord: NextPage = (): JSX.Element => {
             placeholder="Search"
           />
         </header>
-        <MyDTRTable
-          {...{
-            data: myDTRData,
-            columns,
-            globalFilter,
-            setGlobalFilter
-          }}
-        />
+        {!isLoading ? (
+          <MyDTRTable
+            {...{
+              data: mapDTRData(timesheets.timeEntriesByEmployeeId),
+              columns,
+              globalFilter,
+              setGlobalFilter
+            }}
+          />
+        ) : (
+          <React.Fragment></React.Fragment>
+        )}
       </section>
     </Layout>
   )
