@@ -15,7 +15,6 @@ type TimeInRequest = {
 type returnType = {
   handleTimeInMutation: () => UseMutationResult<any, unknown, TimeInRequest, unknown>
 }
-
 type handleTimeInMutationReturnType = UseMutationResult<any, unknown, TimeInRequest, unknown>
 
 const useTimeInMutation = (): returnType => {
