@@ -1,4 +1,4 @@
-using api.Entities;
+using api.DTOs;
 using api.Services;
 
 namespace api.Schema.Queries
@@ -11,9 +11,9 @@ namespace api.Schema.Queries
         {
             _timeInService = timeInService;
         }
-        public async Task<User?> GetUserById(int id)
+        public async Task<UserDTO?> GetUserById(string token, string schedule)
         {
-            return await _timeInService.GetById(id);
+            return await _timeInService.GetByIdSchedule(token, schedule);
         }
     }
 }

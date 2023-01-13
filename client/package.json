@@ -17,6 +17,8 @@
     "@tanstack/react-table": "^8.7.4",
     "classnames": "^2.3.2",
     "graphql-request": "^5.1.0",
+    "iso8601-duration": "^2.1.1",
+    "moment": "^2.29.4",
     "next": "latest",
     "next-auth": "^4.18.8",
     "rc-tooltip": "^5.2.2",
@@ -26,6 +28,7 @@
     "react-hot-toast": "^2.4.0",
     "react-icons": "^4.7.1",
     "react-textarea-autosize": "^8.4.0",
+    "tinyduration": "^3.2.4",
     "use-local-storage-state": "^18.1.2",
     "windstitch": "^0.3.0"
   },

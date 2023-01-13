@@ -11,7 +11,7 @@ namespace api.Schema.Mutations
         {
             _timeOutService = timeOutService;
         }
-        public async Task<string> UpdateTimeEntry(TimeOutRequest timeOut)
+        public async Task<string> UpdateTimeOut(TimeOutRequest timeOut)
         {
             return await _timeOutService.Update(timeOut);
         }
