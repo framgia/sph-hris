@@ -1,66 +1,30 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query'
-import graphqlQuery from './graphqlQuery'
+import { gql } from 'graphql-request'
 
-export interface ITimeEntries {
-  id: number
-  date: string
-  user: {
-    id: number
-    name: string
+export const GET_ALL_EMPLOYEE_TIMESHEET = gql`
+  query {
+    timeEntries {
+      id
+      date
+      user {
+        id
+        name
+      }
+      timeIn {
+        timeHour
+        remarks
+      }
+      timeOut {
+        timeHour
+        remarks
+      }
+      startTime
+      endTime
+      workedHours
+      trackedHours
+      late
+      undertime
+      overtime
+      status
+    }
   }
-  timeIn: {
-    timeHour: string
-    remarks: string
-  }
-  timeOut: {
-    timeHour: string
-    remarks: string
-  }
-  startTime: string
-  endTime: string
-  workedHours: string
-  trackedHours: string
-  late: number
-  undertime: number
-  overtime: number
-  status: string
-}
-
-export interface IAllTimeSheet {
-  timeEntries: ITimeEntries[]
-}
-
-export const getAllEmployeeTimesheet = (): UseQueryResult => {
-  return useQuery({
-    queryKey: ['getAllTimesheet'],
-    queryFn: async () =>
-      await graphqlQuery(
-        `query {
-        timeEntries {
-          id
-          date
-          user {
-            id
-            name
-          }
-          timeIn {
-            timeHour
-            remarks
-          }
-          timeOut {
-            timeHour
-            remarks
-          }
-          startTime
-          endTime
-          workedHours
-          trackedHours
-          late
-          undertime
-          overtime
-          status
-        }
-      }`
-      )
-  })
-}
+`

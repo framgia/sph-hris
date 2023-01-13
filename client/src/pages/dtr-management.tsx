@@ -11,7 +11,7 @@ import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import { columns } from '~/components/molecules/DTRManagementTable/columns'
 import SummaryMenuDropdown from '~/components/molecules/SummaryMenuDropdown'
 import TimeSheetFilterDropdown from '~/components/molecules/TimeSheetFilterDropdown'
-import { getAllEmployeeTimesheet, IAllTimeSheet } from '~/graphql/queries/timesheetQueries'
+import { getAllEmployeeTimesheet, IAllTimeSheet } from '~/hooks/useTimesheetQuery'
 import { mapDTRManagement } from '~/utils/mapping/dtrManagementMap'
 
 const DTRManagement: NextPage = (): JSX.Element => {
