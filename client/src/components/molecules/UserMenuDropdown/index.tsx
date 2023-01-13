@@ -1,8 +1,10 @@
 import classNames from 'classnames'
 import { Menu } from '@headlessui/react'
+import { signOut } from 'next-auth/react'
 import { LogOut, User } from 'react-feather'
 import React, { FC, ReactNode } from 'react'
 
+import useLogoutMutation from '~/hooks/useLogOutMutation'
 import MenuTransition from '~/components/templates/MenuTransition'
 
 type Props = {
@@ -29,6 +31,9 @@ const UserMenuDropDown: FC<Props> = (props): JSX.Element => {
   const menuItemButton = 'flex items-center space-x-2 px-3 py-2 text-xs hover:text-slate-700'
   const menuItemButtonIcon = 'h-4 w-4 stroke-0.5'
 
+  const { handleLogoutMutation } = useLogoutMutation()
+  const LogoutMutation = handleLogoutMutation()
+
   return (
     <Menu as="div" className={menu}>
       <Menu.Button className={className}>{children}</Menu.Button>
@@ -41,7 +46,18 @@ const UserMenuDropDown: FC<Props> = (props): JSX.Element => {
             </button>
           </Menu.Item>
           <Menu.Item>
-            <button className={menuItemButton}>
+            <button
+              className={menuItemButton}
+              onClick={() => {
+                try {
+                  signOut({ callbackUrl: '/login' })
+                    .then()
+                    .catch((error) => error.message)
+                } catch (error) {}
+                LogoutMutation.mutate({ token: localStorage.getItem('cookies') as string })
+                localStorage.removeItem('cookies')
+              }}
+            >
               <LogOut className={menuItemButtonIcon} aria-hidden="true" />
               <span>Logout</span>
             </button>

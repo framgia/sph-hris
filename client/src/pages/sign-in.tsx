@@ -1,12 +1,13 @@
 import Head from 'next/head'
+import { NextPage } from 'next'
 import classNames from 'classnames'
 import React, { useEffect } from 'react'
 import { FcGoogle } from 'react-icons/fc'
-import { NextPage, NextApiRequest } from 'next'
 import { Toaster, toast } from 'react-hot-toast'
 import { signOut, signIn, useSession } from 'next-auth/react'
 
 import Logo from '~/components/atoms/Logo'
+import { getServerSideProps } from '~/utils/ssr'
 import useSignInMutation from '~/hooks/useSignInMutation'
 
 const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
@@ -21,6 +22,7 @@ const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
         token: cookies as string,
         expiration: session?.data?.expires
       })
+      localStorage.setItem('cookies', cookies)
     }
   }, [session?.status])
 
@@ -110,12 +112,4 @@ const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
 
 export default SignIn
 
-export async function getServerSideProps({
-  req
-}: {
-  req: NextApiRequest
-}): Promise<{ props: { cookies: string | null } }> {
-  const cookies = req.cookies['next-auth.session-token'] ?? null
-
-  return { props: { cookies } }
-}
+export { getServerSideProps }
