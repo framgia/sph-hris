@@ -2,7 +2,7 @@ using api.Entities;
 
 namespace api.Seeders
 {
-    public class DatabaseSeeder
+    public static class DatabaseSeeder
     {
         public static EmployeeSchedule employeeSchedule = new EmployeeSchedule
         {

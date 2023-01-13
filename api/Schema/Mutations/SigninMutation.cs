@@ -11,7 +11,7 @@ namespace api.Schema.Mutations
         {
             _signInService = signInService;
         }
-        public async Task<string> CreateSignIn(SigninRequest signIn)
+        public async Task<bool> CreateSignIn(SigninRequest signIn)
         {
             return await _signInService.Create(signIn);
         }
