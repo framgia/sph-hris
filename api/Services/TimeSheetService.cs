@@ -18,13 +18,27 @@ namespace api.Services
             return new TimeEntryDTO(timeEntry);
         }
 
+        public async Task<List<TimeEntry>?> GetTimeEntriesByEmployeeId(int id)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.TimeEntries
+                    .Include(entry => entry.TimeIn)
+                    .Include(entry => entry.TimeOut)
+                    .Include(entry => entry.User)
+                    .Where(c => c.UserId == id)
+                    .ToListAsync();
+            }
+        }
+
         public async Task<TimeEntry?> GetById(int id)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 return await context.TimeEntries
                     .Include(entity => entity.TimeIn)
-                    .FirstOrDefaultAsync(c => c.Id == id);
+                    .Select(x => ToTimeEntryDTO(x))
+                    .FirstOrDefaultAsync(c => c.UserId == id);
             }
         }
 
