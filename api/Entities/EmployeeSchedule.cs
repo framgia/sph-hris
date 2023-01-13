@@ -10,6 +10,6 @@ namespace api.Entities
         public int Id { get; set; }
         public string? Name { get; set; }
         public ICollection<User> Users { get; set; } = default!;
-        public WorkingDayTime WorkingDayTime { get; set; } = default!;
+        public ICollection<WorkingDayTime> WorkingDayTimes { get; set; } = default!;
     }
 }

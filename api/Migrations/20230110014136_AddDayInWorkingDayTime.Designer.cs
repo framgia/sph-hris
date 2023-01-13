@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Context;
 
@@ -11,9 +12,11 @@ using api.Context;
 namespace api.Migrations
 {
     [DbContext(typeof(HrisContext))]
-    partial class HrisContextModelSnapshot : ModelSnapshot
+    [Migration("20230110014136_AddDayInWorkingDayTime")]
+    partial class AddDayInWorkingDayTime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -112,56 +115,6 @@ namespace api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Times");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9660),
-                            Remarks = "First time in",
-                            TimeHour = new TimeSpan(0, 9, 15, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9661)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9665),
-                            Remarks = "Second time in",
-                            TimeHour = new TimeSpan(0, 9, 15, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9665)
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9666),
-                            Remarks = "Third time in",
-                            TimeHour = new TimeSpan(0, 10, 15, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9667)
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9668),
-                            Remarks = "First time out",
-                            TimeHour = new TimeSpan(0, 18, 15, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9669)
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CreatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9669),
-                            Remarks = "Second time out",
-                            TimeHour = new TimeSpan(0, 18, 30, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9670)
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CreatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9671),
-                            Remarks = "Third time out",
-                            TimeHour = new TimeSpan(0, 19, 59, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9672)
-                        });
                 });
 
             modelBuilder.Entity("api.Entities.TimeEntry", b =>
@@ -211,50 +164,6 @@ namespace api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("TimeEntries");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9692),
-                            Date = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9694),
-                            EndTime = new TimeSpan(0, 18, 30, 0, 0),
-                            StartTime = new TimeSpan(0, 9, 30, 0, 0),
-                            TimeInId = 1,
-                            TimeOutId = 4,
-                            TrackedHours = new TimeSpan(0, 8, 0, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9693),
-                            UserId = 1,
-                            WorkedHours = new TimeSpan(0, 8, 0, 0, 0)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9736),
-                            Date = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9737),
-                            EndTime = new TimeSpan(0, 18, 30, 0, 0),
-                            StartTime = new TimeSpan(0, 9, 30, 0, 0),
-                            TimeInId = 2,
-                            TimeOutId = 5,
-                            TrackedHours = new TimeSpan(0, 8, 0, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9736),
-                            UserId = 2,
-                            WorkedHours = new TimeSpan(0, 8, 15, 0, 0)
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9763),
-                            Date = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9764),
-                            EndTime = new TimeSpan(0, 18, 30, 0, 0),
-                            StartTime = new TimeSpan(0, 9, 30, 0, 0),
-                            TimeInId = 3,
-                            TimeOutId = 6,
-                            TrackedHours = new TimeSpan(0, 8, 0, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9764),
-                            UserId = 1,
-                            WorkedHours = new TimeSpan(0, 8, 44, 0, 0)
-                        });
                 });
 
             modelBuilder.Entity("api.Entities.User", b =>
@@ -302,18 +211,7 @@ namespace api.Migrations
                             IsOnline = false,
                             Name = "John Doe",
                             RoleId = 0,
-                            UpdatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9632)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9638),
-                            Email = "reanschwarzer@sun-asterisk.com",
-                            EmployeeScheduleId = 1,
-                            IsOnline = false,
-                            Name = "Rean Schwarzer",
-                            RoleId = 0,
-                            UpdatedAt = new DateTime(2023, 1, 12, 17, 5, 8, 395, DateTimeKind.Local).AddTicks(9639)
+                            UpdatedAt = new DateTime(2023, 1, 10, 9, 41, 35, 552, DateTimeKind.Local).AddTicks(5321)
                         });
                 });
 
