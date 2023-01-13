@@ -1,6 +1,6 @@
 using api.Context;
+using api.DTOs;
 using api.Entities;
-using api.Entities.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Services
