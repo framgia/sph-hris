@@ -1,14 +1,52 @@
-import React from 'react'
 import Head from 'next/head'
 import classNames from 'classnames'
-import { NextPage } from 'next'
+import React, { useEffect } from 'react'
 import { FcGoogle } from 'react-icons/fc'
+import { NextPage, NextApiRequest } from 'next'
+import { Toaster, toast } from 'react-hot-toast'
+import { signOut, signIn, useSession } from 'next-auth/react'
 
 import Logo from '~/components/atoms/Logo'
+import useSignInMutation from '~/hooks/useSignInMutation'
 
-const SignIn: NextPage = (): JSX.Element => {
+const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
+  const session = useSession()
+  const { handleSignInMutation } = useSignInMutation()
+  const SignInMutation = handleSignInMutation()
+
+  useEffect(() => {
+    if (session?.status === 'authenticated') {
+      SignInMutation.mutate({
+        email: session?.data?.user?.email as string,
+        token: cookies as string,
+        expiration: session?.data?.expires
+      })
+    }
+  }, [session?.status])
+
+  useEffect(() => {
+    if (SignInMutation?.data?.createSignIn === true) {
+      window.location.href = '/'
+      toast.success('Verification Success, redirecting...', { duration: 3000 })
+    } else if (session?.data != null) {
+      void signOut({ callbackUrl: '/sign-in' })
+      toast.error('Email does not exist', { duration: 3000 })
+    }
+  }, [SignInMutation?.data])
+
   return (
     <>
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        toastOptions={{
+          style: {
+            borderRadius: '10px',
+            background: '#2D3D63',
+            color: '#fff'
+          }
+        }}
+      />
       <Head>
         <title>Sign In</title>
       </Head>
@@ -50,8 +88,16 @@ const SignIn: NextPage = (): JSX.Element => {
                   'transition duration-150 ease-in-out focus:bg-slate-700',
                   ' focus:shadow-lg focus:outline-none focus:ring-0 hover:shadow-lg  active:shadow-lg'
                 )}
+                onClick={() => {
+                  try {
+                    signIn('google', { callbackUrl: 'http://localhost:3000/sign-in' })
+                      .then()
+                      .catch((error) => error.message)
+                  } catch (error) {}
+                }}
               >
                 <FcGoogle className="absolute left-4 text-xl" />
+
                 <p className="text-center">Google</p>
               </button>
             </div>
@@ -63,3 +109,13 @@ const SignIn: NextPage = (): JSX.Element => {
 }
 
 export default SignIn
+
+export async function getServerSideProps({
+  req
+}: {
+  req: NextApiRequest
+}): Promise<{ props: { cookies: string | null } }> {
+  const cookies = req.cookies['next-auth.session-token'] ?? null
+
+  return { props: { cookies } }
+}

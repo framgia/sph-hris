@@ -12,14 +12,14 @@ namespace api.Services
         {
             _contextFactory = contextFactory;
         }
-        public async Task<string> Create(SigninRequest signin)
+        public async Task<bool> Create(SigninRequest signin)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 using var transaction = context.Database.BeginTransaction();
                 try
                 {
-                    User userExist = await context.Users.FirstAsync(c => c.Email == signin.Email);
+                    User userExist = await context.Users.Where(c => c.Email == signin.Email).FirstAsync();
                     var token = context.Personal_Access_Tokens.Add(new Personal_Access_Token
                     {
                         UserId = userExist.Id,
@@ -28,12 +28,10 @@ namespace api.Services
                     });
                     await context.SaveChangesAsync();
                     transaction.Commit();
-                    return "Successful Log In!";
+                    return true;
                 }
-                catch (Exception e)
-                {
-                    return e.InnerException?.Message ?? "You don't have permission to access this page.";
-                }
+                catch (Exception)
+                { return false; }
             }
         }
     }

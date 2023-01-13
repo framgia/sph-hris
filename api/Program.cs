@@ -11,6 +11,7 @@ var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "P@ssw0rd"
 var dbName = Environment.GetEnvironmentVariable("DB_NAME") ?? "hris";
 var dbUser = Environment.GetEnvironmentVariable("DB_USER") ?? "sa";
 var connectionString = $"Data Source={dbHost};Initial Catalog={dbName};User ID={dbUser};Password={dbPassword};Encrypt=True;TrustServerCertificate=True;";
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 builder.Services.AddGraphQLServer()
     .AddQueryType(q => q.Name("Query"))
@@ -32,9 +33,21 @@ builder.Services.AddScoped<TimeSheetService>();
 builder.Services.AddScoped<SigninService>();
 // builder.Services.AddScoped<UserService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("*").AllowAnyHeader()
+                                                  .AllowAnyMethod();
+                      });
+});
+
 var app = builder.Build();
 
 app.UseRouting();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseEndpoints(endpoints => endpoints.MapGraphQL());
 
