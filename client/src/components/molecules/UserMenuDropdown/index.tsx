@@ -20,7 +20,7 @@ const UserMenuDropDown: FC<Props> = (props): JSX.Element => {
     className = 'shrink-0 outline-none active:scale-95'
   } = props
 
-  const menu = 'relative z-20 flex w-full text-left'
+  const menu = 'relative z-30 flex w-full text-left'
   const menuItems = classNames(
     'absolute flex w-44 flex-col divide-y divide-slate-200 overflow-hidden rounded-md',
     'bg-white py-1 shadow-xl shadow-slate-200 ring-1 ring-black ring-opacity-5 focus:outline-none',

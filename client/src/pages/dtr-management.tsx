@@ -7,12 +7,12 @@ import FilterIcon from '~/utils/icons/FilterIcon'
 import Layout from '~/components/templates/Layout'
 import DTRTable from '~/components/molecules/DTRManagementTable'
 import LegendTooltip from '~/components/molecules/LegendTooltip'
+import { mapDTRManagement } from '~/utils/mapping/dtrManagementMap'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import { columns } from '~/components/molecules/DTRManagementTable/columns'
 import SummaryMenuDropdown from '~/components/molecules/SummaryMenuDropdown'
 import TimeSheetFilterDropdown from '~/components/molecules/TimeSheetFilterDropdown'
 import { getAllEmployeeTimesheet, IAllTimeSheet } from '~/hooks/useTimesheetQuery'
-import { mapDTRManagement } from '~/utils/mapping/dtrManagementMap'
 
 const DTRManagement: NextPage = (): JSX.Element => {
   const [globalFilter, setGlobalFilter] = useState<string>('')
@@ -26,7 +26,7 @@ const DTRManagement: NextPage = (): JSX.Element => {
   return (
     <Layout metaTitle="DTR Management">
       <section className="default-scrollbar relative h-full min-h-full overflow-auto text-xs text-slate-800">
-        <div className="block md:hidden">
+        <div className="sticky top-0 z-20 block bg-slate-100 md:hidden">
           <div className="flex items-center space-x-2 border-b border-slate-200 px-4 py-2">
             <h1 className="text-base font-semibold text-slate-700">DTR Management</h1>
             <LegendTooltip
@@ -38,7 +38,7 @@ const DTRManagement: NextPage = (): JSX.Element => {
         </div>
         <header
           className={classNames(
-            'sticky top-0 left-0 flex items-center justify-between',
+            'sticky top-[41px] left-0 z-20 flex items-center justify-between md:top-0',
             'border-b border-slate-200 bg-slate-100 px-4 py-2'
           )}
         >
@@ -69,7 +69,7 @@ const DTRManagement: NextPage = (): JSX.Element => {
         </header>
         <DTRTable
           {...{
-            data: mapDTRManagement(timesheets.timeEntries),
+            data: mapDTRManagement(timesheets?.timeEntries),
             columns,
             globalFilter,
             setGlobalFilter
