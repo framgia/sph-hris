@@ -18,7 +18,8 @@ public partial class HrisContext : DbContext
     public DbSet<WorkingDayTime> WorkingDayTimes { get; set; } = default!;
     public DbSet<Personal_Access_Token> Personal_Access_Tokens { get; set; } = default!;
     public DbSet<Media> Medias { get; set; } = default!;
-
+    public DbSet<WorkInterruptionType> WorkInterruptionTypes { get; set; } = default!;
+    public DbSet<WorkInterruption> WorkInterruptions { get; set; } = default!;
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<EmployeeSchedule>().HasData(
@@ -35,6 +36,9 @@ public partial class HrisContext : DbContext
         );
         modelBuilder.Entity<TimeEntry>().HasData(
             DatabaseSeeder.timeEntries()
+        );
+        modelBuilder.Entity<WorkInterruptionType>().HasData(
+            DatabaseSeeder.workInterruptionType
         );
     }
 

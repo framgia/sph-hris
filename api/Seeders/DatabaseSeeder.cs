@@ -1,4 +1,5 @@
 using api.Entities;
+using api.Enums;
 
 namespace api.Seeders
 {
@@ -13,37 +14,59 @@ namespace api.Seeders
             new WorkingDayTime {
                 Id = 1,
                 EmployeeScheduleId = employeeSchedule.Id,
-                Day="Monday",
+                Day = "Monday",
                 From = new TimeSpan(9, 30, 0),
                 To = new TimeSpan(18, 30, 0)
             },
             new WorkingDayTime {
                 Id = 2,
                 EmployeeScheduleId = employeeSchedule.Id,
-                Day="Tuesday",
+                Day = "Tuesday",
                 From = new TimeSpan(9, 30, 0),
                 To = new TimeSpan(18, 30, 0)
             },
             new WorkingDayTime {
                 Id = 3,
                 EmployeeScheduleId = employeeSchedule.Id,
-                Day="Wednesday",
+                Day = "Wednesday",
                 From = new TimeSpan(9, 30, 0),
                 To = new TimeSpan(18, 30, 0)
             },
             new WorkingDayTime {
                 Id = 4,
                 EmployeeScheduleId = employeeSchedule.Id,
-                Day="Thursday",
+                Day = "Thursday",
                 From = new TimeSpan(9, 30, 0),
                 To = new TimeSpan(18, 30, 0)
             },
             new WorkingDayTime {
                 Id = 5,
                 EmployeeScheduleId = employeeSchedule.Id,
-                Day="Friday",
+                Day = "Friday",
                 From = new TimeSpan(9, 30, 0),
                 To = new TimeSpan(18, 30, 0)
+            },
+        };
+        public static List<WorkInterruptionType> workInterruptionType = new List<WorkInterruptionType>(){
+            new WorkInterruptionType {
+                Id = 1,
+                Name = WorkInterruptionEnum.POWER_INTERRUPTION
+            },
+            new WorkInterruptionType {
+                Id = 2,
+                Name = WorkInterruptionEnum.LOST_INTERNET_CONNECTION
+            },
+            new WorkInterruptionType {
+                Id = 3,
+                Name = WorkInterruptionEnum.EMERGENCY
+            },
+            new WorkInterruptionType {
+                Id = 4,
+                Name = WorkInterruptionEnum.ERRANDS
+            },
+            new WorkInterruptionType {
+                Id = 5,
+                Name = WorkInterruptionEnum.OTHERS
             },
         };
         public static User[] users()
