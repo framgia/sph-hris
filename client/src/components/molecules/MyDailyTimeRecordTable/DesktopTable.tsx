@@ -9,9 +9,10 @@ import { WorkStatus } from '~/utils/constants/work-status'
 type Props = {
   table: Table<IDTRManagement>
   isLoading: boolean
+  error: unknown
 }
 
-const DesktopTable: FC<Props> = ({ table, isLoading }): JSX.Element => {
+const DesktopTable: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
   return (
     <table
       {...{
@@ -47,40 +48,43 @@ const DesktopTable: FC<Props> = ({ table, isLoading }): JSX.Element => {
         )}
       >
         <>
-          {isLoading ? (
-            <TableSkeleton rows={11} column={10} />
+          {error === null ? (
+            isLoading ? (
+              <TableSkeleton rows={11} column={10} />
+            ) : (
+              <>
+                {table.getPageCount() === 0 ? (
+                  <>
+                    <TableMesagge message="No Data Available" />
+                  </>
+                ) : (
+                  <>
+                    {table.getRowModel().rows.map((row) => (
+                      <tr
+                        key={row.id}
+                        className={classNames(
+                          'group hover:bg-white hover:shadow-md  hover:shadow-slate-200',
+                          row.original.status === WorkStatus.VACATION_LEAVE
+                            ? 'bg-amber-50 hover:bg-amber-50'
+                            : '',
+                          row.original.status === WorkStatus.ABSENT
+                            ? 'bg-fuchsia-50 hover:bg-fuchsia-50'
+                            : ''
+                        )}
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <td key={cell.id} className="flex-wrap px-4 py-2 capitalize">
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </>
+                )}
+              </>
+            )
           ) : (
-            <>
-              {table.getPageCount() === 0 ? (
-                <>
-                  <TableMesagge message="No Data Available" />
-                  <TableError message="Something went wrong" />
-                </>
-              ) : (
-                <>
-                  {table.getRowModel().rows.map((row) => (
-                    <tr
-                      key={row.id}
-                      className={classNames(
-                        'group hover:bg-white hover:shadow-md  hover:shadow-slate-200',
-                        row.original.status === WorkStatus.VACATION_LEAVE
-                          ? 'bg-amber-50 hover:bg-amber-50'
-                          : '',
-                        row.original.status === WorkStatus.ABSENT
-                          ? 'bg-fuchsia-50 hover:bg-fuchsia-50'
-                          : ''
-                      )}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="flex-wrap px-4 py-2 capitalize">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </>
-              )}
-            </>
+            <TableError message="Something went wrong" />
           )}
         </>
       </tbody>

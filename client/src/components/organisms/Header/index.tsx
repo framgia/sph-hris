@@ -48,14 +48,14 @@ const Header: FC<Props> = (props): JSX.Element => {
     setTime(0)
     if (
       status === 'success' &&
-      data.userById.timeEntry.timeIn !== null &&
-      data.userById.timeEntry.timeOut === null
+      data.userById?.timeEntry?.timeIn !== null &&
+      data.userById?.timeEntry?.timeOut === null
     ) {
       setRunning(true)
       const now = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
       setSeconds(0)
       if (data.userById.timeEntry.timeIn !== null) {
-        const timeObj = parse(data?.userById.timeEntry.timeIn.timeHour)
+        const timeObj = parse(data?.userById.timeEntry.timeIn?.timeHour)
         const then = `${moment(new Date(data?.userById.timeEntry.date)).format('YYYY-MM-DD')} ${
           timeObj.hours as number
         }:${timeObj.minutes as number}:${timeObj.seconds as number}`
@@ -141,7 +141,7 @@ const Header: FC<Props> = (props): JSX.Element => {
           >
             <Button
               disabled={
-                data?.userById.timeEntry.timeIn !== null ||
+                data?.userById.timeEntry?.timeIn !== null ||
                 data.userById.employeeSchedule.workingDayTimes.length < 1
               }
               onClick={handleToggleTimeInDrawer}
@@ -167,9 +167,9 @@ const Header: FC<Props> = (props): JSX.Element => {
           >
             <Button
               disabled={
-                data?.userById.timeEntry.timeIn === null ||
-                (data?.userById.timeEntry.timeIn !== null &&
-                  data?.userById.timeEntry.timeOut !== null)
+                data?.userById?.timeEntry?.timeIn === null ||
+                (data?.userById?.timeEntry?.timeIn !== null &&
+                  data?.userById?.timeEntry?.timeOut !== null)
               }
               onClick={handleToggleTimeOutDrawer}
             >

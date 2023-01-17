@@ -11,22 +11,30 @@ import React, { Dispatch, FC, SetStateAction, useState } from 'react'
 
 import DesktopTable from './DesktopTable'
 import FooterTable from './../FooterTable'
-import { IMyDTR } from '~/utils/interfaces'
 import MobileDisclose from './MobileDisclose'
 import { fuzzyFilter } from '~/utils/fuzzyFilter'
+import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 
 type Props = {
-  data: IMyDTR[]
-  columns: Array<ColumnDef<IMyDTR, any>>
-  globalFilter: string
-  setGlobalFilter: Dispatch<SetStateAction<string>>
+  query: {
+    data: IEmployeeTimeEntry[] | undefined
+    error: unknown
+  }
+  table: {
+    columns: Array<ColumnDef<IEmployeeTimeEntry, any>>
+    globalFilter: string
+    setGlobalFilter: Dispatch<SetStateAction<string>>
+  }
 }
 
 const MyDTRTable: FC<Props> = (props): JSX.Element => {
-  const { data: myDailyTimeData, columns, globalFilter, setGlobalFilter } = props
+  const {
+    query: { data: myDailyTimeData, error },
+    table: { columns, globalFilter, setGlobalFilter }
+  } = props
 
   const [sorting, setSorting] = useState<SortingState>([])
-  const [data] = useState(() => [...myDailyTimeData])
+  const [data] = useState(() => [...(myDailyTimeData as IEmployeeTimeEntry[])])
 
   const table = useReactTable({
     data,
@@ -57,7 +65,8 @@ const MyDTRTable: FC<Props> = (props): JSX.Element => {
         <MobileDisclose
           {...{
             table,
-            isLoading: false
+            isLoading: false,
+            error
           }}
         />
       </div>
@@ -66,7 +75,8 @@ const MyDTRTable: FC<Props> = (props): JSX.Element => {
         <DesktopTable
           {...{
             table,
-            isLoading: false
+            isLoading: false,
+            error
           }}
         />
       </div>

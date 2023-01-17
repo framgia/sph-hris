@@ -1,39 +1,22 @@
 import { NextPage } from 'next'
 import classNames from 'classnames'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { MoreHorizontal } from 'react-feather'
-import { toast } from 'react-hot-toast'
 
 import FilterIcon from '~/utils/icons/FilterIcon'
 import Layout from '~/components/templates/Layout'
+import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
 import DTRTable from '~/components/molecules/DTRManagementTable'
 import LegendTooltip from '~/components/molecules/LegendTooltip'
-import { mapDTRManagement } from '~/utils/mapping/dtrManagementMap'
+import { getAllEmployeeTimesheet } from '~/hooks/useTimesheetQuery'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import { columns } from '~/components/molecules/DTRManagementTable/columns'
 import SummaryMenuDropdown from '~/components/molecules/SummaryMenuDropdown'
 import TimeSheetFilterDropdown from '~/components/molecules/TimeSheetFilterDropdown'
-import { getAllEmployeeTimesheet, IAllTimeSheet } from '~/hooks/useTimesheetQuery'
 
 const DTRManagement: NextPage = (): JSX.Element => {
   const [globalFilter, setGlobalFilter] = useState<string>('')
   const { data, error, isLoading } = getAllEmployeeTimesheet()
-  const timesheets: IAllTimeSheet = data as IAllTimeSheet
-
-  useEffect(() => {
-    let toastId
-    if (isLoading) {
-      toastId = toast.loading('Loading...')
-    } else if (!isLoading) {
-      toast.dismiss(toastId)
-    }
-  }, [isLoading])
-
-  useEffect(() => {
-    if (error != null) {
-      toast.error('There is an error!', { duration: 3000 })
-    }
-  }, [error])
 
   return (
     <Layout metaTitle="DTR Management">
@@ -82,14 +65,22 @@ const DTRManagement: NextPage = (): JSX.Element => {
         {!isLoading ? (
           <DTRTable
             {...{
-              data: mapDTRManagement(timesheets.timeEntries),
-              columns,
-              globalFilter,
-              setGlobalFilter
+              query: {
+                data: data?.timeEntries,
+                isLoading,
+                error
+              },
+              table: {
+                columns,
+                globalFilter,
+                setGlobalFilter
+              }
             }}
           />
         ) : (
-          <React.Fragment></React.Fragment>
+          <div className="flex min-h-[50vh] items-center justify-center">
+            <BarsLoadingIcon className="h-7 w-7 fill-current text-amber-500" />
+          </div>
         )}
       </section>
     </Layout>

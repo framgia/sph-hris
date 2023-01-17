@@ -13,20 +13,29 @@ import DesktopTable from './DesktopTable'
 import FooterTable from './../FooterTable'
 import MobileDisclose from './MobileDisclose'
 import { fuzzyFilter } from '~/utils/fuzzyFilter'
-import { IDTRManagement } from '~/utils/interfaces'
+import { ITimeEntry } from '~/utils/types/timeEntryTypes'
 
 type Props = {
-  data: IDTRManagement[]
-  columns: Array<ColumnDef<IDTRManagement, any>>
-  globalFilter: string
-  setGlobalFilter: Dispatch<SetStateAction<string>>
+  query: {
+    data: ITimeEntry[] | undefined
+    isLoading: boolean
+    error: unknown
+  }
+  table: {
+    columns: Array<ColumnDef<ITimeEntry, any>>
+    globalFilter: string
+    setGlobalFilter: Dispatch<SetStateAction<string>>
+  }
 }
 
 const DTRTable: FC<Props> = (props): JSX.Element => {
-  const { data: dtrManagementData, columns, globalFilter, setGlobalFilter } = props
+  const {
+    query: { data: dtrManagementData, isLoading, error },
+    table: { columns, globalFilter, setGlobalFilter }
+  } = props
 
   const [sorting, setSorting] = useState<SortingState>([])
-  const [data] = useState(() => [...dtrManagementData])
+  const [data] = useState(() => [...(dtrManagementData as ITimeEntry[])])
 
   const table = useReactTable({
     data,
@@ -57,7 +66,8 @@ const DTRTable: FC<Props> = (props): JSX.Element => {
         <MobileDisclose
           {...{
             table,
-            isLoading: false
+            isLoading,
+            error
           }}
         />
       </div>
@@ -66,7 +76,10 @@ const DTRTable: FC<Props> = (props): JSX.Element => {
         <DesktopTable
           {...{
             table,
-            isLoading: false
+            query: {
+              isLoading,
+              error
+            }
           }}
         />
       </div>

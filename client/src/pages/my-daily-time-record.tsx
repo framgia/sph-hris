@@ -1,15 +1,14 @@
 import { NextPage } from 'next'
 import classNames from 'classnames'
-import React, { useState, useEffect } from 'react'
-import { toast } from 'react-hot-toast'
+import React, { useState } from 'react'
 
+import useUserQuery from '~/hooks/useUserQuery'
 import Layout from '~/components/templates/Layout'
+import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
+import { getEmployeeTimesheet } from '~/hooks/useTimesheetQuery'
 import MyDTRTable from '~/components/molecules/MyDailyTimeRecordTable'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import { columns } from '~/components/molecules/MyDailyTimeRecordTable/columns'
-import { getEmployeeTimesheet, IEmployeeTimeSheet } from '~/hooks/useTimesheetQuery'
-import { mapDTRData } from '~/utils/mapping/myDTRMap'
-import useUserQuery from '~/hooks/useUserQuery'
 
 const MyDailyTimeRecord: NextPage = (): JSX.Element => {
   const [globalFilter, setGlobalFilter] = useState<string>('')
@@ -17,23 +16,7 @@ const MyDailyTimeRecord: NextPage = (): JSX.Element => {
   const { handleUserQuery } = useUserQuery()
   const user = handleUserQuery()
 
-  const { data, error, isLoading } = getEmployeeTimesheet(user.data?.userById.id as number)
-  const timesheets: IEmployeeTimeSheet = data as IEmployeeTimeSheet
-
-  useEffect(() => {
-    let toastId
-    if (isLoading) {
-      toastId = toast.loading('Loading...')
-    } else if (!isLoading) {
-      toast.dismiss(toastId)
-    }
-  }, [isLoading])
-
-  useEffect(() => {
-    if (error != null) {
-      toast.error('There is an error!', { duration: 3000 })
-    }
-  }, [error])
+  const { data, isLoading, error } = getEmployeeTimesheet(user.data?.userById.id as number)
 
   return (
     <Layout metaTitle="My Daily Time Record">
@@ -58,14 +41,14 @@ const MyDailyTimeRecord: NextPage = (): JSX.Element => {
         {!isLoading ? (
           <MyDTRTable
             {...{
-              data: mapDTRData(timesheets.timeEntriesByEmployeeId),
-              columns,
-              globalFilter,
-              setGlobalFilter
+              query: { data: data?.timeEntriesByEmployeeId, error },
+              table: { columns, globalFilter, setGlobalFilter }
             }}
           />
         ) : (
-          <React.Fragment></React.Fragment>
+          <div className="flex min-h-[50vh] items-center justify-center">
+            <BarsLoadingIcon className="h-7 w-7 fill-current text-amber-500" />
+          </div>
         )}
       </section>
     </Layout>
