@@ -1,15 +1,17 @@
 import React from 'react'
+import moment from 'moment'
 import Tooltip from 'rc-tooltip'
 import classNames from 'classnames'
 import { Clock, Edit } from 'react-feather'
 import { createColumnHelper } from '@tanstack/react-table'
 
 import Chip from '~/components/atoms/Chip'
-import { IMyDTR } from '~/utils/interfaces'
 import SortIcon from '~/utils/icons/SortIcon'
 import Button from '~/components/atoms/Buttons/Button'
+import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 
-const columnHelper = createColumnHelper<IMyDTR>()
+const columnHelper = createColumnHelper<IEmployeeTimeEntry>()
+const EMPTY = 'N/A'
 
 const CellHeader = ({ label }: { label: string }): JSX.Element => {
   return (
@@ -21,45 +23,45 @@ const CellHeader = ({ label }: { label: string }): JSX.Element => {
 }
 
 export const columns = [
-  columnHelper.accessor((row) => row.date, {
+  columnHelper.accessor((row) => moment(new Date(row.date)).format('MMMM DD, YYYY'), {
     id: 'Date',
     header: () => <CellHeader label="Date" />,
     footer: (info) => info.column.id
   }),
-  columnHelper.accessor((row) => row.time_in, {
+  columnHelper.accessor((row) => row.timeIn?.timeHour, {
     id: 'Time In',
     header: () => <CellHeader label="Time In" />,
     footer: (info) => info.column.id,
     cell: (props) => (
       <div className="relative flex ">
         {/* Actual Time In Data */}
-        <span>{props.row.original.time_in}</span>
+        <span>{props.row.original.timeIn?.timeHour ?? EMPTY}</span>
         {/* Status */}
         <span className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500')} />
       </div>
     )
   }),
-  columnHelper.accessor('time_out', {
+  columnHelper.accessor('timeOut', {
     header: () => <CellHeader label="Time Out" />,
     footer: (info) => info.column.id,
     cell: (props) => (
       <div className="relative flex">
         {/* Actual Time In Data */}
-        <span>{props.row.original.time_out}</span>
+        <span>{props.row.original.timeOut?.timeHour ?? EMPTY}</span>
         {/* Status */}
         <span className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500')} />
       </div>
     )
   }),
-  columnHelper.accessor('start_time', {
+  columnHelper.accessor('startTime', {
     header: () => <CellHeader label="Start Time" />,
     footer: (info) => info.column.id
   }),
-  columnHelper.accessor('end_time', {
+  columnHelper.accessor('endTime', {
     header: () => <CellHeader label="End Time" />,
     footer: (info) => info.column.id
   }),
-  columnHelper.accessor('work_hours', {
+  columnHelper.accessor('workedHours', {
     header: () => <CellHeader label="Work Hours" />,
     footer: (info) => info.column.id
   }),

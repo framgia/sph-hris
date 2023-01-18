@@ -27,8 +27,8 @@ export const mapDTRManagement = (data: fetchedData[]): IDTRManagement[] => {
     const newRow: IDTRManagement = {
       id: entry.id,
       name: entry.user.name,
-      time_in: entry.timeIn?.timeHour,
-      time_out: entry.timeIn?.timeHour,
+      time_in: entry.timeIn != null ? entry.timeIn.timeHour : 'N/A',
+      time_out: entry.timeOut != null ? entry.timeOut.timeHour : 'N/A',
       start_time: entry.startTime,
       end_time: entry.endTime,
       work_hours: parseInt(entry.workedHours.split(':')[0]),

@@ -54,7 +54,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.UseCors(MyAllowSpecificOrigins);
 app.UseStaticFiles();
 app.UseRouting();
 

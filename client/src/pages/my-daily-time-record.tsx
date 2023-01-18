@@ -2,14 +2,21 @@ import { NextPage } from 'next'
 import classNames from 'classnames'
 import React, { useState } from 'react'
 
-import { myDTRData } from '~/utils/constants'
+import useUserQuery from '~/hooks/useUserQuery'
 import Layout from '~/components/templates/Layout'
+import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
+import { getEmployeeTimesheet } from '~/hooks/useTimesheetQuery'
 import MyDTRTable from '~/components/molecules/MyDailyTimeRecordTable'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import { columns } from '~/components/molecules/MyDailyTimeRecordTable/columns'
 
 const MyDailyTimeRecord: NextPage = (): JSX.Element => {
   const [globalFilter, setGlobalFilter] = useState<string>('')
+
+  const { handleUserQuery } = useUserQuery()
+  const user = handleUserQuery()
+
+  const { data, isLoading, error } = getEmployeeTimesheet(user.data?.userById.id as number)
 
   return (
     <Layout metaTitle="My Daily Time Record">
@@ -31,14 +38,18 @@ const MyDailyTimeRecord: NextPage = (): JSX.Element => {
             placeholder="Search"
           />
         </header>
-        <MyDTRTable
-          {...{
-            data: myDTRData,
-            columns,
-            globalFilter,
-            setGlobalFilter
-          }}
-        />
+        {!isLoading ? (
+          <MyDTRTable
+            {...{
+              query: { data: data?.timeEntriesByEmployeeId, error },
+              table: { columns, globalFilter, setGlobalFilter }
+            }}
+          />
+        ) : (
+          <div className="flex min-h-[50vh] items-center justify-center">
+            <BarsLoadingIcon className="h-7 w-7 fill-current text-amber-500" />
+          </div>
+        )}
       </section>
     </Layout>
   )

@@ -7,10 +7,11 @@ import { createColumnHelper } from '@tanstack/react-table'
 import Chip from '~/components/atoms/Chip'
 import SortIcon from '~/utils/icons/SortIcon'
 import Avatar from '~/components/atoms/Avatar'
-import { IDTRManagement } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/Button'
+import { ITimeEntry } from '~/utils/types/timeEntryTypes'
 
-const columnHelper = createColumnHelper<IDTRManagement>()
+const columnHelper = createColumnHelper<ITimeEntry>()
+const EMPTY = 'N/A'
 
 const CellHeader = ({ label }: { label: string }): JSX.Element => {
   return (
@@ -22,7 +23,7 @@ const CellHeader = ({ label }: { label: string }): JSX.Element => {
 }
 
 export const columns = [
-  columnHelper.accessor('name', {
+  columnHelper.accessor('user.name', {
     header: () => <CellHeader label="Name" />,
     footer: (info) => info.column.id,
     cell: (props) => (
@@ -39,40 +40,40 @@ export const columns = [
       </div>
     )
   }),
-  columnHelper.accessor((row) => row.time_in, {
+  columnHelper.accessor('timeIn.timeHour', {
     id: 'Time In',
     header: () => <CellHeader label="Time In" />,
     footer: (info) => info.column.id,
     cell: (props) => (
       <div className="relative flex">
         {/* Actual Time In Data */}
-        <span>{props.row.original.time_in}</span>
+        <span>{props.row.original.timeIn?.timeHour ?? EMPTY}</span>
         {/* Status */}
         <span className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500')} />
       </div>
     )
   }),
-  columnHelper.accessor('time_out', {
+  columnHelper.accessor('timeOut.timeHour', {
     header: () => <CellHeader label="Time Out" />,
     footer: (info) => info.column.id,
     cell: (props) => (
       <div className="relative flex">
         {/* Actual Time In Data */}
-        <span>{props.row.original.time_out}</span>
+        <span>{props.row.original.timeOut?.timeHour ?? EMPTY}</span>
         {/* Status */}
         <span className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500')} />
       </div>
     )
   }),
-  columnHelper.accessor('start_time', {
+  columnHelper.accessor('startTime', {
     header: () => <CellHeader label="Start Time" />,
     footer: (info) => info.column.id
   }),
-  columnHelper.accessor('end_time', {
+  columnHelper.accessor('endTime', {
     header: () => <CellHeader label="End Time" />,
     footer: (info) => info.column.id
   }),
-  columnHelper.accessor('work_hours', {
+  columnHelper.accessor('workedHours', {
     header: () => <CellHeader label="Work Hours" />,
     footer: (info) => info.column.id
   }),

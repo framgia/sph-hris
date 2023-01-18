@@ -5,23 +5,18 @@ import { MoreHorizontal } from 'react-feather'
 
 import FilterIcon from '~/utils/icons/FilterIcon'
 import Layout from '~/components/templates/Layout'
+import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
 import DTRTable from '~/components/molecules/DTRManagementTable'
 import LegendTooltip from '~/components/molecules/LegendTooltip'
-import { mapDTRManagement } from '~/utils/mapping/dtrManagementMap'
+import { getAllEmployeeTimesheet } from '~/hooks/useTimesheetQuery'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import { columns } from '~/components/molecules/DTRManagementTable/columns'
 import SummaryMenuDropdown from '~/components/molecules/SummaryMenuDropdown'
 import TimeSheetFilterDropdown from '~/components/molecules/TimeSheetFilterDropdown'
-import { getAllEmployeeTimesheet, IAllTimeSheet } from '~/hooks/useTimesheetQuery'
 
 const DTRManagement: NextPage = (): JSX.Element => {
   const [globalFilter, setGlobalFilter] = useState<string>('')
   const { data, error, isLoading } = getAllEmployeeTimesheet()
-  const timesheets: IAllTimeSheet = data as IAllTimeSheet
-
-  if (isLoading) return <h1>Loading...</h1>
-
-  if (error != null) return <h1>Error...</h1>
 
   return (
     <Layout metaTitle="DTR Management">
@@ -67,14 +62,26 @@ const DTRManagement: NextPage = (): JSX.Element => {
             </SummaryMenuDropdown>
           </div>
         </header>
-        <DTRTable
-          {...{
-            data: mapDTRManagement(timesheets?.timeEntries),
-            columns,
-            globalFilter,
-            setGlobalFilter
-          }}
-        />
+        {!isLoading ? (
+          <DTRTable
+            {...{
+              query: {
+                data: data?.timeEntries,
+                isLoading,
+                error
+              },
+              table: {
+                columns,
+                globalFilter,
+                setGlobalFilter
+              }
+            }}
+          />
+        ) : (
+          <div className="flex min-h-[50vh] items-center justify-center">
+            <BarsLoadingIcon className="h-7 w-7 fill-current text-amber-500" />
+          </div>
+        )}
       </section>
     </Layout>
   )
