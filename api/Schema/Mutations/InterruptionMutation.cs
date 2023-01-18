@@ -1,4 +1,4 @@
-using api.Entities;
+using api.DTOs;
 using api.Requests;
 using api.Services;
 
@@ -12,7 +12,7 @@ namespace api.Schema.Mutations
         {
             _interruptionService = interruptionService;
         }
-        public async Task<WorkInterruption> CreateWorkInterruption(CreateInterruptionRequest interruption)
+        public async Task<WorkInterruptionDTO> CreateWorkInterruption(CreateInterruptionRequest interruption)
         {
             return await _interruptionService.Create(interruption);
         }

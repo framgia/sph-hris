@@ -1,4 +1,5 @@
 using api.Context;
+using api.DTOs;
 using api.Entities;
 using api.Requests;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,22 @@ namespace api.Services
             _contextFactory = contextFactory;
         }
 
-        public async Task<WorkInterruption> Create(CreateInterruptionRequest interruption)
+        public static WorkInterruptionDTO ToWorkInterruptionDTO(WorkInterruption interruption)
+        {
+            return new WorkInterruptionDTO(interruption);
+        }
+        public async Task<List<WorkInterruptionDTO>> Show(ShowInterruptionRequest interruption)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.WorkInterruptions
+                            .Include(i => i.WorkInterruptionType)
+                            .Where(i => i.TimeEntryId == interruption.TimeEntryId)
+                            .Select(x => ToWorkInterruptionDTO(x))
+                            .ToListAsync();
+            }
+        }
+        public async Task<WorkInterruptionDTO> Create(CreateInterruptionRequest interruption)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
@@ -28,7 +44,7 @@ namespace api.Services
                 }).Entity;
                 await context.SaveChangesAsync();
 
-                return work;
+                return new WorkInterruptionDTO(work);
             }
         }
     }
