@@ -10,6 +10,12 @@ const Sidebar = dynamic(async () => await import('~/components/organisms/Sidebar
 const TimeInDrawer = dynamic(async () => await import('~/components/organisms/TimeInDrawer'), {
   ssr: false
 })
+const WorkInterruptionDrawer = dynamic(
+  async () => await import('~/components/organisms/WorkInterruptionDrawer'),
+  {
+    ssr: false
+  }
+)
 const TimeOutDrawer = dynamic(async () => await import('~/components/organisms/TimeOutDrawer'), {
   ssr: false
 })
@@ -26,6 +32,12 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
   const [isOpenTimeInDrawer, setIsOpenTimeInDrawer] = useLocalStorageState('timeInDrawerToggle', {
     defaultValue: false
   })
+  const [isOpenWorkInterruptionDrawer, setIsOpenWorkInterruptionDrawer] = useLocalStorageState(
+    'workInterruptionDrawerToggle',
+    {
+      defaultValue: false
+    }
+  )
   const [isOpenTimeOutDrawer, setIsOpenTimeOutDrawer] = useLocalStorageState(
     'timeOutDrawerToggle',
     {
@@ -37,6 +49,8 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
   const handleToggleDrawer = (): void => setIsOpenDrawer(!isOpenDrawer)
   const handleToggleSidebar = (): void => setIsOpenSidebar(!isOpenSidebar)
   const handleToggleTimeInDrawer = (): void => setIsOpenTimeInDrawer(!isOpenTimeInDrawer)
+  const handleToggleWorkInterruptionDrawer = (): void =>
+    setIsOpenWorkInterruptionDrawer(!isOpenWorkInterruptionDrawer)
   const handleToggleTimeOutDrawer = (): void => setIsOpenTimeOutDrawer(!isOpenTimeOutDrawer)
 
   return (
@@ -74,6 +88,7 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
                 handleToggleDrawer,
                 handleToggleSidebar,
                 handleToggleTimeInDrawer,
+                handleToggleWorkInterruptionDrawer,
                 handleToggleTimeOutDrawer
               }
             }}
@@ -87,6 +102,14 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
             isOpenTimeInDrawer,
             actions: {
               handleToggleTimeInDrawer
+            }
+          }}
+        />
+        <WorkInterruptionDrawer
+          {...{
+            isOpenWorkInterruptionDrawer,
+            actions: {
+              handleToggleWorkInterruptionDrawer
             }
           }}
         />

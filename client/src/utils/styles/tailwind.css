@@ -6,4 +6,7 @@
   .default-scrollbar {
     @apply scrollbar-thin scrollbar-thumb-slate-400 scrollbar-thumb-rounded-md;
   }
+  .error {
+    @apply mt-1 ml-0.5 block text-left text-[11px] text-rose-500;
+  }
 }

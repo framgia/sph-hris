@@ -26,6 +26,7 @@ type Props = {
     handleToggleSidebar: () => void
     handleToggleTimeInDrawer: () => void
     handleToggleTimeOutDrawer: () => void
+    handleToggleWorkInterruptionDrawer: () => void
   }
 }
 
@@ -35,6 +36,7 @@ const Header: FC<Props> = (props): JSX.Element => {
       handleToggleSidebar,
       handleToggleDrawer,
       handleToggleTimeInDrawer,
+      handleToggleWorkInterruptionDrawer,
       handleToggleTimeOutDrawer
     }
   } = props
@@ -155,7 +157,7 @@ const Header: FC<Props> = (props): JSX.Element => {
             overlay="Break Time"
             arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
           >
-            <Button>
+            <Button onClick={handleToggleWorkInterruptionDrawer}>
               <BreakIcon className="h-7 w-7 fill-current" />
             </Button>
           </Tooltip>
