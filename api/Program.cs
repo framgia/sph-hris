@@ -18,7 +18,8 @@ var connectionString = $"Data Source={dbHost};Initial Catalog={dbName};User ID={
 builder.Services.AddGraphQLServer()
     .AddQueryType(q => q.Name("Query"))
     .AddType<UserQuery>()
-    .AddType<TimeSheetQuery>();
+    .AddType<TimeSheetQuery>()
+    .AddType<InterruptionQuery>();
 
 builder.Services.AddGraphQLServer()
     .AddMutationType(q => q.Name("Mutation"))
