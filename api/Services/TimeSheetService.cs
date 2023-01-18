@@ -13,6 +13,15 @@ namespace api.Services
             _contextFactory = contextFactory;
         }
 
+        public async Task<Time?> GetTimeById(int id)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.Times
+                    .FirstOrDefaultAsync(c => c.Id == id);
+            }
+        }
+
         public static TimeEntryDTO ToTimeEntryDTO(TimeEntry timeEntry)
         {
             return new TimeEntryDTO(timeEntry);
