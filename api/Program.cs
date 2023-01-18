@@ -25,7 +25,8 @@ builder.Services.AddGraphQLServer()
     .AddType<TimeInMutation>()
     .AddType<TimeOutMutation>()
     .AddType<SigninMutation>()
-    .AddType<LogoutMutation>();
+    .AddType<LogoutMutation>()
+    .AddType<InterruptionMutation>();
 
 builder.Services.AddGraphQLServer().AddProjections().AddFiltering().AddSorting();
 
@@ -40,7 +41,7 @@ builder.Services.AddScoped<TimeOutService>();
 builder.Services.AddScoped<TimeSheetService>();
 builder.Services.AddScoped<SigninService>();
 builder.Services.AddScoped<LogoutService>();
-// builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<InterruptionService>();
 
 builder.Services.AddCors(options =>
 {
