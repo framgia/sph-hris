@@ -23,12 +23,12 @@ export interface fetchedData {
 export const mapDTRManagement = (data: fetchedData[]): IDTRManagement[] => {
   const newTable: IDTRManagement[] = []
 
-  data.forEach((entry: fetchedData) => {
+  data?.forEach((entry: fetchedData) => {
     const newRow: IDTRManagement = {
       id: entry.id,
       name: entry.user.name,
-      time_in: entry.timeIn.timeHour,
-      time_out: entry.timeIn.timeHour,
+      time_in: entry.timeIn?.timeHour,
+      time_out: entry.timeIn?.timeHour,
       start_time: entry.startTime,
       end_time: entry.endTime,
       work_hours: parseInt(entry.workedHours.split(':')[0]),

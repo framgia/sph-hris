@@ -4,7 +4,6 @@ import React, { FC, ReactNode } from 'react'
 
 import Text from '~/components/atoms/Text'
 import Button from '~/components/atoms/Buttons/Button'
-import RadioButton from '~/components/atoms/RadioButton'
 import MenuTransition from '~/components/templates/MenuTransition'
 
 type Props = {
@@ -25,7 +24,7 @@ const TimeSheetFilterDropdown: FC<Props> = (props): JSX.Element => {
       <MenuTransition>
         <Menu.Items
           className={classNames(
-            'absolute top-8 right-0 flex w-80 flex-col overflow-hidden rounded-md',
+            'fixed right-6 top-[138px] flex w-80 flex-col overflow-hidden rounded-md sm:right-16 md:top-[102px]',
             'flex flex-col bg-white shadow-xl ring-1 ring-black',
             'shadow-slate-200 ring-opacity-5 focus:outline-none'
           )}
@@ -67,13 +66,6 @@ const TimeSheetFilterDropdown: FC<Props> = (props): JSX.Element => {
                 {filterStatusOptions(['All', 'On-Duty', 'Sick Leave', 'Vacation Leave', 'Absent'])}
               </select>
             </label>
-            <hr />
-            <div className="grid grid-cols-2 gap-y-3">
-              <RadioButton label="Work Hours" />
-              <RadioButton label="Undertime" />
-              <RadioButton label="Late" />
-              <RadioButton label="Overtime" />
-            </div>
           </main>
           <footer className="bg-slate-100 px-5 py-3">
             <Button

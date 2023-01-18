@@ -19,7 +19,7 @@ const NotificationPopover: FC<Props> = ({ className }): JSX.Element => {
   const main = 'default-scrollbar max-h-[25vh] min-h-[25vh] py-2'
 
   return (
-    <Popover className="relative z-20">
+    <Popover className="relative z-30">
       {({ open }) => (
         <>
           <Popover.Button className="flex cursor-pointer items-center rounded-full p-1 outline-none active:scale-95">
