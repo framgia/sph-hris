@@ -4,8 +4,8 @@ namespace api.Requests
     {
         public int TimeEntryId { get; set; }
         public int WorkInterruptionTypeId { get; set; }
-        public TimeSpan? TimeOut { get; set; }
-        public TimeSpan? TimeIn { get; set; }
+        public string? TimeOut { get; set; }
+        public string? TimeIn { get; set; }
         public string? Remarks { get; set; }
         public string? OtherReason { get; set; }
     }
