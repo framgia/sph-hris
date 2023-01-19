@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import classNames from 'classnames'
 import { flexRender, Table } from '@tanstack/react-table'
+import useLocalStorageState from 'use-local-storage-state'
 
 import TableSkeleton from './../SkeletonTable'
 import { IDTRManagement } from '~/utils/interfaces'
@@ -15,6 +16,11 @@ type Props = {
 }
 
 const DesktopTable: FC<Props> = (props): JSX.Element => {
+  // const [isOpenTimeInDrawer, setIsOpenTimeInDrawer] = useLocalStorageState('timeInDrawerToggle', {
+  //   defaultValue: false
+  // })
+  // const handleToggleTimeInDrawer = (): void => setIsOpenTimeInDrawer(!isOpenTimeInDrawer)
+
   const {
     table,
     query: { isLoading, error }
@@ -76,6 +82,7 @@ const DesktopTable: FC<Props> = (props): JSX.Element => {
                             ? 'bg-fuchsia-50 hover:bg-fuchsia-50'
                             : ''
                         )}
+                        // onClick={() => handleToggleTimeInDrawer()}
                       >
                         {row.getVisibleCells().map((cell) => (
                           <td key={cell.id} className="flex-wrap px-4 py-2 capitalize">

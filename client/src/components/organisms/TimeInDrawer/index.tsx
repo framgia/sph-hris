@@ -3,6 +3,7 @@ import { X } from 'react-feather'
 import classNames from 'classnames'
 import TextareaAutosize from 'react-textarea-autosize'
 import moment from 'moment'
+import { useRouter } from 'next/router'
 import { serialize } from 'tinyduration'
 import { toast } from 'react-hot-toast'
 import { parse } from 'iso8601-duration'
@@ -13,6 +14,7 @@ import DrawerTemplate from '~/components/templates/DrawerTemplate'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import useTimeInMutation from '~/hooks/useTimeInMutation'
 import useUserQuery from '~/hooks/useUserQuery'
+import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
 
 type Props = {
   isOpenTimeInDrawer: boolean
@@ -22,10 +24,15 @@ type Props = {
 }
 
 const TimeInDrawer: FC<Props> = (props): JSX.Element => {
+  const router = useRouter()
+  const timeInId = router.query.time_in || router.query.time_out
+  const res = getSpecificTimeEntry(Number(timeInId)).data?.timeById.remarks
+
   const {
     isOpenTimeInDrawer,
     actions: { handleToggleTimeInDrawer }
   } = props
+
   const [remarks, setRemarks] = useState('')
   const [files, setFiles] = useState<FileList | null>(null)
   const [afterStartTime, setAfterStartTime] = useState(false)
@@ -142,7 +149,7 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
             <label htmlFor="remarks" className="space-y-0.5">
               <span className="text-xs text-slate-500">Remarks</span>
               <TextareaAutosize
-                value={remarks}
+                value={res ? res : remarks}
                 id="remarks"
                 disabled={timeInMutation.isLoading}
                 onChange={(e) => setRemarks(e.target.value)}

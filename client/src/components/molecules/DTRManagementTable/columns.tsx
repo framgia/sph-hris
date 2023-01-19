@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 import Tooltip from 'rc-tooltip'
 import classNames from 'classnames'
 import { Clock, Edit } from 'react-feather'
@@ -45,24 +46,44 @@ export const columns = [
     header: () => <CellHeader label="Time In" />,
     footer: (info) => info.column.id,
     cell: (props) => (
-      <div className="relative flex">
-        {/* Actual Time In Data */}
-        <span>{props.row.original.timeIn?.timeHour ?? EMPTY}</span>
-        {/* Status */}
-        <span className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500')} />
-      </div>
+      <>
+        {props.row.original.timeIn.id ? (
+          <Link
+            href={`dtr-management/?time_in=${props.row.original.timeIn.id}`}
+            className="relative flex cursor-pointer active:scale-95"
+          >
+            {/* Actual Time In Data */}
+            <span>{props.row.original.timeIn?.timeHour ?? EMPTY}</span>
+            {/* Status */}
+
+            <span className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500')} />
+          </Link>
+        ) : (
+          <span>{props.row.original.timeIn?.timeHour ?? EMPTY}</span>
+        )}
+      </>
     )
   }),
   columnHelper.accessor('timeOut.timeHour', {
     header: () => <CellHeader label="Time Out" />,
     footer: (info) => info.column.id,
     cell: (props) => (
-      <div className="relative flex">
-        {/* Actual Time In Data */}
-        <span>{props.row.original.timeOut?.timeHour ?? EMPTY}</span>
-        {/* Status */}
-        <span className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500')} />
-      </div>
+      <>
+        {props.row.original.timeOut.id ? (
+          <Link
+            href={`dtr-management/?time_out=${props.row.original.timeOut.id}`}
+            className="relative flex cursor-pointer active:scale-95"
+          >
+            {/* Actual Time In Data */}
+            <span>{props.row.original.timeOut?.timeHour ?? EMPTY}</span>
+            {/* Status */}
+
+            <span className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500')} />
+          </Link>
+        ) : (
+          <span>{props.row.original.timeOut?.timeHour ?? EMPTY}</span>
+        )}
+      </>
     )
   }),
   columnHelper.accessor('startTime', {

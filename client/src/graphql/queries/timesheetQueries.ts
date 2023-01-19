@@ -10,10 +10,12 @@ export const GET_ALL_EMPLOYEE_TIMESHEET = gql`
         name
       }
       timeIn {
+        id
         timeHour
         remarks
       }
       timeOut {
+        id
         timeHour
         remarks
       }
@@ -48,6 +50,14 @@ export const GET_EMPLOYEE_TIMESHEET = gql`
       undertime
       overtime
       status
+    }
+  }
+`
+export const GET_SPECIFIC_TIME_ENTRY = gql`
+  query ($id: Int!) {
+    timeById(id: $id) {
+      timeHour
+      remarks
     }
   }
 `
