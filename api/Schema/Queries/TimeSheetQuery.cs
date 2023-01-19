@@ -1,5 +1,6 @@
 using api.DTOs;
 using api.Entities;
+using api.Requests;
 using api.Services;
 
 namespace api.Schema.Queries
@@ -28,9 +29,9 @@ namespace api.Schema.Queries
             return await _timeSheetService.GetTimeEntriesByEmployeeId(id);
         }
 
-        public async Task<List<TimeEntryDTO>> GetTimeEntries()
+        public async Task<List<TimeEntryDTO>> GetTimeEntries(TimeEntryFilter? filter)
         {
-            return await _timeSheetService.GetAll();
+            return await _timeSheetService.GetAll(filter);
         }
     }
 }

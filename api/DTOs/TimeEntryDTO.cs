@@ -15,7 +15,7 @@ namespace api.DTOs
             TimeOutId = timeEntry.TimeOutId;
             StartTime = timeEntry.StartTime.ToString(@"hh\:mm");
             EndTime = timeEntry.EndTime.ToString(@"hh\:mm");
-            Date = timeEntry.Date;
+            Date = DateOnly.FromDateTime(timeEntry.Date);
             WorkedHours = timeEntry.WorkedHours.ToString(@"hh\:mm");
             TrackedHours = timeEntry.TrackedHours.ToString(@"hh\:mm");
             User = timeEntry.User;
@@ -58,6 +58,7 @@ namespace api.DTOs
         public new string? TrackedHours { get; set; }
         public new TimeDTO? TimeIn { get; set; }
         public new TimeDTO? TimeOut { get; set; }
+        public new DateOnly Date { get; set; }
 
         public int? Late { get; set; }
         public int? Undertime { get; set; }
