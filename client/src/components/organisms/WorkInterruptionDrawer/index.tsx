@@ -1,16 +1,21 @@
-import { X } from 'react-feather'
+import { X, Info } from 'react-feather'
 import classNames from 'classnames'
 import React, { FC, useEffect } from 'react'
 import { FieldError, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import TextareaAutosize from 'react-textarea-autosize'
+import toast from 'react-hot-toast'
+import moment from 'moment'
 
 import Text from '~/components/atoms/Text'
 import Avatar from '~/components/atoms/Avatar'
+import useUserQuery from '~/hooks/useUserQuery'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
+import useInterruptionType from '~/hooks/useInterruptionType'
 import { ConfirmInterruptionSchema } from '~/utils/validation'
 import DrawerTemplate from '~/components/templates/DrawerTemplate'
 import { ConfirmInterruptionValues } from '~/utils/types/formValues'
+import { WorkInterruptionType } from '~/utils/constants/work-status'
 
 type Props = {
   isOpenWorkInterruptionDrawer: boolean
@@ -25,10 +30,18 @@ const WorkInterruptionDrawer: FC<Props> = (props): JSX.Element => {
     actions: { handleToggleWorkInterruptionDrawer }
   } = props
 
+  const { handleUserQuery } = useUserQuery()
+  const { data: userData } = handleUserQuery()
+  const { handleInterruptionTypeQuery, handleInterruptionMutation } = useInterruptionType()
+  const { data: interruptionTypeData, isLoading } = handleInterruptionTypeQuery()
+  const interruptionMutation = handleInterruptionMutation()
+
   const {
     reset,
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors, isSubmitting }
   } = useForm<ConfirmInterruptionValues>({
     mode: 'onTouched',
@@ -38,24 +51,43 @@ const WorkInterruptionDrawer: FC<Props> = (props): JSX.Element => {
   // This will handle Save Work Interruption
   const handleSave = async (data: ConfirmInterruptionValues): Promise<void> => {
     return await new Promise((resolve) => {
-      setTimeout(() => {
-        resolve()
-        handleToggleWorkInterruptionDrawer()
-        alert(JSON.stringify(data, null, 2))
-      }, 2000)
+      resolve()
+      interruptionMutation.mutate({
+        timeEntryId: userData?.userById?.timeEntry?.id as number,
+        workInterruptionTypeId: Number(data.work_interruption),
+        timeOut: data.time_out,
+        timeIn: data.time_in,
+        remarks: data.remarks,
+        otherReason:
+          Number(data.work_interruption) === Number(WorkInterruptionType.OTHERS)
+            ? data.specify_reason
+            : null
+      })
     })
   }
+  useEffect(() => {
+    if (interruptionMutation.isSuccess) {
+      handleToggleWorkInterruptionDrawer()
+      toast.success('Work interruption submitted!')
+    }
+  }, [interruptionMutation.status])
 
   useEffect(() => {
     if (isOpenWorkInterruptionDrawer) {
       reset({
+        power_checkbox: true,
+        work_interruption: 1,
         specify_reason: '',
         time_in: '',
-        time_out: '',
+        time_out: moment(new Date()).format('HH:mm'),
         remarks: ''
       })
     }
   }, [isOpenWorkInterruptionDrawer])
+
+  useEffect(() => {
+    setValue('power_checkbox', true)
+  }, [watch('work_interruption')])
 
   const validationError = (error: FieldError | undefined): string => {
     return error !== null && error !== undefined
@@ -96,18 +128,44 @@ const WorkInterruptionDrawer: FC<Props> = (props): JSX.Element => {
             />
             <div>
               <Text theme="md" size="sm" weight="bold">
-                Joshua Galit
+                {userData?.userById.name}
               </Text>
-              <p className="text-[11px] leading-tight text-slate-500">Clocking from GMT +8</p>
-              <p className="text-[11px] leading-tight text-slate-500">Last in a few seconds ago</p>
-              <p className="text-[11px] leading-tight text-slate-500">Split time: 12:00 am</p>
+              <p className="text-[11px] leading-tight text-slate-500">
+                Clocking from {Intl.DateTimeFormat().resolvedOptions().timeZone}
+              </p>
+              <p className="text-[11px] leading-tight text-slate-500">
+                {moment(new Date()).format('dddd, MMMM Do YYYY')}
+              </p>
+              <p className="text-[11px] leading-tight text-slate-500">
+                Schedule: {userData?.userById.employeeSchedule.name}
+              </p>
             </div>
           </div>
           {/* Error Message */}
-          <div className="relative flex items-center justify-center rounded-md border border-rose-400 bg-rose-50 py-2.5 px-4 shadow-md">
-            <X className="absolute left-4 h-4 w-4 rounded-full bg-rose-500 p-0.5 text-white" />
-            <p className="text-xs font-medium text-rose-500">Something went wrong</p>
-          </div>
+          {interruptionMutation.isError ? (
+            <div className="relative flex items-center justify-center rounded-md border border-rose-400 bg-rose-50 py-2.5 px-4 shadow-md">
+              <X className="absolute left-4 h-4 w-4 rounded-full bg-rose-500 p-0.5 text-white" />
+              <p className="text-xs font-medium text-rose-500">Something went wrong</p>
+            </div>
+          ) : (
+            <></>
+          )}
+          {/* Warning Message */}
+          {!watch('power_checkbox') ? (
+            <div className="relative flex flex-row items-center justify-between space-x-4 rounded-md border border-blue-400 bg-blue-50 py-2.5 px-4 shadow-md">
+              <div className="relative flex h-5 w-5 items-center">
+                <Info className="absolute inset-0 h-5 w-5 rounded-full bg-blue-500 p-0.5 text-white" />
+              </div>
+              <div>
+                <p className="text-xs font-medium text-blue-500">
+                  You may not yet submit if you can still continue working
+                </p>
+              </div>
+            </div>
+          ) : (
+            <></>
+          )}
+
           {/* Work Interruption DropDown */}
           <section>
             <label htmlFor="remarks" className="space-y-0.5">
@@ -115,7 +173,7 @@ const WorkInterruptionDrawer: FC<Props> = (props): JSX.Element => {
               <div className="flex justify-center">
                 <select
                   {...register('work_interruption')}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isLoading}
                   className={classNames(
                     'm-0 block w-full rounded placeholder:font-light placeholder:text-slate-400',
                     'border border-solid border-slate-300 bg-white bg-clip-padding focus:ring-primary',
@@ -125,103 +183,133 @@ const WorkInterruptionDrawer: FC<Props> = (props): JSX.Element => {
                   )}
                   aria-label="Default select example"
                 >
-                  <option value="1">Power Interruption</option>
-                  <option value="2">Lost Internet Connection</option>
-                  <option value="3">Emergency</option>
-                  <option value="4">Errands</option>
-                  <option value="5">Others</option>
+                  {interruptionTypeData?.allWorkInterruptionTypes.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             </label>
           </section>
 
-          {/* Others */}
-          <section>
-            <label htmlFor="remarks" className="space-y-0.5">
-              <span className="text-xs text-slate-500">Specify Reason</span>
-              <TextareaAutosize
-                id="remarks"
-                disabled={isSubmitting}
-                className={classNames(
-                  'm-0 block w-full rounded placeholder:font-light placeholder:text-slate-400',
-                  'border border-solid border-slate-300 bg-white bg-clip-padding',
-                  'resize-none px-3 py-1.5 text-sm font-normal text-slate-700 transition',
-                  'ease-in-out focus:bg-white focus:text-slate-700 focus:outline-none',
-                  'disabled:cursor-not-allowed disabled:opacity-50',
-                  validationError(errors?.specify_reason)
-                )}
-                placeholder="Reason..."
-                {...register('specify_reason')}
-              />
-            </label>
-            {errors?.specify_reason !== null && errors?.specify_reason !== undefined && (
-              <span className="error">{errors?.specify_reason.message}</span>
-            )}
-          </section>
+          {/* Power Interruption Checkbox */}
+          {Number(watch('work_interruption')) ===
+          Number(WorkInterruptionType.POWER_INTERRUPTION) ? (
+            <section>
+              <div className="mx-auto space-y-0.5 rounded border border-solid border-slate-300 bg-white px-3 py-1.5">
+                <input
+                  id="default-checkbox"
+                  type="checkbox"
+                  {...register('power_checkbox')}
+                  className="h-3 w-3 rounded border-gray-300 bg-gray-100 text-primary focus:ring-2 focus:ring-primary "
+                />
+                <label htmlFor="default-checkbox" className="ml-2 text-xs text-slate-500 ">
+                  Cannot continue working 💻
+                </label>
+              </div>
+            </section>
+          ) : (
+            <></>
+          )}
 
-          {/* Time Out */}
-          <section>
-            <label htmlFor="remarks" className="space-y-0.5">
-              <span className="text-xs text-slate-500">Time Out</span>
-              <input
-                type="time"
-                disabled={isSubmitting}
-                className={classNames(
-                  'm-0 block w-full rounded placeholder:font-light placeholder:text-slate-400',
-                  'border border-solid border-slate-300 bg-white bg-clip-padding',
-                  'resize-none px-3 py-2 text-xs font-normal text-slate-700 transition',
-                  'clock:text-white ease-in-out focus:bg-white focus:text-slate-700 focus:outline-none',
-                  'disabled:cursor-not-allowed disabled:opacity-50',
-                  validationError(errors?.time_out)
+          {watch('power_checkbox') ? (
+            <>
+              {/* Others */}
+              {Number(watch('work_interruption')) === Number(WorkInterruptionType.OTHERS) ? (
+                <section>
+                  <label htmlFor="remarks" className="space-y-0.5">
+                    <span className="text-xs text-slate-500">Specify Reason</span>
+                    <TextareaAutosize
+                      id="remarks"
+                      disabled={isSubmitting}
+                      className={classNames(
+                        'm-0 block w-full rounded placeholder:font-light placeholder:text-slate-400',
+                        'border border-solid border-slate-300 bg-white bg-clip-padding',
+                        'resize-none px-3 py-1.5 text-sm font-normal text-slate-700 transition',
+                        'ease-in-out focus:bg-white focus:text-slate-700 focus:outline-none',
+                        'disabled:cursor-not-allowed disabled:opacity-50',
+                        validationError(errors?.specify_reason)
+                      )}
+                      placeholder="Reason..."
+                      {...register('specify_reason')}
+                    />
+                  </label>
+                  {errors?.specify_reason !== null && errors?.specify_reason !== undefined && (
+                    <span className="error">{errors?.specify_reason.message}</span>
+                  )}
+                </section>
+              ) : (
+                <></>
+              )}
+
+              {/* Time Out */}
+              <section>
+                <label htmlFor="remarks" className="space-y-0.5">
+                  <span className="text-xs text-slate-500">Time Out</span>
+                  <input
+                    type="time"
+                    disabled={isSubmitting}
+                    className={classNames(
+                      'm-0 block w-full rounded placeholder:font-light placeholder:text-slate-400',
+                      'border border-solid border-slate-300 bg-white bg-clip-padding',
+                      'resize-none px-3 py-2 text-xs font-normal text-slate-700 transition',
+                      'clock:text-white ease-in-out focus:bg-white focus:text-slate-700 focus:outline-none',
+                      'disabled:cursor-not-allowed disabled:opacity-50',
+                      validationError(errors?.time_out)
+                    )}
+                    {...register('time_out')}
+                  />
+                </label>
+                {errors?.time_out !== null && errors?.time_out !== undefined && (
+                  <span className="error">{errors?.time_out.message}</span>
                 )}
-                {...register('time_out')}
-              />
-            </label>
-            {errors?.time_out !== null && errors?.time_out !== undefined && (
-              <span className="error">{errors?.time_out.message}</span>
-            )}
-          </section>
-          {/* Time In */}
-          <section>
-            <label htmlFor="remarks" className="space-y-0.5">
-              <span className="text-xs text-slate-500">Time In</span>
-              <input
-                type="time"
-                disabled={isSubmitting}
-                className={classNames(
-                  'm-0 block w-full rounded placeholder:font-light placeholder:text-slate-400',
-                  'border border-solid border-slate-300 bg-white bg-clip-padding',
-                  'resize-none px-3 py-2 text-xs font-normal text-slate-700 transition',
-                  'ease-in-out focus:bg-white focus:text-slate-700 focus:outline-none',
-                  'disabled:cursor-not-allowed disabled:opacity-50',
-                  validationError(errors?.time_in)
+              </section>
+              {/* Time In */}
+              <section>
+                <label htmlFor="remarks" className="space-y-0.5">
+                  <span className="text-xs text-slate-500">Time In</span>
+                  <input
+                    type="time"
+                    disabled={isSubmitting}
+                    className={classNames(
+                      'm-0 block w-full rounded placeholder:font-light placeholder:text-slate-400',
+                      'border border-solid border-slate-300 bg-white bg-clip-padding',
+                      'resize-none px-3 py-2 text-xs font-normal text-slate-700 transition',
+                      'ease-in-out focus:bg-white focus:text-slate-700 focus:outline-none',
+                      'disabled:cursor-not-allowed disabled:opacity-50',
+                      validationError(errors?.time_in)
+                    )}
+                    {...register('time_in')}
+                  />
+                </label>
+                {errors?.time_in !== null && errors?.time_in !== undefined && (
+                  <span className="error">{errors?.time_in.message}</span>
                 )}
-                {...register('time_in')}
-              />
-            </label>
-            {errors?.time_in !== null && errors?.time_in !== undefined && (
-              <span className="error">{errors?.time_in.message}</span>
-            )}
-          </section>
-          {/* Remarks */}
-          <section>
-            <label htmlFor="remarks" className="space-y-0.5">
-              <span className="text-xs text-slate-500">Remarks</span>
-              <TextareaAutosize
-                id="remarks"
-                disabled={isSubmitting}
-                className={classNames(
-                  'm-0 block min-h-[20vh] w-full rounded placeholder:font-light placeholder:text-slate-400',
-                  'border border-solid border-slate-300 bg-white bg-clip-padding focus:ring-primary',
-                  'resize-none px-3 py-1.5 text-sm font-normal text-slate-700 transition focus:border-primary',
-                  'ease-in-out focus:bg-white focus:text-slate-700 focus:outline-none',
-                  'disabled:cursor-not-allowed disabled:opacity-50'
-                )}
-                placeholder="Message..."
-                {...register('remarks')}
-              />
-            </label>
-          </section>
+              </section>
+              {/* Remarks */}
+              <section>
+                <label htmlFor="remarks" className="space-y-0.5">
+                  <span className="text-xs text-slate-500">Remarks</span>
+                  <TextareaAutosize
+                    id="remarks"
+                    disabled={isSubmitting}
+                    className={classNames(
+                      'm-0 block min-h-[20vh] w-full rounded placeholder:font-light placeholder:text-slate-400',
+                      'border border-solid border-slate-300 bg-white bg-clip-padding focus:ring-primary',
+                      'resize-none px-3 py-1.5 text-sm font-normal text-slate-700 transition focus:border-primary',
+                      'ease-in-out focus:bg-white focus:text-slate-700 focus:outline-none',
+                      'disabled:cursor-not-allowed disabled:opacity-50'
+                    )}
+                    placeholder="Message..."
+                    {...register('remarks')}
+                  />
+                </label>
+              </section>
+            </>
+          ) : (
+            <></>
+          )}
         </main>
         {/* Footer Options */}
         <footer className="border-t border-slate-200">
@@ -240,7 +328,7 @@ const WorkInterruptionDrawer: FC<Props> = (props): JSX.Element => {
             </button>
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !watch('power_checkbox')}
               className={classNames(
                 'disabled:cursor-not-allowed disabled:opacity-50',
                 'flex items-center justify-center rounded-md border active:scale-95',

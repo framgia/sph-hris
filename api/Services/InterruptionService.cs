@@ -13,10 +13,16 @@ namespace api.Services
         {
             _contextFactory = contextFactory;
         }
-
         public static WorkInterruptionDTO ToWorkInterruptionDTO(WorkInterruption interruption)
         {
             return new WorkInterruptionDTO(interruption);
+        }
+        public async Task<List<WorkInterruptionType>> Index()
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.WorkInterruptionTypes.ToListAsync();
+            }
         }
         public async Task<List<WorkInterruptionDTO>> Show(ShowInterruptionRequest interruption)
         {
@@ -38,8 +44,8 @@ namespace api.Services
                     TimeEntryId = interruption.TimeEntryId,
                     WorkInterruptionTypeId = interruption.WorkInterruptionTypeId,
                     OtherReason = interruption.OtherReason,
-                    TimeOut = interruption.TimeOut,
-                    TimeIn = interruption.TimeIn,
+                    TimeOut = interruption.TimeOut != null ? TimeSpan.Parse(interruption.TimeOut) : null,
+                    TimeIn = interruption.TimeIn != null ? TimeSpan.Parse(interruption.TimeIn) : null,
                     Remarks = interruption.Remarks,
                 }).Entity;
                 await context.SaveChangesAsync();

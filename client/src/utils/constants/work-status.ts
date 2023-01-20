@@ -4,3 +4,11 @@ export const WorkStatus = {
   ABSENT: 'Absent',
   ON_DUTY: 'On-Duty'
 }
+
+export const WorkInterruptionType = {
+  POWER_INTERRUPTION: 1,
+  LOST_INTERNET_CONNECTION: 2,
+  EMERGENCY: 3,
+  ERRANDS: 4,
+  OTHERS: 5
+}

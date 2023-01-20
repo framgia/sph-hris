@@ -9,6 +9,7 @@ import { parse } from 'iso8601-duration'
 import Text from '~/components/atoms/Text'
 import Avatar from '~/components/atoms/Avatar'
 import BreakIcon from '~/utils/icons/BreakIcon'
+import useUserQuery from '~/hooks/useUserQuery'
 import { sidebarLinks } from '~/utils/constants'
 import ClockInIcon from '~/utils/icons/ClockInIcon'
 import ClockOutIcon from '~/utils/icons/ClockOutIcon'
@@ -16,7 +17,6 @@ import Button from '~/components/atoms/Buttons/Button'
 import LegendTooltip from '~/components/molecules/LegendTooltip'
 import UserMenuDropDown from '~/components/molecules/UserMenuDropdown'
 import NotificationPopover from '~/components/molecules/NotificationPopOver'
-import useUserQuery from '~/hooks/useUserQuery'
 
 const Tooltip = dynamic(async () => await import('rc-tooltip'), { ssr: false })
 
@@ -146,6 +146,7 @@ const Header: FC<Props> = (props): JSX.Element => {
                 data?.userById.timeEntry?.timeIn !== null ||
                 data.userById.employeeSchedule.workingDayTimes.length < 1
               }
+              className="disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
               onClick={handleToggleTimeInDrawer}
             >
               <ClockInIcon className="h-7 w-7 fill-current" />
@@ -157,7 +158,14 @@ const Header: FC<Props> = (props): JSX.Element => {
             overlay="Break Time"
             arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
           >
-            <Button onClick={handleToggleWorkInterruptionDrawer}>
+            <Button
+              disabled={
+                data?.userById.timeEntry?.timeIn === null ||
+                data?.userById?.timeEntry?.timeOut !== null
+              }
+              className="disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
+              onClick={handleToggleWorkInterruptionDrawer}
+            >
               <BreakIcon className="h-7 w-7 fill-current" />
             </Button>
           </Tooltip>
@@ -173,6 +181,7 @@ const Header: FC<Props> = (props): JSX.Element => {
                 (data?.userById?.timeEntry?.timeIn !== null &&
                   data?.userById?.timeEntry?.timeOut !== null)
               }
+              className="disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
               onClick={handleToggleTimeOutDrawer}
             >
               <ClockOutIcon className="h-7 w-7 fill-current" />
