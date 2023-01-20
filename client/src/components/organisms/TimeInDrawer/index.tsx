@@ -3,6 +3,7 @@ import { X } from 'react-feather'
 import classNames from 'classnames'
 import TextareaAutosize from 'react-textarea-autosize'
 import moment from 'moment'
+import { useRouter } from 'next/router'
 import { serialize } from 'tinyduration'
 import { toast } from 'react-hot-toast'
 import { parse } from 'iso8601-duration'
@@ -13,6 +14,7 @@ import DrawerTemplate from '~/components/templates/DrawerTemplate'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import useTimeInMutation from '~/hooks/useTimeInMutation'
 import useUserQuery from '~/hooks/useUserQuery'
+import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
 
 type Props = {
   isOpenTimeInDrawer: boolean
@@ -22,10 +24,15 @@ type Props = {
 }
 
 const TimeInDrawer: FC<Props> = (props): JSX.Element => {
+  const router = useRouter()
+  const timeInId = router.query.time_in
+  const res = getSpecificTimeEntry(Number(timeInId)).data?.timeById.remarks
+
   const {
     isOpenTimeInDrawer,
     actions: { handleToggleTimeInDrawer }
   } = props
+
   const [remarks, setRemarks] = useState('')
   const [files, setFiles] = useState<FileList | null>(null)
   const [afterStartTime, setAfterStartTime] = useState(false)
@@ -72,6 +79,14 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
     })
   }
 
+  const handleToggleDrawer = (): void => {
+    if (timeInId !== null && timeInId !== undefined) {
+      void router.back()
+    } else {
+      handleToggleTimeInDrawer()
+    }
+  }
+
   useEffect(() => {
     if (timeInMutation.isSuccess) {
       setRemarks('')
@@ -83,7 +98,7 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
   return (
     <DrawerTemplate
       {...{
-        isOpen: isOpenTimeInDrawer,
+        isOpen: timeInId?.length !== undefined ? false : isOpenTimeInDrawer,
         actions: {
           handleToggle: handleToggleTimeInDrawer
         }
@@ -94,7 +109,7 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
         <h1 className="text-base font-medium text-slate-900">
           Confirm {afterStartTime ? 'Late' : ''} Time In
         </h1>
-        <button onClick={handleToggleTimeInDrawer} className="active:scale-95">
+        <button onClick={() => handleToggleDrawer()} className="active:scale-95">
           <X className="h-6 w-6 stroke-0.5 text-slate-400" />
         </button>
       </header>
@@ -142,7 +157,7 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
             <label htmlFor="remarks" className="space-y-0.5">
               <span className="text-xs text-slate-500">Remarks</span>
               <TextareaAutosize
-                value={remarks}
+                value={res ?? remarks}
                 id="remarks"
                 disabled={timeInMutation.isLoading}
                 onChange={(e) => setRemarks(e.target.value)}
@@ -156,7 +171,7 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
               />
             </label>
           </div>
-          {afterStartTime && (
+          {!(timeInId !== undefined && timeInId !== null) && afterStartTime && (
             <div>
               <label htmlFor="screenshots">
                 <span className="text-xs">Screenshots/Proof</span>
@@ -179,34 +194,36 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
         </div>
       </div>
       {/* Footer Options */}
-      <section className="mt-auto border-t border-slate-200">
-        <div className="flex justify-end py-2 px-6">
-          <button
-            type="button"
-            onClick={handleToggleTimeInDrawer}
-            className={classNames(
-              'flex items-center justify-center border-slate-200 text-xs active:scale-95',
-              'w-24 border-dark-primary py-2 text-dark-primary outline-none'
-            )}
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            disabled={timeInMutation.isLoading}
-            onClick={handleSaveTimeIn}
-            className={classNames(
-              'flex items-center justify-center rounded-md border active:scale-95',
-              `w-24 border-dark-primary ${
-                !timeInMutation.isLoading ? 'bg-primary hover:bg-dark-primary' : 'bg-slate-400'
-              } text-xs text-white outline-none `
-            )}
-          >
-            {timeInMutation.isLoading && <SpinnerIcon className=" mr-2 fill-gray-500" />}
-            Save
-          </button>
-        </div>
-      </section>
+      {!(timeInId !== undefined && timeInId !== null) && (
+        <section className="mt-auto border-t border-slate-200">
+          <div className="flex justify-end py-2 px-6">
+            <button
+              type="button"
+              onClick={handleToggleTimeInDrawer}
+              className={classNames(
+                'flex items-center justify-center border-slate-200 text-xs active:scale-95',
+                'w-24 border-dark-primary py-2 text-dark-primary outline-none'
+              )}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              disabled={timeInMutation.isLoading}
+              onClick={handleSaveTimeIn}
+              className={classNames(
+                'flex items-center justify-center rounded-md border active:scale-95',
+                `w-24 border-dark-primary ${
+                  !timeInMutation.isLoading ? 'bg-primary hover:bg-dark-primary' : 'bg-slate-400'
+                } text-xs text-white outline-none `
+              )}
+            >
+              {timeInMutation.isLoading && <SpinnerIcon className=" mr-2 fill-gray-500" />}
+              Save
+            </button>
+          </div>
+        </section>
+      )}
     </DrawerTemplate>
   )
 }

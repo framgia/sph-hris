@@ -1,5 +1,6 @@
-import React, { FC, ReactNode } from 'react'
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
+import React, { FC, ReactNode } from 'react'
 
 type Props = {
   children: ReactNode
@@ -10,11 +11,22 @@ type Props = {
 }
 
 const DrawerTemplate: FC<Props> = (props): JSX.Element => {
+  const router = useRouter()
+  const timeIdExists = router.query.time_out !== undefined || router.query.time_in !== undefined
+
   const {
     children,
     isOpen,
     actions: { handleToggle }
   } = props
+
+  const handleTimeIdExists = (): void => {
+    if (timeIdExists) {
+      void router.back()
+    } else {
+      handleToggle()
+    }
+  }
 
   return (
     <aside className="h-screen">
@@ -31,7 +43,7 @@ const DrawerTemplate: FC<Props> = (props): JSX.Element => {
         {/* This will served as the background of the drawer */}
         {!isOpen && (
           <div
-            onClick={handleToggle}
+            onClick={() => handleTimeIdExists()}
             className="fixed inset-0 z-40 cursor-default bg-slate-900/10"
           ></div>
         )}

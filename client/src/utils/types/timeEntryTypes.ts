@@ -2,10 +2,12 @@ export interface IEmployeeTimeEntry {
   id: number
   date: string
   timeIn: {
+    id: number
     timeHour: string
     remarks: string
   }
   timeOut: {
+    id: number
     timeHour: string
     remarks: string
   }
@@ -27,10 +29,12 @@ export interface ITimeEntry {
     name: string
   }
   timeIn: {
+    id: number
     timeHour: string
     remarks: string
   }
   timeOut: {
+    id: number
     timeHour: string
     remarks: string
   }
@@ -42,4 +46,9 @@ export interface ITimeEntry {
   undertime: number
   overtime: number
   status: string
+}
+
+export interface ITimeEntryById {
+  timeHour: string
+  remarks: string
 }
