@@ -16,6 +16,14 @@ namespace api.Schema.Mutations
         {
             return await _interruptionService.Create(interruption);
         }
+        public async Task<bool> UpdateWorkInterruption(UpdateInterruptionRequest interruption)
+        {
+            return await _interruptionService.Update(interruption);
+        }
+        public async Task<bool> DeleteWorkInterruption(int id)
+        {
+            return await _interruptionService.Delete(id);
+        }
 
     }
 }
