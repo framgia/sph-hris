@@ -35,3 +35,11 @@ export interface IMyDTR {
   overtime: number
   status: string
 }
+
+export interface IInterruptionTimeEntry {
+  id: number | string
+  date: string
+  timeOut: string
+  timeIn: string
+  remarks?: string
+}

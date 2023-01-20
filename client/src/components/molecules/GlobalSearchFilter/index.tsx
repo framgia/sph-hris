@@ -6,10 +6,11 @@ type Props = {
   value: string | number
   onChange: (value: string | number) => void
   debounce?: number
+  className?: string
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'>
 
 const GlobalSearchFilter: FC<Props> = (props): JSX.Element => {
-  const { value: initialValue, onChange, debounce = 500, ...rest } = props
+  const { className, value: initialValue, onChange, debounce = 500, ...rest } = props
 
   const [value, setValue] = useState(initialValue)
 
@@ -26,7 +27,7 @@ const GlobalSearchFilter: FC<Props> = (props): JSX.Element => {
   }, [value])
 
   return (
-    <div className="group flex items-center space-x-2">
+    <div className={classNames('group flex items-center space-x-2', className)}>
       <Search className="h-5 w-5 text-slate-400 group-focus-within:text-amber-500" />
       <input
         type="text"
@@ -43,5 +44,7 @@ const GlobalSearchFilter: FC<Props> = (props): JSX.Element => {
     </div>
   )
 }
+
+GlobalSearchFilter.defaultProps = {}
 
 export default GlobalSearchFilter

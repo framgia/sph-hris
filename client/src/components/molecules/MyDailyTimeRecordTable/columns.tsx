@@ -1,27 +1,19 @@
-import React from 'react'
 import moment from 'moment'
 import Link from 'next/link'
-import Tooltip from 'rc-tooltip'
+import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
+import React, { useState } from 'react'
 import { Clock, Edit } from 'react-feather'
 import { createColumnHelper } from '@tanstack/react-table'
 
 import Chip from '~/components/atoms/Chip'
-import SortIcon from '~/utils/icons/SortIcon'
 import Button from '~/components/atoms/Buttons/Button'
+import CellHeader from '~/components/atoms/CellHeader'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
+import InterruptionTimeEntriesModal from './../InterruptionTimeEntriesModal'
 
 const columnHelper = createColumnHelper<IEmployeeTimeEntry>()
 const EMPTY = 'N/A'
-
-const CellHeader = ({ label }: { label: string }): JSX.Element => {
-  return (
-    <span className="group flex items-center font-normal text-slate-500">
-      {label}
-      <SortIcon className="ml-2 h-3 w-3 shrink-0 fill-current group-active:scale-95" />
-    </span>
-  )
-}
 
 export const columns = [
   columnHelper.accessor((row) => moment(new Date(row.date)).format('MMMM DD, YYYY'), {
@@ -133,37 +125,45 @@ export const columns = [
   }),
   columnHelper.display({
     id: 'id',
-    header: () => <span className="font-normal">Actions</span>,
-    cell: (props) => (
-      <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
-        <Tooltip
-          placement="left"
-          overlay="Time Entries"
-          arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
-        >
-          <Button
-            onClick={() => alert(props.row.id)}
-            rounded="none"
-            className="py-0.5 px-1 text-slate-500"
-          >
-            <Clock className="h-4 w-4" />
-          </Button>
-        </Tooltip>
-        <Tooltip
-          placement="left"
-          overlay="Edit"
-          arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
-        >
-          <Button
-            onClick={() => alert(props.row.id)}
-            rounded="none"
-            className="py-0.5 px-1 text-slate-500"
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
-        </Tooltip>
-      </div>
-    ),
+    header: () => <span className="font-normal text-slate-500">Actions</span>,
+    cell: (props) => {
+      const [isOpenTimeEntry, setIsOpenTimeEntry] = useState<boolean>(false)
+
+      const handleIsOpenTimeEntryToggle = (id?: string | undefined): void => {
+        setIsOpenTimeEntry(!isOpenTimeEntry)
+      }
+
+      return (
+        <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
+          <Tippy placement="left" content="Time Entries" className="!text-xs">
+            <Button
+              rounded="none"
+              className="py-0.5 px-1 text-slate-500"
+              onClick={() => handleIsOpenTimeEntryToggle(props.row.id)}
+            >
+              <Clock className="h-4 w-4" />
+              {isOpenTimeEntry ? (
+                <InterruptionTimeEntriesModal
+                  {...{
+                    isOpen: isOpenTimeEntry,
+                    closeModal: handleIsOpenTimeEntryToggle
+                  }}
+                />
+              ) : null}
+            </Button>
+          </Tippy>
+          <Tippy placement="left" content="Edit" className="!text-xs">
+            <Button
+              onClick={() => alert(props.row.id)}
+              rounded="none"
+              className="py-0.5 px-1 text-slate-500"
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+          </Tippy>
+        </div>
+      )
+    },
     footer: (info) => info.column.id
   })
 ]

@@ -1,2 +1,4 @@
 @import url('./tailwind.css');
-@import 'rc-tooltip/assets/bootstrap_white.css';
+@import url('rc-tooltip/assets/bootstrap_white.css');
+@import url('https://unpkg.com/tippy.js@6/dist/tippy.css');
+@import url('react-confirm-alert/src/react-confirm-alert.css');

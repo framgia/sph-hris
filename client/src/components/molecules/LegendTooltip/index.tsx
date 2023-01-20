@@ -6,7 +6,7 @@ type Props = {
   placement?: string
 }
 
-const LegendTooltip: FC<Props> = ({ placement = 'rightTop' }): JSX.Element => {
+const LegendTooltip: FC<Props> = ({ placement }): JSX.Element => {
   return (
     <Tooltip
       placement={placement}
@@ -34,6 +34,10 @@ const LegendTooltip: FC<Props> = ({ placement = 'rightTop' }): JSX.Element => {
       <HelpCircle className="h-5 w-5" />
     </Tooltip>
   )
+}
+
+LegendTooltip.defaultProps = {
+  placement: 'rightTop'
 }
 
 export default LegendTooltip

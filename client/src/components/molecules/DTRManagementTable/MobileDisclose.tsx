@@ -1,6 +1,6 @@
-import Tooltip from 'rc-tooltip'
-import React, { FC } from 'react'
+import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
+import React, { FC, useState } from 'react'
 import { Table } from '@tanstack/react-table'
 import { Disclosure } from '@headlessui/react'
 import { ChevronRight, Clock, Edit } from 'react-feather'
@@ -8,9 +8,10 @@ import { ChevronRight, Clock, Edit } from 'react-feather'
 import Chip from '~/components/atoms/Chip'
 import Avatar from '~/components/atoms/Avatar'
 import Button from '~/components/atoms/Buttons/Button'
+import { ITimeEntry } from '~/utils/types/timeEntryTypes'
 import { WorkStatus } from '~/utils/constants/work-status'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
-import { ITimeEntry } from '~/utils/types/timeEntryTypes'
+import InterruptionTimeEntriesModal from '../InterruptionTimeEntriesModal'
 
 type Props = {
   table: Table<ITimeEntry>
@@ -19,6 +20,12 @@ type Props = {
 }
 
 const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
+  const [isOpenTimeEntry, setIsOpenTimeEntry] = useState<boolean>(false)
+
+  const handleIsOpenTimeEntryToggle = (id?: string | undefined): void => {
+    setIsOpenTimeEntry(!isOpenTimeEntry)
+  }
+
   const EMPTY = 'N/A'
 
   return (
@@ -46,10 +53,10 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                           className={classNames(
                             'w-full border-b border-slate-200 py-2 px-4 hover:bg-white',
                             open ? 'bg-white' : 'hover:shadow-md hover:shadow-slate-200',
-                            row.original.status === WorkStatus.VACATION_LEAVE
+                            row.original.status === WorkStatus.VACATION_LEAVE.toLowerCase()
                               ? 'bg-amber-50 hover:bg-amber-50'
                               : '',
-                            row.original.status === WorkStatus.ABSENT
+                            row.original.status === WorkStatus.ABSENT.toLowerCase()
                               ? 'bg-fuchsia-50 hover:bg-fuchsia-50'
                               : ''
                           )}
@@ -78,7 +85,10 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                           </div>
                         </Disclosure.Button>
                         <Disclosure.Panel
-                          className={classNames('text-slate-600', open ? 'bg-white shadow-md' : '')}
+                          className={classNames(
+                            'text-slate-600',
+                            open ? 'bg-white shadow-md shadow-slate-200' : ''
+                          )}
                         >
                           <ul className="flex flex-col divide-y divide-slate-200">
                             <li className="flex items-center space-x-1 px-4 py-2">
@@ -125,24 +135,24 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                             <li className="flex items-center space-x-2 px-4 py-2">
                               <span>Actions:</span>
                               <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
-                                <Tooltip
-                                  placement="left"
-                                  overlay="Time Entries"
-                                  arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
-                                >
+                                <Tippy placement="left" content="Time Entries" className="!text-xs">
                                   <Button
-                                    onClick={() => alert(row.original.id)}
+                                    onClick={() => handleIsOpenTimeEntryToggle(row.id)}
                                     rounded="none"
                                     className="py-0.5 px-1 text-slate-500"
                                   >
                                     <Clock className="h-4 w-4" />
+                                    {isOpenTimeEntry ? (
+                                      <InterruptionTimeEntriesModal
+                                        {...{
+                                          isOpen: isOpenTimeEntry,
+                                          closeModal: handleIsOpenTimeEntryToggle
+                                        }}
+                                      />
+                                    ) : null}
                                   </Button>
-                                </Tooltip>
-                                <Tooltip
-                                  placement="left"
-                                  overlay="Edit"
-                                  arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
-                                >
+                                </Tippy>
+                                <Tippy placement="left" content="Edit" className="!text-xs">
                                   <Button
                                     onClick={() => alert(row.original.id)}
                                     rounded="none"
@@ -150,7 +160,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                   >
                                     <Edit className="h-4 w-4" />
                                   </Button>
-                                </Tooltip>
+                                </Tippy>
                               </div>
                             </li>
                           </ul>
