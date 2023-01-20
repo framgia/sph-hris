@@ -1,17 +1,19 @@
-import React, { FC, useEffect, useState } from 'react'
+import moment from 'moment'
 import { X } from 'react-feather'
 import classNames from 'classnames'
-import TextareaAutosize from 'react-textarea-autosize'
-import { serialize } from 'tinyduration'
 import { toast } from 'react-hot-toast'
-import moment from 'moment'
+import { useRouter } from 'next/router'
+import { serialize } from 'tinyduration'
+import TextareaAutosize from 'react-textarea-autosize'
+import React, { FC, useEffect, useState } from 'react'
 
 import Text from '~/components/atoms/Text'
 import Avatar from '~/components/atoms/Avatar'
-import DrawerTemplate from '~/components/templates/DrawerTemplate'
 import useUserQuery from '~/hooks/useUserQuery'
-import useTimeOutMutation from '~/hooks/useTimeOutMutation'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
+import useTimeOutMutation from '~/hooks/useTimeOutMutation'
+import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
+import DrawerTemplate from '~/components/templates/DrawerTemplate'
 
 type Props = {
   isOpenTimeOutDrawer: boolean
@@ -21,6 +23,10 @@ type Props = {
 }
 
 const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
+  const router = useRouter()
+  const timeOutId = router.query.time_out
+  const res = getSpecificTimeEntry(Number(timeOutId)).data?.timeById.remarks
+
   const {
     isOpenTimeOutDrawer,
     actions: { handleToggleTimeOutDrawer }
@@ -47,6 +53,14 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
     })
   }
 
+  const handleToggleDrawer = (): void => {
+    if (timeOutId !== null && timeOutId !== undefined) {
+      void router.back()
+    } else {
+      handleToggleTimeOutDrawer()
+    }
+  }
+
   useEffect(() => {
     if (timeOutMutation.isSuccess) {
       setRemarks('')
@@ -58,7 +72,7 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
   return (
     <DrawerTemplate
       {...{
-        isOpen: isOpenTimeOutDrawer,
+        isOpen: timeOutId?.length !== undefined ? false : isOpenTimeOutDrawer,
         actions: {
           handleToggle: handleToggleTimeOutDrawer
         }
@@ -67,7 +81,7 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
       {/* Header */}
       <header className="flex items-center justify-between border-b border-slate-200 px-6 py-3">
         <h1 className="text-base font-medium text-slate-900">Confirm Time Out</h1>
-        <button onClick={handleToggleTimeOutDrawer} className="active:scale-95">
+        <button onClick={() => handleToggleDrawer()} className="active:scale-95">
           <X className="h-6 w-6 stroke-0.5 text-slate-400" />
         </button>
       </header>
@@ -115,7 +129,7 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
               <span className="text-xs text-slate-500">Remarks</span>
               <TextareaAutosize
                 id="remarks"
-                value={remarks}
+                value={res ?? remarks}
                 disabled={timeOutMutation.isLoading}
                 onChange={(e) => setRemarks(e.target.value)}
                 className={classNames(
@@ -131,32 +145,34 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
         </div>
       </div>
       {/* Footer Options */}
-      <section className="mt-auto border-t border-slate-200">
-        <div className="flex justify-end py-2 px-6">
-          <button
-            type="button"
-            onClick={handleToggleTimeOutDrawer}
-            className={classNames(
-              'flex items-center justify-center border-slate-200 text-xs active:scale-95',
-              'w-24 border-dark-primary py-2 text-dark-primary outline-none'
-            )}
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            disabled={timeOutMutation.isLoading}
-            onClick={handleSaveTimeOut}
-            className={classNames(
-              'flex items-center justify-center rounded-md border active:scale-95',
-              'w-24 border-dark-primary bg-primary text-xs text-white outline-none hover:bg-dark-primary'
-            )}
-          >
-            {timeOutMutation.isLoading && <SpinnerIcon className=" mr-2 fill-gray-500" />}
-            Save
-          </button>
-        </div>
-      </section>
+      {!(timeOutId !== undefined && timeOutId !== null) && (
+        <section className="mt-auto border-t border-slate-200">
+          <div className="flex justify-end py-2 px-6">
+            <button
+              type="button"
+              onClick={handleToggleTimeOutDrawer}
+              className={classNames(
+                'flex items-center justify-center border-slate-200 text-xs active:scale-95',
+                'w-24 border-dark-primary py-2 text-dark-primary outline-none'
+              )}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              disabled={timeOutMutation.isLoading}
+              onClick={handleSaveTimeOut}
+              className={classNames(
+                'flex items-center justify-center rounded-md border active:scale-95',
+                'w-24 border-dark-primary bg-primary text-xs text-white outline-none hover:bg-dark-primary'
+              )}
+            >
+              {timeOutMutation.isLoading && <SpinnerIcon className=" mr-2 fill-gray-500" />}
+              Save
+            </button>
+          </div>
+        </section>
+      )}
     </DrawerTemplate>
   )
 }
