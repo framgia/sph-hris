@@ -8,6 +8,7 @@ import { serialize } from 'tinyduration'
 import { toast } from 'react-hot-toast'
 import { parse } from 'iso8601-duration'
 
+import Alert from '~/components/atoms/Alert'
 import Text from '~/components/atoms/Text'
 import Avatar from '~/components/atoms/Avatar'
 import DrawerTemplate from '~/components/templates/DrawerTemplate'
@@ -139,17 +140,7 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
           </div>
         </div>
         {/* Error Message */}
-        {timeInMutation.isError && (
-          <div
-            className={classNames(
-              'relative flex items-center justify-center rounded-md border border-rose-400',
-              ' bg-rose-50 py-2.5 px-4 shadow-md shadow-slate-200'
-            )}
-          >
-            <X className="absolute left-4 h-4 w-4 rounded-full bg-rose-500 p-0.5 text-white" />
-            <p className="text-xs font-medium text-rose-500">Something went wrong</p>
-          </div>
-        )}
+        {timeInMutation.isError && <Alert type="error" />}
 
         {/* Remarks */}
         <div className="form-group space-y-2">
