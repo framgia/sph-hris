@@ -5,14 +5,17 @@ import { MoreHorizontal } from 'react-feather'
 import React, { useEffect, useState } from 'react'
 
 import FilterIcon from '~/utils/icons/FilterIcon'
+import { dtrSummaryData } from '~/utils/constants'
 import Layout from '~/components/templates/Layout'
 import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
-import DTRTable from '~/components/molecules/DTRManagementTable'
 import LegendTooltip from '~/components/molecules/LegendTooltip'
+import DTRTable from '~/components/molecules/DTRManagementTable'
 import { getAllEmployeeTimesheet } from '~/hooks/useTimesheetQuery'
+import DTRSummaryTable from '~/components/molecules/DTRSummaryTable'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
-import { columns } from '~/components/molecules/DTRManagementTable/columns'
 import SummaryMenuDropdown from '~/components/molecules/SummaryMenuDropdown'
+import { columns } from '~/components/molecules/DTRManagementTable/columns'
+import { columns as dtrSummaryColumns } from '~/components/molecules/DTRSummaryTable/columns'
 import TimeSheetFilterDropdown from '~/components/molecules/TimeSheetFilterDropdown'
 
 export type Filters = {
@@ -26,6 +29,8 @@ export type QueryVariablesType = {
 }
 
 const DTRManagement: NextPage = (): JSX.Element => {
+  const [isOpenSummaryTable, setIsOpenSummaryTable] = useState<boolean>(false)
+  const handleToggleSummaryTable = (): void => setIsOpenSummaryTable(!isOpenSummaryTable)
   const [globalFilter, setGlobalFilter] = useState<string>('')
   const [filters, setFilters] = useState({
     date: moment().format('YYYY-MM-DD'),
@@ -104,6 +109,12 @@ const DTRManagement: NextPage = (): JSX.Element => {
               <span>Filters</span>
             </TimeSheetFilterDropdown>
             <SummaryMenuDropdown
+              {...{
+                isOpenSummaryTable,
+                actions: {
+                  handleToggleSummaryTable
+                }
+              }}
               className={classNames(
                 'rounded border border-slate-200 bg-white py-0.5 px-2 outline-none',
                 'shadow-sm hover:bg-white hover:text-slate-600 active:scale-95'
@@ -114,20 +125,39 @@ const DTRManagement: NextPage = (): JSX.Element => {
           </div>
         </header>
         {!fetchedData.isLoading && fetchedData.data !== undefined ? (
-          <DTRTable
-            {...{
-              query: {
-                data: fetchedData.data.timeEntries,
-                isLoading: fetchedData.isLoading,
-                error
-              },
-              table: {
-                columns,
-                globalFilter,
-                setGlobalFilter
-              }
-            }}
-          />
+          <div>
+            {!isOpenSummaryTable ? (
+              <DTRTable
+                {...{
+                  query: {
+                    data: fetchedData.data.timeEntries,
+                    isLoading: fetchedData.isLoading,
+                    error
+                  },
+                  table: {
+                    columns,
+                    globalFilter,
+                    setGlobalFilter
+                  }
+                }}
+              />
+            ) : (
+              <DTRSummaryTable
+                {...{
+                  query: {
+                    data: dtrSummaryData,
+                    isLoading: fetchedData.isLoading,
+                    error
+                  },
+                  table: {
+                    columns: dtrSummaryColumns,
+                    globalFilter,
+                    setGlobalFilter
+                  }
+                }}
+              />
+            )}
+          </div>
         ) : (
           <div className="flex min-h-[50vh] items-center justify-center">
             <BarsLoadingIcon className="h-7 w-7 fill-current text-amber-500" />

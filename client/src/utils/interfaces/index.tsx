@@ -22,6 +22,16 @@ export interface IDTRManagement {
   status: string
 }
 
+export interface IDTRSummary {
+  id: number
+  name: string
+  leave: number
+  absences: number
+  late: number
+  undertime: number
+  overtime: number
+}
+
 export interface IMyDTR {
   id: number
   date: string
