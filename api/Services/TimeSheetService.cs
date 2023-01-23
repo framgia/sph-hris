@@ -87,6 +87,56 @@ namespace api.Services
                 return entries;
             }
         }
+
+        public async Task<List<TimeEntriesSummaryDTO>> GetSummary(String? startDate, String? endDate)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                List<TimeEntriesSummaryDTO> summaries = new List<TimeEntriesSummaryDTO>();
+
+                var entries = await context.TimeEntries
+                    .Include(entry => entry.TimeIn)
+                    .Include(entry => entry.TimeOut)
+                    .Include(entry => entry.User)
+                    .OrderByDescending(entry => entry.Date)
+                    .Select(entry => ToTimeEntryDTO(entry))
+                    .ToListAsync();
+
+                if (startDate != null && endDate != null)
+                {
+                    var filterDateRange = from entry in entries
+                                          where DateOnly.Parse(startDate).CompareTo(entry.Date) <= 0
+                                          where DateOnly.Parse(endDate).CompareTo(entry.Date) >= 0
+                                          select entry;
+
+                    entries = filterDateRange.ToList();
+                }
+
+                var grouped = entries.OrderBy(entry => entry.UserId)
+                              .GroupBy(entry => entry.UserId);
+
+                foreach (var group in grouped)
+                {
+                    var userSummary = new TimeEntriesSummaryDTO(group.First());
+                    summaries.Add(userSummary);
+                    foreach (var timeEntry in group)
+                    {
+                        // No module for leave yet
+
+                        if (timeEntry.Status.ToLower() == "absent")
+                        {
+                            userSummary.AddAbsences();
+                        }
+
+                        userSummary.AddLate(timeEntry.Late);
+                        userSummary.AddUndertime(timeEntry.Undertime);
+                        userSummary.AddOvertime(timeEntry.Overtime);
+                    }
+                };
+
+                return summaries;
+            }
+        }
     }
 
 }

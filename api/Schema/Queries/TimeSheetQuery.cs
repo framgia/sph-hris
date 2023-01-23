@@ -32,5 +32,10 @@ namespace api.Schema.Queries
         {
             return await _timeSheetService.GetAll(date, status);
         }
+
+        public async Task<List<TimeEntriesSummaryDTO>> GetTimesheetSummary(String? startDate, String? endDate)
+        {
+            return await _timeSheetService.GetSummary(startDate, endDate);
+        }
     }
 }

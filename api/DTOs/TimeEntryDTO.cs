@@ -60,9 +60,9 @@ namespace api.DTOs
         public new TimeDTO? TimeOut { get; set; }
         public new DateOnly Date { get; set; }
 
-        public int? Late { get; set; }
-        public int? Undertime { get; set; }
-        public int? Overtime { get; set; }
+        public int Late { get; set; }
+        public int Undertime { get; set; }
+        public int Overtime { get; set; }
 
         public string Status { get; set; }
     }
