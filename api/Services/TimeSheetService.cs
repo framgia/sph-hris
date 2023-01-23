@@ -1,7 +1,6 @@
 using api.Context;
 using api.DTOs;
 using api.Entities;
-using api.Requests;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Services
@@ -54,7 +53,7 @@ namespace api.Services
             }
         }
 
-        public async Task<List<TimeEntryDTO>> GetAll(TimeEntryFilter? filter)
+        public async Task<List<TimeEntryDTO>> GetAll(String? date = null, String? status = null)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
@@ -66,14 +65,23 @@ namespace api.Services
                     .Select(entry => ToTimeEntryDTO(entry))
                     .ToListAsync();
 
-                if (filter != null)
+                if (date != null)
                 {
                     var filterDate = from entry in entries
-                                     where filter.StartDate.CompareTo(entry.Date) <= 0
-                                     && filter.EndDate.CompareTo(entry.Date) >= 0
+                                     where DateOnly.Parse(date).CompareTo(entry.Date) == 0
                                      select entry;
 
                     entries = filterDate.ToList();
+
+                }
+
+                if (status != null)
+                {
+                    var filterStatus = from entry in entries
+                                       where entry.Status == status
+                                       select entry;
+
+                    entries = filterStatus.ToList();
                 }
 
                 return entries;
