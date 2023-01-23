@@ -61,6 +61,7 @@ namespace api.Services
                     .Include(entry => entry.TimeIn)
                     .Include(entry => entry.TimeOut)
                     .Include(entry => entry.User)
+                    .Include(entry => entry.WorkInterruptions)
                     .OrderByDescending(entry => entry.Date)
                     .Select(entry => ToTimeEntryDTO(entry))
                     .ToListAsync();
@@ -98,6 +99,7 @@ namespace api.Services
                     .Include(entry => entry.TimeIn)
                     .Include(entry => entry.TimeOut)
                     .Include(entry => entry.User)
+                    .Include(entry => entry.WorkInterruptions)
                     .OrderByDescending(entry => entry.Date)
                     .Select(entry => ToTimeEntryDTO(entry))
                     .ToListAsync();

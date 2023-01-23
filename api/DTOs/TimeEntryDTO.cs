@@ -22,6 +22,7 @@ namespace api.DTOs
             TimeIn = timeEntry.TimeIn != null ? new TimeDTO(timeEntry.TimeIn) : null;
             TimeOut = timeEntry.TimeOut != null ? new TimeDTO(timeEntry.TimeOut) : null;
             Overtime = 0;   // for now, default to 0
+            Undertime = 0;
 
             if (timeEntry.TimeIn != null && TimeSpan.Compare(timeEntry.TimeIn.TimeHour, timeEntry.StartTime) > ONTIME)
             {
@@ -32,13 +33,20 @@ namespace api.DTOs
                 Late = 0;
             }
 
+            //  Handle early logout
             if (timeEntry.TimeOut != null && TimeSpan.Compare(timeEntry.EndTime, timeEntry.TimeOut.TimeHour) > ONTIME)
             {
-                Undertime = (int)timeEntry.EndTime.Subtract(timeEntry.TimeOut.TimeHour).TotalMinutes;
+                this.Undertime = Undertime + (int)timeEntry.EndTime.Subtract(timeEntry.TimeOut.TimeHour).TotalMinutes;
             }
-            else
+
+            // Handle work interruptions undertime
+            if (timeEntry.WorkInterruptions.Count > 0)
             {
-                Undertime = 0;
+                foreach (var interruptions in timeEntry.WorkInterruptions)
+                {
+                    var difference = interruptions.TimeIn != null && interruptions.TimeOut != null ? (interruptions.TimeIn - interruptions.TimeOut).Value.TotalMinutes : 0;
+                    this.Undertime = this.Undertime + (int)difference;
+                }
             }
 
             if (timeEntry.TimeIn == null && timeEntry.TimeOut == null)
