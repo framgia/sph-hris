@@ -17,7 +17,7 @@ import { ITimeEntry } from '~/utils/types/timeEntryTypes'
 
 type Props = {
   query: {
-    data: ITimeEntry[] | undefined
+    data: ITimeEntry[]
     isLoading: boolean
     error: unknown
   }
@@ -35,10 +35,9 @@ const DTRTable: FC<Props> = (props): JSX.Element => {
   } = props
 
   const [sorting, setSorting] = useState<SortingState>([])
-  const [data] = useState(() => [...(dtrManagementData as ITimeEntry[])])
 
   const table = useReactTable({
-    data,
+    data: dtrManagementData,
     columns,
     // Options
     state: {

@@ -1,21 +1,50 @@
+import moment from 'moment'
 import classNames from 'classnames'
 import { Menu } from '@headlessui/react'
 import React, { FC, ReactNode } from 'react'
 
 import Text from '~/components/atoms/Text'
+import { Filters } from '~/pages/dtr-management'
 import Button from '~/components/atoms/Buttons/Button'
 import MenuTransition from '~/components/templates/MenuTransition'
 
 type Props = {
   className?: string
+  filters: Filters
+  setFilters: React.Dispatch<React.SetStateAction<any>>
+  handleFilterUpdate: Function
   children: ReactNode
 }
 
 const TimeSheetFilterDropdown: FC<Props> = (props): JSX.Element => {
-  const { children, className = 'shrink-0 outline-none active:scale-95' } = props
+  const {
+    children,
+    className = 'shrink-0 outline-none active:scale-95',
+    filters,
+    setFilters,
+    handleFilterUpdate
+  } = props
+
+  const dateSelectionRef = React.createRef<HTMLInputElement>()
+
+  const statusOptions = ['All', 'On-Duty', 'Sick Leave', 'Vacation Leave', 'Absent']
 
   const filterStatusOptions = (statusList: string[]): JSX.Element[] => {
     return statusList.map((item) => <option key={item}>{item}</option>)
+  }
+
+  const handleDateChange = (): void => {
+    const selectedDate =
+      dateSelectionRef.current != null ? new Date(dateSelectionRef.current.value) : new Date()
+
+    setFilters({ ...filters, date: moment(selectedDate).format('YYYY-MM-DD') })
+  }
+
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
+    setFilters({
+      ...filters,
+      status: e.currentTarget.value !== 'All' ? e.currentTarget.value.toLowerCase() : ''
+    })
   }
 
   return (
@@ -34,24 +63,15 @@ const TimeSheetFilterDropdown: FC<Props> = (props): JSX.Element => {
               Timesheet Filters
             </Text>
             <div>
-              <select
-                className={classNames(
-                  'w-full rounded-md border border-slate-300 text-xs shadow-sm',
-                  'focus:border-primary focus:ring-1 focus:ring-primary'
-                )}
-              >
-                <option>1-15 Days Timesheet</option>
-                <option>16-31 Days Timesheet</option>
-              </select>
-            </div>
-            <div>
               <input
                 type="date"
                 className={classNames(
                   'w-full rounded-md border border-slate-300 text-xs shadow-sm',
                   'focus:border-primary focus:ring-1 focus:ring-primary'
                 )}
-                defaultValue={new Date().toISOString().substr(0, 10)}
+                defaultValue={filters.date}
+                ref={dateSelectionRef}
+                onChange={handleDateChange}
               />
             </div>
             <label htmlFor="filterStatus" className="flex flex-col space-y-1">
@@ -62,8 +82,9 @@ const TimeSheetFilterDropdown: FC<Props> = (props): JSX.Element => {
                 focus:border-primary focus:ring-1 focus:ring-primary
                 `}
                 id="filterStatus"
+                onChange={(e) => handleStatusChange(e)}
               >
-                {filterStatusOptions(['All', 'On-Duty', 'Sick Leave', 'Vacation Leave', 'Absent'])}
+                {filterStatusOptions(statusOptions)}
               </select>
             </label>
           </main>
@@ -75,6 +96,7 @@ const TimeSheetFilterDropdown: FC<Props> = (props): JSX.Element => {
                 'w-full border border-dark-primary bg-primary py-2 text-xs text-white',
                 'transition duration-150 ease-in-out hover:bg-dark-primary active:bg-primary'
               )}
+              onClick={(): React.MouseEvent<HTMLInputElement> => handleFilterUpdate()}
             >
               Update Results
             </Button>

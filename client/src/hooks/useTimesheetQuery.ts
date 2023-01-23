@@ -1,13 +1,19 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
+
 import { client } from '~/utils/shared/client'
 import {
   GET_ALL_EMPLOYEE_TIMESHEET,
   GET_EMPLOYEE_TIMESHEET,
   GET_SPECIFIC_TIME_ENTRY
 } from '~/graphql/queries/timesheetQueries'
+import { QueryVariablesType } from '~/pages/dtr-management'
 import { ITimeEntry, IEmployeeTimeEntry, ITimeEntryById } from '~/utils/types/timeEntryTypes'
 
-export const getAllEmployeeTimesheet = (): UseQueryResult<
+export const getAllEmployeeTimesheet = (
+  input: string = '',
+  argument: string,
+  variables: QueryVariablesType
+): UseQueryResult<
   {
     timeEntries: ITimeEntry[]
   },
@@ -15,7 +21,8 @@ export const getAllEmployeeTimesheet = (): UseQueryResult<
 > => {
   const result = useQuery({
     queryKey: ['GET_ALL_EMPLOYEE_TIMESHEET'],
-    queryFn: async () => await client.request(GET_ALL_EMPLOYEE_TIMESHEET),
+    queryFn: async () =>
+      await client.request(GET_ALL_EMPLOYEE_TIMESHEET(input, argument), variables),
     select: (data: { timeEntries: ITimeEntry[] }) => data
   })
   return result

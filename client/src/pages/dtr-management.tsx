@@ -1,7 +1,8 @@
+import moment from 'moment'
 import { NextPage } from 'next'
 import classNames from 'classnames'
-import React, { useState } from 'react'
 import { MoreHorizontal } from 'react-feather'
+import React, { useEffect, useState } from 'react'
 
 import FilterIcon from '~/utils/icons/FilterIcon'
 import Layout from '~/components/templates/Layout'
@@ -14,9 +15,56 @@ import { columns } from '~/components/molecules/DTRManagementTable/columns'
 import SummaryMenuDropdown from '~/components/molecules/SummaryMenuDropdown'
 import TimeSheetFilterDropdown from '~/components/molecules/TimeSheetFilterDropdown'
 
+export type Filters = {
+  date: string
+  status: string
+}
+
+export type QueryVariablesType = {
+  date: string
+  status: string | null
+}
+
 const DTRManagement: NextPage = (): JSX.Element => {
   const [globalFilter, setGlobalFilter] = useState<string>('')
-  const { data, error, isLoading } = getAllEmployeeTimesheet()
+  const [filters, setFilters] = useState({
+    date: moment().format('YYYY-MM-DD'),
+    status: ''
+  })
+
+  const queryInput = '$date: String, $status: String'
+  const queryArgument = 'date: $date, status: $status'
+  const queryVariables: QueryVariablesType = {
+    date: filters.date,
+    status: filters.status !== '' ? filters.status : null
+  }
+
+  const { data, error, isLoading, refetch } = getAllEmployeeTimesheet(
+    queryInput,
+    queryArgument,
+    queryVariables
+  )
+
+  const [fetchedData, setFetchedData] = useState({
+    data,
+    error,
+    isLoading
+  })
+
+  const handleFilterUpdate = (): void => {
+    setFetchedData({ ...fetchedData, isLoading: true })
+    void refetch().then((response) => {
+      setFetchedData({
+        data: response.data,
+        error: response.error,
+        isLoading: response.isLoading
+      })
+    })
+  }
+
+  useEffect(() => {
+    if (data !== undefined) setFetchedData({ data, error, isLoading })
+  }, [data])
 
   return (
     <Layout metaTitle="DTR Management">
@@ -48,6 +96,9 @@ const DTRManagement: NextPage = (): JSX.Element => {
                 'flex items-center space-x-2 rounded border border-slate-200 bg-transparent bg-white',
                 'px-3 py-1 shadow-sm outline-none hover:text-slate-600 active:scale-95'
               )}
+              filters={filters}
+              setFilters={setFilters}
+              handleFilterUpdate={handleFilterUpdate}
             >
               <FilterIcon className="h-4 w-4 fill-current" />
               <span>Filters</span>
@@ -62,12 +113,12 @@ const DTRManagement: NextPage = (): JSX.Element => {
             </SummaryMenuDropdown>
           </div>
         </header>
-        {!isLoading ? (
+        {!fetchedData.isLoading && fetchedData.data !== undefined ? (
           <DTRTable
             {...{
               query: {
-                data: data?.timeEntries,
-                isLoading,
+                data: fetchedData.data.timeEntries,
+                isLoading: fetchedData.isLoading,
                 error
               },
               table: {

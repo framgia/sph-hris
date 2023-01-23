@@ -1,35 +1,37 @@
 import { gql } from 'graphql-request'
 
-export const GET_ALL_EMPLOYEE_TIMESHEET = gql`
-  query {
-    timeEntries {
-      id
-      date
-      user {
+export const GET_ALL_EMPLOYEE_TIMESHEET = (input: string, argument: string): string => {
+  return gql`
+    query (${input}){
+      timeEntries (${argument}) {
         id
-        name
+        date
+        user {
+          id
+          name
+        }
+        timeIn {
+          id
+          timeHour
+          remarks
+        }
+        timeOut {
+          id
+          timeHour
+          remarks
+        }
+        startTime
+        endTime
+        workedHours
+        trackedHours
+        late
+        undertime
+        overtime
+        status
       }
-      timeIn {
-        id
-        timeHour
-        remarks
-      }
-      timeOut {
-        id
-        timeHour
-        remarks
-      }
-      startTime
-      endTime
-      workedHours
-      trackedHours
-      late
-      undertime
-      overtime
-      status
     }
-  }
-`
+  `
+}
 
 export const GET_EMPLOYEE_TIMESHEET = gql`
   query ($id: Int!) {
