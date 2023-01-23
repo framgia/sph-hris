@@ -16,6 +16,12 @@ const WorkInterruptionDrawer = dynamic(
     ssr: false
   }
 )
+const ViewDetailsDrawer = dynamic(
+  async () => await import('~/components/organisms/ViewDetailsDrawer'),
+  {
+    ssr: false
+  }
+)
 const TimeOutDrawer = dynamic(async () => await import('~/components/organisms/TimeOutDrawer'), {
   ssr: false
 })
@@ -32,6 +38,12 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
   const [isOpenTimeInDrawer, setIsOpenTimeInDrawer] = useLocalStorageState('timeInDrawerToggle', {
     defaultValue: false
   })
+  const [isOpenViewDetailsDrawer, setIsOpenViewDetailsDrawer] = useLocalStorageState(
+    'viewDetailsDrawerToggle',
+    {
+      defaultValue: false
+    }
+  )
   const [isOpenWorkInterruptionDrawer, setIsOpenWorkInterruptionDrawer] = useLocalStorageState(
     'workInterruptionDrawerToggle',
     {
@@ -49,6 +61,8 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
   const handleToggleDrawer = (): void => setIsOpenDrawer(!isOpenDrawer)
   const handleToggleSidebar = (): void => setIsOpenSidebar(!isOpenSidebar)
   const handleToggleTimeInDrawer = (): void => setIsOpenTimeInDrawer(!isOpenTimeInDrawer)
+  const handleToggleViewDetailsDrawer = (): void =>
+    setIsOpenViewDetailsDrawer(!isOpenViewDetailsDrawer)
   const handleToggleWorkInterruptionDrawer = (): void =>
     setIsOpenWorkInterruptionDrawer(!isOpenWorkInterruptionDrawer)
   const handleToggleTimeOutDrawer = (): void => setIsOpenTimeOutDrawer(!isOpenTimeOutDrawer)
@@ -118,6 +132,14 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
             isOpenTimeOutDrawer,
             actions: {
               handleToggleTimeOutDrawer
+            }
+          }}
+        />
+        <ViewDetailsDrawer
+          {...{
+            isOpenViewDetailsDrawer,
+            actions: {
+              handleToggleViewDetailsDrawer
             }
           }}
         />

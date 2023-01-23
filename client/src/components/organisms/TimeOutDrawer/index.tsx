@@ -8,6 +8,7 @@ import TextareaAutosize from 'react-textarea-autosize'
 import React, { FC, useEffect, useState } from 'react'
 
 import Text from '~/components/atoms/Text'
+import Alert from '~/components/atoms/Alert'
 import Avatar from '~/components/atoms/Avatar'
 import useUserQuery from '~/hooks/useUserQuery'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
@@ -111,17 +112,7 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
           </div>
         </div>
         {/* Error Message */}
-        {timeOutMutation.isError && (
-          <div
-            className={classNames(
-              'relative flex items-center justify-center rounded-md border border-rose-400',
-              ' bg-rose-50 py-2.5 px-4 shadow-md shadow-slate-200'
-            )}
-          >
-            <X className="absolute left-4 h-4 w-4 rounded-full bg-rose-500 p-0.5 text-white" />
-            <p className="text-xs font-medium text-rose-500">Something went wrong</p>
-          </div>
-        )}
+        {timeOutMutation.isError && <Alert type="error" />}
         {/* Remarks */}
         <div className="form-group space-y-2">
           <div>
