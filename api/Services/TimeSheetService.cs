@@ -19,6 +19,7 @@ namespace api.Services
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 return await context.Times
+                    .Include(entry => entry.Media)
                     .FirstOrDefaultAsync(c => c.Id == id);
             }
         }
