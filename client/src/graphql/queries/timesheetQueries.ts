@@ -64,6 +64,13 @@ export const GET_SPECIFIC_TIME_ENTRY = gql`
     timeById(id: $id) {
       timeHour
       remarks
+      createdAt
+      media {
+        collectionName
+        name
+        fileName
+        mimeType
+      }
     }
   }
 `

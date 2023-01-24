@@ -22,7 +22,7 @@ const DrawerTemplate: FC<Props> = (props): JSX.Element => {
 
   const handleTimeIdExists = (): void => {
     if (timeIdExists) {
-      void router.back()
+      void router.replace(router.pathname, undefined, { shallow: false })
     } else {
       handleToggle()
     }
