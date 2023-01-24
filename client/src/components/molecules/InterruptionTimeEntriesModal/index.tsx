@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { Clock } from 'react-feather'
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import {
   SortingState,
   useReactTable,
@@ -15,22 +15,40 @@ import { columns } from './columns'
 import InterruptionTimeEntriesTable from './Table'
 import Button from '~/components/atoms/Buttons/Button'
 import GlobalSearchFilter from './../GlobalSearchFilter'
+import useInterruptionType from '~/hooks/useInterruptionType'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
-import { interruptions } from '~/utils/constants/interruptionDummyTimeEntries'
 
 type Props = {
   isOpen: boolean
+  timeEntryId: number
+  user: string
   closeModal: () => void
 }
 
-const InterruptionTimeEntriesModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
+const InterruptionTimeEntriesModal: FC<Props> = ({
+  isOpen,
+  closeModal,
+  user,
+  timeEntryId
+}): JSX.Element => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState<string>('')
+  const { handleGetAllWorkInterruptionsQuery } = useInterruptionType()
+  const {
+    data: interruptions,
+    refetch,
+    isLoading,
+    isError
+  } = handleGetAllWorkInterruptionsQuery({ timeEntryId })
+
+  useEffect(() => {
+    void refetch()
+  }, [timeEntryId])
 
   const table = useReactTable({
-    data: interruptions,
+    data: interruptions?.interruptionsByTimeEntryId ?? [],
     columns,
     // Options
     state: {
@@ -57,7 +75,7 @@ const InterruptionTimeEntriesModal: FC<Props> = ({ isOpen, closeModal }): JSX.El
       {/* Custom Modal Header */}
       <ModalHeader
         {...{
-          title: 'Joshua Galit’s Interruption Time Entries',
+          title: `${user}'s Interruption Time Entries`,
           Icon: Clock,
           closeModal
         }}
@@ -71,7 +89,11 @@ const InterruptionTimeEntriesModal: FC<Props> = ({ isOpen, closeModal }): JSX.El
       {/* Actual Data Table for Interruption Time Entries */}
       <InterruptionTimeEntriesTable
         {...{
-          table
+          table,
+          query: {
+            isLoading,
+            isError
+          }
         }}
       />
       {/* Custom Modal Footer Style */}

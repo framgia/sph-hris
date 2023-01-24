@@ -21,9 +21,13 @@ type Props = {
 
 const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
   const [isOpenTimeEntry, setIsOpenTimeEntry] = useState<boolean>(false)
+  const [timeEntryId, setTimeEntryId] = useState<number>(-1)
+  const [user, setUser] = useState<string>('')
 
-  const handleIsOpenTimeEntryToggle = (id?: string | undefined): void => {
+  const handleIsOpenTimeEntryToggle = (id?: string | undefined, name?: string): void => {
     setIsOpenTimeEntry(!isOpenTimeEntry)
+    setTimeEntryId(parseInt(id as string))
+    setUser(name as string)
   }
 
   const EMPTY = 'N/A'
@@ -137,19 +141,16 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                               <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
                                 <Tippy placement="left" content="Time Entries" className="!text-xs">
                                   <Button
-                                    onClick={() => handleIsOpenTimeEntryToggle(row.id)}
+                                    onClick={() =>
+                                      handleIsOpenTimeEntryToggle(
+                                        row.original.id.toString(),
+                                        row.original.user.name
+                                      )
+                                    }
                                     rounded="none"
                                     className="py-0.5 px-1 text-slate-500"
                                   >
                                     <Clock className="h-4 w-4" />
-                                    {isOpenTimeEntry ? (
-                                      <InterruptionTimeEntriesModal
-                                        {...{
-                                          isOpen: isOpenTimeEntry,
-                                          closeModal: handleIsOpenTimeEntryToggle
-                                        }}
-                                      />
-                                    ) : null}
                                   </Button>
                                 </Tippy>
                                 <Tippy placement="left" content="Edit" className="!text-xs">
@@ -169,6 +170,17 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                     )}
                   </Disclosure>
                 ))}
+
+                {isOpenTimeEntry ? (
+                  <InterruptionTimeEntriesModal
+                    {...{
+                      isOpen: isOpenTimeEntry,
+                      timeEntryId,
+                      user,
+                      closeModal: handleIsOpenTimeEntryToggle
+                    }}
+                  />
+                ) : null}
               </>
             )}
           </>

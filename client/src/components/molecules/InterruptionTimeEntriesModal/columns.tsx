@@ -1,3 +1,4 @@
+import moment from 'moment'
 import Tippy from '@tippyjs/react'
 import toast from 'react-hot-toast'
 import React, { useRef, useState } from 'react'
@@ -14,15 +15,16 @@ import UpdateInterruptionTimeEntriesModal from './UpdateInterruptionTimeEntriesM
 const columnHelper = createColumnHelper<IInterruptionTimeEntry>()
 
 export const columns = [
-  columnHelper.accessor('date', {
+  columnHelper.accessor('createdAt', {
     header: () => <CellHeader label="Date" className="!font-medium" />,
-    footer: (info) => info.column.id
-  }),
-  columnHelper.accessor('timeIn', {
-    header: () => <CellHeader label="Time Out" className="!font-medium" />,
+    cell: (props) => moment(props.getValue()).format('MMMM DD, YYYY'),
     footer: (info) => info.column.id
   }),
   columnHelper.accessor('timeOut', {
+    header: () => <CellHeader label="Time Out" className="!font-medium" />,
+    footer: (info) => info.column.id
+  }),
+  columnHelper.accessor('timeIn', {
     header: () => <CellHeader label="Time In" className="!font-medium" />,
     footer: (info) => info.column.id
   }),

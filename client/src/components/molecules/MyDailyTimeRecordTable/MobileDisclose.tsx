@@ -1,16 +1,18 @@
 import moment from 'moment'
 import Tooltip from 'rc-tooltip'
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import classNames from 'classnames'
 import { Table } from '@tanstack/react-table'
 import { Disclosure } from '@headlessui/react'
 import { ChevronRight, Clock, Edit } from 'react-feather'
 
 import Chip from '~/components/atoms/Chip'
+import useUserQuery from '~/hooks/useUserQuery'
 import Button from '~/components/atoms/Buttons/Button'
 import { WorkStatus } from '~/utils/constants/work-status'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
+import InterruptionTimeEntriesModal from '../InterruptionTimeEntriesModal'
 
 type Props = {
   table: Table<IEmployeeTimeEntry>
@@ -19,6 +21,16 @@ type Props = {
 }
 
 const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
+  const [isOpenTimeEntry, setIsOpenTimeEntry] = useState<boolean>(false)
+  const [timeEntryId, setTimeEntryId] = useState<number>(-1)
+  const { handleUserQuery } = useUserQuery()
+  const { data: user } = handleUserQuery()
+
+  const handleIsOpenTimeEntryToggle = (id?: string | undefined): void => {
+    setIsOpenTimeEntry(!isOpenTimeEntry)
+    setTimeEntryId(parseInt(id as string))
+  }
+
   const EMPTY = 'N/A'
 
   return (
@@ -123,7 +135,9 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                   arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
                                 >
                                   <Button
-                                    onClick={() => alert(row.original.id)}
+                                    onClick={() =>
+                                      handleIsOpenTimeEntryToggle(row.original.id.toString())
+                                    }
                                     rounded="none"
                                     className="py-0.5 px-1 text-slate-500"
                                   >
@@ -151,6 +165,17 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                     )}
                   </Disclosure>
                 ))}
+
+                {isOpenTimeEntry ? (
+                  <InterruptionTimeEntriesModal
+                    {...{
+                      isOpen: isOpenTimeEntry,
+                      timeEntryId,
+                      user: user?.userById.name as string,
+                      closeModal: handleIsOpenTimeEntryToggle
+                    }}
+                  />
+                ) : null}
               </>
             )}
           </>
