@@ -64,10 +64,10 @@ const DesktopTable: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
                         key={row.id}
                         className={classNames(
                           'group hover:bg-white hover:shadow-md  hover:shadow-slate-200',
-                          row.original.status === WorkStatus.VACATION_LEAVE
+                          row.original.status === WorkStatus.VACATION_LEAVE.toLowerCase()
                             ? 'bg-amber-50 hover:bg-amber-50'
                             : '',
-                          row.original.status === WorkStatus.ABSENT
+                          row.original.status === WorkStatus.ABSENT.toLowerCase()
                             ? 'bg-fuchsia-50 hover:bg-fuchsia-50'
                             : ''
                         )}

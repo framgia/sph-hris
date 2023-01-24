@@ -1,10 +1,10 @@
-import React, { FC, useEffect, useState } from 'react'
+import moment from 'moment'
 import dynamic from 'next/dynamic'
 import classNames from 'classnames'
 import { Menu } from 'react-feather'
 import { useRouter } from 'next/router'
-import moment from 'moment'
 import { parse } from 'iso8601-duration'
+import React, { FC, useEffect, useState } from 'react'
 
 import Text from '~/components/atoms/Text'
 import Avatar from '~/components/atoms/Avatar'
@@ -31,6 +31,8 @@ type Props = {
 }
 
 const Header: FC<Props> = (props): JSX.Element => {
+  const router = useRouter()
+
   const {
     actions: {
       handleToggleSidebar,
@@ -88,8 +90,6 @@ const Header: FC<Props> = (props): JSX.Element => {
     return () => clearInterval(interval)
   }, [running])
 
-  const router = useRouter()
-
   return (
     <header
       className={classNames(
@@ -114,10 +114,15 @@ const Header: FC<Props> = (props): JSX.Element => {
         <div className="hidden md:block">
           <div className="flex items-center space-x-2">
             <h1 className="text-lg font-semibold text-slate-700">
-              {sidebarLinks?.my_nav.map((my) => my.href === router.asPath && my.name)}
-              {sidebarLinks?.management.map((my) => my.href === router.asPath && my.name)}
+              {router.pathname === '/' ? 'Home' : ''}
+              {sidebarLinks?.my_nav.map((my) =>
+                router.pathname === my.href && router.pathname !== '/' ? my.name : ''
+              )}
+              {sidebarLinks?.management.map((my) =>
+                my.href.includes(router.pathname) && router.pathname !== '/' ? my.name : ''
+              )}
             </h1>
-            {router.pathname === '/dtr-management' && <LegendTooltip />}
+            {router.pathname.includes('/dtr-management') && <LegendTooltip />}
           </div>
         </div>
       </section>

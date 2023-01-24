@@ -6,3 +6,7 @@ export type ConfirmInterruptionValues = {
   time_in: string
   remarks: string
 }
+
+export type TimeEntryFormValues = Required<
+  Pick<ConfirmInterruptionValues, 'time_out' | 'time_in' | 'remarks'>
+>

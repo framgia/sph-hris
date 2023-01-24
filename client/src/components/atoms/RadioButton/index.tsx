@@ -4,7 +4,7 @@ type Props = {
   label: string
 }
 
-const RadioButton: FC<Props> = ({ label = '', ...rest }): JSX.Element => {
+const RadioButton: FC<Props> = ({ label, ...rest }): JSX.Element => {
   return (
     <label htmlFor={label} className="flex items-center">
       <input
@@ -16,6 +16,10 @@ const RadioButton: FC<Props> = ({ label = '', ...rest }): JSX.Element => {
       <span className="ml-2 select-none text-xs capitalize text-slate-500">{label}</span>
     </label>
   )
+}
+
+RadioButton.defaultProps = {
+  label: ''
 }
 
 export default RadioButton

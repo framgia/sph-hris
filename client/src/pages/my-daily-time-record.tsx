@@ -38,7 +38,7 @@ const MyDailyTimeRecord: NextPage = (): JSX.Element => {
             placeholder="Search"
           />
         </header>
-        {!isLoading ? (
+        {!isLoading && data !== undefined ? (
           <MyDTRTable
             {...{
               query: { data: data?.timeEntriesByEmployeeId, error },

@@ -1,5 +1,6 @@
 import * as Yup from 'yup'
-import { WorkInterruptionType } from '../constants/work-status'
+
+import { WorkInterruptionType } from './../constants/work-status'
 
 export const ConfirmInterruptionSchema = Yup.object().shape({
   work_interruption: Yup.string().required().label('Work Interruption'),
@@ -11,7 +12,13 @@ export const ConfirmInterruptionSchema = Yup.object().shape({
         ? schema.required()
         : schema
     }),
-  time_out: Yup.string().required().label('Time Out'),
-  time_in: Yup.string().required().label('Time In'),
+  time_out: Yup.string().required().label('Time out'),
+  time_in: Yup.string().required().label('Time in'),
+  remarks: Yup.string().label('Remarks')
+})
+
+export const TimeEntrySchema = Yup.object().shape({
+  time_out: Yup.string().required().label('Time out'),
+  time_in: Yup.string().required().label('Time in'),
   remarks: Yup.string().label('Remarks')
 })

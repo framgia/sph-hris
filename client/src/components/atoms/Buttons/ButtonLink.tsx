@@ -17,13 +17,13 @@ const ButtonLink: FC<Props> = ({ href, router, name, isOpen, Icon }): JSX.Elemen
       href={href}
       className={classNames(
         'relative flex transition duration-75 ease-in-out hover:bg-slate-100 hover:text-slate-700',
-        router.asPath === href ? 'font-medium text-slate-800' : 'subpixel-antialiased'
+        router.pathname === href ? 'font-medium text-slate-800' : 'subpixel-antialiased'
       )}
     >
       <span
         className={classNames(
           'border-r-[4px]',
-          router.asPath === href ? 'rounded-r-lg border-slate-600' : 'border-transparent'
+          router.pathname === href ? 'rounded-r-lg border-slate-600' : 'border-transparent'
         )}
       />
       <div className="flex w-full items-center space-x-3 px-6 py-1.5">

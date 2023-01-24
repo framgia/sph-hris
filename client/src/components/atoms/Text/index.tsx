@@ -4,22 +4,25 @@ const Text = w.p(``, {
   variants: {
     color: {
       amber: 'text-amber-500',
-      slate: 'text-slate-800'
+      slate: 'text-slate-900'
     },
     size: {
       xs: 'text-xs',
       sm: 'text-sm',
       base: 'text-base',
       md: 'text-2xl',
+      lg: 'text-lg',
       xl: 'text-8xl'
     },
     weight: {
       normal: 'font-normal',
+      medium: 'medium',
       bold: 'font-bold',
       semibold: 'font-semibold'
     },
     theme: {
       h1: '',
+      lg: '',
       base: '',
       md: '',
       sm: ''
@@ -37,6 +40,13 @@ const Text = w.p(``, {
       defaultTo: {
         size: 'xl',
         weight: 'bold'
+      }
+    },
+    {
+      theme: 'lg',
+      defaultTo: {
+        size: 'lg',
+        weight: 'normal'
       }
     },
     {
