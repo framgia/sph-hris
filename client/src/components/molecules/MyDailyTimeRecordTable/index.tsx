@@ -17,7 +17,7 @@ import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 
 type Props = {
   query: {
-    data: IEmployeeTimeEntry[] | undefined
+    data: IEmployeeTimeEntry[]
     error: unknown
   }
   table: {
@@ -34,10 +34,9 @@ const MyDTRTable: FC<Props> = (props): JSX.Element => {
   } = props
 
   const [sorting, setSorting] = useState<SortingState>([])
-  const [data] = useState(() => [...(myDailyTimeData as IEmployeeTimeEntry[])])
 
   const table = useReactTable({
-    data,
+    data: myDailyTimeData,
     columns,
     // Options
     state: {

@@ -23,29 +23,65 @@ namespace api.DTOs
             TimeOut = timeEntry.TimeOut != null ? new TimeDTO(timeEntry.TimeOut) : null;
             Overtime = 0;   // for now, default to 0
             Undertime = 0;
+            Late = 0;
+
+            TimeSpan noonBreakStart = new TimeSpan(12, 0, 0);
+            TimeSpan noonBreakEnd = new TimeSpan(13, 0, 0);
 
             if (timeEntry.TimeIn != null && TimeSpan.Compare(timeEntry.TimeIn.TimeHour, timeEntry.StartTime) > ONTIME)
             {
-                Late = (int)timeEntry.TimeIn.TimeHour.Subtract(timeEntry.StartTime).TotalMinutes;
-            }
-            else
-            {
-                Late = 0;
+                this.Late = (int)timeEntry.TimeIn.TimeHour.Subtract(timeEntry.StartTime).TotalMinutes;
             }
 
             //  Handle early logout
             if (timeEntry.TimeOut != null && TimeSpan.Compare(timeEntry.EndTime, timeEntry.TimeOut.TimeHour) > ONTIME)
             {
-                this.Undertime = Undertime + (int)timeEntry.EndTime.Subtract(timeEntry.TimeOut.TimeHour).TotalMinutes;
+                this.Undertime = this.Undertime + (int)timeEntry.EndTime.Subtract(timeEntry.TimeOut.TimeHour).TotalMinutes;
+
+                // handle logout during noon break
+                if (TimeSpan.Compare(timeEntry.TimeOut.TimeHour, noonBreakStart) >= 0 && TimeSpan.Compare(timeEntry.TimeOut.TimeHour, noonBreakEnd) <= 0)
+                {
+                    this.Undertime = this.Undertime - (int)(noonBreakEnd - timeEntry.TimeOut.TimeHour).TotalMinutes;
+                }
+                // handle logout before noon break
+                else if (TimeSpan.Compare(noonBreakStart, timeEntry.TimeOut.TimeHour) >= 0)
+                {
+                    this.Undertime -= (int)(noonBreakEnd - noonBreakStart).TotalMinutes;
+                }
             }
 
             // Handle work interruptions undertime
-            if (timeEntry.WorkInterruptions.Count > 0)
+            if (timeEntry.WorkInterruptions?.Count > 0)
             {
                 foreach (var interruptions in timeEntry.WorkInterruptions)
                 {
-                    var difference = interruptions.TimeIn != null && interruptions.TimeOut != null ? (interruptions.TimeIn - interruptions.TimeOut).Value.TotalMinutes : 0;
-                    this.Undertime = this.Undertime + (int)difference;
+                    if (interruptions.TimeIn != null && interruptions.TimeOut != null)
+                    {
+                        var difference = (interruptions.TimeIn - interruptions.TimeOut).Value.TotalMinutes;
+
+                        // interruption during noon break
+                        if ((noonBreakEnd - interruptions.TimeIn)?.TotalMinutes >= 0 && (interruptions.TimeOut - noonBreakStart)?.TotalMinutes >= 0)
+                        {
+                            difference = 0;
+                        }
+                        // interruption before noon until noon break
+                        else if ((noonBreakStart - interruptions.TimeOut)?.TotalMinutes >= 0 && (interruptions.TimeIn - noonBreakStart)?.TotalMinutes > 0 && (noonBreakEnd - interruptions.TimeIn)?.TotalMinutes >= 0)
+                        {
+                            difference = difference - (interruptions.TimeIn - noonBreakStart).Value.TotalMinutes;
+                        }
+                        // interruption during noon break until after noon break
+                        else if ((noonBreakEnd - interruptions.TimeOut)?.TotalMinutes > 0 && (interruptions.TimeIn - noonBreakEnd)?.TotalMinutes >= 0 && (interruptions.TimeOut - noonBreakStart)?.TotalMinutes >= 0)
+                        {
+                            difference = difference - (noonBreakEnd - interruptions.TimeOut).Value.TotalMinutes;
+                        }
+                        // noon break in duration of interruption
+                        else if ((noonBreakStart - interruptions.TimeOut)?.TotalMinutes >= 0 && (noonBreakEnd - interruptions.TimeIn)?.TotalMinutes <= 0)
+                        {
+                            difference = difference - (noonBreakEnd - noonBreakStart).TotalMinutes;
+                        }
+
+                        this.Undertime = this.Undertime + (int)difference;
+                    }
                 }
             }
 
