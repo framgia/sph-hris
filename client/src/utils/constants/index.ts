@@ -1,7 +1,7 @@
 import { Clock, FileText, Home, Layers, Sunrise, Users } from 'react-feather'
 
 import MyOvertimeIcon from './../icons/MyOvertimeIcon'
-import { IDTRManagement, IMyDTR, ISidebarLink } from './../interfaces'
+import { IDTRManagement, IMyDTR, ISidebarLink, IDTRSummary } from './../interfaces'
 
 export const sidebarLinks = {
   my_nav: [
@@ -1396,5 +1396,43 @@ export const myDTRData: IMyDTR[] = [
     undertime: 0,
     overtime: 0,
     status: 'On-Duty'
+  }
+]
+export const dtrSummaryData: IDTRSummary[] = [
+  {
+    id: 1,
+    name: 'joshua galit',
+    leave: 0,
+    absences: 0,
+    late: 0,
+    undertime: 1,
+    overtime: 0
+  },
+  {
+    id: 2,
+    name: 'rojelio david',
+    leave: 0,
+    absences: 0,
+    late: 3,
+    undertime: 0,
+    overtime: 0
+  },
+  {
+    id: 3,
+    name: 'Basesos Bergson',
+    leave: 0,
+    absences: 3,
+    late: 0,
+    undertime: 0,
+    overtime: 0
+  },
+  {
+    id: 4,
+    name: 'John Doe',
+    leave: 1,
+    absences: 0,
+    late: 0,
+    undertime: 0,
+    overtime: 0
   }
 ]
