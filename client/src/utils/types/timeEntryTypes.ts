@@ -51,4 +51,13 @@ export interface ITimeEntry {
 export interface ITimeEntryById {
   timeHour: string
   remarks: string
+  createdAt: string
+  media: [
+    {
+      collectionName: string
+      name: string
+      fileName: string
+      mimeType: string
+    }
+  ]
 }

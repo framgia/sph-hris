@@ -1,10 +1,13 @@
+import moment from 'moment'
 import React, { FC } from 'react'
-import { Calendar, Clock, Download, X } from 'react-feather'
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
+import { parse } from 'iso8601-duration'
+import { Calendar, Clock, Download, X } from 'react-feather'
 
 import Text from '~/components/atoms/Text'
-import Alert from '~/components/atoms/Alert'
 import Avatar from '~/components/atoms/Avatar'
+import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
 import DrawerTemplate from '~/components/templates/DrawerTemplate'
 
 type Props = {
@@ -15,15 +18,25 @@ type Props = {
 }
 
 const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
+  const router = useRouter()
+  const timeIdExists = router.query.time_in ?? router.query.time_out
+  const res = getSpecificTimeEntry(Number(timeIdExists))
+  const timeIn = parse(res.data?.timeById?.timeHour ?? 'PT0H')
+  const date = res.data?.timeById?.createdAt
+
   const {
     isOpenViewDetailsDrawer,
     actions: { handleToggleViewDetailsDrawer }
   } = props
 
+  const handleToggleDrawer = (): void => {
+    void router.replace(router.pathname, undefined, { shallow: false })
+  }
+
   return (
     <DrawerTemplate
       {...{
-        isOpen: isOpenViewDetailsDrawer,
+        isOpen: timeIdExists !== undefined ? !isOpenViewDetailsDrawer : isOpenViewDetailsDrawer,
         actions: {
           handleToggle: handleToggleViewDetailsDrawer
         }
@@ -32,7 +45,7 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
       {/* Header */}
       <header className="flex items-center justify-between border-b border-slate-200 px-6 py-3">
         <h1 className="text-base font-medium text-slate-900">View Details</h1>
-        <button onClick={handleToggleViewDetailsDrawer} className="active:scale-95">
+        <button onClick={() => handleToggleDrawer()} className="active:scale-95">
           <X className="h-6 w-6 stroke-0.5 text-slate-400" />
         </button>
       </header>
@@ -56,7 +69,7 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
           </div>
         </div>
         {/* Error Message */}
-        <Alert type="error" />
+        {/* <Alert type="error" /> */}
         <div className="form-group space-y-2">
           {/* Time */}
           <div>
@@ -75,7 +88,10 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
                     <Clock className="h-4 w-4 text-slate-500" />
                   </div>
                   <div className="border-l-4 border-slate-300"></div>
-                  <p className="text-xs">INSERT DATA HERE</p>
+                  <p className="text-xs">
+                    {Number(timeIn.hours) > 12 ? Number(timeIn.hours) - 12 : Number(timeIn.hours)}:
+                    {timeIn.minutes} {Number(timeIn?.hours) >= 12 ? 'PM' : 'AM'}
+                  </p>
                 </div>
               </div>
             </label>
@@ -97,7 +113,7 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
                     <Calendar className="h-4 w-4 text-slate-500" />
                   </div>
                   <div className="border-l-4 border-slate-300"></div>
-                  <p className="text-xs">INSERT DATA HERE</p>
+                  <p className="text-xs">{moment(date).format('YYYY/MM/DD')}</p>
                 </div>
               </div>
             </label>
@@ -114,67 +130,62 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
                   'resize-none px-3 py-1.5 text-sm font-normal text-slate-700 transition'
                 )}
               >
-                Insert Data Here
+                <p>{res.data?.timeById?.remarks}</p>
               </div>
             </label>
           </div>
           {/* Downloaded Files */}
-          <div>
-            <label htmlFor="remarks" className="space-y-0.5">
-              <span className="text-xs text-slate-500">Proofs Provided</span>
-              <div
-                className={classNames(
-                  'm-0 block h-[200px] w-full rounded placeholder:text-slate-400',
-                  'border border-solid border-slate-300 bg-white bg-clip-padding',
-                  'default-scrollbar '
-                )}
-              >
-                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i: number) => (
-                  <div
-                    key={i}
-                    className="flex w-full justify-between rounded px-2 py-2 text-xs font-medium text-slate-700 transition duration-150 ease-in-out focus:outline-none focus:ring-0 hover:bg-slate-700 hover:bg-opacity-5"
-                  >
-                    <div className="flex">
-                      <div className="mr-1">
-                        <img src="https://files.slack.com/files-pri/T028JVBUY4F-F04J407U1H7/image.png"></img>
-                      </div>
-                      <div>IMG_20221209_211826.JPG</div>
+          {!(router.query.time_out !== undefined) && (
+            <div>
+              <label htmlFor="remarks" className="space-y-0.5">
+                <span className="text-xs text-slate-500">Proofs Provided</span>
+                <div
+                  className={classNames(
+                    'm-0 block h-[200px] w-full rounded placeholder:text-slate-400',
+                    'border border-solid border-slate-300 bg-white bg-clip-padding',
+                    'default-scrollbar '
+                  )}
+                >
+                  {res.data?.timeById?.media?.map((i, index: number) => (
+                    <div
+                      key={index}
+                      className="flex w-full justify-between rounded px-2 py-2 text-xs font-medium text-slate-700 transition duration-150 ease-in-out focus:outline-none focus:ring-0 hover:bg-slate-700 hover:bg-opacity-5"
+                    >
+                      <a
+                        className="group flex w-full justify-between"
+                        href={`http://localhost:5257/media/${i.collectionName}/${i.fileName}`}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        <div className="flex">
+                          <div className="mr-1">
+                            <img
+                              src={
+                                i.mimeType.includes('.document')
+                                  ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Microsoft_Word_2013-2019_logo.svg/2170px-Microsoft_Word_2013-2019_logo.svg.png'
+                                  : i.mimeType?.includes('pdf')
+                                  ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/833px-PDF_file_icon.svg.png'
+                                  : i.mimeType?.includes('image')
+                                  ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png'
+                                  : 'https://w7.pngwing.com/pngs/770/995/png-transparent-computer-icons-text-file-tiff-plain-text-tiff-text-logo-sign.png'
+                              }
+                              width={'17px'}
+                            ></img>
+                          </div>
+                          <div>{i.fileName}</div>
+                        </div>
+                        <button className="rounded bg-white p-0.5 opacity-0 focus:outline-slate-400 group-hover:opacity-100">
+                          <Download className="h-4 w-4 text-slate-500" />
+                        </button>
+                      </a>
                     </div>
-                    <button className="rounded bg-white p-0.5 focus:outline-slate-400">
-                      <Download className="h-4 w-4 text-slate-500" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </label>
-          </div>
+                  ))}
+                </div>
+              </label>
+            </div>
+          )}
         </div>
       </div>
-      {/* Footer Options */}
-      <section className="mt-auto border-t border-slate-200">
-        <div className="flex justify-end py-2 px-6">
-          <button
-            type="button"
-            onClick={handleToggleViewDetailsDrawer}
-            className={classNames(
-              'flex items-center justify-center border-slate-200 text-xs active:scale-95',
-              'w-24 border-dark-primary py-2 text-dark-primary outline-none'
-            )}
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={handleToggleViewDetailsDrawer}
-            className={classNames(
-              'flex items-center justify-center rounded-md border active:scale-95',
-              'w-24 border-dark-primary bg-primary text-xs text-white outline-none hover:bg-dark-primary'
-            )}
-          >
-            Save
-          </button>
-        </div>
-      </section>
     </DrawerTemplate>
   )
 }
