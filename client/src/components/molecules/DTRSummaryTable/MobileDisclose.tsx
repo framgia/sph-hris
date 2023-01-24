@@ -11,9 +11,10 @@ import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 type Props = {
   table: Table<IDTRSummary>
   isLoading: boolean
+  error: unknown
 }
 
-const MobileDisclose: FC<Props> = ({ table, isLoading }): JSX.Element => {
+const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
   return (
     <>
       {isLoading ? (
@@ -27,8 +28,9 @@ const MobileDisclose: FC<Props> = ({ table, isLoading }): JSX.Element => {
           {table.getPageCount() === 0 ? (
             <div className="h-[50vh]">
               <DiscloseMessage message="No Available Data" />
-              <DiscloseMessage message="Something went wrong" type="error" />
             </div>
+          ) : error !== null ? (
+            <DiscloseMessage message="Something went wrong" />
           ) : (
             <>
               {table.getRowModel().rows.map((row) => (

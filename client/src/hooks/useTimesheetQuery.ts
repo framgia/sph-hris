@@ -4,10 +4,16 @@ import { client } from '~/utils/shared/client'
 import {
   GET_ALL_EMPLOYEE_TIMESHEET,
   GET_EMPLOYEE_TIMESHEET,
-  GET_SPECIFIC_TIME_ENTRY
+  GET_SPECIFIC_TIME_ENTRY,
+  GET_TIMESHEET_SUMMARY
 } from '~/graphql/queries/timesheetQueries'
 import { QueryVariablesType } from '~/pages/dtr-management'
-import { ITimeEntry, IEmployeeTimeEntry, ITimeEntryById } from '~/utils/types/timeEntryTypes'
+import {
+  ITimeEntry,
+  IEmployeeTimeEntry,
+  ITimeEntryById,
+  ITimesheetSummary
+} from '~/utils/types/timeEntryTypes'
 
 export const getAllEmployeeTimesheet = (
   input: string = '',
@@ -58,6 +64,24 @@ export const getSpecificTimeEntry = (
     queryFn: async () => await client.request(GET_SPECIFIC_TIME_ENTRY, { id }),
     select: (data: { timeById: ITimeEntryById }) => data,
     enabled: !isNaN(id)
+  })
+  return result
+}
+
+export const getTimesheetSummary = (
+  input: string = '',
+  argument: string,
+  variables: QueryVariablesType
+): UseQueryResult<
+  {
+    timesheetSummary: ITimesheetSummary[]
+  },
+  unknown
+> => {
+  const result = useQuery({
+    queryKey: ['GET_TIMESHEET_SUMMARY'],
+    queryFn: async () => await client.request(GET_TIMESHEET_SUMMARY(input, argument), variables),
+    select: (data: { timesheetSummary: ITimesheetSummary[] }) => data
   })
   return result
 }

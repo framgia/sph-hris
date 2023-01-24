@@ -3,9 +3,9 @@ import { createColumnHelper } from '@tanstack/react-table'
 
 import SortIcon from '~/utils/icons/SortIcon'
 import Avatar from '~/components/atoms/Avatar'
-import { IDTRSummary } from '~/utils/interfaces'
+import { ITimesheetSummary } from '~/utils/types/timeEntryTypes'
 
-const columnHelper = createColumnHelper<IDTRSummary>()
+const columnHelper = createColumnHelper<ITimesheetSummary>()
 
 const CellHeader = ({ label }: { label: string }): JSX.Element => {
   return (
@@ -17,7 +17,7 @@ const CellHeader = ({ label }: { label: string }): JSX.Element => {
 }
 
 export const columns = [
-  columnHelper.accessor('name', {
+  columnHelper.accessor('user.name', {
     header: () => <CellHeader label="Name" />,
     footer: (info) => info.column.id,
     cell: (props) => (

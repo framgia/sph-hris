@@ -61,3 +61,15 @@ export interface ITimeEntryById {
     }
   ]
 }
+
+export interface ITimesheetSummary {
+  user: {
+    id: number
+    name: string
+  }
+  leave: number
+  absences: number
+  late: number
+  undertime: number
+  overtime: number
+}
