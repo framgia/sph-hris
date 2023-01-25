@@ -52,7 +52,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                 rounded="full"
                               />
                               <div className="flex flex-col items-start">
-                                <h1 className="font-semibold">{row.original.name}</h1>
+                                <h1 className="font-semibold">{row.original.user.name}</h1>
                                 <small className="text-slate-500">Web Developer</small>
                               </div>
                             </div>

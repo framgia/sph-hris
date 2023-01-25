@@ -24,7 +24,9 @@ export interface IDTRManagement {
 
 export interface IDTRSummary {
   id: number
-  name: string
+  user: {
+    name: string
+  }
   leave: number
   absences: number
   late: number

@@ -1401,7 +1401,9 @@ export const myDTRData: IMyDTR[] = [
 export const dtrSummaryData: IDTRSummary[] = [
   {
     id: 1,
-    name: 'joshua galit',
+    user: {
+      name: 'joshua galit'
+    },
     leave: 0,
     absences: 0,
     late: 0,
@@ -1410,7 +1412,9 @@ export const dtrSummaryData: IDTRSummary[] = [
   },
   {
     id: 2,
-    name: 'rojelio david',
+    user: {
+      name: 'rojelio david'
+    },
     leave: 0,
     absences: 0,
     late: 3,
@@ -1419,7 +1423,9 @@ export const dtrSummaryData: IDTRSummary[] = [
   },
   {
     id: 3,
-    name: 'Basesos Bergson',
+    user: {
+      name: 'Basesos Bergson'
+    },
     leave: 0,
     absences: 3,
     late: 0,
@@ -1428,7 +1434,9 @@ export const dtrSummaryData: IDTRSummary[] = [
   },
   {
     id: 4,
-    name: 'John Doe',
+    user: {
+      name: 'John Doe'
+    },
     leave: 1,
     absences: 0,
     late: 0,
