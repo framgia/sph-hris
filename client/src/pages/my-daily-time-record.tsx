@@ -41,7 +41,7 @@ const MyDailyTimeRecord: NextPage = (): JSX.Element => {
         {!isLoading && data !== undefined ? (
           <MyDTRTable
             {...{
-              query: { data: data?.timeEntriesByEmployeeId, error },
+              query: { data: data.timeEntriesByEmployeeId, error },
               table: { columns, globalFilter, setGlobalFilter }
             }}
           />
