@@ -33,6 +33,21 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
     void router.replace(router.pathname, undefined, { shallow: false })
   }
 
+  const handleDownloadFile = (collectionName: string, fileName: string): void => {
+    void fetch(`${process.env.NEXT_PUBLIC_MEDIA_URL as string}${collectionName}/${fileName}`)
+      .then(async (resp) => await resp.blob())
+      .then((blobobject) => {
+        const blob = window.URL.createObjectURL(blobobject)
+        const anchor = document.createElement('a')
+        anchor.style.display = 'none'
+        anchor.href = blob
+        anchor.download = fileName
+        document.body.appendChild(anchor)
+        anchor.click()
+        window.URL.revokeObjectURL(blob)
+      })
+  }
+
   return (
     <DrawerTemplate
       {...{
@@ -149,35 +164,40 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
                   {res.data?.timeById?.media?.map((i, index: number) => (
                     <div
                       key={index}
-                      className="flex w-full justify-between rounded px-2 py-2 text-xs font-medium text-slate-700 transition duration-150 ease-in-out focus:outline-none focus:ring-0 hover:bg-slate-700 hover:bg-opacity-5"
+                      className="group flex w-full justify-between rounded px-2 py-2 text-xs font-medium text-slate-700 transition duration-150 ease-in-out focus:outline-none focus:ring-0 hover:bg-slate-700 hover:bg-opacity-5"
                     >
+                      <div className="mr-1">
+                        <img
+                          src={
+                            i.mimeType.includes('.document')
+                              ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Microsoft_Word_2013-2019_logo.svg/2170px-Microsoft_Word_2013-2019_logo.svg.png'
+                              : i.mimeType?.includes('pdf')
+                              ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/833px-PDF_file_icon.svg.png'
+                              : i.mimeType?.includes('image')
+                              ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png'
+                              : 'https://w7.pngwing.com/pngs/770/995/png-transparent-computer-icons-text-file-tiff-plain-text-tiff-text-logo-sign.png'
+                          }
+                          width={'17px'}
+                        ></img>
+                      </div>
                       <a
-                        className="group flex w-full justify-between"
-                        href={`http://localhost:5257/media/${i.collectionName}/${i.fileName}`}
+                        className="flex w-full truncate"
+                        href={`${process.env.NEXT_PUBLIC_MEDIA_URL as string}${i.collectionName}/${
+                          i.fileName
+                        }`}
                         rel="noreferrer"
                         target="_blank"
                       >
                         <div className="flex">
-                          <div className="mr-1">
-                            <img
-                              src={
-                                i.mimeType.includes('.document')
-                                  ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Microsoft_Word_2013-2019_logo.svg/2170px-Microsoft_Word_2013-2019_logo.svg.png'
-                                  : i.mimeType?.includes('pdf')
-                                  ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/833px-PDF_file_icon.svg.png'
-                                  : i.mimeType?.includes('image')
-                                  ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png'
-                                  : 'https://w7.pngwing.com/pngs/770/995/png-transparent-computer-icons-text-file-tiff-plain-text-tiff-text-logo-sign.png'
-                              }
-                              width={'17px'}
-                            ></img>
-                          </div>
                           <div>{i.fileName}</div>
                         </div>
-                        <button className="rounded bg-white p-0.5 opacity-0 focus:outline-slate-400 group-hover:opacity-100">
-                          <Download className="h-4 w-4 text-slate-500" />
-                        </button>
                       </a>
+                      <button
+                        className="rounded bg-white p-0.5 opacity-0 focus:outline-slate-400 group-hover:opacity-100"
+                        onClick={() => handleDownloadFile(i.collectionName, i.fileName)}
+                      >
+                        <Download className="h-4 w-4 text-slate-500" />
+                      </button>
                     </div>
                   ))}
                 </div>
