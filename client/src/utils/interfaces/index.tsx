@@ -53,5 +53,8 @@ export interface IInterruptionTimeEntry {
   createdAt: string
   timeOut: string
   timeIn: string
+  workInterruptionTypeId: number
+  timeEntryId: number
+  otherReason: string
   remarks?: string
 }

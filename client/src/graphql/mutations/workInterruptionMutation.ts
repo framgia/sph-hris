@@ -6,3 +6,13 @@ export const CREATE_INTERRUPTION_MUTATION = gql`
     }
   }
 `
+export const UPDATE_INTERRUPTION_MUTATION = gql`
+  mutation ($interruption: UpdateInterruptionRequestInput!) {
+    updateWorkInterruption(interruption: $interruption)
+  }
+`
+export const DELETE_INTERRUPTION_MUTATION = gql`
+  mutation ($id: Int!) {
+    deleteWorkInterruption(id: $id)
+  }
+`

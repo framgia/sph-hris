@@ -1,15 +1,18 @@
 import moment from 'moment'
 import Tippy from '@tippyjs/react'
-import toast from 'react-hot-toast'
+import { useRouter } from 'next/router'
 import React, { useRef, useState } from 'react'
 import { Edit, Eye, Trash } from 'react-feather'
 import { confirmAlert } from 'react-confirm-alert'
 import { createColumnHelper } from '@tanstack/react-table'
 
+import { Roles } from '~/utils/constants/roles'
+import useUserQuery from '~/hooks/useUserQuery'
 import ShowRemarksModal from './ShowRemarksModal'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
 import { IInterruptionTimeEntry } from '~/utils/interfaces'
+import useInterruptionType from '~/hooks/useInterruptionType'
 import UpdateInterruptionTimeEntriesModal from './UpdateInterruptionTimeEntriesModal'
 
 const columnHelper = createColumnHelper<IInterruptionTimeEntry>()
@@ -32,11 +35,15 @@ export const columns = [
     id: 'action',
     header: () => <span className="font-medium">Actions</span>,
     cell: (props) => {
+      const router = useRouter()
       const [isOpenRemark, setIsOpenRemark] = useState<boolean>(false)
       const [isUpdateRemark, setIsUpdateRemark] = useState<boolean>(false)
       const [remarks, setRemarks] = useState<string | undefined>('')
-      const [timeEntryRow, setTimeEntryRow] = useState<IInterruptionTimeEntry>()
       const deleteButtonRef = useRef<HTMLButtonElement | null>(null)
+      const { handleDeleteInterruptionMutation } = useInterruptionType()
+      const { handleUserQuery } = useUserQuery()
+      const { data: user } = handleUserQuery()
+      const deleteInterruption = handleDeleteInterruptionMutation()
 
       const handleOpenRemark = (remarked?: string | undefined): void => {
         void setIsOpenRemark(!isOpenRemark)
@@ -45,13 +52,12 @@ export const columns = [
 
       const handleToggleUpdateRemark = (row?: IInterruptionTimeEntry | undefined): void => {
         setIsUpdateRemark(!isUpdateRemark)
-        setTimeEntryRow(row)
       }
 
       // Actual Deletion
       const handleYesDeleteRemark = (remarkId: string | number, onClose: () => void): void => {
         if (deleteButtonRef.current !== undefined) {
-          toast.success(`Deleted Successfully ${remarkId}`)
+          deleteInterruption.mutate({ id: remarkId as number })
           onClose()
         }
       }
@@ -84,7 +90,13 @@ export const columns = [
           }
         })
       }
-
+      const checkStatus =
+        user?.userById.role.name !== Roles.HR_ADMIN && !router.pathname.includes('dtr-management')
+          ? moment(new Date(props.row.original.createdAt)).format('YYYY-MM-DD') !==
+              moment(new Date()).format('YYYY-MM-DD') &&
+            moment(new Date(props.row.original.createdAt)).format('YYYY-MM-DD') !==
+              moment(new Date()).add(-1, 'day').format('YYYY-MM-DD')
+          : !(user?.userById.role.name === Roles.HR_ADMIN)
       return (
         <div className="inline-flex items-center space-x-1 rounded">
           <Tippy content="View" placement="left" className="!text-xs">
@@ -109,7 +121,8 @@ export const columns = [
           <Tippy content="Edit" placement="left" className="!text-xs">
             <Button
               rounded="none"
-              className="py-0.5 px-1 text-slate-500"
+              className="py-0.5 px-1 text-slate-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
+              disabled={checkStatus}
               onClick={() => handleToggleUpdateRemark(props.row.original)}
             >
               <Edit className="h-4 w-4" />
@@ -118,7 +131,7 @@ export const columns = [
                   {...{
                     isOpen: isUpdateRemark,
                     closeModal: handleToggleUpdateRemark,
-                    remarks: timeEntryRow
+                    remarks: props.row.original
                   }}
                 />
               ) : null}
@@ -127,8 +140,9 @@ export const columns = [
           <Tippy content="Delete" placement="right" className="!text-xs">
             <Button
               onClick={() => handleConfirmDeleteRemark(props.row.original.id)}
+              disabled={checkStatus}
               rounded="none"
-              className="py-0.5 px-1 text-slate-500"
+              className="py-0.5 px-1 text-slate-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
             >
               <Trash className="h-4 w-4" />
             </Button>

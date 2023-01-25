@@ -69,6 +69,16 @@ namespace api.Seeders
                 Name = WorkInterruptionEnum.OTHERS
             },
         };
+        public static List<Role> roles = new List<Role>(){
+            new Role {
+                Id = 1,
+                Name = RoleEnum.MANAGER
+            },
+            new Role {
+                Id = 2,
+                Name = RoleEnum.HR_ADMIN
+            }
+        };
         public static User[] users()
         {
             User[] users = {
@@ -77,6 +87,7 @@ namespace api.Seeders
                     Id = 1,
                     Name = "John Doe",
                     Email = "johndoe@sun-asterisk.com",
+                    RoleId = 2,
                     EmployeeScheduleId = employeeSchedule.Id,
                     IsOnline = false
                 },
@@ -84,6 +95,7 @@ namespace api.Seeders
                 {
                     Id = 2,
                     Name = "Rean Schwarzer",
+                    RoleId = 1,
                     Email = "reanschwarzer@sun-asterisk.com",
                     EmployeeScheduleId = employeeSchedule.Id,
                     IsOnline = false

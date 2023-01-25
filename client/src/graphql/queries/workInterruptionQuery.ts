@@ -19,6 +19,8 @@ export const GET_ALL_WORK_INTERRUPTIONS_QUERY = gql`
         id
         name
       }
+      workInterruptionTypeId
+      timeEntryId
       createdAt
     }
   }
