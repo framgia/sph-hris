@@ -7,6 +7,7 @@ import { Clock, Edit } from 'react-feather'
 import { createColumnHelper } from '@tanstack/react-table'
 
 import Chip from '~/components/atoms/Chip'
+import useUserQuery from '~/hooks/useUserQuery'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
@@ -128,6 +129,8 @@ export const columns = [
     header: () => <span className="font-normal text-slate-500">Actions</span>,
     cell: (props) => {
       const [isOpenTimeEntry, setIsOpenTimeEntry] = useState<boolean>(false)
+      const { handleUserQuery } = useUserQuery()
+      const { data: user } = handleUserQuery()
 
       const handleIsOpenTimeEntryToggle = (id?: string | undefined): void => {
         setIsOpenTimeEntry(!isOpenTimeEntry)
@@ -146,6 +149,8 @@ export const columns = [
                 <InterruptionTimeEntriesModal
                   {...{
                     isOpen: isOpenTimeEntry,
+                    timeEntryId: props.row.original.id,
+                    user: user?.userById.name as string,
                     closeModal: handleIsOpenTimeEntryToggle
                   }}
                 />

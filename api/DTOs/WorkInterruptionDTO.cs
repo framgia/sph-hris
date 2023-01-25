@@ -16,6 +16,8 @@ namespace api.DTOs
             TimeOut = interruption.TimeOut.HasValue ? interruption.TimeOut.Value.ToString(@"hh\:mm\:ss") : null;
             TimeIn = interruption.TimeIn.HasValue ? interruption.TimeIn.Value.ToString(@"hh\:mm\:ss") : null;
             WorkInterruptionType = interruption.WorkInterruptionType;
+            CreatedAt = interruption.CreatedAt;
+            UpdatedAt = interruption.UpdatedAt;
         }
     }
 }

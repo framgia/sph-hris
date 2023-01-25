@@ -158,6 +158,8 @@ export const columns = [
                 <InterruptionTimeEntriesModal
                   {...{
                     isOpen: isOpenTimeEntry,
+                    user: props.row.original.user.name,
+                    timeEntryId: props.row.original.id,
                     closeModal: handleIsOpenTimeEntryToggle
                   }}
                 />

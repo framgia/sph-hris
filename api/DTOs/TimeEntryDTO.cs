@@ -40,7 +40,7 @@ namespace api.DTOs
             }
 
             // Handle work interruptions undertime
-            if (timeEntry.WorkInterruptions.Count > 0)
+            if (timeEntry.WorkInterruptions?.Count > 0)
             {
                 foreach (var interruptions in timeEntry.WorkInterruptions)
                 {

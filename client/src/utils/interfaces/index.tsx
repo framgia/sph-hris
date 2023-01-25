@@ -48,7 +48,7 @@ export interface IMyDTR {
 
 export interface IInterruptionTimeEntry {
   id: number | string
-  date: string
+  createdAt: string
   timeOut: string
   timeIn: string
   remarks?: string
