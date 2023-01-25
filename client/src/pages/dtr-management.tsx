@@ -5,27 +5,30 @@ import { MoreHorizontal } from 'react-feather'
 import React, { useEffect, useState } from 'react'
 
 import FilterIcon from '~/utils/icons/FilterIcon'
-import { dtrSummaryData } from '~/utils/constants'
 import Layout from '~/components/templates/Layout'
 import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
 import LegendTooltip from '~/components/molecules/LegendTooltip'
 import DTRTable from '~/components/molecules/DTRManagementTable'
-import { getAllEmployeeTimesheet } from '~/hooks/useTimesheetQuery'
 import DTRSummaryTable from '~/components/molecules/DTRSummaryTable'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
-import SummaryMenuDropdown from '~/components/molecules/SummaryMenuDropdown'
 import { columns } from '~/components/molecules/DTRManagementTable/columns'
-import { columns as dtrSummaryColumns } from '~/components/molecules/DTRSummaryTable/columns'
+import SummaryMenuDropdown from '~/components/molecules/SummaryMenuDropdown'
 import TimeSheetFilterDropdown from '~/components/molecules/TimeSheetFilterDropdown'
+import { getAllEmployeeTimesheet, getTimesheetSummary } from '~/hooks/useTimesheetQuery'
+import { columns as dtrSummaryColumns } from '~/components/molecules/DTRSummaryTable/columns'
 
 export type Filters = {
   date: string
   status: string
+  startDate: string
+  endDate: string
 }
 
 export type QueryVariablesType = {
   date: string
   status: string | null
+  startDate: string | null
+  endDate: string | null
 }
 
 const DTRManagement: NextPage = (): JSX.Element => {
@@ -34,42 +37,86 @@ const DTRManagement: NextPage = (): JSX.Element => {
   const [globalFilter, setGlobalFilter] = useState<string>('')
   const [filters, setFilters] = useState({
     date: moment().format('YYYY-MM-DD'),
-    status: ''
+    status: '',
+    startDate:
+      new Date().getDate() > 15 ? moment().format('YYYY-MM-16') : moment().format('YYYY-MM-01'),
+    endDate:
+      new Date().getDate() > 15
+        ? moment().endOf('month').format('YYYY-MM-DD')
+        : moment().format('YYYY-MM-15')
   })
 
-  const queryInput = '$date: String, $status: String'
-  const queryArgument = 'date: $date, status: $status'
   const queryVariables: QueryVariablesType = {
     date: filters.date,
-    status: filters.status !== '' ? filters.status : null
+    status: filters.status !== '' ? filters.status : null,
+    startDate: filters.startDate,
+    endDate: filters.endDate
   }
 
-  const { data, error, isLoading, refetch } = getAllEmployeeTimesheet(
-    queryInput,
-    queryArgument,
+  const allEmployee = getAllEmployeeTimesheet(
+    '$date: String, $status: String',
+    'date: $date, status: $status',
     queryVariables
   )
 
-  const [fetchedData, setFetchedData] = useState({
-    data,
-    error,
-    isLoading
+  const summary = getTimesheetSummary(
+    '$startDate: String, $endDate:String',
+    'startDate: $startDate, endDate: $endDate',
+    queryVariables
+  )
+
+  const [fetchedAllEmployeeData, setFetchedAllEmployeeData] = useState({
+    data: allEmployee.data,
+    error: allEmployee.error,
+    isLoading: allEmployee.isLoading
+  })
+
+  const [fetchedSummaryData, setFetchedSummaryData] = useState({
+    data: summary.data,
+    error: summary.error,
+    isLoading: summary.isLoading
   })
 
   const handleFilterUpdate = (): void => {
-    setFetchedData({ ...fetchedData, isLoading: true })
-    void refetch().then((response) => {
-      setFetchedData({
-        data: response.data,
-        error: response.error,
-        isLoading: response.isLoading
+    if (isOpenSummaryTable) {
+      setFetchedSummaryData({ ...fetchedSummaryData, isLoading: true })
+      void summary.refetch().then((response) => {
+        setFetchedSummaryData({
+          data: response.data,
+          error: response.error,
+          isLoading: response.isLoading
+        })
       })
-    })
+    } else {
+      setFetchedAllEmployeeData({ ...fetchedAllEmployeeData, isLoading: true })
+      void allEmployee.refetch().then((response) => {
+        setFetchedAllEmployeeData({
+          data: response.data,
+          error: response.error,
+          isLoading: response.isLoading
+        })
+      })
+    }
   }
 
   useEffect(() => {
-    if (data !== undefined) setFetchedData({ data, error, isLoading })
-  }, [data])
+    if (allEmployee.data !== undefined)
+      setFetchedAllEmployeeData({
+        data: allEmployee.data,
+        error: allEmployee.error,
+        isLoading: allEmployee.isLoading
+      })
+  }, [allEmployee.data])
+
+  useEffect(() => {
+    if (summary.data !== undefined) {
+      setFetchedSummaryData({
+        data: summary.data,
+        error: summary.error,
+        isLoading: summary.isLoading
+      })
+    }
+  }, [summary.data])
 
   return (
     <Layout metaTitle="DTR Management">
@@ -104,6 +151,7 @@ const DTRManagement: NextPage = (): JSX.Element => {
               filters={filters}
               setFilters={setFilters}
               handleFilterUpdate={handleFilterUpdate}
+              isOpenSummaryTable={isOpenSummaryTable}
             >
               <FilterIcon className="h-4 w-4 fill-current" />
               <span>Filters</span>
@@ -124,15 +172,15 @@ const DTRManagement: NextPage = (): JSX.Element => {
             </SummaryMenuDropdown>
           </div>
         </header>
-        {!fetchedData.isLoading && fetchedData.data !== undefined ? (
-          <div>
+        {!fetchedAllEmployeeData.isLoading && fetchedAllEmployeeData.data !== undefined ? (
+          <>
             {!isOpenSummaryTable ? (
               <DTRTable
                 {...{
                   query: {
-                    data: fetchedData.data.timeEntries,
-                    isLoading: fetchedData.isLoading,
-                    error
+                    data: fetchedAllEmployeeData.data.timeEntries,
+                    isLoading: fetchedAllEmployeeData.isLoading,
+                    error: fetchedAllEmployeeData.error
                   },
                   table: {
                     columns,
@@ -142,22 +190,24 @@ const DTRManagement: NextPage = (): JSX.Element => {
                 }}
               />
             ) : (
-              <DTRSummaryTable
-                {...{
-                  query: {
-                    data: dtrSummaryData,
-                    isLoading: fetchedData.isLoading,
-                    error
-                  },
-                  table: {
-                    columns: dtrSummaryColumns,
-                    globalFilter,
-                    setGlobalFilter
-                  }
-                }}
-              />
+              fetchedSummaryData.data !== undefined && (
+                <DTRSummaryTable
+                  {...{
+                    query: {
+                      data: fetchedSummaryData.data.timesheetSummary,
+                      isLoading: fetchedAllEmployeeData.isLoading,
+                      error: fetchedAllEmployeeData.error
+                    },
+                    table: {
+                      columns: dtrSummaryColumns,
+                      globalFilter,
+                      setGlobalFilter
+                    }
+                  }}
+                />
+              )
             )}
-          </div>
+          </>
         ) : (
           <div className="flex min-h-[50vh] items-center justify-center">
             <BarsLoadingIcon className="h-7 w-7 fill-current text-amber-500" />

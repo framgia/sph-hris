@@ -74,3 +74,21 @@ export const GET_SPECIFIC_TIME_ENTRY = gql`
     }
   }
 `
+
+export const GET_TIMESHEET_SUMMARY = (input: string, argument: string): string => {
+  return gql`
+    query (${input}){
+      timesheetSummary (${argument}) {
+        user{
+          id
+          name
+        }
+        leave
+        absences
+        late
+        undertime
+        overtime
+      }
+    }
+  `
+}

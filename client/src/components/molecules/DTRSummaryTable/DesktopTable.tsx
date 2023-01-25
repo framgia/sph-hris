@@ -8,9 +8,10 @@ import { IDTRSummary } from '~/utils/interfaces'
 type Props = {
   table: Table<IDTRSummary>
   isLoading: boolean
+  error: unknown
 }
 
-const DesktopTable: FC<Props> = ({ table, isLoading }): JSX.Element => {
+const DesktopTable: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
   return (
     <table
       {...{
@@ -53,8 +54,9 @@ const DesktopTable: FC<Props> = ({ table, isLoading }): JSX.Element => {
               {table.getPageCount() === 0 ? (
                 <>
                   <TableMesagge message="No Data Available" />
-                  <TableError message="Something went wrong" />
                 </>
+              ) : error !== null ? (
+                <TableError message="Something went wrong" />
               ) : (
                 <>
                   {table.getRowModel().rows.map((row) => (
