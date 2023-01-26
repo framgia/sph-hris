@@ -77,6 +77,10 @@ namespace api.Seeders
             new Role {
                 Id = 2,
                 Name = RoleEnum.HR_ADMIN
+            },
+            new Role {
+                Id = 3,
+                Name = RoleEnum.EMPLOYEE
             }
         };
         public static User[] users()
