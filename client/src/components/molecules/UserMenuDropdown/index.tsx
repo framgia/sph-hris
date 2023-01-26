@@ -50,7 +50,7 @@ const UserMenuDropDown: FC<Props> = (props): JSX.Element => {
               className={menuItemButton}
               onClick={() => {
                 try {
-                  signOut({ callbackUrl: '/login' })
+                  signOut({ callbackUrl: '/sign-in' })
                     .then()
                     .catch((error) => error.message)
                 } catch (error) {}
