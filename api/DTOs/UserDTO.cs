@@ -14,6 +14,7 @@ namespace api.DTOs
             EmployeeScheduleId = user.EmployeeScheduleId;
             IsOnline = user.IsOnline;
             EmployeeSchedule = user.EmployeeSchedule;
+            Role = user.Role;
             TimeEntry = user.TimeEntries.FirstOrDefault();
         }
     }

@@ -1,10 +1,14 @@
 export type User = {
   id: number
   name: string
+  role: Role
   timeEntry: TimeEntry
   employeeSchedule: EmployeeSchedule
 }
-
+export type Role = {
+  id: number
+  name: string
+}
 // MARK: - EmployeeSchedule
 export type EmployeeSchedule = {
   id: number

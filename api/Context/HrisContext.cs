@@ -20,6 +20,7 @@ public partial class HrisContext : DbContext
     public DbSet<Media> Medias { get; set; } = default!;
     public DbSet<WorkInterruptionType> WorkInterruptionTypes { get; set; } = default!;
     public DbSet<WorkInterruption> WorkInterruptions { get; set; } = default!;
+    public DbSet<Role> Roles { get; set; } = default!;
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<EmployeeSchedule>().HasData(
@@ -39,6 +40,9 @@ public partial class HrisContext : DbContext
         );
         modelBuilder.Entity<WorkInterruptionType>().HasData(
             DatabaseSeeder.workInterruptionType
+        );
+        modelBuilder.Entity<Role>().HasData(
+            DatabaseSeeder.roles
         );
     }
 

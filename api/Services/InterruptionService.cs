@@ -54,6 +54,7 @@ namespace api.Services
                 WorkInterruption work = ToWorkInterruption(interruption);
                 context.Update(work);
                 context.Entry(work).Property(x => x.TimeEntryId).IsModified = false;
+                context.Entry(work).Property(x => x.CreatedAt).IsModified = false;
                 return await context.SaveChangesAsync() > 0;
             }
         }

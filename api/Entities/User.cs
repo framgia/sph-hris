@@ -13,6 +13,7 @@ namespace api.Entities
         public int RoleId { get; set; }
         public int EmployeeScheduleId { get; set; }
         public bool IsOnline { get; set; }
+        public Role Role { get; set; } = default!;
         public EmployeeSchedule EmployeeSchedule { get; set; } = default!;
         public ICollection<TimeEntry> TimeEntries { get; set; } = default!;
     }

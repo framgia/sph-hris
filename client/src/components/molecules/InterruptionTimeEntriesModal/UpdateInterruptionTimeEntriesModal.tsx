@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import toast from 'react-hot-toast'
 import React, { FC, useEffect } from 'react'
 import { Edit, Save, X } from 'react-feather'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -9,6 +8,7 @@ import ReactTextareaAutosize from 'react-textarea-autosize'
 import { TimeEntrySchema } from '~/utils/validation'
 import Button from '~/components/atoms/Buttons/Button'
 import { IInterruptionTimeEntry } from '~/utils/interfaces'
+import useInterruptionType from '~/hooks/useInterruptionType'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import { TimeEntryFormValues } from '~/utils/types/formValues'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
@@ -22,7 +22,10 @@ type Props = {
 
 const UpdateInterruptionTimeEntriesModal: FC<Props> = (props): JSX.Element => {
   const { isOpen, closeModal, remarks } = props
-
+  const { handleUpdateInterruptionMutation } = useInterruptionType()
+  const updateInterruption = handleUpdateInterruptionMutation({
+    timeEntryId: remarks?.timeEntryId as number
+  })
   const {
     reset,
     register,
@@ -34,7 +37,14 @@ const UpdateInterruptionTimeEntriesModal: FC<Props> = (props): JSX.Element => {
   })
 
   const handleUpdateInterruption = (data: TimeEntryFormValues): void => {
-    toast.success('Successfully Saved')
+    updateInterruption.mutate({
+      id: remarks?.id as number,
+      otherReason: remarks?.otherReason as string,
+      remarks: data.remarks,
+      timeIn: data.time_in,
+      timeOut: data.time_out,
+      workInterruptionTypeId: remarks?.workInterruptionTypeId as number
+    })
     closeModal()
   }
 

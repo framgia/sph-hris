@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Context;
 
@@ -11,9 +12,11 @@ using api.Context;
 namespace api.Migrations
 {
     [DbContext(typeof(HrisContext))]
-    partial class HrisContextModelSnapshot : ModelSnapshot
+    [Migration("20230125101948_AddRoles")]
+    partial class AddRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,9 +50,9 @@ namespace api.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 92, DateTimeKind.Local).AddTicks(9203),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 627, DateTimeKind.Local).AddTicks(7014),
                             Name = "Morning Shift",
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 98, DateTimeKind.Local).AddTicks(1966)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 628, DateTimeKind.Local).AddTicks(8691)
                         });
                 });
 
@@ -145,23 +148,16 @@ namespace api.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(3054),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(1782),
                             Name = "Manager",
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(3055)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(1783)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(3769),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(2255),
                             Name = "HR Admin",
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(3771)
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(3772),
-                            Name = "Employee",
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(3773)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(2256)
                         });
                 });
 
@@ -193,50 +189,50 @@ namespace api.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9306),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1007),
                             Remarks = "First time in",
                             TimeHour = new TimeSpan(0, 9, 15, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9307)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1007)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9309),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1010),
                             Remarks = "Second time in",
                             TimeHour = new TimeSpan(0, 9, 15, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9310)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1010)
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9311),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1011),
                             Remarks = "Third time in",
                             TimeHour = new TimeSpan(0, 10, 15, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9311)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1011)
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9312),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1012),
                             Remarks = "First time out",
                             TimeHour = new TimeSpan(0, 18, 15, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9312)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1013)
                         },
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9313),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1013),
                             Remarks = "Second time out",
                             TimeHour = new TimeSpan(0, 18, 30, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9313)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1014)
                         },
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9314),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1014),
                             Remarks = "Third time out",
                             TimeHour = new TimeSpan(0, 19, 59, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9315)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1015)
                         });
                 });
 
@@ -292,42 +288,42 @@ namespace api.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9329),
-                            Date = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9331),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1027),
+                            Date = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1028),
                             EndTime = new TimeSpan(0, 18, 30, 0, 0),
                             StartTime = new TimeSpan(0, 9, 30, 0, 0),
                             TimeInId = 1,
                             TimeOutId = 4,
                             TrackedHours = new TimeSpan(0, 8, 0, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9330),
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1027),
                             UserId = 1,
                             WorkedHours = new TimeSpan(0, 8, 0, 0, 0)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9359),
-                            Date = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9360),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1056),
+                            Date = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1057),
                             EndTime = new TimeSpan(0, 18, 30, 0, 0),
                             StartTime = new TimeSpan(0, 9, 30, 0, 0),
                             TimeInId = 2,
                             TimeOutId = 5,
                             TrackedHours = new TimeSpan(0, 8, 0, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9359),
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1056),
                             UserId = 2,
                             WorkedHours = new TimeSpan(0, 8, 15, 0, 0)
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9378),
-                            Date = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9379),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1100),
+                            Date = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1101),
                             EndTime = new TimeSpan(0, 18, 30, 0, 0),
                             StartTime = new TimeSpan(0, 9, 30, 0, 0),
                             TimeInId = 3,
                             TimeOutId = 6,
                             TrackedHours = new TimeSpan(0, 8, 0, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9379),
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(1100),
                             UserId = 1,
                             WorkedHours = new TimeSpan(0, 8, 44, 0, 0)
                         });
@@ -374,24 +370,24 @@ namespace api.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9270),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(973),
                             Email = "johndoe@sun-asterisk.com",
                             EmployeeScheduleId = 1,
                             IsOnline = false,
                             Name = "John Doe",
                             RoleId = 2,
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9285)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(991)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9288),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(994),
                             Email = "reanschwarzer@sun-asterisk.com",
                             EmployeeScheduleId = 1,
                             IsOnline = false,
                             Name = "Rean Schwarzer",
                             RoleId = 1,
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 708, DateTimeKind.Local).AddTicks(9289)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 999, DateTimeKind.Local).AddTicks(995)
                         });
                 });
 
@@ -461,37 +457,37 @@ namespace api.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(2001),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(896),
                             Name = "Power Interruption",
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(2003)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(897)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(2746),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(1487),
                             Name = "Lost Internet Connection",
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(2747)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(1488)
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(2748),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(1489),
                             Name = "Emergency",
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(2749)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(1489)
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(2750),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(1490),
                             Name = "Errands",
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(2750)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(1491)
                         },
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(2751),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(1491),
                             Name = "Others",
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(2752)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(1492)
                         });
                 });
 
@@ -531,52 +527,52 @@ namespace api.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(255),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 628, DateTimeKind.Local).AddTicks(9704),
                             Day = "Monday",
                             EmployeeScheduleId = 1,
                             From = new TimeSpan(0, 9, 30, 0, 0),
                             To = new TimeSpan(0, 18, 30, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(269)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 628, DateTimeKind.Local).AddTicks(9706)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(1608),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(624),
                             Day = "Tuesday",
                             EmployeeScheduleId = 1,
                             From = new TimeSpan(0, 9, 30, 0, 0),
                             To = new TimeSpan(0, 18, 30, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(1610)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(625)
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(1612),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(627),
                             Day = "Wednesday",
                             EmployeeScheduleId = 1,
                             From = new TimeSpan(0, 9, 30, 0, 0),
                             To = new TimeSpan(0, 18, 30, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(1613)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(628)
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(1614),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(629),
                             Day = "Thursday",
                             EmployeeScheduleId = 1,
                             From = new TimeSpan(0, 9, 30, 0, 0),
                             To = new TimeSpan(0, 18, 30, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(1615)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(629)
                         },
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(1616),
+                            CreatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(630),
                             Day = "Friday",
                             EmployeeScheduleId = 1,
                             From = new TimeSpan(0, 9, 30, 0, 0),
                             To = new TimeSpan(0, 18, 30, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 26, 10, 8, 28, 99, DateTimeKind.Local).AddTicks(1616)
+                            UpdatedAt = new DateTime(2023, 1, 25, 18, 19, 47, 629, DateTimeKind.Local).AddTicks(630)
                         });
                 });
 
