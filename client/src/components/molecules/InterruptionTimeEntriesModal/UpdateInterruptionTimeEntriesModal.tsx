@@ -6,11 +6,11 @@ import { FieldError, useForm } from 'react-hook-form'
 import ReactTextareaAutosize from 'react-textarea-autosize'
 
 import { TimeEntrySchema } from '~/utils/validation'
-import Button from '~/components/atoms/Buttons/Button'
 import { IInterruptionTimeEntry } from '~/utils/interfaces'
+import Button from '~/components/atoms/Buttons/ButtonAction'
 import useInterruptionType from '~/hooks/useInterruptionType'
-import ModalTemplate from '~/components/templates/ModalTemplate'
 import { TimeEntryFormValues } from '~/utils/types/formValues'
+import ModalTemplate from '~/components/templates/ModalTemplate'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
 
@@ -161,29 +161,21 @@ const UpdateInterruptionTimeEntriesModal: FC<Props> = (props): JSX.Element => {
         <ModalFooter>
           <Button
             type="button"
+            variant="secondary"
             onClick={closeModal}
-            className={classNames(
-              'flex items-center space-x-1 border border-slate-300 py-1 px-4',
-              'text-sm text-slate-600 transition duration-150 ease-in-out',
-              'disabled:cursor-not-allowed disabled:opacity-50 hover:border-slate-500',
-              'hover:bg-white hover:text-slate-800'
-            )}
+            className="relative flex items-center space-x-1 py-1 px-7 text-sm"
             disabled={isSubmitting}
           >
-            <X className="h-4 w-4" />
+            <X className="absolute left-2.5 h-4 w-4" />
             <span>Close</span>
           </Button>
           <Button
             type="submit"
-            className={classNames(
-              'flex items-center space-x-2 border border-dark-primary',
-              'bg-primary py-1 px-4 text-sm text-white transition',
-              'duration-150 ease-in-out disabled:cursor-not-allowed',
-              'disabled:opacity-50 hover:bg-dark-primary'
-            )}
+            variant="primary"
+            className="relative flex items-center space-x-2 py-1 px-7 text-sm"
             disabled={isSubmitting}
           >
-            <Save className="h-4 w-4" />
+            <Save className="absolute left-2.5 h-4 w-4" />
             <span>Save</span>
           </Button>
         </ModalFooter>

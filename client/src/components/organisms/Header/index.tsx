@@ -10,13 +10,13 @@ import Text from '~/components/atoms/Text'
 import Avatar from '~/components/atoms/Avatar'
 import BreakIcon from '~/utils/icons/BreakIcon'
 import useUserQuery from '~/hooks/useUserQuery'
-import { sidebarLinks } from '~/utils/constants'
 import ClockInIcon from '~/utils/icons/ClockInIcon'
 import ClockOutIcon from '~/utils/icons/ClockOutIcon'
 import Button from '~/components/atoms/Buttons/Button'
 import LegendTooltip from '~/components/molecules/LegendTooltip'
 import UserMenuDropDown from '~/components/molecules/UserMenuDropdown'
 import NotificationPopover from '~/components/molecules/NotificationPopOver'
+import { Menus } from '~/utils/constants/sidebarMenu'
 
 const Tooltip = dynamic(async () => await import('rc-tooltip'), { ssr: false })
 
@@ -114,13 +114,18 @@ const Header: FC<Props> = (props): JSX.Element => {
         <div className="hidden md:block">
           <div className="flex items-center space-x-2">
             <h1 className="text-lg font-semibold text-slate-700">
-              {router.pathname === '/' ? 'Home' : ''}
-              {sidebarLinks?.my_nav.map((my) =>
-                router.pathname === my.href && router.pathname !== '/' ? my.name : ''
-              )}
-              {sidebarLinks?.management.map((my) =>
-                my.href.includes(router.pathname) && router.pathname !== '/' ? my.name : ''
-              )}
+              <>
+                {router.pathname === '/' ? 'Home' : ''}
+                {Menus.map((item, index) => (
+                  <div key={index}>
+                    {router.pathname === item.href && router.pathname !== '/' && item.name}
+                    {item?.submenu === true &&
+                      item?.submenuItems?.map((sub) =>
+                        router.asPath === sub.href ? sub.name : ''
+                      )}
+                  </div>
+                ))}
+              </>
             </h1>
             {router.pathname.includes('/dtr-management') && <LegendTooltip />}
           </div>
@@ -151,7 +156,6 @@ const Header: FC<Props> = (props): JSX.Element => {
                 data?.userById.timeEntry?.timeIn !== null ||
                 data.userById.employeeSchedule.workingDayTimes.length < 1
               }
-              className="disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
               onClick={handleToggleTimeInDrawer}
             >
               <ClockInIcon className="h-7 w-7 fill-current" />
@@ -168,7 +172,6 @@ const Header: FC<Props> = (props): JSX.Element => {
                 data?.userById.timeEntry?.timeIn === null ||
                 data?.userById?.timeEntry?.timeOut !== null
               }
-              className="disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
               onClick={handleToggleWorkInterruptionDrawer}
             >
               <BreakIcon className="h-7 w-7 fill-current" />
@@ -186,7 +189,6 @@ const Header: FC<Props> = (props): JSX.Element => {
                 (data?.userById?.timeEntry?.timeIn !== null &&
                   data?.userById?.timeEntry?.timeOut !== null)
               }
-              className="disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
               onClick={handleToggleTimeOutDrawer}
             >
               <ClockOutIcon className="h-7 w-7 fill-current" />

@@ -5,11 +5,12 @@ import { Disclosure } from '@headlessui/react'
 import { ChevronRight } from 'react-feather'
 
 import Avatar from '~/components/atoms/Avatar'
-import { IDTRSummary } from '~/utils/interfaces'
+import { ITimesheetSummary } from '~/utils/types/timeEntryTypes'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
+import DisclosureTransition from '~/components/templates/DisclosureTransition'
 
 type Props = {
-  table: Table<IDTRSummary>
+  table: Table<ITimesheetSummary>
   isLoading: boolean
   error: unknown
 }
@@ -65,28 +66,32 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                           />
                         </div>
                       </Disclosure.Button>
-                      <Disclosure.Panel
-                        className={classNames('text-slate-600', open ? 'bg-white shadow-md' : '')}
-                      >
-                        <ul className="flex flex-col divide-y divide-slate-200">
-                          <li className="px-4 py-2">
-                            Leave: <span className="font-semibold">{row.original.leave}</span>
-                          </li>
-                          <li className="px-4 py-2">
-                            Absences: <span className="font-semibold">{row.original.absences}</span>
-                          </li>
-                          <li className="px-4 py-2">
-                            Late: <span className="font-semibold">{row.original.late}</span>
-                          </li>
-                          <li className="px-4 py-2">
-                            Undertime:{' '}
-                            <span className="font-semibold">{row.original.undertime}</span>
-                          </li>
-                          <li className="px-4 py-2">
-                            Overtime: <span className="font-semibold">{row.original.overtime}</span>
-                          </li>
-                        </ul>
-                      </Disclosure.Panel>
+                      <DisclosureTransition>
+                        <Disclosure.Panel
+                          className={classNames('text-slate-600', open ? 'bg-white shadow-md' : '')}
+                        >
+                          <ul className="flex flex-col divide-y divide-slate-200">
+                            <li className="px-4 py-2">
+                              Leave: <span className="font-semibold">{row.original.leave}</span>
+                            </li>
+                            <li className="px-4 py-2">
+                              Absences:{' '}
+                              <span className="font-semibold">{row.original.absences}</span>
+                            </li>
+                            <li className="px-4 py-2">
+                              Late: <span className="font-semibold">{row.original.late}</span>
+                            </li>
+                            <li className="px-4 py-2">
+                              Undertime:{' '}
+                              <span className="font-semibold">{row.original.undertime}</span>
+                            </li>
+                            <li className="px-4 py-2">
+                              Overtime:{' '}
+                              <span className="font-semibold">{row.original.overtime}</span>
+                            </li>
+                          </ul>
+                        </Disclosure.Panel>
+                      </DisclosureTransition>
                     </>
                   )}
                 </Disclosure>

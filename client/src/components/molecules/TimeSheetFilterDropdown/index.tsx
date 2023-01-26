@@ -5,7 +5,7 @@ import React, { FC, ReactNode } from 'react'
 
 import Text from '~/components/atoms/Text'
 import { Filters } from '~/pages/dtr-management'
-import Button from '~/components/atoms/Buttons/Button'
+import Button from '~/components/atoms/Buttons/ButtonAction'
 import MenuTransition from '~/components/templates/MenuTransition'
 
 type Props = {
@@ -159,11 +159,9 @@ const TimeSheetFilterDropdown: FC<Props> = (props): JSX.Element => {
           <footer className="bg-slate-100 px-5 py-3">
             <Button
               type="button"
+              variant="primary"
               rounded="md"
-              className={classNames(
-                'w-full border border-dark-primary bg-primary py-2 text-xs text-white',
-                'transition duration-150 ease-in-out hover:bg-dark-primary active:bg-primary'
-              )}
+              className="w-full py-2 text-xs"
               onClick={(): React.MouseEvent<HTMLInputElement> => handleFilterUpdate()}
             >
               Update Results

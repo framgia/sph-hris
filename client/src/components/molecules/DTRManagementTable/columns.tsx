@@ -1,3 +1,4 @@
+import moment from 'moment'
 import Link from 'next/link'
 import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
@@ -41,27 +42,33 @@ export const columns = [
       <>
         {props.row.original.timeIn?.remarks !== undefined &&
         props.row.original.timeIn?.remarks !== '' ? (
-          <Link
-            href={`dtr-management/?time_in=${props.row.original.timeIn?.id}`}
-            className="relative flex cursor-pointer active:scale-95"
+          <Tippy
+            content={moment(props.row.original.date).format('MMM D, YYYY')}
+            placement="left"
+            className="!text-xs"
           >
-            {/* Actual Time In Data */}
-            <span>{props.row.original.timeIn?.timeHour ?? EMPTY}</span>
-            {/* Status */}
-            {props.row.original.startTime > props.row.original.timeIn?.timeHour ? (
-              <span
-                className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500')}
-              />
-            ) : (
-              <>
-                {!Number.isNaN(props.row.original.timeIn?.id) && (
-                  <span
-                    className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500')}
-                  />
-                )}
-              </>
-            )}
-          </Link>
+            <Link
+              href={`dtr-management/?time_in=${props.row.original.timeIn?.id}`}
+              className="relative flex cursor-pointer active:scale-95"
+            >
+              {/* Actual Time In Data */}
+              <span>{props.row.original.timeIn?.timeHour ?? EMPTY}</span>
+              {/* Status */}
+              {props.row.original.startTime > props.row.original.timeIn?.timeHour ? (
+                <span
+                  className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500')}
+                />
+              ) : (
+                <>
+                  {!Number.isNaN(props.row.original.timeIn?.id) && (
+                    <span
+                      className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500')}
+                    />
+                  )}
+                </>
+              )}
+            </Link>
+          </Tippy>
         ) : (
           <div className="relative flex">
             {/* Actual Time In Data */}
@@ -87,19 +94,25 @@ export const columns = [
       <>
         {props.row.original.timeOut?.remarks !== undefined &&
         props.row.original.timeOut?.remarks !== '' ? (
-          <Link
-            href={`dtr-management/?time_out=${props.row.original.timeOut?.id}`}
-            className="relative flex cursor-pointer active:scale-95"
+          <Tippy
+            content={moment(props.row.original.date).format('MMM D, YYYY')}
+            placement="left"
+            className="!text-xs"
           >
-            {/* Actual Time In Data */}
-            <span>{props.row.original.timeOut?.timeHour ?? EMPTY}</span>
-            {/* Status */}
-            {!Number.isNaN(props.row.original.timeOut?.id) && (
-              <span
-                className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500')}
-              />
-            )}
-          </Link>
+            <Link
+              href={`dtr-management/?time_out=${props.row.original.timeOut?.id}`}
+              className="relative flex cursor-pointer active:scale-95"
+            >
+              {/* Actual Time In Data */}
+              <span>{props.row.original.timeOut?.timeHour ?? EMPTY}</span>
+              {/* Status */}
+              {!Number.isNaN(props.row.original.timeOut?.id) && (
+                <span
+                  className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500')}
+                />
+              )}
+            </Link>
+          </Tippy>
         ) : (
           <span>{props.row.original.timeOut?.timeHour ?? EMPTY}</span>
         )}

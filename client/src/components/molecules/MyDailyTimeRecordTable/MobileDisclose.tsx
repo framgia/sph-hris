@@ -1,7 +1,7 @@
 import moment from 'moment'
 import Tooltip from 'rc-tooltip'
-import React, { FC, useState } from 'react'
 import classNames from 'classnames'
+import React, { FC, useState } from 'react'
 import { Table } from '@tanstack/react-table'
 import { Disclosure } from '@headlessui/react'
 import { ChevronRight, Clock, Edit } from 'react-feather'
@@ -13,6 +13,7 @@ import { WorkStatus } from '~/utils/constants/work-status'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 import InterruptionTimeEntriesModal from '../InterruptionTimeEntriesModal'
+import DisclosureTransition from '~/components/templates/DisclosureTransition'
 
 type Props = {
   table: Table<IEmployeeTimeEntry>
@@ -81,86 +82,92 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                             />
                           </div>
                         </Disclosure.Button>
-                        <Disclosure.Panel
-                          className={classNames('text-slate-600', open ? 'bg-white shadow-md' : '')}
-                        >
-                          <ul className="flex flex-col divide-y divide-slate-200">
-                            <li className="flex items-center space-x-1 px-4 py-2">
-                              <p>Time In:</p>
-                              <div className="relative flex">
-                                <span className="font-semibold">
-                                  {row.original.timeIn?.timeHour ?? EMPTY}
-                                </span>
-                                <span
-                                  className={classNames(
-                                    'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500'
-                                  )}
-                                />
-                              </div>
-                            </li>
-                            <li className="flex items-center space-x-2 px-4 py-2">
-                              <p>Time Out:</p>
-                              <div className="relative flex">
-                                <span className="font-semibold">
-                                  {row.original.timeOut?.timeHour ?? EMPTY}
-                                </span>
-                                <span
-                                  className={classNames(
-                                    'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500'
-                                  )}
-                                />
-                              </div>
-                            </li>
-                            <li className="px-4 py-2">
-                              Work Hours:{' '}
-                              <span className="font-semibold">{row.original.workedHours}</span>
-                            </li>
-                            <li className="px-4 py-2">
-                              Late(min): <span className="font-semibold">{row.original.late}</span>
-                            </li>
-                            <li className="px-4 py-2">
-                              Undertime(min):{' '}
-                              <span className="font-semibold">{row.original.undertime}</span>
-                            </li>
-                            <li className="px-4 py-2">
-                              Overtime(min):{' '}
-                              <span className="font-semibold">{row.original.overtime}</span>
-                            </li>
-                            <li className="flex items-center space-x-2 px-4 py-2">
-                              <span>Actions:</span>
-                              <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
-                                <Tooltip
-                                  placement="left"
-                                  overlay="Time Entries"
-                                  arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
-                                >
-                                  <Button
-                                    onClick={() =>
-                                      handleIsOpenTimeEntryToggle(row.original.id.toString())
-                                    }
-                                    rounded="none"
-                                    className="py-0.5 px-1 text-slate-500"
+                        <DisclosureTransition>
+                          <Disclosure.Panel
+                            className={classNames(
+                              'text-slate-600',
+                              open ? 'bg-white shadow-md' : ''
+                            )}
+                          >
+                            <ul className="flex flex-col divide-y divide-slate-200">
+                              <li className="flex items-center space-x-1 px-4 py-2">
+                                <p>Time In:</p>
+                                <div className="relative flex">
+                                  <span className="font-semibold">
+                                    {row.original.timeIn?.timeHour ?? EMPTY}
+                                  </span>
+                                  <span
+                                    className={classNames(
+                                      'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500'
+                                    )}
+                                  />
+                                </div>
+                              </li>
+                              <li className="flex items-center space-x-2 px-4 py-2">
+                                <p>Time Out:</p>
+                                <div className="relative flex">
+                                  <span className="font-semibold">
+                                    {row.original.timeOut?.timeHour ?? EMPTY}
+                                  </span>
+                                  <span
+                                    className={classNames(
+                                      'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500'
+                                    )}
+                                  />
+                                </div>
+                              </li>
+                              <li className="px-4 py-2">
+                                Work Hours:{' '}
+                                <span className="font-semibold">{row.original.workedHours}</span>
+                              </li>
+                              <li className="px-4 py-2">
+                                Late(min):{' '}
+                                <span className="font-semibold">{row.original.late}</span>
+                              </li>
+                              <li className="px-4 py-2">
+                                Undertime(min):{' '}
+                                <span className="font-semibold">{row.original.undertime}</span>
+                              </li>
+                              <li className="px-4 py-2">
+                                Overtime(min):{' '}
+                                <span className="font-semibold">{row.original.overtime}</span>
+                              </li>
+                              <li className="flex items-center space-x-2 px-4 py-2">
+                                <span>Actions:</span>
+                                <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
+                                  <Tooltip
+                                    placement="left"
+                                    overlay="Time Entries"
+                                    arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
                                   >
-                                    <Clock className="h-4 w-4" />
-                                  </Button>
-                                </Tooltip>
-                                <Tooltip
-                                  placement="left"
-                                  overlay="Edit"
-                                  arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
-                                >
-                                  <Button
-                                    onClick={() => alert(row.original.id)}
-                                    rounded="none"
-                                    className="py-0.5 px-1 text-slate-500"
+                                    <Button
+                                      onClick={() =>
+                                        handleIsOpenTimeEntryToggle(row.original.id.toString())
+                                      }
+                                      rounded="none"
+                                      className="py-0.5 px-1 text-slate-500"
+                                    >
+                                      <Clock className="h-4 w-4" />
+                                    </Button>
+                                  </Tooltip>
+                                  <Tooltip
+                                    placement="left"
+                                    overlay="Edit"
+                                    arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
                                   >
-                                    <Edit className="h-4 w-4" />
-                                  </Button>
-                                </Tooltip>
-                              </div>
-                            </li>
-                          </ul>
-                        </Disclosure.Panel>
+                                    <Button
+                                      onClick={() => alert(row.original.id)}
+                                      rounded="none"
+                                      className="py-0.5 px-1 text-slate-500"
+                                    >
+                                      <Edit className="h-4 w-4" />
+                                    </Button>
+                                  </Tooltip>
+                                </div>
+                              </li>
+                            </ul>
+                          </Disclosure.Panel>
+                        </DisclosureTransition>
                       </>
                     )}
                   </Disclosure>

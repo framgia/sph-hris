@@ -4,8 +4,8 @@ import { Bell, ChevronRight, X } from 'react-feather'
 
 import Logo from '~/components/atoms/Logo'
 import Avatar from '~/components/atoms/Avatar'
-import { sidebarLinks } from '~/utils/constants'
 import NavList from '~/components/molecules/NavList'
+import { Menus } from '~/utils/constants/sidebarMenu'
 import UserMenuDropDown from '~/components/molecules/UserMenuDropdown'
 
 type Props = {
@@ -26,8 +26,8 @@ const Drawer: FC<Props> = (props): JSX.Element => {
       <div
         className={classNames(
           'flex h-screen max-w-[250px] shrink-0 flex-col border-r border-slate-200',
-          'fixed top-0 left-0 w-full bg-white shadow-lg transition-all duration-300',
-          isOpenDrawer ? 'z-50 translate-x-0' : '-translate-x-full'
+          'fixed top-0 left-0 z-50 w-full bg-white shadow-lg transition-all duration-300',
+          isOpenDrawer ? 'translate-x-0' : '-translate-x-full'
         )}
       >
         {/* Business Logo */}
@@ -41,15 +41,8 @@ const Drawer: FC<Props> = (props): JSX.Element => {
           <ul className="space-y-1.5 text-xs text-slate-500">
             <NavList
               {...{
-                isOpen: isOpenDrawer,
-                lists: sidebarLinks?.my_nav
-              }}
-            />
-            <hr />
-            <NavList
-              {...{
-                isOpen: isOpenDrawer,
-                lists: sidebarLinks?.management
+                isOpenSidebar: isOpenDrawer,
+                lists: Menus
               }}
             />
           </ul>

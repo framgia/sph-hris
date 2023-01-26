@@ -148,6 +148,10 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
   )
 }
 
+Layout.defaultProps = {
+  metaTitle: 'Home'
+}
+
 // Main Wrapper of Home Authenticated User
 const Wrapper = ({ children }: { children: ReactNode }): JSX.Element => (
   <div className="flex h-screen min-h-screen overflow-hidden bg-slate-100 text-slate-800">

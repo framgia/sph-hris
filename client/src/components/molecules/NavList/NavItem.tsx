@@ -1,32 +1,50 @@
 import React, { FC } from 'react'
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/router'
 
-import { ISidebarLink } from '~/utils/interfaces'
+import { IMenu } from '~/utils/constants/sidebarMenu'
 import ButtonLink from '~/components/atoms/Buttons/ButtonLink'
 
 const Tooltip = dynamic(async () => await import('rc-tooltip'), { ssr: false })
 
 type Props = {
-  isOpen: boolean
-  item: ISidebarLink
+  state: {
+    isOpenSidebar: boolean
+    isOpenSubMenu: boolean
+  }
+  actions: {
+    handleOpenSubMenu: () => void
+  }
+  item: IMenu
 }
 
-const NavItem: FC<Props> = ({ item, isOpen }): JSX.Element => {
-  const { href, name, Icon } = item
-  const router = useRouter()
+const NavItem: FC<Props> = (props): JSX.Element => {
+  const {
+    item,
+    state: { isOpenSidebar, isOpenSubMenu },
+    actions: { handleOpenSubMenu }
+  } = props
+
+  const { href, name, Icon, submenu } = item
 
   return (
     <>
-      {isOpen ? (
+      {isOpenSidebar ? (
         // Without Tooltip Default Desktop Sidebar
         <ButtonLink
           {...{
-            href,
-            router,
-            name,
-            isOpen,
-            Icon
+            item: {
+              name,
+              href,
+              Icon,
+              submenu
+            },
+            state: {
+              isOpenSidebar,
+              isOpenSubMenu
+            },
+            actions: {
+              handleOpenSubMenu
+            }
           }}
         />
       ) : (
@@ -39,11 +57,19 @@ const NavItem: FC<Props> = ({ item, isOpen }): JSX.Element => {
           <div>
             <ButtonLink
               {...{
-                href,
-                router,
-                name,
-                isOpen,
-                Icon
+                item: {
+                  name,
+                  href,
+                  Icon,
+                  submenu
+                },
+                state: {
+                  isOpenSidebar,
+                  isOpenSubMenu
+                },
+                actions: {
+                  handleOpenSubMenu
+                }
               }}
             />
           </div>
