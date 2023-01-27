@@ -15,7 +15,14 @@ namespace api.DTOs
             IsOnline = user.IsOnline;
             EmployeeSchedule = user.EmployeeSchedule;
             Role = user.Role;
-            TimeEntry = user.TimeEntries.FirstOrDefault();
+            TimeEntry = checkLatestTimeEntry(user);
+
+
+        }
+        private TimeEntry? checkLatestTimeEntry(User user)
+        {
+            TimeEntry? entry = user.TimeEntries.Where(t => t.TimeIn != null && t.TimeOut == null).FirstOrDefault();
+            return entry != null ? entry : user.TimeEntries.FirstOrDefault();
         }
     }
 }

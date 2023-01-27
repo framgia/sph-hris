@@ -7,6 +7,7 @@ type TimeOutRequest = {
   timeEntryId: number
   timeHour: string
   remarks: string
+  workedHours: string
 }
 type returnType = {
   handleTimeOutMutation: () => UseMutationResult<any, unknown, TimeOutRequest, unknown>

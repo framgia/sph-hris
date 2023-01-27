@@ -25,7 +25,7 @@ type Props = {
     handleToggleDrawer: () => void
     handleToggleSidebar: () => void
     handleToggleTimeInDrawer: () => void
-    handleToggleTimeOutDrawer: () => void
+    handleToggleTimeOutDrawer: (workedHours: string) => void
     handleToggleWorkInterruptionDrawer: () => void
   }
 }
@@ -63,10 +63,8 @@ const Header: FC<Props> = (props): JSX.Element => {
         const then = `${moment(new Date(data?.userById.timeEntry.date)).format('YYYY-MM-DD')} ${
           timeObj.hours as number
         }:${timeObj.minutes as number}:${timeObj.seconds as number}`
-        const temp = moment
-          .utc(moment(new Date(now)).diff(moment(new Date(then))))
-          .format('HH:mm:ss')
-        setSeconds(moment.duration(temp).asSeconds())
+        const temp = moment.utc(moment(new Date(now)).diff(moment(new Date(then))))
+        setSeconds(moment.duration(temp as moment.DurationInputArg1).asSeconds())
       }
     }
   }, [status, data])
@@ -77,6 +75,13 @@ const Header: FC<Props> = (props): JSX.Element => {
   useEffect(() => {
     setTime(seconds)
   }, [seconds])
+
+  const onToggleTimeOutDrawerClick = (): void => {
+    const hours = `0${Math.floor((time as number) / (60 * 60))}`.slice(-2)
+    const min = `0${Math.floor(((time as number) % (60 * 60)) / 60)}`.slice(-2)
+    const sec = `0${(time as number) % 60}`.slice(-2)
+    handleToggleTimeOutDrawer(`${hours}:${min}:${sec}`)
+  }
 
   useEffect(() => {
     let interval: string | number | NodeJS.Timeout | undefined
@@ -187,7 +192,7 @@ const Header: FC<Props> = (props): JSX.Element => {
                   data?.userById?.timeEntry?.timeOut !== null)
               }
               className="disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
-              onClick={handleToggleTimeOutDrawer}
+              onClick={onToggleTimeOutDrawerClick}
             >
               <ClockOutIcon className="h-7 w-7 fill-current" />
             </Button>

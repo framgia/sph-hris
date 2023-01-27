@@ -6,5 +6,6 @@ namespace api.Requests
         public int? TimeEntryId { get; set; }
         public TimeSpan TimeHour { get; set; }
         public string? Remarks { get; set; }
+        public string? WorkedHours { get; set; }
     }
 }

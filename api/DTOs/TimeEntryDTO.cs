@@ -16,7 +16,7 @@ namespace api.DTOs
             StartTime = timeEntry.StartTime.ToString(@"hh\:mm");
             EndTime = timeEntry.EndTime.ToString(@"hh\:mm");
             Date = DateOnly.FromDateTime(timeEntry.Date);
-            WorkedHours = timeEntry.WorkedHours.ToString(@"hh\:mm");
+            WorkedHours = timeEntry.WorkedHours?.Remove(timeEntry.WorkedHours.LastIndexOf(':'));
             TrackedHours = timeEntry.TrackedHours.ToString(@"hh\:mm");
             User = timeEntry.User;
             TimeIn = timeEntry.TimeIn != null ? new TimeDTO(timeEntry.TimeIn) : null;
