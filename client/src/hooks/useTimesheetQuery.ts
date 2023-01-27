@@ -18,7 +18,8 @@ import {
 export const getAllEmployeeTimesheet = (
   input: string = '',
   argument: string,
-  variables: QueryVariablesType
+  variables: QueryVariablesType,
+  ready: boolean
 ): UseQueryResult<
   {
     timeEntries: ITimeEntry[]
@@ -29,7 +30,8 @@ export const getAllEmployeeTimesheet = (
     queryKey: ['GET_ALL_EMPLOYEE_TIMESHEET'],
     queryFn: async () =>
       await client.request(GET_ALL_EMPLOYEE_TIMESHEET(input, argument), variables),
-    select: (data: { timeEntries: ITimeEntry[] }) => data
+    select: (data: { timeEntries: ITimeEntry[] }) => data,
+    enabled: ready
   })
   return result
 }
@@ -71,7 +73,8 @@ export const getSpecificTimeEntry = (
 export const getTimesheetSummary = (
   input: string = '',
   argument: string,
-  variables: QueryVariablesType
+  variables: QueryVariablesType,
+  ready: boolean
 ): UseQueryResult<
   {
     timesheetSummary: ITimesheetSummary[]
@@ -81,7 +84,8 @@ export const getTimesheetSummary = (
   const result = useQuery({
     queryKey: ['GET_TIMESHEET_SUMMARY'],
     queryFn: async () => await client.request(GET_TIMESHEET_SUMMARY(input, argument), variables),
-    select: (data: { timesheetSummary: ITimesheetSummary[] }) => data
+    select: (data: { timesheetSummary: ITimesheetSummary[] }) => data,
+    enabled: ready
   })
   return result
 }

@@ -105,7 +105,7 @@ const TimeSheetFilterDropdown: FC<Props> = (props): JSX.Element => {
                     'focus:border-primary focus:ring-1 focus:ring-primary'
                   )}
                   ref={monthYearSelectionRef}
-                  defaultValue={moment().format('YYYY-MM')}
+                  defaultValue={moment(filters.startDate).format('YYYY-MM')}
                   onChange={handleSummaryFilterChange}
                 ></input>
                 <select
