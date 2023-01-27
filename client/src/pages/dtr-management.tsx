@@ -1,6 +1,7 @@
 import moment from 'moment'
 import { NextPage } from 'next'
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
 import { MoreHorizontal } from 'react-feather'
 import React, { useEffect, useState } from 'react'
 
@@ -32,8 +33,28 @@ export type QueryVariablesType = {
 }
 
 const DTRManagement: NextPage = (): JSX.Element => {
+  const router = useRouter()
+  const { query } = router
+
   const [isOpenSummaryTable, setIsOpenSummaryTable] = useState<boolean>(false)
-  const handleToggleSummaryTable = (): void => setIsOpenSummaryTable(!isOpenSummaryTable)
+  const [fetchReady, setFetchReady] = useState<boolean>(false)
+  const handleToggleSummaryTable = (): void => {
+    void router.replace({
+      pathname: '/dtr-management',
+      query: !isOpenSummaryTable
+        ? {
+            startDate: filters.startDate,
+            endDate: filters.endDate,
+            summary: true
+          }
+        : {
+            date: filters.date,
+            status: filters.status,
+            summary: false
+          }
+    })
+    setIsOpenSummaryTable(!isOpenSummaryTable)
+  }
   const [globalFilter, setGlobalFilter] = useState<string>('')
   const [filters, setFilters] = useState({
     date: moment().format('YYYY-MM-DD'),
@@ -56,13 +77,15 @@ const DTRManagement: NextPage = (): JSX.Element => {
   const allEmployee = getAllEmployeeTimesheet(
     '$date: String, $status: String',
     'date: $date, status: $status',
-    queryVariables
+    queryVariables,
+    fetchReady
   )
 
   const summary = getTimesheetSummary(
     '$startDate: String, $endDate:String',
     'startDate: $startDate, endDate: $endDate',
-    queryVariables
+    queryVariables,
+    fetchReady
   )
 
   const [fetchedAllEmployeeData, setFetchedAllEmployeeData] = useState({
@@ -79,6 +102,14 @@ const DTRManagement: NextPage = (): JSX.Element => {
 
   const handleFilterUpdate = (): void => {
     if (isOpenSummaryTable) {
+      void router.replace({
+        pathname: '/dtr-management',
+        query: {
+          startDate: filters.startDate,
+          endDate: filters.endDate,
+          summary: true
+        }
+      })
       setFetchedSummaryData({ ...fetchedSummaryData, isLoading: true })
       void summary.refetch().then((response) => {
         setFetchedSummaryData({
@@ -88,6 +119,14 @@ const DTRManagement: NextPage = (): JSX.Element => {
         })
       })
     } else {
+      void router.replace({
+        pathname: '/dtr-management',
+        query: {
+          date: filters.date,
+          status: filters.status,
+          summary: false
+        }
+      })
       setFetchedAllEmployeeData({ ...fetchedAllEmployeeData, isLoading: true })
       void allEmployee.refetch().then((response) => {
         setFetchedAllEmployeeData({
@@ -98,6 +137,23 @@ const DTRManagement: NextPage = (): JSX.Element => {
       })
     }
   }
+
+  useEffect(() => {
+    if (router.isReady) {
+      setFilters({
+        ...filters,
+        date: query.date !== undefined ? (query.date as string) : filters.date,
+        status: query.status !== undefined ? (query.status as string) : filters.status,
+        startDate: query.startDate !== undefined ? (query.startDate as string) : filters.startDate,
+        endDate: query.endDate !== undefined ? (query.endDate as string) : filters.endDate
+      })
+      setIsOpenSummaryTable(query.summary === 'true')
+    }
+  }, [router.isReady])
+
+  useEffect(() => {
+    if (router.isReady) setFetchReady(true)
+  }, [router.isReady, filters])
 
   useEffect(() => {
     if (allEmployee.data !== undefined)
@@ -172,7 +228,9 @@ const DTRManagement: NextPage = (): JSX.Element => {
             </SummaryMenuDropdown>
           </div>
         </header>
-        {!fetchedAllEmployeeData.isLoading && fetchedAllEmployeeData.data !== undefined ? (
+        {!fetchedAllEmployeeData.isLoading &&
+        fetchedAllEmployeeData.data !== undefined &&
+        !fetchedSummaryData.isLoading ? (
           <>
             {!isOpenSummaryTable ? (
               <DTRTable
