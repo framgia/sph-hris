@@ -9,8 +9,11 @@ import { signOut, signIn, useSession } from 'next-auth/react'
 import Logo from '~/components/atoms/Logo'
 import { getServerSideProps } from '~/utils/ssr'
 import useSignInMutation from '~/hooks/useSignInMutation'
+import { useRouter } from 'next/router'
 
 const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
+  const router = useRouter()
+
   const session = useSession()
   const { handleSignInMutation } = useSignInMutation()
   const SignInMutation = handleSignInMutation()
@@ -28,7 +31,7 @@ const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
 
   useEffect(() => {
     if (SignInMutation?.data?.createSignIn === true) {
-      window.location.href = '/'
+      void router.push('/')
       toast.success('Verification Success, redirecting...', { duration: 3000 })
     } else if (session?.data != null) {
       void signOut({ callbackUrl: '/sign-in' })
