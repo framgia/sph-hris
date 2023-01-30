@@ -1,6 +1,6 @@
 import { NextPage } from 'next'
 import classNames from 'classnames'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import useUserQuery from '~/hooks/useUserQuery'
 import Layout from '~/components/templates/Layout'
@@ -9,14 +9,36 @@ import { getEmployeeTimesheet } from '~/hooks/useTimesheetQuery'
 import MyDTRTable from '~/components/molecules/MyDailyTimeRecordTable'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import { columns } from '~/components/molecules/MyDailyTimeRecordTable/columns'
+import { useRouter } from 'next/router'
 
 const MyDailyTimeRecord: NextPage = (): JSX.Element => {
+  const router = useRouter()
+
   const [globalFilter, setGlobalFilter] = useState<string>('')
 
   const { handleUserQuery } = useUserQuery()
   const user = handleUserQuery()
 
   const { data, isLoading, error } = getEmployeeTimesheet(user.data?.userById.id as number)
+
+  useEffect(() => {
+    const params = new URL(window.location.href).searchParams
+    setGlobalFilter(params.get('searchKey') as string)
+  }, [])
+
+  useEffect(() => {
+    if (router.isReady) {
+      void router.replace({
+        pathname: '/my-daily-time-record',
+        query:
+          globalFilter !== ''
+            ? {
+                searchKey: globalFilter
+              }
+            : null
+      })
+    }
+  }, [globalFilter])
 
   return (
     <Layout metaTitle="My Daily Time Record">

@@ -32,6 +32,20 @@ export type QueryVariablesType = {
   endDate: string | null
 }
 
+type URLParameterType =
+  | {
+      startDate: string
+      endDate: string
+      summary: boolean
+      searchKey: string
+    }
+  | {
+      date: string
+      status: string
+      summary: boolean
+      searchKey: string
+    }
+
 const DTRManagement: NextPage = (): JSX.Element => {
   const router = useRouter()
   const { query } = router
@@ -39,20 +53,21 @@ const DTRManagement: NextPage = (): JSX.Element => {
   const [isOpenSummaryTable, setIsOpenSummaryTable] = useState<boolean>(false)
   const [fetchReady, setFetchReady] = useState<boolean>(false)
   const handleToggleSummaryTable = (): void => {
-    void router.replace({
-      pathname: '/dtr-management',
-      query: !isOpenSummaryTable
+    handleURLParameterChange(
+      !isOpenSummaryTable
         ? {
             startDate: filters.startDate,
             endDate: filters.endDate,
-            summary: true
+            summary: true,
+            searchKey: globalFilter
           }
         : {
             date: filters.date,
             status: filters.status,
-            summary: false
+            summary: false,
+            searchKey: globalFilter
           }
-    })
+    )
     setIsOpenSummaryTable(!isOpenSummaryTable)
   }
   const [globalFilter, setGlobalFilter] = useState<string>('')
@@ -100,15 +115,20 @@ const DTRManagement: NextPage = (): JSX.Element => {
     isLoading: summary.isLoading
   })
 
+  const handleURLParameterChange = (query: URLParameterType): void => {
+    void router.replace({
+      pathname: '/dtr-management',
+      query
+    })
+  }
+
   const handleFilterUpdate = (): void => {
     if (isOpenSummaryTable) {
-      void router.replace({
-        pathname: '/dtr-management',
-        query: {
-          startDate: filters.startDate,
-          endDate: filters.endDate,
-          summary: true
-        }
+      handleURLParameterChange({
+        startDate: filters.startDate,
+        endDate: filters.endDate,
+        summary: true,
+        searchKey: globalFilter
       })
       setFetchedSummaryData({ ...fetchedSummaryData, isLoading: true })
       void summary.refetch().then((response) => {
@@ -119,13 +139,11 @@ const DTRManagement: NextPage = (): JSX.Element => {
         })
       })
     } else {
-      void router.replace({
-        pathname: '/dtr-management',
-        query: {
-          date: filters.date,
-          status: filters.status,
-          summary: false
-        }
+      handleURLParameterChange({
+        date: filters.date,
+        status: filters.status,
+        summary: false,
+        searchKey: globalFilter
       })
       setFetchedAllEmployeeData({ ...fetchedAllEmployeeData, isLoading: true })
       void allEmployee.refetch().then((response) => {
@@ -137,6 +155,31 @@ const DTRManagement: NextPage = (): JSX.Element => {
       })
     }
   }
+
+  useEffect(() => {
+    const params = new URL(window.location.href).searchParams
+    setGlobalFilter(params.get('searchKey') as string)
+  }, [])
+
+  useEffect(() => {
+    if (router.isReady) {
+      if (isOpenSummaryTable) {
+        handleURLParameterChange({
+          startDate: filters.startDate,
+          endDate: filters.endDate,
+          summary: true,
+          searchKey: globalFilter
+        })
+      } else {
+        handleURLParameterChange({
+          date: filters.date,
+          status: filters.status,
+          summary: false,
+          searchKey: globalFilter
+        })
+      }
+    }
+  }, [globalFilter])
 
   useEffect(() => {
     if (router.isReady) {
