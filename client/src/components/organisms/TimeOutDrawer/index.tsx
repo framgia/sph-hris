@@ -16,6 +16,7 @@ import DrawerTemplate from '~/components/templates/DrawerTemplate'
 
 type Props = {
   isOpenTimeOutDrawer: boolean
+  workedHours: string
   actions: {
     handleToggleTimeOutDrawer: () => void
   }
@@ -24,6 +25,7 @@ type Props = {
 const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
   const {
     isOpenTimeOutDrawer,
+    workedHours,
     actions: { handleToggleTimeOutDrawer }
   } = props
 
@@ -39,6 +41,7 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
     timeOutMutation.mutate({
       userId: data?.userById.id as number,
       timeEntryId: data?.userById.timeEntry.id as number,
+      workedHours,
       timeHour: serialize({
         hours: time.hours(),
         minutes: time.minutes(),

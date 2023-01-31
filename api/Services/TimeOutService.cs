@@ -31,7 +31,7 @@ namespace api.Services
                     .Where(x => x.Id == timeout.TimeEntryId)
                     .FirstAsync();
                     timeEntry.TimeOutId = time.Entity.Id;
-                    timeEntry.WorkedHours = time.Entity.TimeHour.Subtract(timeEntry.TimeIn?.TimeHour ?? DateTime.Now.TimeOfDay);
+                    timeEntry.WorkedHours = timeout.WorkedHours;
                     timeEntry.TrackedHours = timeEntry.EndTime.Subtract(timeEntry.StartTime);
                     context.TimeEntries.Update(timeEntry);
                     await context.SaveChangesAsync();

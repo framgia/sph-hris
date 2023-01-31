@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Context;
 
@@ -11,9 +12,11 @@ using api.Context;
 namespace api.Migrations
 {
     [DbContext(typeof(HrisContext))]
-    partial class HrisContextModelSnapshot : ModelSnapshot
+    [Migration("20230127083633_UpdateDefaultTimestamps")]
+    partial class UpdateDefaultTimestamps
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -275,8 +278,8 @@ namespace api.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<string>("WorkedHours")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<TimeSpan>("WorkedHours")
+                        .HasColumnType("time");
 
                     b.HasKey("Id");
 
@@ -301,7 +304,7 @@ namespace api.Migrations
                             TrackedHours = new TimeSpan(0, 8, 0, 0, 0),
                             UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                             UserId = 1,
-                            WorkedHours = "08:00"
+                            WorkedHours = new TimeSpan(0, 8, 0, 0, 0)
                         },
                         new
                         {
@@ -315,7 +318,7 @@ namespace api.Migrations
                             TrackedHours = new TimeSpan(0, 8, 0, 0, 0),
                             UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                             UserId = 2,
-                            WorkedHours = "08:15"
+                            WorkedHours = new TimeSpan(0, 8, 15, 0, 0)
                         },
                         new
                         {
@@ -329,7 +332,7 @@ namespace api.Migrations
                             TrackedHours = new TimeSpan(0, 8, 0, 0, 0),
                             UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                             UserId = 1,
-                            WorkedHours = "08:44"
+                            WorkedHours = new TimeSpan(0, 8, 44, 0, 0)
                         });
                 });
 

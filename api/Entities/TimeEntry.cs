@@ -14,7 +14,7 @@ namespace api.Entities
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
         public DateTime Date { get; set; }
-        public TimeSpan WorkedHours { get; set; }
+        public string? WorkedHours { get; set; }
         public TimeSpan TrackedHours { get; set; }
         public User User { get; set; } = default!;
         public Time? TimeIn { get; set; }

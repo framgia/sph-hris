@@ -57,6 +57,7 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
     }
   )
   const [isOpenDrawer, setIsOpenDrawer] = useState<boolean>(false)
+  const [workedHours, setWorkedHours] = useState<string>('')
 
   const handleToggleDrawer = (): void => setIsOpenDrawer(!isOpenDrawer)
   const handleToggleSidebar = (): void => setIsOpenSidebar(!isOpenSidebar)
@@ -65,7 +66,10 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
     setIsOpenViewDetailsDrawer(!isOpenViewDetailsDrawer)
   const handleToggleWorkInterruptionDrawer = (): void =>
     setIsOpenWorkInterruptionDrawer(!isOpenWorkInterruptionDrawer)
-  const handleToggleTimeOutDrawer = (): void => setIsOpenTimeOutDrawer(!isOpenTimeOutDrawer)
+  const handleToggleTimeOutDrawer = (workedHours: string = ''): void => {
+    setIsOpenTimeOutDrawer(!isOpenTimeOutDrawer)
+    setWorkedHours(workedHours)
+  }
 
   return (
     <>
@@ -130,6 +134,7 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
         <TimeOutDrawer
           {...{
             isOpenTimeOutDrawer,
+            workedHours,
             actions: {
               handleToggleTimeOutDrawer
             }
