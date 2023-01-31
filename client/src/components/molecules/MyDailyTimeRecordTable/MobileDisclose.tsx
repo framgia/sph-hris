@@ -1,4 +1,5 @@
 import moment from 'moment'
+import Link from 'next/link'
 import Tooltip from 'rc-tooltip'
 import React, { FC, useState } from 'react'
 import classNames from 'classnames'
@@ -88,27 +89,87 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                             <li className="flex items-center space-x-1 px-4 py-2">
                               <p>Time In:</p>
                               <div className="relative flex">
-                                <span className="font-semibold">
-                                  {row.original.timeIn?.timeHour ?? EMPTY}
-                                </span>
-                                <span
-                                  className={classNames(
-                                    'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500'
-                                  )}
-                                />
+                                {row.original.timeIn?.remarks !== undefined &&
+                                row.original.timeIn?.remarks !== '' ? (
+                                  <>
+                                    <Link
+                                      href={`my-daily-time-record/?time_in=${row.original.timeIn?.id}`}
+                                      className="relative flex cursor-pointer active:scale-95"
+                                    >
+                                      {/* Actual Time In Data */}
+                                      <span className="font-semibold">
+                                        {row.original.timeIn?.timeHour ?? EMPTY}
+                                      </span>
+                                      {/* Status */}
+                                      {row.original.startTime > row.original.timeIn?.timeHour ? (
+                                        <span
+                                          className={classNames(
+                                            'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500'
+                                          )}
+                                        />
+                                      ) : (
+                                        <>
+                                          {!Number.isNaN(row.original.timeIn?.id) && (
+                                            <span
+                                              className={classNames(
+                                                'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500'
+                                              )}
+                                            />
+                                          )}
+                                        </>
+                                      )}
+                                    </Link>
+                                  </>
+                                ) : (
+                                  <>
+                                    {/* Actual Time In Data */}
+                                    <span className="font-semibold">
+                                      {row.original.timeIn?.timeHour ?? EMPTY}
+                                    </span>
+                                    {/* Status */}
+                                    {row.original.timeIn?.timeHour !== undefined &&
+                                    row.original.timeIn?.timeHour !== ''
+                                      ? !(
+                                          row.original.startTime > row.original.timeIn?.timeHour
+                                        ) && (
+                                          <span
+                                            className={classNames(
+                                              'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500'
+                                            )}
+                                          />
+                                        )
+                                      : ''}
+                                  </>
+                                )}
                               </div>
                             </li>
                             <li className="flex items-center space-x-2 px-4 py-2">
                               <p>Time Out:</p>
                               <div className="relative flex">
-                                <span className="font-semibold">
-                                  {row.original.timeOut?.timeHour ?? EMPTY}
-                                </span>
-                                <span
-                                  className={classNames(
-                                    'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500'
-                                  )}
-                                />
+                                {row.original.timeOut?.remarks !== undefined &&
+                                row.original.timeOut?.remarks !== '' ? (
+                                  <Link
+                                    href={`my-daily-time-record/?time_out=${row.original.timeOut?.id}`}
+                                    className="relative flex cursor-pointer active:scale-95"
+                                  >
+                                    {/* Actual Time Out Data */}
+                                    <span className="font-semibold">
+                                      {row.original.timeOut?.timeHour ?? EMPTY}
+                                    </span>
+                                    {/* Status */}
+                                    {!Number.isNaN(row.original.timeOut?.id) && (
+                                      <span
+                                        className={classNames(
+                                          'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500'
+                                        )}
+                                      />
+                                    )}
+                                  </Link>
+                                ) : (
+                                  <span className="font-semibold">
+                                    {row.original.timeOut?.timeHour ?? EMPTY}
+                                  </span>
+                                )}
                               </div>
                             </li>
                             <li className="px-4 py-2">
