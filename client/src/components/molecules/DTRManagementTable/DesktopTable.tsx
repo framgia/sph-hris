@@ -3,11 +3,11 @@ import classNames from 'classnames'
 import { flexRender, Table } from '@tanstack/react-table'
 
 import TableSkeleton from './../SkeletonTable'
-import { IDTRManagement } from '~/utils/interfaces'
 import { WorkStatus } from '~/utils/constants/work-status'
+import { ITimeEntry } from '~/utils/types/timeEntryTypes'
 
 type Props = {
-  table: Table<IDTRManagement>
+  table: Table<ITimeEntry>
   query: {
     isLoading: boolean
     error: unknown

@@ -4,10 +4,35 @@ import { X, AlertCircle, Info, Check } from 'react-feather'
 
 type Props = {
   message?: string
-  type?: string
+  type?: 'success' | 'error' | 'warning' | 'info'
 }
 
 const Alert: FC<Props> = ({ message, type }): JSX.Element => {
+  let containerStyle = ''
+  let textStyle = ''
+
+  switch (type) {
+    case 'success':
+      containerStyle = 'border-green-400 bg-green-50'
+      textStyle = 'text-green-500'
+      break
+    case 'error':
+      containerStyle = 'border-rose-400 bg-rose-50'
+      textStyle = 'text-rose-500'
+      break
+    case 'warning':
+      containerStyle = 'border-amber-400 bg-amber-50'
+      textStyle = 'text-amber-500'
+      break
+    case 'info':
+      containerStyle = 'border-sky-400 bg-sky-50'
+      textStyle = 'text-sky-500'
+      break
+    default:
+      containerStyle = 'border-sky-400 bg-sky-50'
+      textStyle = 'text-sky-500'
+  }
+
   const IconType = (
     <>
       {type === 'error' && (
@@ -28,25 +53,13 @@ const Alert: FC<Props> = ({ message, type }): JSX.Element => {
   return (
     <div
       className={classNames(
-        'relative flex items-center justify-center rounded-md border py-2.5 px-4 shadow-md',
-        type === 'error' ? 'border-rose-400 bg-rose-50' : '',
-        type === 'warning' ? 'border-amber-400 bg-amber-50' : '',
-        type === 'info' ? 'border-sky-400 bg-sky-50' : '',
-        type === 'success' ? 'border-green-400 bg-green-50' : ''
+        'relative flex items-center justify-center',
+        'rounded-md border py-2.5 px-4 shadow-md shadow-slate-200',
+        containerStyle
       )}
     >
       {IconType}
-      <p
-        className={classNames(
-          'text-xs font-medium',
-          type === 'error' ? 'text-rose-500' : '',
-          type === 'warning' ? 'text-amber-500' : '',
-          type === 'info' ? 'text-sky-500' : '',
-          type === 'success' ? 'text-green-500' : ''
-        )}
-      >
-        {message}
-      </p>
+      <p className={classNames('text-xs font-medium', textStyle)}>{message}</p>
     </div>
   )
 }

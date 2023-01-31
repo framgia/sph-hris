@@ -3,8 +3,8 @@ import classNames from 'classnames'
 import { ChevronsLeft } from 'react-feather'
 
 import Logo from '~/components/atoms/Logo'
-import { sidebarLinks } from '~/utils/constants'
 import NavList from '~/components/molecules/NavList'
+import { Menus } from '~/utils/constants/sidebarMenu'
 
 type Props = {
   isOpenSidebar: boolean
@@ -35,21 +35,14 @@ const Sidebar: FC<Props> = (props): JSX.Element => {
       />
       {/* Navigation Links */}
       <nav className="default-scrollbar hidden md:block">
-        <ul className="space-y-1.5 text-xs text-slate-500 overflow-x-hidden">
+        <div className="space-y-1.5 text-xs text-slate-500 overflow-x-hidden">
           <NavList
             {...{
-              isOpen: isOpenSidebar,
-              lists: sidebarLinks?.my_nav
+              isOpenSidebar,
+              lists: Menus
             }}
           />
-          <hr />
-          <NavList
-            {...{
-              isOpen: isOpenSidebar,
-              lists: sidebarLinks?.management
-            }}
-          />
-        </ul>
+        </div>
       </nav>
       {/* Footer Ooptions */}
       <section className="mt-auto hidden text-slate-500 md:block">

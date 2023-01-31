@@ -1,8 +1,7 @@
 import React, { FC } from 'react'
 import { Eye } from 'react-feather'
-import classNames from 'classnames'
 
-import Button from '~/components/atoms/Buttons/Button'
+import Button from '~/components/atoms/Buttons/ButtonAction'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
@@ -37,13 +36,7 @@ const ShowRemarksModal: FC<Props> = ({ isOpen, closeModal, remarks }): JSX.Eleme
 
       {/* Custom Modal Footer Style */}
       <ModalFooter>
-        <Button
-          onClick={closeModal}
-          className={classNames(
-            'border border-slate-300 px-5 py-1 text-sm hover:border-slate-500 hover:bg-white',
-            'text-slate-600 transition duration-150 ease-in-out hover:text-slate-800'
-          )}
-        >
+        <Button onClick={closeModal} variant="secondary" className="px-5 py-1 text-sm">
           Close
         </Button>
       </ModalFooter>

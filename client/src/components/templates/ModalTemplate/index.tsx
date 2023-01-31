@@ -1,6 +1,6 @@
+import classNames from 'classnames'
 import React, { Fragment, FC, ReactNode } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import classNames from 'classnames'
 
 type Props = {
   isOpen: boolean
