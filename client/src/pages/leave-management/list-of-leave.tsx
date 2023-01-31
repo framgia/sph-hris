@@ -1,13 +1,32 @@
-import React from 'react'
 import { NextPage } from 'next'
+import React, { useState } from 'react'
 
-import UnderConstructionPage from '~/components/pages/UnderContructionPage'
+import { dummyData } from '~/utils/constants/dummyListOfLeaveData'
+import ListOfLeaveTable from '~/components/molecules/ListOfLeaveTable'
+import { columns } from '~/components/molecules/ListOfLeaveTable/columns'
 import LeaveManagementLayout from '~/components/templates/LeaveManagementLayout'
 
 const ListOfLeave: NextPage = (): JSX.Element => {
+  const [globalFilter, setGlobalFilter] = useState<string>('')
+
   return (
     <LeaveManagementLayout metaTitle="List of leave">
-      <UnderConstructionPage />
+      <section className="default-scrollbar relative overflow-auto text-xs text-slate-800">
+        <ListOfLeaveTable
+          {...{
+            query: {
+              data: dummyData,
+              isLoading: false,
+              error: null
+            },
+            table: {
+              columns,
+              globalFilter,
+              setGlobalFilter
+            }
+          }}
+        />
+      </section>
     </LeaveManagementLayout>
   )
 }

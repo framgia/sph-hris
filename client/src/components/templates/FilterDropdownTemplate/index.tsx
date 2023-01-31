@@ -30,7 +30,7 @@ const FilterDropdownTemplate: FC<Props> = (props): JSX.Element => {
         <span className="hidden sm:block">{btnText}</span>
       </Menu.Button>
       <MenuTransition>
-        <Menu.Items className="fixed right-4 top-[94px] flex w-80 flex-col md:top-[97px]">
+        <Menu.Items className="fixed right-4 top-[94px] flex w-80 flex-col outline-none md:top-[97px]">
           <Card shadow-size="xl" rounded="md" className="overflow-hidden">
             {children}
           </Card>

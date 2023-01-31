@@ -126,7 +126,7 @@ const Header: FC<Props> = (props): JSX.Element => {
                     {router.pathname === item.href && router.pathname !== '/' && item.name}
                     {item?.submenu === true &&
                       item?.submenuItems?.map((sub) =>
-                        router.asPath === sub.href ? sub.name : ''
+                        router.pathname.includes(sub.href) ? sub.name : ''
                       )}
                   </div>
                 ))}
