@@ -21,6 +21,11 @@ public partial class HrisContext : DbContext
     public DbSet<WorkInterruptionType> WorkInterruptionTypes { get; set; } = default!;
     public DbSet<WorkInterruption> WorkInterruptions { get; set; } = default!;
     public DbSet<Role> Roles { get; set; } = default!;
+    public DbSet<LeaveType> LeaveTypes { get; set; } = default!;
+    public DbSet<Project> Projects { get; set; } = default!;
+    public DbSet<Leave> Leaves { get; set; } = default!;
+    public DbSet<Undertime> Undertimes { get; set; } = default!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<EmployeeSchedule>().HasData(
@@ -43,6 +48,12 @@ public partial class HrisContext : DbContext
         );
         modelBuilder.Entity<Role>().HasData(
             DatabaseSeeder.roles
+        );
+        modelBuilder.Entity<LeaveType>().HasData(
+            DatabaseSeeder.leaveTypes
+        );
+        modelBuilder.Entity<Project>().HasData(
+            DatabaseSeeder.projects
         );
     }
 

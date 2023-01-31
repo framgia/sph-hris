@@ -243,5 +243,179 @@ namespace api.Seeders
             };
             return entries;
         }
+        public static List<LeaveType> leaveTypes = new List<LeaveType>(){
+            new LeaveType {
+                Id = 1,
+                Name = "Sick leave",
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new LeaveType {
+                Id = 2,
+                Name = "Bereavement leave",
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new LeaveType {
+                Id = 3,
+                Name = "Emergency leave",
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new LeaveType {
+                Id = 4,
+                Name = "Vacation leave",
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new LeaveType {
+                Id = 5,
+                Name = "Maternity/Paternity leave",
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new LeaveType {
+                Id = 6,
+                Name = "Undertime",
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+        };
+        public static List<Project> projects = new List<Project>(){
+            new Project {
+                Id = 1,
+                Name = "Admin",
+                ProjectLeaderId = 1,
+                ProjectSubLeaderId = 2,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Project {
+                Id = 2,
+                Name = "Casec",
+                ProjectLeaderId = 2,
+                ProjectSubLeaderId = 1,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Project {
+                Id = 3,
+                Name = "Shaperon",
+                ProjectLeaderId = 1,
+                ProjectSubLeaderId = 2,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Project {
+                Id = 4,
+                Name = "01Booster",
+                ProjectLeaderId = 2,
+                ProjectSubLeaderId = 1,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Project {
+                Id = 5,
+                Name = "Edge",
+                ProjectLeaderId = 1,
+                ProjectSubLeaderId = 2,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Project {
+                Id = 6,
+                Name = "DTS",
+                ProjectLeaderId = 2,
+                ProjectSubLeaderId = 1,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Project {
+                Id = 7,
+                Name = "OJT",
+                ProjectLeaderId = 1,
+                ProjectSubLeaderId = 2,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Project {
+                Id = 8,
+                Name = "Safie",
+                ProjectLeaderId = 2,
+                ProjectSubLeaderId = 1,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Project {
+                Id = 9,
+                Name = "AAA Education",
+                ProjectLeaderId = 1,
+                ProjectSubLeaderId = 2,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Project {
+                Id = 10,
+                Name = "Development Training",
+                ProjectLeaderId = 2,
+                ProjectSubLeaderId = 1,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Project {
+                Id = 11,
+                Name = "Yamato",
+                ProjectLeaderId = 1,
+                ProjectSubLeaderId = 2,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Project {
+                Id = 12,
+                Name = "Next Base",
+                ProjectLeaderId = 2,
+                ProjectSubLeaderId = 1,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Project {
+                Id = 13,
+                Name = "MetaJobs",
+                ProjectLeaderId = 1,
+                ProjectSubLeaderId = 2,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Project {
+                Id = 14,
+                Name = "Prrrr",
+                ProjectLeaderId = 2,
+                ProjectSubLeaderId = 1,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Project {
+                Id = 15,
+                Name = "Aironworks",
+                ProjectLeaderId = 1,
+                ProjectSubLeaderId = 2,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Project {
+                Id = 16,
+                Name = "OsakaMetro",
+                ProjectLeaderId = 1,
+                ProjectSubLeaderId = 1,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Project {
+                Id = 17,
+                Name = "Others",
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+        };
     }
 }
