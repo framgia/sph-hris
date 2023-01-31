@@ -121,7 +121,7 @@ export const columns = [
           <Tippy content="Edit" placement="left" className="!text-xs">
             <Button
               rounded="none"
-              className="py-0.5 px-1 text-slate-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
+              className="py-0.5 px-1 text-slate-500"
               disabled={checkStatus}
               onClick={() => handleToggleUpdateRemark(props.row.original)}
             >
@@ -142,7 +142,7 @@ export const columns = [
               onClick={() => handleConfirmDeleteRemark(props.row.original.id)}
               disabled={checkStatus}
               rounded="none"
-              className="py-0.5 px-1 text-slate-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
+              className="py-0.5 px-1 text-slate-500"
             >
               <Trash className="h-4 w-4" />
             </Button>

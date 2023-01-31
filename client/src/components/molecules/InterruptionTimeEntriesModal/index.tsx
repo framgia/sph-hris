@@ -1,4 +1,3 @@
-import classNames from 'classnames'
 import { Clock } from 'react-feather'
 import React, { FC, useEffect, useState } from 'react'
 import {
@@ -13,8 +12,8 @@ import { fuzzyFilter } from '~/utils/fuzzyFilter'
 
 import { columns } from './columns'
 import InterruptionTimeEntriesTable from './Table'
-import Button from '~/components/atoms/Buttons/Button'
 import GlobalSearchFilter from './../GlobalSearchFilter'
+import Button from '~/components/atoms/Buttons/ButtonAction'
 import useInterruptionType from '~/hooks/useInterruptionType'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
@@ -98,13 +97,7 @@ const InterruptionTimeEntriesModal: FC<Props> = ({
       />
       {/* Custom Modal Footer Style */}
       <ModalFooter>
-        <Button
-          onClick={closeModal}
-          className={classNames(
-            'border border-slate-300 px-5 py-1 text-sm hover:border-slate-500 hover:bg-white',
-            'text-slate-600 transition duration-150 ease-in-out hover:text-slate-800'
-          )}
-        >
+        <Button onClick={closeModal} variant="secondary" className="px-5 py-1 text-sm">
           Close
         </Button>
       </ModalFooter>
