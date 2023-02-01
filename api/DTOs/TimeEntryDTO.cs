@@ -6,7 +6,7 @@ namespace api.DTOs
     {
         private static readonly int ONTIME = 0;
         private static readonly string ABSENT = "absent";
-        private static readonly string ONDUTY = "on-duty";
+        private static readonly string ONDUTY = "present";
         public TimeEntryDTO(TimeEntry timeEntry)
         {
             Id = timeEntry.Id;
