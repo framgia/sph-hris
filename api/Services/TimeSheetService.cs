@@ -1,6 +1,7 @@
 using api.Context;
 using api.DTOs;
 using api.Entities;
+using api.Requests;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Services
@@ -137,6 +138,64 @@ namespace api.Services
                 };
 
                 return summaries;
+            }
+        }
+
+        public async Task<string> UpdateOneTimeEntry(UpdateTimeEntry updatedTimeEntry)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var user = context.Users.SingleOrDefault(user => user.Id == updatedTimeEntry.UserId);
+                if (user == null || user.RoleId != 2) return "Operation not allowed for this user";
+
+                var currentTimeEntry = context.TimeEntries
+                    .SingleOrDefault(entry => entry.Id == updatedTimeEntry.TimeEntryId);
+
+                if (currentTimeEntry != null)
+                {
+                    if (updatedTimeEntry.TimeIn != null)
+                    {
+                        if (currentTimeEntry.TimeInId != null)
+                        {
+                            Time currentTimeIn = context.Times.Single(time => time.Id == currentTimeEntry.TimeInId);
+                            currentTimeIn.TimeHour = TimeSpan.Parse(updatedTimeEntry.TimeIn);
+                        }
+                        else
+                        {
+                            Time newTime = new Time
+                            {
+                                TimeHour = TimeSpan.Parse(updatedTimeEntry.TimeIn)
+                            };
+                            context.Times.Add(newTime);
+                            await context.SaveChangesAsync();
+                            currentTimeEntry.TimeInId = newTime.Id;
+                        }
+                    }
+
+                    if (updatedTimeEntry.TimeOut != null)
+                    {
+                        if (currentTimeEntry.TimeOutId != null)
+                        {
+                            Time currentTimeOut = context.Times.Single(time => time.Id == currentTimeEntry.TimeOutId);
+                            currentTimeOut.TimeHour = TimeSpan.Parse(updatedTimeEntry.TimeOut);
+                        }
+                        else
+                        {
+                            Time newTime = new Time
+                            {
+                                TimeHour = TimeSpan.Parse(updatedTimeEntry.TimeOut)
+                            };
+                            context.Times.Add(newTime);
+                            await context.SaveChangesAsync();
+                            currentTimeEntry.TimeOutId = newTime.Id;
+                        }
+                    }
+
+                    await context.SaveChangesAsync();
+                    return "Updated Successfully!";
+                }
+
+                return "Something went wrong";
             }
         }
     }
