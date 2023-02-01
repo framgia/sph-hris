@@ -15,7 +15,8 @@ namespace api.Entities
         public string? Reason { get; set; }
         public TimeSpan From { get; set; }
         public TimeSpan To { get; set; }
-        public bool? IsApproved { get; set; }
+        public bool? IsLeaderApproved { get; set; }
+        public bool? IsManagerApproved { get; set; }
         public ICollection<Project> Projects { get; set; } = default!;
         public User Manager { get; set; } = default!;
         public User User { get; set; } = default!;

@@ -12,7 +12,7 @@ using api.Context;
 namespace api.Migrations
 {
     [DbContext(typeof(HrisContext))]
-    [Migration("20230131110734_AddLeaveModule")]
+    [Migration("20230201034416_AddLeaveModule")]
     partial class AddLeaveModule
     {
         /// <inheritdoc />
@@ -97,7 +97,10 @@ namespace api.Migrations
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool?>("IsApproved")
+                    b.Property<bool?>("IsLeaderApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsManagerApproved")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsWithPay")
@@ -685,7 +688,10 @@ namespace api.Migrations
                     b.Property<TimeSpan>("From")
                         .HasColumnType("time");
 
-                    b.Property<bool?>("IsApproved")
+                    b.Property<bool?>("IsLeaderApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsManagerApproved")
                         .HasColumnType("bit");
 
                     b.Property<int?>("ManagerId")

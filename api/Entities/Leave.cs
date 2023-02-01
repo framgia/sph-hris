@@ -16,7 +16,8 @@ namespace api.Entities
         public string? Reason { get; set; }
         public DateTime LeaveDate { get; set; }
         public bool IsWithPay { get; set; }
-        public bool? IsApproved { get; set; }
+        public bool? IsLeaderApproved { get; set; }
+        public bool? IsManagerApproved { get; set; }
         public ICollection<Project> Projects { get; set; } = default!;
         public LeaveType LeaveType { get; set; } = default!;
         public User Manager { get; set; } = default!;

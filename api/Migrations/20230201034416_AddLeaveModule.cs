@@ -67,7 +67,8 @@ namespace api.Migrations
                     Reason = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     From = table.Column<TimeSpan>(type: "time", nullable: false),
                     To = table.Column<TimeSpan>(type: "time", nullable: false),
-                    IsApproved = table.Column<bool>(type: "bit", nullable: true),
+                    IsLeaderApproved = table.Column<bool>(type: "bit", nullable: true),
+                    IsManagerApproved = table.Column<bool>(type: "bit", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -101,7 +102,8 @@ namespace api.Migrations
                     Reason = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LeaveDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsWithPay = table.Column<bool>(type: "bit", nullable: false),
-                    IsApproved = table.Column<bool>(type: "bit", nullable: true),
+                    IsLeaderApproved = table.Column<bool>(type: "bit", nullable: true),
+                    IsManagerApproved = table.Column<bool>(type: "bit", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },

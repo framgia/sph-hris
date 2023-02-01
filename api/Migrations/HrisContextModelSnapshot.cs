@@ -94,7 +94,10 @@ namespace api.Migrations
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool?>("IsApproved")
+                    b.Property<bool?>("IsLeaderApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsManagerApproved")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsWithPay")
@@ -682,7 +685,10 @@ namespace api.Migrations
                     b.Property<TimeSpan>("From")
                         .HasColumnType("time");
 
-                    b.Property<bool?>("IsApproved")
+                    b.Property<bool?>("IsLeaderApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsManagerApproved")
                         .HasColumnType("bit");
 
                     b.Property<int?>("ManagerId")
