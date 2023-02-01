@@ -55,6 +55,12 @@ public partial class HrisContext : DbContext
         modelBuilder.Entity<Project>().HasData(
             DatabaseSeeder.projects
         );
+        modelBuilder.Entity<Leave>().HasData(
+            DatabaseSeeder.leaves
+        );
+        modelBuilder.Entity<Undertime>().HasData(
+            DatabaseSeeder.undertimes
+        );
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
