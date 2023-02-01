@@ -133,6 +133,7 @@ const Header: FC<Props> = (props): JSX.Element => {
               </>
             </h1>
             {router.pathname.includes('/dtr-management') && <LegendTooltip />}
+            {router.pathname.includes('/my-daily-time-record') && <LegendTooltip />}
           </div>
         </div>
       </section>
