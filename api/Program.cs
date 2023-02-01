@@ -27,7 +27,8 @@ builder.Services.AddGraphQLServer()
     .AddType<TimeOutMutation>()
     .AddType<SigninMutation>()
     .AddType<LogoutMutation>()
-    .AddType<InterruptionMutation>();
+    .AddType<InterruptionMutation>()
+    .AddType<TimeEntryMutation>();
 
 builder.Services.AddGraphQLServer().AddProjections().AddFiltering().AddSorting();
 
