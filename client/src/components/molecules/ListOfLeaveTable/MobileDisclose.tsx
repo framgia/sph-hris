@@ -29,7 +29,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
 
   return (
     <>
-      {error == null ? (
+      {error === null ? (
         isLoading ? (
           <div className="flex flex-col px-4 py-3">
             {Array.from({ length: 30 }, (_, i) => (
