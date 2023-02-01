@@ -417,5 +417,67 @@ namespace api.Seeders
                 UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
             },
         };
+        public static List<Leave> leaves = new List<Leave>(){
+            new Leave {
+                Id = 1,
+                UserId = 1,
+                ProjectId = 1,
+                LeaveTypeId = 1,
+                ManagerId = 1,
+                OtherProject = "None",
+                Reason = "Leave lang guds",
+                LeaveDate = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                IsWithPay = false,
+                IsLeaderApproved = true,
+                IsManagerApproved = true,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Leave {
+                Id = 2,
+                UserId = 1,
+                ProjectId = 3,
+                LeaveTypeId = 4,
+                ManagerId = 1,
+                OtherProject = "None",
+                Reason = "Vacation leave",
+                LeaveDate = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                IsWithPay = true,
+                IsLeaderApproved = true,
+                IsManagerApproved = true,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+        };
+        public static List<Undertime> undertimes = new List<Undertime>(){
+            new Undertime {
+                Id = 1,
+                UserId = 1,
+                ProjectId = 1,
+                ManagerId = 1,
+                OtherProject = "None",
+                Reason = "Leave lang guds",
+                From = new TimeSpan(9, 30, 0),
+                To = new TimeSpan(18, 30, 0),
+                IsLeaderApproved = true,
+                IsManagerApproved = true,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Undertime {
+                Id = 2,
+                UserId = 1,
+                ProjectId = 1,
+                ManagerId = 1,
+                OtherProject = "None",
+                Reason = "Under lang guds",
+                From = new TimeSpan(9, 30, 0),
+                To = new TimeSpan(18, 30, 0),
+                IsLeaderApproved = true,
+                IsManagerApproved = true,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+        };
     }
 }

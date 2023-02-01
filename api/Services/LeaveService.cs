@@ -44,5 +44,12 @@ namespace api.Services
                 .Build());
             }
         }
+        public async Task<List<Leave>> Index()
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.Leaves.ToListAsync();
+            }
+        }
     }
 }

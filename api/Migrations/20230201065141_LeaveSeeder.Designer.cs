@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Context;
 
@@ -11,9 +12,11 @@ using api.Context;
 namespace api.Migrations
 {
     [DbContext(typeof(HrisContext))]
-    partial class HrisContextModelSnapshot : ModelSnapshot
+    [Migration("20230201065141_LeaveSeeder")]
+    partial class LeaveSeeder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -753,38 +756,6 @@ namespace api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Undertimes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                            From = new TimeSpan(0, 9, 30, 0, 0),
-                            IsLeaderApproved = true,
-                            IsManagerApproved = true,
-                            ManagerId = 1,
-                            OtherProject = "None",
-                            ProjectId = 1,
-                            Reason = "Leave lang guds",
-                            To = new TimeSpan(0, 18, 30, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                            UserId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                            From = new TimeSpan(0, 9, 30, 0, 0),
-                            IsLeaderApproved = true,
-                            IsManagerApproved = true,
-                            ManagerId = 1,
-                            OtherProject = "None",
-                            ProjectId = 1,
-                            Reason = "Under lang guds",
-                            To = new TimeSpan(0, 18, 30, 0, 0),
-                            UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                            UserId = 1
-                        });
                 });
 
             modelBuilder.Entity("api.Entities.User", b =>
