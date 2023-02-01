@@ -12,6 +12,7 @@ import CellHeader from '~/components/atoms/CellHeader'
 import Button from '~/components/atoms/Buttons/Button'
 import { ITimeEntry } from '~/utils/types/timeEntryTypes'
 import InterruptionTimeEntriesModal from './../InterruptionTimeEntriesModal'
+import EditTimeEntriesModal from '../EditTimeEntryModal'
 
 const columnHelper = createColumnHelper<ITimeEntry>()
 const EMPTY = 'N/A'
@@ -153,9 +154,14 @@ export const columns = [
     header: () => <span className="font-normal text-slate-500">Actions</span>,
     cell: (props) => {
       const [isOpenTimeEntry, setIsOpenTimeEntry] = useState<boolean>(false)
+      const [isOpenEditModal, setIsOpenEditModal] = useState<boolean>(false)
 
       const handleIsOpenTimeEntryToggle = (id?: string | undefined): void => {
         setIsOpenTimeEntry(!isOpenTimeEntry)
+      }
+
+      const handleIsOpenEditModalToggle = (): void => {
+        setIsOpenEditModal(!isOpenEditModal)
       }
 
       return (
@@ -181,11 +187,25 @@ export const columns = [
           </Tippy>
           <Tippy content="Edit" placement="left" className="!text-xs">
             <Button
-              onClick={() => alert(props.row.id)}
+              onClick={handleIsOpenEditModalToggle}
               rounded="none"
               className="py-0.5 px-1 text-slate-500"
             >
               <Edit className="h-4 w-4" />
+              {isOpenEditModal ? (
+                <EditTimeEntriesModal
+                  {...{
+                    isOpen: isOpenEditModal,
+                    user: props.row.original.user,
+                    timeEntry: {
+                      id: props.row.original.id,
+                      timeIn: props.row.original.timeIn?.timeHour,
+                      timeOut: props.row.original.timeOut?.timeHour
+                    },
+                    closeModal: handleIsOpenEditModalToggle
+                  }}
+                />
+              ) : null}
             </Button>
           </Tippy>
         </div>

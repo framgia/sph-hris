@@ -146,7 +146,9 @@ namespace api.Services
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 var user = context.Users.SingleOrDefault(user => user.Id == updatedTimeEntry.UserId);
-                if (user == null || user.RoleId != 2) return "Operation not allowed for this user";
+                if (user == null || user.RoleId != 2) throw new GraphQLException(ErrorBuilder.New()
+                .SetMessage("Operation not allowed for this user")
+                .Build());
 
                 var currentTimeEntry = context.TimeEntries
                     .SingleOrDefault(entry => entry.Id == updatedTimeEntry.TimeEntryId);
@@ -195,7 +197,9 @@ namespace api.Services
                     return "Updated Successfully!";
                 }
 
-                return "Something went wrong";
+                throw new GraphQLException(ErrorBuilder.New()
+                .SetMessage("Something went wrong")
+                .Build());
             }
         }
     }
