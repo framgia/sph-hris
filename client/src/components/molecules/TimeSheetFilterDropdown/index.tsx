@@ -33,7 +33,7 @@ const TimeSheetFilterDropdown: FC<Props> = (props): JSX.Element => {
 
   const daysRangeSelectionRef = React.createRef<HTMLSelectElement>()
 
-  const statusOptions = ['All', 'On-Duty', 'Sick Leave', 'Vacation Leave', 'Absent']
+  const statusOptions = ['All', 'Present', 'Sick Leave', 'Vacation Leave', 'Absent']
 
   const daysRangeOptions = ['1-15 Days Timesheet', '16-31 Days Timesheet']
 
