@@ -34,6 +34,7 @@
     "react-hook-form": "^7.42.1",
     "react-hot-toast": "^2.4.0",
     "react-icons": "^4.7.1",
+    "react-select": "^5.7.0",
     "react-textarea-autosize": "^8.4.0",
     "tinyduration": "^3.2.4",
     "use-local-storage-state": "^18.1.2",

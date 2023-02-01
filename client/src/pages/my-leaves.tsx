@@ -12,16 +12,17 @@ import {
   initialSeriesData,
   Series
 } from '~/utils/generateData'
+import useLeave from '~/hooks/useLeave'
+import useUserQuery from '~/hooks/useUserQuery'
+import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { Chip } from '~/components/templates/LeaveManagementLayout'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
+import AddNewLeaveModal from '~/components/molecules/AddNewLeaveModal'
 import BreakdownOfLeaveCard from '~/components/molecules/BreakdownOfLeavesCard'
 import SummaryFilterDropdown from '~/components/molecules/SummaryFilterDropdown'
-import LeaveManagementResultTable from '~/components/molecules/LeaveManagementResultTable'
-import useUserQuery from '~/hooks/useUserQuery'
-import useLeave from '~/hooks/useLeave'
 import { Breakdown, HeatmapDetails, LeaveTable } from '~/utils/types/leaveTypes'
-import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
+import LeaveManagementResultTable from '~/components/molecules/LeaveManagementResultTable'
 
 const ReactApexChart = dynamic(async () => await import('react-apexcharts'), {
   ssr: false
@@ -34,6 +35,7 @@ type SeriesData = {
 
 const MyLeaves: NextPage = (): JSX.Element => {
   const { handleUserQuery } = useUserQuery()
+  const [isOpen, setIsOpen] = useState<boolean>(false)
   const { data: user, isSuccess: isUserSuccess, isLoading: isUserLoading } = handleUserQuery()
   const { handleLeaveQuery } = useLeave()
   const {
@@ -105,6 +107,8 @@ const MyLeaves: NextPage = (): JSX.Element => {
     }
   }, [isSuccess, isUserSuccess, leaves?.leaves.heatmap])
 
+  const handleToggle = (): void => setIsOpen(!isOpen)
+
   return (
     <Layout metaTitle="My Leaves">
       <main className="h-full">
@@ -124,12 +128,23 @@ const MyLeaves: NextPage = (): JSX.Element => {
               type="button"
               variant="primary"
               className="flex items-center space-x-0.5 px-1.5 py-[3px]"
+              onClick={handleToggle}
             >
               <Plus className="h-4 w-4" />
               <span className="hidden sm:block">File leave</span>
             </Button>
             <SummaryFilterDropdown />
           </div>
+
+          {/* This will Open New Modal for Filing New Leave */}
+          {isOpen ? (
+            <AddNewLeaveModal
+              {...{
+                isOpen,
+                closeModal: handleToggle
+              }}
+            />
+          ) : null}
         </header>
         {!isUserLoading && !isLeavesLoading ? (
           <div className="default-scrollbar h-full space-y-4 overflow-y-auto px-4">

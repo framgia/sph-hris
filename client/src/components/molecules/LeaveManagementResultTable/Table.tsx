@@ -47,7 +47,7 @@ const LeaveManagementTable: FC<Props> = (props) => {
       </thead>
       <tbody
         className={classNames(
-          'h-full min-h-[80vh] w-full divide-y divide-slate-200 border-b border-slate-200',
+          'relative h-full min-h-[80vh] w-full divide-y divide-slate-100 border-b border-slate-200',
           table.getPageCount() === 0 || isError ? 'h-[20vh]' : ''
         )}
       >
