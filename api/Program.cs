@@ -28,7 +28,9 @@ builder.Services.AddGraphQLServer()
     .AddType<SigninMutation>()
     .AddType<LogoutMutation>()
     .AddType<InterruptionMutation>()
-    .AddType<TimeEntryMutation>();
+    .AddType<TimeEntryMutation>()
+    .AddType<LeaveMutation>()
+    .AddType<UndertimeMutation>();
 
 builder.Services.AddGraphQLServer().AddProjections().AddFiltering().AddSorting();
 
@@ -44,15 +46,16 @@ builder.Services.AddScoped<TimeSheetService>();
 builder.Services.AddScoped<SigninService>();
 builder.Services.AddScoped<LogoutService>();
 builder.Services.AddScoped<InterruptionService>();
+builder.Services.AddScoped<LeaveService>();
+builder.Services.AddScoped<UndertimeService>();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
-                      policy =>
-                      {
-                          policy.WithOrigins("*").AllowAnyHeader()
-                                                  .AllowAnyMethod();
-                      });
+        policy =>
+        {
+            policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
+        });
 });
 
 var app = builder.Build();
