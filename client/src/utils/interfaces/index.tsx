@@ -20,3 +20,18 @@ export interface ILeaveManagementSummaryTable {
   reason: string
   numOfLeaves: number
 }
+
+export interface IListOfLeave {
+  id: number
+  name: string
+  project: string
+  leaveDate: string
+  type: string
+  isWithPay: boolean
+  manager: string
+  projectLeader: string
+  totalUndertime: number
+  totalLeaves: number
+  dateFiled: string
+  reason: string
+}

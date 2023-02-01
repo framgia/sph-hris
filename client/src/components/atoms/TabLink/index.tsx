@@ -17,8 +17,8 @@ const TabLink: FC<Props> = ({ href, name, Icon }): JSX.Element => {
     <Link
       href={href}
       className={classNames(
-        'flex select-none items-center space-x-2 border-b-[3px] border-transparent py-2.5',
-        router.pathname === href
+        'flex select-none items-center space-x-2 border-b-[3px] border-transparent py-2.5 outline-none',
+        router.pathname.includes(href)
           ? 'border-amber-500 font-medium text-amber-500'
           : 'font-normal text-slate-500 focus:border-slate-300 hover:border-slate-300 hover:text-slate-600'
       )}

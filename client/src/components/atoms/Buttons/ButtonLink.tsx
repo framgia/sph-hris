@@ -42,7 +42,7 @@ const ButtonLink: FC<Props> = (props): JSX.Element => {
       }
       className={classNames(
         'relative flex items-center transition duration-75 ease-in-out',
-        'hover:bg-slate-100 hover:text-slate-700',
+        'outline-none hover:bg-slate-100 hover:text-slate-700',
         router.pathname.includes(href) && href !== '/'
           ? 'font-medium text-slate-800'
           : 'subpixel-antialiased',
