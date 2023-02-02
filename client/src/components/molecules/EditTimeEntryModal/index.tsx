@@ -94,7 +94,9 @@ const EditTimeEntriesModal: FC<Props> = ({ isOpen, timeEntry, user, closeModal }
                     'disabled:cursor-not-allowed disabled:opacity-50'
                   )}
                   {...register('time_in')}
-                  disabled={isSubmitting}
+                  disabled={
+                    isSubmitting || timeEntry.timeIn === null || timeEntry.timeIn === undefined
+                  }
                 />
               </label>
             </div>
@@ -112,7 +114,9 @@ const EditTimeEntriesModal: FC<Props> = ({ isOpen, timeEntry, user, closeModal }
                     'disabled:cursor-not-allowed disabled:opacity-50'
                   )}
                   {...register('time_out')}
-                  disabled={isSubmitting}
+                  disabled={
+                    isSubmitting || timeEntry.timeOut === null || timeEntry.timeOut === undefined
+                  }
                 />
               </label>
             </div>
@@ -135,7 +139,11 @@ const EditTimeEntriesModal: FC<Props> = ({ isOpen, timeEntry, user, closeModal }
             type="submit"
             variant="primary"
             className="relative flex items-center space-x-2 py-1 px-7 text-sm"
-            disabled={isSubmitting}
+            disabled={
+              isSubmitting ||
+              (timeEntry.timeIn === undefined && timeEntry.timeOut === undefined) ||
+              (timeEntry.timeIn === null && timeEntry.timeOut === null)
+            }
           >
             <Save className="absolute left-2.5 h-4 w-4" />
             <span>Save</span>
