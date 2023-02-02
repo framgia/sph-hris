@@ -9,6 +9,7 @@ import { ChevronRight, Clock, Edit } from 'react-feather'
 import Chip from '~/components/atoms/Chip'
 import Avatar from '~/components/atoms/Avatar'
 import Button from '~/components/atoms/Buttons/Button'
+import EditTimeEntriesModal from '../EditTimeEntryModal'
 import { ITimeEntry } from '~/utils/types/timeEntryTypes'
 import { WorkStatus } from '~/utils/constants/work-status'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
@@ -23,6 +24,7 @@ type Props = {
 
 const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
   const [isOpenTimeEntry, setIsOpenTimeEntry] = useState<boolean>(false)
+  const [isOpenEditModal, setIsOpenEditModal] = useState<boolean>(false)
   const [timeEntryId, setTimeEntryId] = useState<number>(-1)
   const [user, setUser] = useState<string>('')
 
@@ -30,6 +32,10 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
     setIsOpenTimeEntry(!isOpenTimeEntry)
     setTimeEntryId(parseInt(id as string))
     setUser(name as string)
+  }
+
+  const handleIsOpenEditModalToggle = (): void => {
+    setIsOpenEditModal(!isOpenEditModal)
   }
 
   const EMPTY = 'N/A'
@@ -223,11 +229,25 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                   </Tippy>
                                   <Tippy placement="left" content="Edit" className="!text-xs">
                                     <Button
-                                      onClick={() => alert(row.original.id)}
+                                      onClick={handleIsOpenEditModalToggle}
                                       rounded="none"
                                       className="py-0.5 px-1 text-slate-500"
                                     >
                                       <Edit className="h-4 w-4" />
+                                      {isOpenEditModal ? (
+                                        <EditTimeEntriesModal
+                                          {...{
+                                            isOpen: isOpenEditModal,
+                                            user: row.original.user,
+                                            timeEntry: {
+                                              id: row.original.id,
+                                              timeIn: row.original.timeIn?.timeHour,
+                                              timeOut: row.original.timeOut?.timeHour
+                                            },
+                                            closeModal: handleIsOpenEditModalToggle
+                                          }}
+                                        />
+                                      ) : null}
                                     </Button>
                                   </Tippy>
                                 </div>
