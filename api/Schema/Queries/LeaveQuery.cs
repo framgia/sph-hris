@@ -1,3 +1,4 @@
+using api.DTOs;
 using api.Entities;
 using api.Services;
 
@@ -15,6 +16,10 @@ namespace api.Schema.Queries
         public async Task<List<Leave>> GetAllLeaves()
         {
             return await _leaveService.Index();
+        }
+        public async Task<LeavesDTO> GetLeaves(int userId, int year)
+        {
+            return await _leaveService.ShowHeapMap(userId, year);
         }
     }
 }

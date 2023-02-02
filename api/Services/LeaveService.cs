@@ -1,4 +1,5 @@
 using api.Context;
+using api.DTOs;
 using api.Entities;
 using api.Enums;
 using api.Requests;
@@ -13,6 +14,28 @@ namespace api.Services
         public LeaveService(IDbContextFactory<HrisContext> contextFactory)
         {
             _contextFactory = contextFactory;
+        }
+
+        public async Task<LeavesDTO> ShowHeapMap(int userId, int year)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+
+                var leaves = await context.Leaves
+                            .Include(i => i.LeaveType)
+                            .Where(u => u.UserId == userId && u.LeaveDate.Year == year)
+                            .OrderBy(o => o.LeaveDate.Day)
+                            .Select(s => new LeavesTableDTO(s))
+                            .ToListAsync();
+                var undertimes = await context.Undertimes
+                            .Where(u => u.UserId == userId && (u.CreatedAt ?? DateTime.Now).Year == year)
+                            .OrderBy(o => (o.CreatedAt ?? DateTime.Now).Day)
+                            .Select(s => new LeavesTableDTO(s))
+                            .ToListAsync();
+                leaves.AddRange(undertimes);
+                LeaveHeatMapDTO heatmap = new LeaveHeatMapDTO(leaves);
+                return new LeavesDTO(new LeaveHeatMapDTO(leaves), leaves);
+            }
         }
 
         public async Task<List<Leave>> Create(CreateLeaveRequest leave)
