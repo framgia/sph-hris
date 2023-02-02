@@ -1,7 +1,8 @@
-import { useMutation, UseMutationResult, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-hot-toast'
-import { UPDATE_TIME_ENTRY } from '~/graphql/mutations/timeEntryMutation'
+import { useMutation, UseMutationResult, useQueryClient } from '@tanstack/react-query'
+
 import { client } from '~/utils/shared/client'
+import { UPDATE_TIME_ENTRY } from '~/graphql/mutations/timeEntryMutation'
 
 type UpdateTimeEntryRequest = {
   updatedTimeEntry: {

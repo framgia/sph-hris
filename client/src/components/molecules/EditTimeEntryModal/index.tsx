@@ -1,13 +1,14 @@
 import classNames from 'classnames'
+import { useForm } from 'react-hook-form'
 import React, { FC, useEffect } from 'react'
 import { Edit, Save, X } from 'react-feather'
-import { useForm } from 'react-hook-form'
+
 import Button from '~/components/atoms/Buttons/ButtonAction'
+import { TimeEntryFormValues } from '~/utils/types/formValues'
 import ModalTemplate from '~/components/templates/ModalTemplate'
+import useUpdateTimeEntryMutation from '~/hooks/useTimeEntryMutation'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
-import { TimeEntryFormValues } from '~/utils/types/formValues'
-import useUpdateTimeEntryMutation from '~/hooks/useTimeEntryMutation'
 
 type Props = {
   isOpen: boolean
