@@ -3,10 +3,10 @@ import classNames from 'classnames'
 import { flexRender, Table } from '@tanstack/react-table'
 
 import TableSkeleton from './../SkeletonTable'
-import { ILeaveManagementSummaryTable } from '~/utils/interfaces'
+import { LeaveTable } from '~/utils/types/leaveTypes'
 
 type Props = {
-  table: Table<ILeaveManagementSummaryTable>
+  table: Table<LeaveTable>
   query: {
     isLoading: boolean
     isError: boolean

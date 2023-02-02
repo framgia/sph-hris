@@ -8,7 +8,6 @@ import { generateData } from '~/utils/generateData'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import BreakdownOfLeaveCard from '~/components/molecules/BreakdownOfLeavesCard'
 import LeaveManagementLayout from '~/components/templates/LeaveManagementLayout'
-import { dummayLeaveSummaryData } from '~/utils/constants/dummyLeaveSummaryData'
 import LeaveManagementResultTable from '~/components/molecules/LeaveManagementResultTable'
 
 const ReactApexChart = dynamic(async () => await import('react-apexcharts'), {
@@ -188,11 +187,22 @@ const LeaveSummary: NextPage = (): JSX.Element => {
             )}
           >
             {/* Pass the needed props of these components */}
-            <BreakdownOfLeaveCard />
+            <BreakdownOfLeaveCard
+              data={{
+                sickLeave: 0,
+                undertime: 0,
+                vacationLeave: 0,
+                emergencyLeave: 0,
+                bereavementLeave: 0,
+                maternityLeave: 0,
+                withoutPayTotal: 0,
+                withPayTotal: 0
+              }}
+            />
             <LeaveManagementResultTable
               {...{
                 query: {
-                  data: dummayLeaveSummaryData,
+                  data: [],
                   isLoading: false,
                   isError: false
                 }
