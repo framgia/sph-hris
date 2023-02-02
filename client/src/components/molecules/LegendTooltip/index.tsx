@@ -16,15 +16,15 @@ const LegendTooltip: FC<Props> = ({ placement }): JSX.Element => {
           <ul className="ml-3 space-y-2 text-xs">
             <li className="flex items-start space-x-2">
               <span className="h-4 w-4 shrink-0 rounded-full bg-rose-600"></span>
-              <p>Represent Late Time In</p>
+              <p>Late Time In</p>
             </li>
             <li className="flex items-start space-x-2">
               <span className="h-4 w-4 shrink-0 rounded-full bg-purple-600"></span>
-              <p>Represent Remarks</p>
+              <p>Remarks</p>
             </li>
             <li className="flex items-start space-x-2">
               <span className="h-4 w-4 shrink-0 rounded-full bg-amber-500"></span>
-              <p>Represent With Proof and Late Time In</p>
+              <p>Late Time In With Proof</p>
             </li>
           </ul>
         </div>
