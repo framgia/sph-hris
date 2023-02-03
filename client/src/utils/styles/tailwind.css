@@ -9,4 +9,10 @@
   .error {
     @apply mt-1 ml-0.5 block text-left text-[11px] text-rose-500;
   }
+  .text-area-auto-resize {
+    @apply m-0 block min-h-[10vh] w-full rounded pt-3 placeholder:font-light placeholder:text-slate-400;
+    @apply border border-slate-300 bg-white bg-clip-padding focus:border-primary focus:ring-primary;
+    @apply resize-none px-3 py-1.5 text-xs font-normal text-slate-700 transition;
+    @apply ease-in-out focus:bg-white focus:text-slate-700 focus:outline-none;
+  }
 }

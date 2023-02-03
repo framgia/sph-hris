@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { X } from 'react-feather'
+import { Plus, X } from 'react-feather'
 
 import Button from '~/components/atoms/Buttons/Button'
 
@@ -25,7 +25,7 @@ const ModalHeader: FC<Props> = ({ title, Icon, closeModal }): JSX.Element => {
 
 ModalHeader.defaultProps = {
   title: 'Title',
-  Icon: 'Plus'
+  Icon: Plus
 }
 
 export default ModalHeader
