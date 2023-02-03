@@ -9,7 +9,7 @@ namespace api.DTOs
         public LeavesDTO(LeaveHeatMapDTO heatmapLeaves, List<LeavesTableDTO> table)
         {
             Heatmap = heatmapLeaves;
-            Table = table;
+            Table = table.OrderByDescending(table => table.Date).ToList();
             Breakdown = new LeaveBreakdownDTO(table);
         }
     }
