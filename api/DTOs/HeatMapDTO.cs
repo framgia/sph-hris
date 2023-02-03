@@ -32,5 +32,11 @@ namespace api.DTOs
                     break;
             }
         }
+
+        public HeatMapDTO(int day, int value)
+        {
+            this.day = day;
+            this.value = value;
+        }
     }
 }

@@ -28,6 +28,22 @@ namespace api.Services
             }
         }
 
+        public async Task<LeavesDTO> ShowYearlyLeavesSummary(int year)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+
+                var leaves = await context.Leaves
+                            .Include(i => i.LeaveType)
+                            .Where(u => u.LeaveDate.Year == year)
+                            .OrderBy(o => o.LeaveDate.Day)
+                            .Select(s => new LeavesTableDTO(s))
+                            .ToListAsync();
+                LeaveHeatMapDTO heatmap = new LeaveHeatMapDTO(leaves);
+                heatmap.summarizeMonth();
+                return new LeavesDTO(heatmap, leaves);
+            }
+        }
         public async Task<List<Leave>> Create(CreateLeaveRequest leave)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())

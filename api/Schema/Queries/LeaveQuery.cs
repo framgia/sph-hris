@@ -21,5 +21,10 @@ namespace api.Schema.Queries
         {
             return await _leaveService.GetLeavesSummary(userId, year);
         }
+
+        public async Task<LeavesDTO> GetYearlyAllLeaves(int year)
+        {
+            return await _leaveService.ShowYearlyLeavesSummary(year);
+        }
     }
 }

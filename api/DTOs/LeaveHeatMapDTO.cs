@@ -17,7 +17,7 @@ namespace api.DTOs
 
         public LeaveHeatMapDTO(List<LeavesTableDTO> leaves)
         {
-            leaves.ForEach(leave =>
+            leaves.OrderBy(leave => leave.Date).ToList().ForEach(leave =>
             {
                 switch (leave.Date?.Month)
                 {
@@ -37,28 +37,58 @@ namespace api.DTOs
                         May?.Add(new HeatMapDTO(leave));
                         break;
                     case 6:
-                        January?.Add(new HeatMapDTO(leave));
-                        break;
-                    case 7:
                         June?.Add(new HeatMapDTO(leave));
                         break;
-                    case 8:
+                    case 7:
                         July?.Add(new HeatMapDTO(leave));
                         break;
-                    case 9:
+                    case 8:
                         August?.Add(new HeatMapDTO(leave));
                         break;
-                    case 10:
+                    case 9:
                         September?.Add(new HeatMapDTO(leave));
                         break;
-                    case 11:
+                    case 10:
                         October?.Add(new HeatMapDTO(leave));
                         break;
-                    case 12:
+                    case 11:
                         November?.Add(new HeatMapDTO(leave));
+                        break;
+                    case 12:
+                        December?.Add(new HeatMapDTO(leave));
                         break;
                 }
             });
+        }
+
+        public void summarizeMonth()
+        {
+            this.January = this.summarizeToDays(this.January);
+            this.February = this.summarizeToDays(this.February);
+            this.March = this.summarizeToDays(this.March);
+            this.April = this.summarizeToDays(this.April);
+            this.May = this.summarizeToDays(this.May);
+            this.June = this.summarizeToDays(this.June);
+            this.July = this.summarizeToDays(this.July);
+            this.August = this.summarizeToDays(this.August);
+            this.September = this.summarizeToDays(this.September);
+            this.October = this.summarizeToDays(this.October);
+            this.November = this.summarizeToDays(this.November);
+            this.December = this.summarizeToDays(this.December);
+        }
+
+        private List<HeatMapDTO> summarizeToDays(List<HeatMapDTO> month)
+        {
+            var groupedByDays = month.GroupBy(month => month.day);
+            List<HeatMapDTO> newHeatmap = new List<HeatMapDTO>();
+
+            foreach (var dayGroup in groupedByDays)
+            {
+                var majority = dayGroup.GroupBy(group => group.value).OrderByDescending(value => value.Count()).First();
+                newHeatmap.Add(new HeatMapDTO(dayGroup.Key, majority.Key));
+            }
+
+            return newHeatmap;
         }
     }
 }
