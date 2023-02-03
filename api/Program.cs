@@ -20,7 +20,8 @@ builder.Services.AddGraphQLServer()
     .AddType<UserQuery>()
     .AddType<TimeSheetQuery>()
     .AddType<InterruptionQuery>()
-    .AddType<LeaveQuery>();
+    .AddType<LeaveQuery>()
+    .AddType<ProjectQuery>();
 
 builder.Services.AddGraphQLServer()
     .AddMutationType(q => q.Name("Mutation"))
@@ -30,8 +31,7 @@ builder.Services.AddGraphQLServer()
     .AddType<LogoutMutation>()
     .AddType<InterruptionMutation>()
     .AddType<TimeEntryMutation>()
-    .AddType<LeaveMutation>()
-    .AddType<UndertimeMutation>();
+    .AddType<LeaveMutation>();
 
 builder.Services.AddGraphQLServer().AddProjections().AddFiltering().AddSorting();
 
@@ -48,7 +48,8 @@ builder.Services.AddScoped<SigninService>();
 builder.Services.AddScoped<LogoutService>();
 builder.Services.AddScoped<InterruptionService>();
 builder.Services.AddScoped<LeaveService>();
-builder.Services.AddScoped<UndertimeService>();
+builder.Services.AddScoped<ProjectService>();
+
 
 builder.Services.AddCors(options =>
 {

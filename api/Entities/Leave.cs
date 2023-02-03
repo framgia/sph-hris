@@ -15,6 +15,7 @@ namespace api.Entities
         public string? OtherProject { get; set; }
         public string? Reason { get; set; }
         public DateTime LeaveDate { get; set; }
+        public float Days { get; set; }
         public bool IsWithPay { get; set; }
         public bool? IsLeaderApproved { get; set; }
         public bool? IsManagerApproved { get; set; }

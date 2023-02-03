@@ -8,9 +8,6 @@ namespace api.Requests
         public int? ManagerId { get; set; }
         public string? OtherProject { get; set; }
         public string? Reason { get; set; }
-        public bool IsWithPay { get; set; }
-        public List<string>? LeaveDates { get; set; }
-        public string? From { get; set; }
-        public string? To { get; set; }
+        public List<LeaveDateRequest>? LeaveDates { get; set; }
     }
 }

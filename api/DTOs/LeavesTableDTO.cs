@@ -1,5 +1,4 @@
 using api.Entities;
-using api.Enums;
 
 namespace api.DTOs
 {
@@ -9,23 +8,15 @@ namespace api.DTOs
         public int LeaveTypeId { get; set; }
         public bool IsWithPay { get; set; }
         public string? Reason { get; set; }
-        public int NumLeaves { get; set; } = 1;
+        public float NumLeaves { get; set; }
 
 
-        public LeavesTableDTO(dynamic data)
+        public LeavesTableDTO(Leave data)
         {
-            if (data.GetType() == typeof(Leave))
-            {
-                Date = data.LeaveDate;
-                LeaveTypeId = data.LeaveTypeId;
-                IsWithPay = data.IsWithPay;
-            }
-            else
-            {
-                Date = data.CreatedAt;
-                LeaveTypeId = LeaveTypeEnum.UNDERTIME;
-                IsWithPay = false;
-            }
+            Date = data.LeaveDate;
+            LeaveTypeId = data.LeaveTypeId;
+            IsWithPay = data.IsWithPay;
+            NumLeaves = data.Days;
             Reason = data.Reason;
         }
     }
