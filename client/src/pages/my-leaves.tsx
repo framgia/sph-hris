@@ -2,171 +2,108 @@ import { NextPage } from 'next'
 import dynamic from 'next/dynamic'
 import classNames from 'classnames'
 import { Plus } from 'react-feather'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import Card from '~/components/atoms/Card'
 import Layout from '~/components/templates/Layout'
-import { generateData } from '~/utils/generateData'
+import {
+  getHeatmapData,
+  initialChartOptions,
+  initialSeriesData,
+  Series
+} from '~/utils/generateData'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { Chip } from '~/components/templates/LeaveManagementLayout'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import BreakdownOfLeaveCard from '~/components/molecules/BreakdownOfLeavesCard'
 import SummaryFilterDropdown from '~/components/molecules/SummaryFilterDropdown'
-import { dummayYearlySummaryData } from '~/utils/constants/dummyYearlySummaryData'
 import LeaveManagementResultTable from '~/components/molecules/LeaveManagementResultTable'
+import useUserQuery from '~/hooks/useUserQuery'
+import useLeave from '~/hooks/useLeave'
+import { Breakdown, HeatmapDetails, LeaveTable } from '~/utils/types/leaveTypes'
+import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
 
 const ReactApexChart = dynamic(async () => await import('react-apexcharts'), {
   ssr: false
 })
 
+type SeriesData = {
+  name: string
+  data: Series[]
+}
+
 const MyLeaves: NextPage = (): JSX.Element => {
-  const [chart] = useState({
-    series: [
-      {
-        name: 'November',
-        data: generateData(31, {
-          min: 0,
-          max: 50
-        })
-      },
-      {
-        name: 'October',
-        data: generateData(31, {
-          min: 0,
-          max: 50
-        })
-      },
-      {
-        name: 'September',
-        data: generateData(31, {
-          min: 0,
-          max: 50
-        })
-      },
-      {
-        name: 'August',
-        data: generateData(31, {
-          min: 0,
-          max: 50
-        })
-      },
-      {
-        name: 'July',
-        data: generateData(31, {
-          min: 0,
-          max: 50
-        })
-      },
-      {
-        name: 'June',
-        data: generateData(31, {
-          min: 1,
-          max: 50
-        })
-      },
-      {
-        name: 'May',
-        data: generateData(31, {
-          min: 0,
-          max: 50
-        })
-      },
-      {
-        name: 'April',
-        data: generateData(31, {
-          min: 0,
-          max: 50
-        })
-      },
-      {
-        name: 'March',
-        data: generateData(31, {
-          min: 0,
-          max: 50
-        })
-      },
-      {
-        name: 'February',
-        data: generateData(31, {
-          min: 0,
-          max: 50
-        })
-      },
-      {
-        name: 'January',
-        data: generateData(31, {
-          min: 0,
-          max: 50
-        })
-      }
-    ],
-    options: {
-      chart: {
-        toolbar: {
-          show: false,
-          tools: {
-            download: true,
-            selection: false,
-            zoom: false,
-            zoomin: false,
-            zoomout: false,
-            pan: false,
-            reset: false
-          }
-        }
-      },
-      plotOptions: {
-        heatmap: {
-          shadeIntensity: 0.5,
-          radius: 0,
-          useFillColorAsStroke: false,
-          colorScale: {
-            ranges: [
-              {
-                from: 1,
-                to: 6,
-                name: 'Undertime',
-                color: '#d97706'
-              },
-              {
-                from: 7,
-                to: 12,
-                name: 'Sick Leave',
-                color: '#059669'
-              },
-              {
-                from: 13,
-                to: 18,
-                name: 'Vacation Leave',
-                color: '#2563eb'
-              },
-              {
-                from: 19,
-                to: 31,
-                name: 'Emergency Leave',
-                color: '#e11d48'
-              },
-              {
-                from: 32,
-                to: 50,
-                name: 'Bereavement Leave',
-                color: '#4b5563'
-              }
-            ]
-          }
-        }
-      },
-      dataLabels: {
-        enabled: false
-      },
-      stroke: {
-        width: 1
-      },
-      title: {
-        text: ''
-      }
+  const { handleUserQuery } = useUserQuery()
+  const { data: user, isSuccess: isUserSuccess, isLoading: isUserLoading } = handleUserQuery()
+  const { handleLeaveQuery } = useLeave()
+  const {
+    data: leaves,
+    refetch,
+    isSuccess,
+    isLoading: isLeavesLoading,
+    isError: isLeavesError
+  } = handleLeaveQuery(user?.userById.id as number, new Date().getFullYear())
+
+  const [series, setSeries] = useState<SeriesData[]>(initialSeriesData)
+  useEffect(() => {
+    if (isUserSuccess || user?.userById.id !== undefined) {
+      void refetch()
     }
-  })
+  }, [isUserSuccess, user])
+  useEffect(() => {
+    if (isSuccess || isUserSuccess) {
+      setSeries([
+        {
+          name: 'December',
+          data: getHeatmapData(31, leaves?.leaves.heatmap.december as HeatmapDetails[])
+        },
+        {
+          name: 'November',
+          data: getHeatmapData(31, leaves?.leaves.heatmap.november as HeatmapDetails[])
+        },
+        {
+          name: 'October',
+          data: getHeatmapData(31, leaves?.leaves.heatmap.october as HeatmapDetails[])
+        },
+        {
+          name: 'September',
+          data: getHeatmapData(31, leaves?.leaves.heatmap.september as HeatmapDetails[])
+        },
+        {
+          name: 'August',
+          data: getHeatmapData(31, leaves?.leaves.heatmap.august as HeatmapDetails[])
+        },
+        {
+          name: 'July',
+          data: getHeatmapData(31, leaves?.leaves.heatmap.july as HeatmapDetails[])
+        },
+        {
+          name: 'June',
+          data: getHeatmapData(31, leaves?.leaves.heatmap.june as HeatmapDetails[])
+        },
+        {
+          name: 'May',
+          data: getHeatmapData(31, leaves?.leaves.heatmap.may as HeatmapDetails[])
+        },
+        {
+          name: 'April',
+          data: getHeatmapData(31, leaves?.leaves.heatmap.april as HeatmapDetails[])
+        },
+        {
+          name: 'March',
+          data: getHeatmapData(31, leaves?.leaves.heatmap.march as HeatmapDetails[])
+        },
+        {
+          name: 'February',
+          data: getHeatmapData(31, leaves?.leaves.heatmap.february as HeatmapDetails[])
+        },
+        {
+          name: 'January',
+          data: getHeatmapData(31, leaves?.leaves.heatmap.january as HeatmapDetails[])
+        }
+      ])
+    }
+  }, [isSuccess, isUserSuccess, leaves?.leaves.heatmap])
 
   return (
     <Layout metaTitle="My Leaves">
@@ -194,41 +131,47 @@ const MyLeaves: NextPage = (): JSX.Element => {
             <SummaryFilterDropdown />
           </div>
         </header>
-        <div className="default-scrollbar h-full space-y-4 overflow-y-auto px-4">
-          <MaxWidthContainer>
-            <Card className="default-scrollbar mt-4 overflow-x-auto overflow-y-hidden">
-              <div className="w-full min-w-[647px] px-5 pt-4 md:max-w-full">
-                <ReactApexChart
-                  options={chart.options}
-                  series={chart.series}
-                  type="heatmap"
-                  width={'100%'}
-                  height={450}
+        {!isUserLoading && !isLeavesLoading ? (
+          <div className="default-scrollbar h-full space-y-4 overflow-y-auto px-4">
+            <MaxWidthContainer>
+              <Card className="default-scrollbar mt-4 overflow-x-auto overflow-y-hidden">
+                <div className="w-full min-w-[647px] px-5 pt-4 md:max-w-full">
+                  <ReactApexChart
+                    options={initialChartOptions}
+                    series={series}
+                    type="heatmap"
+                    width={'100%'}
+                    height={450}
+                  />
+                </div>
+              </Card>
+            </MaxWidthContainer>
+            <MaxWidthContainer>
+              <article
+                className={classNames(
+                  'flex flex-col space-y-4 pb-24 text-xs',
+                  'md:flex-row md:space-y-0 md:space-x-4'
+                )}
+              >
+                {/* Pass the needed props of these components */}
+                <BreakdownOfLeaveCard data={leaves?.leaves.breakdown as Breakdown} />
+                <LeaveManagementResultTable
+                  {...{
+                    query: {
+                      data: leaves?.leaves.table as LeaveTable[],
+                      isLoading: isLeavesLoading,
+                      isError: isLeavesError
+                    }
+                  }}
                 />
-              </div>
-            </Card>
-          </MaxWidthContainer>
-          <MaxWidthContainer>
-            <article
-              className={classNames(
-                'flex flex-col space-y-4 pb-24 text-xs',
-                'md:flex-row md:space-y-0 md:space-x-4'
-              )}
-            >
-              {/* Pass the needed props of these components */}
-              <BreakdownOfLeaveCard />
-              <LeaveManagementResultTable
-                {...{
-                  query: {
-                    data: dummayYearlySummaryData,
-                    isLoading: false,
-                    isError: false
-                  }
-                }}
-              />
-            </article>
-          </MaxWidthContainer>
-        </div>
+              </article>
+            </MaxWidthContainer>
+          </div>
+        ) : (
+          <div className="flex min-h-[50vh] items-center justify-center">
+            <BarsLoadingIcon className="h-7 w-7 fill-current text-amber-500" />
+          </div>
+        )}
       </main>
     </Layout>
   )

@@ -12,11 +12,11 @@ import { columns } from './columns'
 import FooterTable from './../FooterTable'
 import LeaveManagementTable from './Table'
 import Card from '~/components/atoms/Card'
-import { ILeaveManagementSummaryTable } from '~/utils/interfaces'
+import { LeaveTable } from '~/utils/types/leaveTypes'
 
 type Props = {
   query: {
-    data: ILeaveManagementSummaryTable[]
+    data: LeaveTable[]
     isLoading: boolean
     isError: boolean
   }
@@ -30,7 +30,11 @@ const LeaveManagementResultTable: FC<Props> = (props): JSX.Element => {
   const [sorting, setSorting] = useState<SortingState>([])
 
   const table = useReactTable({
-    data,
+    data: data.sort((a, b) => {
+      if (new Date(a.date) > new Date(b.date)) return -1
+      else if (new Date(a.date) < new Date(b.date)) return 1
+      else return 0
+    }),
     columns,
     // Options
     state: {
