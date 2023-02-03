@@ -24,7 +24,6 @@ public partial class HrisContext : DbContext
     public DbSet<LeaveType> LeaveTypes { get; set; } = default!;
     public DbSet<Project> Projects { get; set; } = default!;
     public DbSet<Leave> Leaves { get; set; } = default!;
-    public DbSet<Undertime> Undertimes { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -54,12 +53,6 @@ public partial class HrisContext : DbContext
         );
         modelBuilder.Entity<Project>().HasData(
             DatabaseSeeder.projects
-        );
-        modelBuilder.Entity<Leave>().HasData(
-            DatabaseSeeder.leaves
-        );
-        modelBuilder.Entity<Undertime>().HasData(
-            DatabaseSeeder.undertimes
         );
     }
 

@@ -15,7 +15,6 @@ namespace api.Entities
         public User? ProjectLeader { get; set; } = default!;
         public User? ProjectSubLeader { get; set; } = default!;
         public ICollection<Leave> Leaves { get; set; } = default!;
-        public ICollection<Undertime> Undertimes { get; set; } = default!;
 
     }
 }

@@ -19,7 +19,7 @@ namespace api.Schema.Queries
         }
         public async Task<LeavesDTO> GetLeaves(int userId, int year)
         {
-            return await _leaveService.ShowHeapMap(userId, year);
+            return await _leaveService.GetLeavesSummary(userId, year);
         }
     }
 }
