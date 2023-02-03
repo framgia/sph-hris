@@ -2,6 +2,7 @@ import { NextPage } from 'next'
 import dynamic from 'next/dynamic'
 import classNames from 'classnames'
 import { Plus } from 'react-feather'
+import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import Card from '~/components/atoms/Card'
@@ -34,6 +35,7 @@ type SeriesData = {
 }
 
 const MyLeaves: NextPage = (): JSX.Element => {
+  const router = useRouter()
   const { handleUserQuery } = useUserQuery()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const { data: user, isSuccess: isUserSuccess, isLoading: isUserLoading } = handleUserQuery()
@@ -44,14 +46,24 @@ const MyLeaves: NextPage = (): JSX.Element => {
     isSuccess,
     isLoading: isLeavesLoading,
     isError: isLeavesError
-  } = handleLeaveQuery(user?.userById.id as number, new Date().getFullYear())
-
+  } = handleLeaveQuery(user?.userById.id as number, parseInt(router.query.year as string))
   const [series, setSeries] = useState<SeriesData[]>(initialSeriesData)
+
   useEffect(() => {
-    if (isUserSuccess || user?.userById.id !== undefined) {
+    if (router.isReady && router.query.year === undefined) {
+      void router.replace({
+        pathname: router.pathname,
+        query: {
+          year: new Date().getFullYear()
+        }
+      })
+    }
+  }, [router])
+  useEffect(() => {
+    if (isUserSuccess && user?.userById.id !== undefined && router.query.year !== undefined) {
       void refetch()
     }
-  }, [isUserSuccess, user])
+  }, [isUserSuccess, user, router])
   useEffect(() => {
     if (isSuccess || isUserSuccess) {
       setSeries([

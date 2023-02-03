@@ -16,7 +16,7 @@ const useLeave = (): returnType => {
       queryKey: ['GET_MY_LEAVES_QUERY', userId, year],
       queryFn: async () => await client.request(GET_MY_LEAVES_QUERY, { userId, year }),
       select: (data: Leaves) => data,
-      enabled: !(userId === undefined)
+      enabled: Boolean(userId) && Boolean(year)
     })
   return {
     handleLeaveQuery
