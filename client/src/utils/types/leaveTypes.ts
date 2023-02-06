@@ -40,3 +40,11 @@ export type Leaves = {
     table: LeaveTable[]
   }
 }
+
+export type YearlyLeaves = {
+  yearlyAllLeaves: {
+    breakdown: Breakdown
+    heatmap: Heatmap
+    table: LeaveTable[]
+  }
+}
