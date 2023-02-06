@@ -72,7 +72,13 @@ namespace api.Services
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
-                return await context.Leaves.ToListAsync();
+                return
+                await context.Leaves
+                .Include(x => x.User.Role)
+                .Include(x => x.LeaveType)
+                .Include(x => x.Manager)
+                .Include(x => x.Projects)
+                .ToListAsync();
             }
         }
     }

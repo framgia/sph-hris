@@ -1,3 +1,34 @@
+export interface ILeave {
+  id: number
+  projects: [
+    projectLeader: {
+      name: string
+      projectLeader: {
+        name: string
+      }
+    }
+  ]
+  user: {
+    name: string
+    role: {
+      name: string
+    }
+  }
+  leaveType: {
+    name: string
+  }
+  manager: {
+    name: string
+  }
+  otherProject: string
+  reason: string
+  leaveDate: string
+  isWithPay: boolean
+  isLeaderApproved: boolean
+  isManagerApproved: boolean
+  days: number
+  createdAt: string
+}
 export type HeatmapDetails = {
   value: number
   day: number
