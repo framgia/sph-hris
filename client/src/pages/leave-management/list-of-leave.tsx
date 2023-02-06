@@ -25,8 +25,10 @@ const ListOfLeave: NextPage = (): JSX.Element => {
         isWithPay: i?.isWithPay,
         manager: i?.manager?.name,
         projectLeader: i?.projects[0]?.projectLeader?.name,
-        totalUndertime: i?.leaveType?.name === 'Undertime' ? i?.days : 0,
-        totalLeaves: i?.leaveType?.name === 'Undertime' ? 0 : i?.days,
+        totalUndertime:
+          i?.leaveType?.name === 'Undertime' ? parseFloat(i?.days.toFixed(3).toString()) : 0,
+        totalLeaves:
+          i?.leaveType?.name === 'Undertime' ? 0 : parseFloat(i?.days.toFixed(3).toString()),
         dateFiled: moment(i?.createdAt).format('MM/DD/YYYY'),
         reason: i?.reason
       })
