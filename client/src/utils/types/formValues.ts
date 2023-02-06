@@ -38,5 +38,7 @@ export type UndertimeFormValues = {
   other_project?: string
   leave_date: string
   number_of_days_in_leave_undertime: string
+  manager: string
+  project_leader: string
   reason: string
 }

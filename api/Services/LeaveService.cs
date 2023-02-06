@@ -13,6 +13,13 @@ namespace api.Services
         {
             _contextFactory = contextFactory;
         }
+        public async Task<List<LeaveType>> GetLeaveTypes()
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.LeaveTypes.ToListAsync();
+            }
+        }
         public async Task<LeavesDTO> GetLeavesSummary(int userId, int year)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
@@ -49,20 +56,26 @@ namespace api.Services
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 var leaves = new List<Leave>();
+                var projects = new List<Project>();
+                leave.ProjectIds?.ForEach(project =>
+                {
+                    projects.Add(context.Projects.First(p => p.Id == project));
+                });
                 leave.LeaveDates?.ForEach(date =>
                 {
-                    leaves.Add(context.Leaves.Add(new Leave
+                    var myLeaves = new Leave
                     {
                         UserId = leave.UserId,
-                        ProjectId = leave.ProjectId,
                         LeaveTypeId = leave.LeaveTypeId,
+                        Projects = projects,
                         ManagerId = leave.ManagerId,
                         OtherProject = leave.OtherProject,
                         Reason = leave.Reason,
                         LeaveDate = DateTime.Parse(date.LeaveDate),
                         IsWithPay = date.IsWithPay,
                         Days = date.Days
-                    }).Entity);
+                    };
+                    leaves.Add(context.Leaves.Add(myLeaves).Entity);
                 });
                 await context.SaveChangesAsync();
                 return leaves;
