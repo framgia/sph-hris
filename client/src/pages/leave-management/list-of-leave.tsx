@@ -1,3 +1,4 @@
+import moment from 'moment'
 import { NextPage } from 'next'
 import React, { useState, useEffect } from 'react'
 
@@ -19,14 +20,14 @@ const ListOfLeave: NextPage = (): JSX.Element => {
         id: i?.id,
         name: i?.user?.name,
         project: i?.projects[0]?.name,
-        leaveDate: i?.leaveDate,
+        leaveDate: moment(i?.leaveDate).format('MM/DD/YYYY'),
         type: i?.leaveType?.name,
         isWithPay: i?.isWithPay,
         manager: i?.manager?.name,
         projectLeader: i?.projects[0]?.projectLeader?.name,
         totalUndertime: i?.leaveType?.name === 'Undertime' ? i?.days : 0,
         totalLeaves: i?.leaveType?.name === 'Undertime' ? 0 : i?.days,
-        dateFiled: i?.createdAt,
+        dateFiled: moment(i?.createdAt).format('MM/DD/YYYY'),
         reason: i?.reason
       })
     })

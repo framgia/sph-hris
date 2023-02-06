@@ -35,7 +35,7 @@ export const columns = [
     footer: (info) => info.column.id
   }),
   columnHelper.accessor('leaveDate', {
-    header: () => <CellHeader label="Time Out" />,
+    header: () => <CellHeader label="Leave Date(s)" />,
     footer: (info) => info.column.id
   }),
   columnHelper.accessor('type', {
