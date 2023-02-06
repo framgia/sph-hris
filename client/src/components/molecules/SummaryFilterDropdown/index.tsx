@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
 
@@ -12,8 +12,23 @@ type Props = {}
 
 const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
   const router = useRouter()
+  const currentYear = new Date().getFullYear()
+  const range = (start: number, stop: number, step: number): number[] =>
+    Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + i * step)
+  const [year, setYear] = useState<number>(2023)
 
   const isListOfLeaveTabPage = router.pathname === '/leave-management/list-of-leave'
+
+  const handleUpdateResult = (): void => {
+    if (router.pathname.includes('/my-leaves')) {
+      void router.replace({
+        pathname: router.pathname,
+        query: {
+          year
+        }
+      })
+    }
+  }
 
   return (
     <div>
@@ -70,15 +85,15 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
                       'w-full rounded-md border border-slate-300 text-xs shadow-sm',
                       'focus:border-primary focus:ring-1 focus:ring-primary'
                     )}
+                    defaultValue={router.query.year}
+                    onChange={(e) => setYear(parseInt(e.target.value))}
                     id="filterYear"
                   >
-                    <option value="">2017</option>
-                    <option value="">2018</option>
-                    <option value="">2019</option>
-                    <option value="">2020</option>
-                    <option value="">2021</option>
-                    <option value="">2022</option>
-                    <option value="">2023</option>
+                    {range(currentYear, currentYear - 10, -1).map((year, i) => (
+                      <option key={i} value={year}>
+                        {year}
+                      </option>
+                    ))}
                   </select>
                 </label>
               )}
@@ -111,7 +126,13 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
           )}
         </main>
         <footer className="bg-slate-100 px-5 py-3">
-          <Button type="button" variant="primary" rounded="md" className="w-full py-2">
+          <Button
+            onClick={handleUpdateResult}
+            type="button"
+            variant="primary"
+            rounded="md"
+            className="w-full py-2"
+          >
             Update Results
           </Button>
         </footer>
