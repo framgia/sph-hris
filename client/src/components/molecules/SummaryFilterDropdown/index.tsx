@@ -20,7 +20,10 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
   const isListOfLeaveTabPage = router.pathname === '/leave-management/list-of-leave'
 
   const handleUpdateResult = (): void => {
-    if (router.pathname.includes('/my-leaves')) {
+    if (
+      router.pathname.includes('/my-leaves') ||
+      router.pathname.includes('/leave-management/yearly-summary')
+    ) {
       void router.replace({
         pathname: router.pathname,
         query: {
@@ -89,7 +92,7 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
                     onChange={(e) => setYear(parseInt(e.target.value))}
                     id="filterYear"
                   >
-                    {range(currentYear, currentYear - 10, -1).map((year, i) => (
+                    {range(currentYear, 2015, -1).map((year, i) => (
                       <option key={i} value={year}>
                         {year}
                       </option>

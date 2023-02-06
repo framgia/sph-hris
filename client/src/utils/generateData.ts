@@ -47,6 +47,7 @@ export const initialChartOptions = {
     }
   },
   tooltip: {
+    enabled: false,
     y: {
       title: {
         formatter: function (seriesName: string) {
