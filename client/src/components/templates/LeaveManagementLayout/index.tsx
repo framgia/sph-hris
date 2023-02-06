@@ -1,3 +1,4 @@
+import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import { FileText, Filter } from 'react-feather'
@@ -65,11 +66,11 @@ const LeaveManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Element 
           <nav
             className={classNames(
               'flex w-full items-center justify-between',
-              'space-x-4 border-b border-slate-200 px-4 text-xs',
-              isListOfLeaveTabPage ? 'min-w-[612px] ' : 'min-w-[451px] '
+              'space-x-4 border-b border-slate-200 text-xs',
+              isListOfLeaveTabPage ? 'min-w-[612px]' : 'min-w-[451px]'
             )}
           >
-            <section className="flex shrink-0 items-center space-x-4 md:space-x-6">
+            <section className="flex shrink-0 items-center space-x-4 px-4 md:space-x-6">
               {submenuItems.map(({ name, Icon, href }, i) => (
                 <TabLink
                   key={i}
@@ -81,7 +82,7 @@ const LeaveManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Element 
                 />
               ))}
             </section>
-            <section className="flex space-x-2">
+            <section className="flex space-x-2 px-4">
               {isListOfLeaveTabPage ? (
                 <GlobalSearchFilter
                   value={globalFilter ?? ''}
@@ -91,7 +92,9 @@ const LeaveManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Element 
               ) : null}
               {isLeaveSummaryTabPage ? (
                 <div className="flex items-center space-x-1">
-                  <p className="hidden text-slate-500 sm:block">Remaining Paid Leaves:</p>
+                  <div className="hidden sm:block">
+                    <span className="text-slate-500 line-clamp-1">Remaining Paid Leaves:</span>
+                  </div>
                   <Chip count={12} />
                 </div>
               ) : null}
@@ -108,14 +111,16 @@ const LeaveManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Element 
 
 export const Chip = ({ count }: { count: number }): JSX.Element => {
   return (
-    <span
-      className={classNames(
-        'shrink-0 rounded-full border border-green-600 bg-green-500',
-        'flex h-5 w-5 items-center justify-center font-semibold text-white'
-      )}
-    >
-      {count}
-    </span>
+    <Tippy content="Remaining Paid Leaves" placement="left" className="!text-xs">
+      <span
+        className={classNames(
+          'shrink-0 rounded-full border border-green-600 bg-green-500',
+          'flex h-5 w-5 items-center justify-center font-semibold text-white'
+        )}
+      >
+        {count}
+      </span>
+    </Tippy>
   )
 }
 
