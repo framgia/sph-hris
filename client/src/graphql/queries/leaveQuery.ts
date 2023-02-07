@@ -1,4 +1,12 @@
 import { gql } from 'graphql-request'
+export const GET_LEAVE_TYPES_QUERY = gql`
+  {
+    leaveTypes {
+      id
+      name
+    }
+  }
+`
 export const GET_MY_LEAVES_QUERY = gql`
   query ($userId: Int!, $year: Int!) {
     leaves(userId: $userId, year: $year) {

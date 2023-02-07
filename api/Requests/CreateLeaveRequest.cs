@@ -3,7 +3,7 @@ namespace api.Requests
     public class CreateLeaveRequest
     {
         public int UserId { get; set; }
-        public int ProjectId { get; set; }
+        public List<int>? ProjectIds { get; set; }
         public int LeaveTypeId { get; set; }
         public int? ManagerId { get; set; }
         public string? OtherProject { get; set; }

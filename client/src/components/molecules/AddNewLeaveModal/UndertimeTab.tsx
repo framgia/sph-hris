@@ -1,11 +1,12 @@
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
 import makeAnimated from 'react-select/animated'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, useForm } from 'react-hook-form'
 import ReactSelect, { MultiValue } from 'react-select'
 import React, { FC, useEffect, useState } from 'react'
 import ReactTextareaAutosize from 'react-textarea-autosize'
-import { X, Save, Coffee, FileText, Calendar } from 'react-feather'
+import { X, Save, Coffee, FileText, Calendar, UserCheck, User } from 'react-feather'
 
 import TextField from './../TextField'
 import Input from '~/components/atoms/Input'
@@ -16,10 +17,15 @@ import Button from '~/components/atoms/Buttons/ButtonAction'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import { UndertimeFormValues } from '~/utils/types/formValues'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
-import {
-  numberOfDaysInLeavesByUndertime,
-  projectList
-} from '~/utils/constants/dummyAddNewLeaveFields'
+import { numberOfDaysInLeavesByUndertime } from '~/utils/constants/dummyAddNewLeaveFields'
+import useProject from '~/hooks/useProject'
+import useUserQuery from '~/hooks/useUserQuery'
+import useLeave from '~/hooks/useLeave'
+import { User as UserType } from '~/utils/types/userTypes'
+import { Roles } from '~/utils/constants/roles'
+import { generateProjectsMultiSelect } from '~/utils/createLeaveHelpers'
+import { ProjectDetails } from '~/utils/types/projectTypes'
+import { LeaveTypes } from '~/utils/constants/leaveTypes'
 
 type Props = {
   isOpen: boolean
@@ -31,6 +37,42 @@ type ReactSelectProps = { label: string; value: string }
 const animatedComponents = makeAnimated()
 
 const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
+  const router = useRouter()
+  const [otherProject, setOtherProject] = useState<boolean>(false)
+  const [managers, setManagers] = useState<UserType[]>([])
+  const [leaders, setLeaders] = useState<UserType[]>([])
+  const { handleProjectQuery } = useProject()
+  const { handleAllUsersQuery, handleUserQuery } = useUserQuery()
+  const { handleLeaveMutation } = useLeave()
+  const { data: user } = handleUserQuery()
+  const leaveMutation = handleLeaveMutation(
+    user?.userById.id as number,
+    parseInt(router.query.year as string)
+  )
+  const { data: projects, isSuccess: isProjectsSuccess } = handleProjectQuery()
+  const { data: users, isSuccess: isUsersSuccess } = handleAllUsersQuery()
+
+  useEffect(() => {
+    if (isUsersSuccess) {
+      const tempManager = users.allUsers.filter((user) => user.role.name === Roles.MANAGER)
+      setManagers([...tempManager])
+    }
+  }, [isUsersSuccess])
+
+  useEffect(() => {
+    if (isProjectsSuccess && projects.projects.length > 0) {
+      const tempLeaders = [...leaders]
+      projects?.projects.forEach((project) => {
+        if (project?.projectLeader != null || project?.projectSubLeader != null) {
+          if (!tempLeaders.some((leader) => leader.id === project.projectLeader.id))
+            tempLeaders.push(project?.projectLeader)
+          if (!tempLeaders.some((leader) => leader.id === project.projectSubLeader.id))
+            tempLeaders.push(project?.projectSubLeader)
+        }
+      })
+      setLeaders(tempLeaders)
+    }
+  }, [isProjectsSuccess, projects?.projects])
   const [selectedOtherProjectOption, setSelectedOtherProjectOption] = useState<
     MultiValue<ReactSelectProps>
   >([])
@@ -49,19 +91,31 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
   // This will handle form submit and save
   const handleSave = async (data: UndertimeFormValues): Promise<void> => {
     return await new Promise((resolve) => {
-      setTimeout(() => {
-        resolve()
-        const newData = {
-          ...data,
-          project: selectedOtherProjectOption
-        }
-        alert(JSON.stringify(newData, null, 2))
-        closeModal()
-      }, 3000)
+      leaveMutation.mutate({
+        userId: user?.userById.id as number,
+        projectIds: selectedOtherProjectOption.map((p) => parseInt(p.value)),
+        leaveTypeId: LeaveTypes.UNDERTIME,
+        managerId: parseInt(data.manager),
+        otherProject: data.other_project as string,
+        reason: data.reason,
+        leaveDates: [
+          {
+            leaveDate: data.leave_date,
+            isWithPay: false,
+            days: parseFloat(data.number_of_days_in_leave_undertime)
+          }
+        ]
+      })
+      resolve()
+      closeModal()
     })
   }
 
   const handleChangeProject = (selectedOption: MultiValue<ReactSelectProps>): void => {
+    setOtherProject(false)
+    if (selectedOption.some((s) => s.label === 'Others')) {
+      setOtherProject(true)
+    }
     setSelectedOtherProjectOption(selectedOption)
   }
 
@@ -94,7 +148,7 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                     {...field}
                     isClearable
                     styles={customStyles}
-                    options={projectList}
+                    options={generateProjectsMultiSelect(projects?.projects as ProjectDetails[])}
                     closeMenuOnSelect={false}
                     isDisabled={isSubmitting}
                     backspaceRemovesValue={true}
@@ -114,11 +168,13 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
         </section>
 
         {/* Other Projects */}
-        <section className="col-span-2">
-          <TextField title="Other Project" Icon={Coffee} isOptional>
-            <Input type="text" {...register('other_project')} className="py-2.5 pl-11 text-xs" />
-          </TextField>
-        </section>
+        {otherProject ? (
+          <section className="col-span-2">
+            <TextField title="Other Project" Icon={Coffee} isOptional>
+              <Input type="text" {...register('other_project')} className="py-2.5 pl-11 text-xs" />
+            </TextField>
+          </section>
+        ) : null}
 
         {/* Leave Date */}
         <section className="col-span-2">
@@ -163,6 +219,40 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                 </span>
               )}
           </label>
+        </section>
+
+        {/* Manager & Project leader */}
+        <section className="col-span-2 sm:col-span-1">
+          <TextField title="Manager" Icon={UserCheck} isRequired>
+            <Select
+              className="py-2.5 pl-11 text-xs"
+              disabled={isSubmitting}
+              {...register('manager')}
+            >
+              {managers.map((manager, i) => (
+                <option key={i} value={manager?.id}>
+                  {manager?.name}
+                </option>
+              ))}
+            </Select>
+          </TextField>
+        </section>
+
+        {/* Project Leaders Field */}
+        <section className="col-span-2 sm:col-span-1">
+          <TextField title="Project Leader" Icon={User} isRequired>
+            <Select
+              className="py-2.5 pl-11 text-xs"
+              disabled={isSubmitting}
+              {...register('project_leader')}
+            >
+              {leaders.map((leader, i) => (
+                <option key={i} value={leader?.id}>
+                  {leader?.name}
+                </option>
+              ))}
+            </Select>
+          </TextField>
         </section>
 
         {/* Reason for leave Field */}

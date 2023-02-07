@@ -49,6 +49,7 @@ builder.Services.AddScoped<LogoutService>();
 builder.Services.AddScoped<InterruptionService>();
 builder.Services.AddScoped<LeaveService>();
 builder.Services.AddScoped<ProjectService>();
+builder.Services.AddScoped<UserService>();
 
 
 builder.Services.AddCors(options =>

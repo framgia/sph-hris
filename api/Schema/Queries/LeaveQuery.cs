@@ -17,6 +17,10 @@ namespace api.Schema.Queries
         {
             return await _leaveService.Index();
         }
+        public async Task<List<LeaveType>> GetLeaveTypes()
+        {
+            return await _leaveService.GetLeaveTypes();
+        }
         public async Task<LeavesDTO> GetLeaves(int userId, int year)
         {
             return await _leaveService.GetLeavesSummary(userId, year);

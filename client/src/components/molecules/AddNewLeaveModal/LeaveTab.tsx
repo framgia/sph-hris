@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
 import makeAnimated from 'react-select/animated'
 import { yupResolver } from '@hookform/resolvers/yup'
 import ReactSelect, { MultiValue } from 'react-select'
@@ -27,12 +28,15 @@ import Button from '~/components/atoms/Buttons/ButtonAction'
 import { NewLeaveFormValues } from '~/utils/types/formValues'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
-import {
-  leaveTypes,
-  numberOfDaysInLeaves,
-  projectLeaders,
-  projectList
-} from '~/utils/constants/dummyAddNewLeaveFields'
+import { numberOfDaysInLeaves } from '~/utils/constants/dummyAddNewLeaveFields'
+import useProject from '~/hooks/useProject'
+import useUserQuery from '~/hooks/useUserQuery'
+import { User as UserType } from '~/utils/types/userTypes'
+import { Roles } from '~/utils/constants/roles'
+import { generateProjectsMultiSelect } from '~/utils/createLeaveHelpers'
+import { ProjectDetails } from '~/utils/types/projectTypes'
+import useLeave from '~/hooks/useLeave'
+import { LeaveTypes } from '~/utils/constants/leaveTypes'
 
 type Props = {
   isOpen: boolean
@@ -44,6 +48,44 @@ type ReactSelectProps = { label: string; value: string }
 const animatedComponents = makeAnimated()
 
 const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
+  const router = useRouter()
+  const [managers, setManagers] = useState<UserType[]>([])
+  const [leaders, setLeaders] = useState<UserType[]>([])
+  const [otherProject, setOtherProject] = useState<boolean>(false)
+  const { handleProjectQuery } = useProject()
+  const { handleAllUsersQuery, handleUserQuery } = useUserQuery()
+  const { handleLeaveTypeQuery, handleLeaveMutation } = useLeave()
+  const { data: user } = handleUserQuery()
+  const leaveMutation = handleLeaveMutation(
+    user?.userById.id as number,
+    parseInt(router.query.year as string)
+  )
+  const { data: leaveTypes } = handleLeaveTypeQuery()
+  const { data: projects, isSuccess: isProjectsSuccess } = handleProjectQuery()
+  const { data: users, isSuccess: isUsersSuccess } = handleAllUsersQuery()
+
+  useEffect(() => {
+    if (isUsersSuccess) {
+      const tempManager = users.allUsers.filter((user) => user.role.name === Roles.MANAGER)
+      setManagers([...tempManager])
+    }
+  }, [isUsersSuccess])
+
+  useEffect(() => {
+    if (isProjectsSuccess && projects.projects.length > 0) {
+      const tempLeaders = [...leaders]
+      projects?.projects.forEach((project) => {
+        if (project?.projectLeader != null || project?.projectSubLeader != null) {
+          if (!tempLeaders.some((leader) => leader.id === project.projectLeader.id))
+            tempLeaders.push(project?.projectLeader)
+          if (!tempLeaders.some((leader) => leader.id === project.projectSubLeader.id))
+            tempLeaders.push(project?.projectSubLeader)
+        }
+      })
+      setLeaders(tempLeaders)
+    }
+  }, [isProjectsSuccess, projects?.projects])
+
   const [selectedOtherProjectOption, setSelectedOtherProjectOption] = useState<
     MultiValue<ReactSelectProps>
   >([])
@@ -62,19 +104,31 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
   // This will handle form submit and save
   const handleSave = async (data: NewLeaveFormValues): Promise<void> => {
     return await new Promise((resolve) => {
-      setTimeout(() => {
-        resolve()
-        const newData = {
-          ...data,
-          project: selectedOtherProjectOption
-        }
-        alert(JSON.stringify(newData, null, 2))
-        closeModal()
-      }, 3000)
+      leaveMutation.mutate({
+        userId: user?.userById.id as number,
+        projectIds: selectedOtherProjectOption.map((p) => parseInt(p.value)),
+        leaveTypeId: parseInt(data.leave_type),
+        managerId: parseInt(data.manager),
+        otherProject: data.other_project as string,
+        reason: data.reason,
+        leaveDates: data.leave_date.map((date) => {
+          return {
+            leaveDate: date.date,
+            isWithPay: date.is_with_pay,
+            days: parseFloat(date.number_of_days_in_leave)
+          }
+        })
+      })
+      resolve()
+      closeModal()
     })
   }
 
   const handleChangeProject = (selectedOption: MultiValue<ReactSelectProps>): void => {
+    setOtherProject(false)
+    if (selectedOption.some((s) => s.label === 'Others')) {
+      setOtherProject(true)
+    }
     setSelectedOtherProjectOption(selectedOption)
   }
 
@@ -126,7 +180,7 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                     {...field}
                     isClearable
                     styles={customStyles}
-                    options={projectList}
+                    options={generateProjectsMultiSelect(projects?.projects as ProjectDetails[])}
                     closeMenuOnSelect={false}
                     isDisabled={isSubmitting}
                     backspaceRemovesValue={true}
@@ -146,14 +200,16 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
         </section>
 
         {/* Other Projects */}
-        <section className="col-span-2 sm:col-span-1">
-          <TextField title="Other Project" Icon={Coffee} isOptional>
-            <Input type="text" {...register('other_project')} className="py-2.5 pl-11 text-xs" />
-          </TextField>
-        </section>
+        {otherProject ? (
+          <section className="col-span-2 sm:col-span-1">
+            <TextField title="Other Project" Icon={Coffee} isOptional>
+              <Input type="text" {...register('other_project')} className="py-2.5 pl-11 text-xs" />
+            </TextField>
+          </section>
+        ) : null}
 
         {/* Leave Types */}
-        <section className="col-span-2 sm:col-span-1">
+        <section className={`${otherProject ? 'col-span-2 sm:col-span-1' : 'col-span-2'} `}>
           <TextField title="Leave Type" Icon={Activity} isRequired>
             <Select
               className="py-2.5 pl-11 text-xs"
@@ -161,11 +217,14 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
               {...register('leave_type')}
               iserror={errors.leave_type !== null && errors?.leave_type !== undefined}
             >
-              {leaveTypes.map((leave) => (
-                <option key={leave.id} value={leave.value}>
-                  {leave.value}
-                </option>
-              ))}
+              {leaveTypes?.leaveTypes?.map(
+                (leave) =>
+                  leave.id !== LeaveTypes.UNDERTIME && (
+                    <option key={leave.id} value={leave.id}>
+                      {leave.name}
+                    </option>
+                  )
+              )}
             </Select>
           </TextField>
           {errors?.leave_type !== null && errors?.leave_type !== undefined && (
@@ -281,10 +340,11 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
               disabled={isSubmitting}
               {...register('manager')}
             >
-              <option value="Abdul Jalil Palala">Abdul Jalil Palala</option>
-              <option value="Arden Dave Cabotaje">Arden Dave Cabotaje</option>
-              <option value="Jeremiah Caballero">Jeremiah Caballero</option>
-              <option value="Rogelio John Oliverio">Rogelio John Oliverio</option>
+              {managers.map((manager, i) => (
+                <option key={i} value={manager?.id}>
+                  {manager?.name}
+                </option>
+              ))}
             </Select>
           </TextField>
         </section>
@@ -297,9 +357,9 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
               disabled={isSubmitting}
               {...register('project_leader')}
             >
-              {projectLeaders.map((project, i) => (
-                <option key={i} value={project.value}>
-                  {project.value}
+              {leaders.map((leader, i) => (
+                <option key={i} value={leader?.id}>
+                  {leader?.name}
                 </option>
               ))}
             </Select>

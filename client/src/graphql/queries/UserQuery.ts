@@ -37,3 +37,15 @@ export const GET_USER_QUERY = gql`
     }
   }
 `
+export const GET_ALL_USERS_QUERY = gql`
+  query {
+    allUsers {
+      id
+      name
+      role {
+        id
+        name
+      }
+    }
+  }
+`

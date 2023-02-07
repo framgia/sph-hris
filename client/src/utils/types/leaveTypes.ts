@@ -79,3 +79,24 @@ export type YearlyLeaves = {
     table: LeaveTable[]
   }
 }
+export type LeaveRequest = {
+  userId: number
+  projectIds: number[]
+  leaveTypeId: number
+  managerId: number
+  otherProject: string
+  reason: string
+  leaveDates: LeaveDateRequest[]
+}
+export type LeaveDateRequest = {
+  leaveDate: string
+  isWithPay: boolean
+  days: number
+}
+export type LeaveTypes = {
+  leaveTypes: LeaveType[]
+}
+export type LeaveType = {
+  id: number
+  name: string
+}
