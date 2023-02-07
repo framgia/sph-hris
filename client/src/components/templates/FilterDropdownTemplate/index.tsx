@@ -10,11 +10,12 @@ type Props = {
   btnStyle?: string
   Icon?: any
   btnText?: string
+  cardClassName?: string
   children: ReactNode
 }
 
 const FilterDropdownTemplate: FC<Props> = (props): JSX.Element => {
-  const { btnStyle, children, btnText, Icon, ...rest } = props
+  const { btnStyle, children, btnText, Icon, cardClassName, ...rest } = props
 
   return (
     <Menu as="div" className="relative z-10 flex w-full">
@@ -31,7 +32,7 @@ const FilterDropdownTemplate: FC<Props> = (props): JSX.Element => {
       </Menu.Button>
       <MenuTransition>
         <Menu.Items className="fixed right-4 top-[94px] flex w-80 flex-col outline-none md:top-[97px]">
-          <Card shadow-size="xl" rounded="md" className="overflow-hidden">
+          <Card shadow-size="xl" rounded="md" className={cardClassName}>
             {children}
           </Card>
         </Menu.Items>
@@ -42,7 +43,8 @@ const FilterDropdownTemplate: FC<Props> = (props): JSX.Element => {
 
 FilterDropdownTemplate.defaultProps = {
   btnText: 'Filters',
-  Icon: FilterIcon
+  Icon: FilterIcon,
+  cardClassName: 'overflow-hidden'
 }
 
 export default FilterDropdownTemplate

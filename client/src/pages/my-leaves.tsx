@@ -149,14 +149,12 @@ const MyLeaves: NextPage = (): JSX.Element => {
           </div>
 
           {/* This will Open New Modal for Filing New Leave */}
-          {isOpen ? (
-            <AddNewLeaveModal
-              {...{
-                isOpen,
-                closeModal: handleToggle
-              }}
-            />
-          ) : null}
+          <AddNewLeaveModal
+            {...{
+              isOpen,
+              closeModal: handleToggle
+            }}
+          />
         </header>
         {!isUserLoading && !isLeavesLoading ? (
           <div className="default-scrollbar h-full space-y-4 overflow-y-auto px-4">
