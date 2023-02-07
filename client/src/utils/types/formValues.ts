@@ -42,3 +42,15 @@ export type UndertimeFormValues = {
   project_leader: string
   reason: string
 }
+
+export type NewOvertimeFormValues = {
+  // eslint-disable-next-line @typescript-eslint/array-type
+  project: {
+    label: string
+    value: string
+  }[]
+  other_project?: string
+  date_effective: string
+  requested_hours: string
+  remarks: string
+}

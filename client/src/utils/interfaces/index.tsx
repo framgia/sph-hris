@@ -35,3 +35,16 @@ export interface IListOfLeave {
   dateFiled: string
   reason: string
 }
+
+export interface IMyOvertime {
+  id: number
+  project: string
+  date: string
+  overtimeIn: string
+  overtimeOut: string
+  requestedHours: number
+  supervisor: string
+  dateFiled: string
+  remarks: string
+  status: string
+}
