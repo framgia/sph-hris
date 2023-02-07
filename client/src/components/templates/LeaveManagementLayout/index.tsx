@@ -5,7 +5,9 @@ import { FileText, Filter } from 'react-feather'
 import React, { FC, ReactNode, useEffect, useState } from 'react'
 
 import Layout from './../Layout'
+import useUserQuery from '~/hooks/useUserQuery'
 import TabLink from '~/components/atoms/TabLink'
+import { getRemainingPaidLeaves } from '~/hooks/useLeaveQuery'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import SummaryFilterDropdown from '~/components/molecules/SummaryFilterDropdown'
 
@@ -17,6 +19,9 @@ type Props = {
 const LeaveManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Element => {
   const router = useRouter()
   const [globalFilter, setGlobalFilter] = useState<string>('')
+  const { handleUserQuery } = useUserQuery()
+  const { data: user } = handleUserQuery()
+  const { data: paidLeaves } = getRemainingPaidLeaves(user?.userById?.id as number)
 
   const isListOfLeaveTabPage = router.pathname === '/leave-management/list-of-leave'
   const isLeaveSummaryTabPage = router.pathname === '/leave-management/leave-summary'
@@ -95,7 +100,7 @@ const LeaveManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Element 
                   <div className="hidden sm:block">
                     <span className="text-slate-500 line-clamp-1">Remaining Paid Leaves:</span>
                   </div>
-                  <Chip count={12} />
+                  <Chip count={paidLeaves?.paidLeaves} />
                 </div>
               ) : null}
               {/* FOR INTEGRATOR: Filter it by shallow route */}
@@ -109,12 +114,12 @@ const LeaveManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Element 
   )
 }
 
-export const Chip = ({ count }: { count: number }): JSX.Element => {
+export const Chip = ({ count }: { count: number | undefined }): JSX.Element => {
   return (
     <Tippy content="Remaining Paid Leaves" placement="left" className="!text-xs">
       <span
         className={classNames(
-          'shrink-0 rounded-full border border-green-600 bg-green-500',
+          'w-fit shrink-0 rounded-full border border-green-600 bg-green-500 px-1',
           'flex h-5 w-5 items-center justify-center font-semibold text-white'
         )}
       >

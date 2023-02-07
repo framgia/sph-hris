@@ -33,3 +33,10 @@ export const GET_ALL_REQUESTED_LEAVES = gql`
     }
   }
 `
+
+export const GET_REMAINING_PAID_LEAVES = gql`
+query ($id: Int!) {
+  paidLeaves(id: $id) {
+  }
+}
+`
