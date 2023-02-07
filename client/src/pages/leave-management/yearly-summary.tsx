@@ -32,13 +32,13 @@ type SeriesData = {
 
 const YearlySummary: NextPage = (): JSX.Element => {
   const router = useRouter()
-  const { handleYearlyAllLeaveQuery } = useLeave()
+  const { getYearlyAllLeaveQuery } = useLeave()
   const {
     data: leaves,
     isSuccess,
     isLoading: isLeavesLoading,
     isError: isLeavesError
-  } = handleYearlyAllLeaveQuery(
+  } = getYearlyAllLeaveQuery(
     isNaN(parseInt(router.query.year as string))
       ? moment().year()
       : parseInt(router.query.year as string),

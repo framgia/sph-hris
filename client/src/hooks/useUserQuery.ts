@@ -18,7 +18,7 @@ type handleAllUsersQueryType = UseQueryResult<
 >
 type returnType = {
   handleUserQuery: () => handleUserQueryType
-  handleAllUsersQuery: () => handleAllUsersQueryType
+  handleAllUsersQuery: (ready?: boolean) => handleAllUsersQueryType
 }
 const useUserQuery = (): returnType => {
   const handleUserQuery = (): handleUserQueryType =>
@@ -31,11 +31,12 @@ const useUserQuery = (): returnType => {
         }),
       select: (data: { userById: User }) => data
     })
-  const handleAllUsersQuery = (): handleAllUsersQueryType =>
+  const handleAllUsersQuery = (ready: boolean = true): handleAllUsersQueryType =>
     useQuery({
       queryKey: ['GET_ALL_USERS_QUERY'],
       queryFn: async () => await client.request(GET_ALL_USERS_QUERY),
-      select: (data: { allUsers: User[] }) => data
+      select: (data: { allUsers: User[] }) => data,
+      enabled: ready
     })
   return {
     handleUserQuery,

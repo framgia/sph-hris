@@ -8,9 +8,11 @@ namespace api.Schema.Queries
     public class UserQuery
     {
         private readonly TimeInService _timeInService;
-        public UserQuery(TimeInService timeInService)
+        private readonly UserService _userService;
+        public UserQuery(TimeInService timeInService, UserService userService)
         {
             _timeInService = timeInService;
+            _userService = userService;
         }
         public async Task<UserDTO?> GetUserById(string token, string schedule)
         {

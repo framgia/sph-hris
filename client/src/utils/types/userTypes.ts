@@ -37,3 +37,9 @@ export type Time = {
   id: number
   timeHour: string
 }
+
+export type Users = {
+  id: number
+  name: string
+  email: string
+}

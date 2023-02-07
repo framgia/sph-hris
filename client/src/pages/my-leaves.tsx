@@ -39,14 +39,14 @@ const MyLeaves: NextPage = (): JSX.Element => {
   const { handleUserQuery } = useUserQuery()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const { data: user, isSuccess: isUserSuccess, isLoading: isUserLoading } = handleUserQuery()
-  const { handleLeaveQuery } = useLeave()
+  const { getLeaveQuery } = useLeave()
   const {
     data: leaves,
     refetch,
     isSuccess,
     isLoading: isLeavesLoading,
     isError: isLeavesError
-  } = handleLeaveQuery(user?.userById.id as number, parseInt(router.query.year as string))
+  } = getLeaveQuery(user?.userById.id as number, parseInt(router.query.year as string))
   const [series, setSeries] = useState<SeriesData[]>(initialSeriesData)
 
   useEffect(() => {
@@ -149,14 +149,12 @@ const MyLeaves: NextPage = (): JSX.Element => {
           </div>
 
           {/* This will Open New Modal for Filing New Leave */}
-          {isOpen ? (
-            <AddNewLeaveModal
-              {...{
-                isOpen,
-                closeModal: handleToggle
-              }}
-            />
-          ) : null}
+          <AddNewLeaveModal
+            {...{
+              isOpen,
+              closeModal: handleToggle
+            }}
+          />
         </header>
         {!isUserLoading && !isLeavesLoading ? (
           <div className="default-scrollbar h-full space-y-4 overflow-y-auto px-4">
