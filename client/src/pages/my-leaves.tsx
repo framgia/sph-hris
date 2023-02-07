@@ -17,6 +17,7 @@ import useLeave from '~/hooks/useLeave'
 import useUserQuery from '~/hooks/useUserQuery'
 import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
 import Button from '~/components/atoms/Buttons/ButtonAction'
+import { getRemainingPaidLeaves } from '~/hooks/useLeaveQuery'
 import { Chip } from '~/components/templates/LeaveManagementLayout'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import AddNewLeaveModal from '~/components/molecules/AddNewLeaveModal'
@@ -48,6 +49,7 @@ const MyLeaves: NextPage = (): JSX.Element => {
     isError: isLeavesError
   } = getLeaveQuery(user?.userById.id as number, parseInt(router.query.year as string))
   const [series, setSeries] = useState<SeriesData[]>(initialSeriesData)
+  const { data: paidLeaves } = getRemainingPaidLeaves(user?.userById?.id as number)
 
   useEffect(() => {
     if (router.isReady && router.query.year === undefined) {
@@ -132,7 +134,7 @@ const MyLeaves: NextPage = (): JSX.Element => {
         >
           <div className="flex items-center space-x-1">
             <p className="text-slate-500">Remaining Paid Leaves:</p>
-            <Chip count={12} />
+            <Chip count={paidLeaves?.paidLeaves} />
           </div>
           {/* FOR INTEGRATOR: Filter it by shallow route */}
           <div className="flex items-center space-x-2">
