@@ -66,23 +66,23 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
 
   useEffect(() => {
     if (isUsersSuccess) {
-      const temp = users.allUsers.filter((user) => user.role.name === Roles.MANAGER)
-      setManagers([...temp])
+      const tempManager = users.allUsers.filter((user) => user.role.name === Roles.MANAGER)
+      setManagers([...tempManager])
     }
   }, [isUsersSuccess])
 
   useEffect(() => {
     if (isProjectsSuccess && projects.projects.length > 0) {
-      const temp = [...leaders]
+      const tempLeaders = [...leaders]
       projects?.projects.forEach((project) => {
         if (project?.projectLeader != null || project?.projectSubLeader != null) {
-          if (!temp.some((leader) => leader.id === project.projectLeader.id))
-            temp.push(project?.projectLeader)
-          if (!temp.some((leader) => leader.id === project.projectSubLeader.id))
-            temp.push(project?.projectSubLeader)
+          if (!tempLeaders.some((leader) => leader.id === project.projectLeader.id))
+            tempLeaders.push(project?.projectLeader)
+          if (!tempLeaders.some((leader) => leader.id === project.projectSubLeader.id))
+            tempLeaders.push(project?.projectSubLeader)
         }
       })
-      setLeaders(temp)
+      setLeaders(tempLeaders)
     }
   }, [isProjectsSuccess, projects?.projects])
 
@@ -206,9 +206,7 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
               <Input type="text" {...register('other_project')} className="py-2.5 pl-11 text-xs" />
             </TextField>
           </section>
-        ) : (
-          <></>
-        )}
+        ) : null}
 
         {/* Leave Types */}
         <section className={`${otherProject ? 'col-span-2 sm:col-span-1' : 'col-span-2'} `}>
