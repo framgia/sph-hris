@@ -6,21 +6,13 @@ export type optionType = {
 }
 
 export const usersSelectOptions = (users: User[]): optionType[] => {
-  const result: optionType[] = []
-
-  users.forEach((user) => {
-    result.push({ label: user.name, value: user.id })
+  return users.map((user) => {
+    return { label: user.name, value: user.id }
   })
-
-  return result
 }
 
 export const yearSelectOptions = (years: number[]): optionType[] => {
-  const result: optionType[] = []
-
-  years.forEach((year) => {
-    result.push({ label: year.toString(), value: year })
+  return years.map((year) => {
+    return { label: year.toString(), value: year }
   })
-
-  return result
 }

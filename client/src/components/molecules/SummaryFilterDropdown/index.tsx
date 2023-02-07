@@ -22,6 +22,9 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
   const range = (start: number, stop: number, step: number): number[] =>
     Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + i * step)
 
+  const NAME_FIELD = 'name'
+  const YEAR_FIELD = 'year'
+
   // filter states
   const [year, setYear] = useState<number>(currentYear)
   const [selectedUser, setSelectedUser] = useState<number>()
@@ -64,59 +67,24 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
     let defaultValue: optionType | null = null
 
     switch (field) {
-      case 'year':
+      case YEAR_FIELD:
         defaultValue = yearOptions[0]
         break
-      case 'name':
+      case NAME_FIELD:
         defaultValue = nameOptions[0]
         break
     }
 
     if (isLeaveSummaryTabPage) {
-      const yearQuery = router.query.year
-      const idQuery = router.query.id
+      if (field === YEAR_FIELD && router.query.year !== undefined)
+        return yearOptions.find((option) => option.value === year) ?? null
 
-      if (field === 'year') {
-        if (yearQuery !== undefined) {
-          yearOptions.forEach((option) => {
-            if (option.value === parseInt(yearQuery as string) && option.value === year) {
-              defaultValue = option
-            } else if (option.value === year) {
-              defaultValue = option
-            }
-          })
-        } else {
-          yearOptions.forEach((option) => {
-            if (option.value === year) defaultValue = option
-          })
-        }
-      } else if (field === 'name') {
-        if (idQuery !== undefined) {
-          nameOptions.forEach((name) => {
-            if (name.value === parseInt(idQuery as string) && name.value === selectedUser) {
-              defaultValue = name
-            } else if (name.value === selectedUser) {
-              defaultValue = name
-            }
-          })
-        } else {
-          nameOptions.forEach((name) => {
-            if (name.value === selectedUser) defaultValue = name
-          })
-        }
-      }
-    } else if (isYearlySummaryTabPage) {
-      const yearQuery = router.query.year
+      if (field === NAME_FIELD && router.query.id !== undefined)
+        return nameOptions.find((option) => option.value === selectedUser) ?? null
+    }
 
-      if (yearQuery !== undefined) {
-        yearOptions.forEach((option) => {
-          if (option.value === parseInt(yearQuery as string) && option.value === year) {
-            defaultValue = option
-          } else if (option.value === year) {
-            defaultValue = option
-          }
-        })
-      }
+    if (isYearlySummaryTabPage && router.query.year !== undefined) {
+      return yearOptions.find((option) => option.value === year) ?? null
     }
 
     return defaultValue
@@ -159,9 +127,9 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
                     <Select
                       id="filterName"
                       styles={customStyles}
-                      defaultValue={handleDefaultValues('name')}
+                      defaultValue={handleDefaultValues(NAME_FIELD)}
                       isLoading={isLoading}
-                      name="name"
+                      name={NAME_FIELD}
                       onChange={(e) => (e !== null ? setSelectedUser(e.value) : null)}
                       options={nameOptions}
                     />
@@ -171,9 +139,9 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
                     <Select
                       id="filterYear"
                       styles={customStyles}
-                      defaultValue={handleDefaultValues('year')}
+                      defaultValue={handleDefaultValues(YEAR_FIELD)}
                       isLoading={isLoading}
-                      name="year"
+                      name={YEAR_FIELD}
                       onChange={(e) => (e !== null ? setYear(e.value) : null)}
                       options={yearOptions}
                     />

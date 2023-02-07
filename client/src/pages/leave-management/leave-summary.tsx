@@ -30,7 +30,7 @@ type SeriesData = {
 
 const LeaveSummary: NextPage = (): JSX.Element => {
   const router = useRouter()
-  const { handleLeaveQuery } = useLeave()
+  const { getLeaveQuery } = useLeave()
 
   const {
     data: leaves,
@@ -38,7 +38,7 @@ const LeaveSummary: NextPage = (): JSX.Element => {
     isSuccess,
     isLoading: isLeavesLoading,
     isError: isLeavesError
-  } = handleLeaveQuery(
+  } = getLeaveQuery(
     router.query.id !== undefined ? parseInt(router.query.id as string) : 0,
     router.query.year !== undefined
       ? parseInt(router.query.year as string)
