@@ -94,5 +94,15 @@ namespace api.Services
                 .ToListAsync();
             }
         }
+        public async Task<double> GetPaidLeaves(int id)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                User user = await context.Users.Where(c => c.Id == id).FirstAsync();
+
+                return Convert.ToDouble(user.PaidLeaves.ToString("N3"));
+
+            }
+        }
     }
 }

@@ -30,5 +30,10 @@ namespace api.Schema.Queries
         {
             return await _leaveService.ShowYearlyLeavesSummary(year);
         }
+
+        public async Task<double> GetPaidLeaves(int id)
+        {
+            return await _leaveService.GetPaidLeaves(id);
+        }
     }
 }

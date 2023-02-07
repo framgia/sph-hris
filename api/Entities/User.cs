@@ -12,6 +12,7 @@ namespace api.Entities
         public string? Email { get; set; }
         public int RoleId { get; set; }
         public int EmployeeScheduleId { get; set; }
+        public float PaidLeaves { get; set; }
         public bool IsOnline { get; set; }
         public Role Role { get; set; } = default!;
         public EmployeeSchedule EmployeeSchedule { get; set; } = default!;
