@@ -1,6 +1,7 @@
 import { NextPage } from 'next'
 import dynamic from 'next/dynamic'
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import Card from '~/components/atoms/Card'
@@ -10,14 +11,14 @@ import {
   initialSeriesData,
   Series
 } from '~/utils/generateData'
+import useLeave from '~/hooks/useLeave'
+import useUserQuery from '~/hooks/useUserQuery'
+import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
+import { Breakdown, LeaveTable } from '~/utils/types/leaveTypes'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import BreakdownOfLeaveCard from '~/components/molecules/BreakdownOfLeavesCard'
 import LeaveManagementLayout from '~/components/templates/LeaveManagementLayout'
 import LeaveManagementResultTable from '~/components/molecules/LeaveManagementResultTable'
-import useLeave from '~/hooks/useLeave'
-import { useRouter } from 'next/router'
-import { Breakdown, LeaveTable } from '~/utils/types/leaveTypes'
-import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
 
 const ReactApexChart = dynamic(async () => await import('react-apexcharts'), {
   ssr: false
@@ -31,6 +32,9 @@ type SeriesData = {
 const LeaveSummary: NextPage = (): JSX.Element => {
   const router = useRouter()
   const { getLeaveQuery } = useLeave()
+  const { handleUserQuery } = useUserQuery()
+
+  const { data: user, isSuccess: isUserSuccess } = handleUserQuery()
 
   const {
     data: leaves,
@@ -39,7 +43,9 @@ const LeaveSummary: NextPage = (): JSX.Element => {
     isLoading: isLeavesLoading,
     isError: isLeavesError
   } = getLeaveQuery(
-    router.query.id !== undefined ? parseInt(router.query.id as string) : 0,
+    router.query.id !== undefined
+      ? parseInt(router.query.id as string)
+      : (user?.userById.id as number),
     router.query.year !== undefined
       ? parseInt(router.query.year as string)
       : new Date().getFullYear()
@@ -102,8 +108,8 @@ const LeaveSummary: NextPage = (): JSX.Element => {
   }, [isSuccess, leaves?.leaves.heatmap])
 
   useEffect(() => {
-    if (router.isReady) void refetch()
-  }, [router])
+    if (router.isReady && isUserSuccess) void refetch()
+  }, [router, isUserSuccess])
 
   return (
     <LeaveManagementLayout metaTitle="Leave Summary">
