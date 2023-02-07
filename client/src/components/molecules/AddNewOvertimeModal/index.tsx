@@ -61,7 +61,7 @@ const AddNewOvertimeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => 
       reset({
         other_project: '',
         date_effective: '',
-        requested_hours: '',
+        requested_hours: 0,
         remarks: ''
       })
       setOtherProject(false)
