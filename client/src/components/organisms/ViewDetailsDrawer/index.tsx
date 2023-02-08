@@ -9,6 +9,7 @@ import Text from '~/components/atoms/Text'
 import Avatar from '~/components/atoms/Avatar'
 import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
 import DrawerTemplate from '~/components/templates/DrawerTemplate'
+import useUserQuery from '~/hooks/useUserQuery'
 
 type Props = {
   isOpenViewDetailsDrawer: boolean
@@ -23,6 +24,8 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
   const res = getSpecificTimeEntry(Number(timeIdExists))
   const timeIn = parse(res.data?.timeById?.timeHour ?? 'PT0H')
   const date = res.data?.timeById?.createdAt
+  const { handleUserQuery } = useUserQuery()
+  const { data: user } = handleUserQuery()
 
   const {
     isOpenViewDetailsDrawer,
@@ -33,7 +36,7 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
     void router.replace(router.pathname, undefined, { shallow: false })
   }
 
-  const handleDownloadFile = (collectionName: string, fileName: string): void => {
+  const handleDownloadFile = (fileName: string): void => {
     void fetch(`${process.env.NEXT_PUBLIC_MEDIA_URL as string}/${fileName}`)
       .then(async (resp) => await resp.blob())
       .then((blobobject) => {
@@ -76,7 +79,7 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
           />
           <div>
             <Text theme="md" size="sm" weight="bold">
-              Joshua Galit
+              {user?.userById?.name as string}
             </Text>
             <p className="text-[11px] leading-tight text-slate-500">Clocking from GMT +8</p>
             <p className="text-[11px] leading-tight text-slate-500">Last in a few seconds ago</p>
@@ -192,7 +195,7 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
                       </a>
                       <button
                         className="rounded bg-white p-0.5 opacity-0 focus:outline-slate-400 group-hover:opacity-100"
-                        onClick={() => handleDownloadFile(i.collectionName, i.fileName)}
+                        onClick={() => handleDownloadFile(i.fileName)}
                       >
                         <Download className="h-4 w-4 text-slate-500" />
                       </button>
