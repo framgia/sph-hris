@@ -9,10 +9,14 @@ import MyOvertimeTable from '~/components/molecules/MyOvertimeTable'
 import { columns } from '~/components/molecules/MyOvertimeTable/columns'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import { dummyMyOvertimeData } from '~/utils/constants/dummyMyOvertimeData'
+import AddNewOvertimeModal from '~/components/molecules/AddNewOvertimeModal'
 import YearlyFilterDropdown from '~/components/molecules/MyOvertimeTable/YearlyFilterDropdown'
 
 const MyOverTime: NextPage = (): JSX.Element => {
+  const [isOpen, setIsOpen] = useState<boolean>(false)
   const [globalFilter, setGlobalFilter] = useState<string>('')
+
+  const handleToggle = (): void => setIsOpen(!isOpen)
 
   return (
     <Layout metaTitle="My Overtime">
@@ -37,6 +41,7 @@ const MyOverTime: NextPage = (): JSX.Element => {
             <Button
               type="button"
               variant="primary"
+              onClick={handleToggle}
               className="flex items-center space-x-0.5 px-1.5 py-[3px]"
             >
               <Plus className="h-4 w-4" />
@@ -44,6 +49,14 @@ const MyOverTime: NextPage = (): JSX.Element => {
             </Button>
             <YearlyFilterDropdown />
           </div>
+
+          {/* File New Overtime Modal */}
+          <AddNewOvertimeModal
+            {...{
+              isOpen,
+              closeModal: handleToggle
+            }}
+          />
         </header>
         <MyOvertimeTable
           {...{
