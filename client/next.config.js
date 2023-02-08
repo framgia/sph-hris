@@ -1,5 +1,13 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
+  async rewrites() {
+    return [
+      {
+        source: '/media/:path*',
+        destination: 'http://localhost:5257/media/timeinservice/:path*'
+      }
+    ]
+  },
   webpack: (config) => {
     config.watchOptions = {
       poll: 1000,

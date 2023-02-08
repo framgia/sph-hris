@@ -34,7 +34,7 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
   }
 
   const handleDownloadFile = (collectionName: string, fileName: string): void => {
-    void fetch(`${process.env.NEXT_PUBLIC_MEDIA_URL as string}${collectionName}/${fileName}`)
+    void fetch(`${process.env.NEXT_PUBLIC_MEDIA_URL as string}/${fileName}`)
       .then(async (resp) => await resp.blob())
       .then((blobobject) => {
         const blob = window.URL.createObjectURL(blobobject)
@@ -182,9 +182,7 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
                       </div>
                       <a
                         className="flex w-full truncate"
-                        href={`${process.env.NEXT_PUBLIC_MEDIA_URL as string}${i.collectionName}/${
-                          i.fileName
-                        }`}
+                        href={`${process.env.NEXT_PUBLIC_MEDIA_URL as string}/${i.fileName}`}
                         rel="noreferrer"
                         target="_blank"
                       >
