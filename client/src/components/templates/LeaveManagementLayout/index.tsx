@@ -85,7 +85,7 @@ const LeaveManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Element 
                   <div className="hidden sm:block">
                     <span className="text-slate-500 line-clamp-1">Remaining Paid Leaves:</span>
                   </div>
-                  <Chip count={remainingLeaves?.leaves.user.paidLeaves ?? 0} />
+                  <Chip count={remainingLeaves?.leaves?.user?.paidLeaves} />
                 </div>
               ) : null}
               {!isListOfLeaveTabPage ? <SummaryFilterDropdown /> : null}
@@ -115,7 +115,7 @@ export const Chip = ({ count }: { count: number | undefined }): JSX.Element => {
           'flex h-5 w-5 items-center justify-center font-semibold text-white'
         )}
       >
-        {parsedNumber}
+        {isNaN(parsedNumber) ? 0 : parsedNumber}
       </span>
     </Tippy>
   )
