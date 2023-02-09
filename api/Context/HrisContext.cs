@@ -54,6 +54,9 @@ public partial class HrisContext : DbContext
         modelBuilder.Entity<Project>().HasData(
             DatabaseSeeder.projects
         );
+        modelBuilder.Entity<Media>().HasData(
+            DatabaseSeeder.media
+        );
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

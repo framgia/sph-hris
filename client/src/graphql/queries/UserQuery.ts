@@ -4,6 +4,7 @@ export const GET_USER_QUERY = gql`
     userById(token: $token, schedule: $schedule) {
       id
       name
+      avatarLink
       timeEntry {
         id
         date

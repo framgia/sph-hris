@@ -206,12 +206,7 @@ const Header: FC<Props> = (props): JSX.Element => {
             <NotificationPopover className="h-5 w-5 text-slate-400" />
             {/* User Avatar */}
             <UserMenuDropDown position="bottom">
-              <Avatar
-                src="https://avatars.githubusercontent.com/u/38458781?v=4"
-                alt="user-avatar"
-                size="md"
-                rounded="full"
-              />
+              <Avatar src={data?.userById.avatarLink} alt="user-avatar" size="md" rounded="full" />
             </UserMenuDropDown>
           </div>
         </div>

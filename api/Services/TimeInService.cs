@@ -4,6 +4,7 @@ using api.Entities;
 using api.Requests;
 using api.Utils;
 using LiteX.Storage.Core;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Services
@@ -12,14 +13,12 @@ namespace api.Services
     {
         private readonly IDbContextFactory<HrisContext> _contextFactory = default!;
         private readonly FileUpload _fileUpload;
-        public TimeInService(IDbContextFactory<HrisContext> contextFactory, ILiteXBlobService blobService)
+        private readonly IServer _server;
+        public TimeInService(IDbContextFactory<HrisContext> contextFactory, ILiteXBlobService blobService, IServer server)
         {
             _contextFactory = contextFactory;
             _fileUpload = new FileUpload(blobService);
-        }
-        public static UserDTO ToUserDTO(User user)
-        {
-            return new UserDTO(user);
+            _server = server;
         }
         public async Task<UserDTO?> GetByIdSchedule(string token, string schedule)
         {
@@ -34,8 +33,9 @@ namespace api.Services
                         .ThenInclude(i => i.TimeIn)
                     .Include(i => i.TimeEntries.OrderByDescending(o => o.CreatedAt))
                         .ThenInclude(i => i.TimeOut)
+                    .Include(i => i.ProfileImage)
                     .Where(x => x.Id == personal_token.UserId)
-                    .Select(x => ToUserDTO(x))
+                    .Select(x => new UserDTO(x, _server))
                     .FirstAsync();
             }
         }
