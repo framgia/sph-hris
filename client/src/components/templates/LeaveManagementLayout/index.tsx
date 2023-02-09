@@ -99,6 +99,14 @@ const LeaveManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Element 
 }
 
 export const Chip = ({ count }: { count: number | undefined }): JSX.Element => {
+  const decimalFormatter = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 3,
+    maximumFractionDigits: 3
+  })
+
+  const formattedNumber = decimalFormatter.format(count as number)
+  const parsedNumber = parseFloat(formattedNumber)
+
   return (
     <Tippy content="Remaining Paid Leaves" placement="left" className="!text-xs">
       <span
@@ -107,7 +115,7 @@ export const Chip = ({ count }: { count: number | undefined }): JSX.Element => {
           'flex h-5 w-5 items-center justify-center font-semibold text-white'
         )}
       >
-        {count}
+        {parsedNumber}
       </span>
     </Tippy>
   )
