@@ -39,6 +39,7 @@ builder.Services.AddGraphQLServer().AddType<UploadType>();
 builder.Services.AddPooledDbContextFactory<HrisContext>(o => o.UseSqlServer(connectionString));
 
 builder.Services.AddLiteXFileSystemStorageService();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddHostedService<TimeInScheduler>();
 builder.Services.AddScoped<TimeInService>();
@@ -60,6 +61,7 @@ builder.Services.AddCors(options =>
             policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
         });
 });
+
 
 var app = builder.Build();
 
