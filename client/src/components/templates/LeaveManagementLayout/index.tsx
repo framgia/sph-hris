@@ -1,14 +1,13 @@
 import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
+import React, { FC, ReactNode } from 'react'
 import { FileText, Filter } from 'react-feather'
-import React, { FC, ReactNode, useEffect, useState } from 'react'
 
 import Layout from './../Layout'
 import useUserQuery from '~/hooks/useUserQuery'
 import TabLink from '~/components/atoms/TabLink'
 import { getRemainingPaidLeaves } from '~/hooks/useLeaveQuery'
-import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import SummaryFilterDropdown from '~/components/molecules/SummaryFilterDropdown'
 
 type Props = {
@@ -18,7 +17,6 @@ type Props = {
 
 const LeaveManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Element => {
   const router = useRouter()
-  const [globalFilter, setGlobalFilter] = useState<string>('')
   const { handleUserQuery } = useUserQuery()
   const { data: user } = handleUserQuery()
   const { data: paidLeaves } = getRemainingPaidLeaves(user?.userById?.id as number)
@@ -43,22 +41,6 @@ const LeaveManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Element 
       href: '/leave-management/yearly-summary'
     }
   ]
-
-  useEffect(() => {
-    if (router.isReady) {
-      if (isListOfLeaveTabPage) {
-        void router.replace({
-          pathname: '/leave-management/list-of-leave/',
-          query:
-            globalFilter !== ''
-              ? {
-                  searchKey: globalFilter
-                }
-              : null
-        })
-      }
-    }
-  }, [globalFilter])
 
   return (
     <Layout
@@ -88,13 +70,6 @@ const LeaveManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Element 
               ))}
             </section>
             <section className="flex space-x-2 px-4">
-              {isListOfLeaveTabPage ? (
-                <GlobalSearchFilter
-                  value={globalFilter ?? ''}
-                  onChange={(value) => setGlobalFilter(String(value))}
-                  placeholder="Search"
-                />
-              ) : null}
               {isLeaveSummaryTabPage ? (
                 <div className="flex items-center space-x-1">
                   <div className="hidden sm:block">
@@ -103,8 +78,7 @@ const LeaveManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Element 
                   <Chip count={paidLeaves?.paidLeaves} />
                 </div>
               ) : null}
-              {/* FOR INTEGRATOR: Filter it by shallow route */}
-              <SummaryFilterDropdown />
+              {!isListOfLeaveTabPage ? <SummaryFilterDropdown /> : null}
             </section>
           </nav>
         </header>
