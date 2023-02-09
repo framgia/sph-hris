@@ -10,6 +10,10 @@ export const GET_LEAVE_TYPES_QUERY = gql`
 export const GET_MY_LEAVES_QUERY = gql`
   query ($userId: Int!, $year: Int!) {
     leaves(userId: $userId, year: $year) {
+      user {
+        id
+        paidLeaves
+      }
       heatmap {
         january {
           value

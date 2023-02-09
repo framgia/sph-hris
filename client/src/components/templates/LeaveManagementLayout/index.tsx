@@ -5,9 +5,9 @@ import React, { FC, ReactNode } from 'react'
 import { FileText, Filter } from 'react-feather'
 
 import Layout from './../Layout'
+import useLeave from '~/hooks/useLeave'
 import useUserQuery from '~/hooks/useUserQuery'
 import TabLink from '~/components/atoms/TabLink'
-import { getRemainingPaidLeaves } from '~/hooks/useLeaveQuery'
 import SummaryFilterDropdown from '~/components/molecules/SummaryFilterDropdown'
 
 type Props = {
@@ -18,8 +18,18 @@ type Props = {
 const LeaveManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Element => {
   const router = useRouter()
   const { handleUserQuery } = useUserQuery()
+
+  const { getLeaveQuery } = useLeave()
   const { data: user } = handleUserQuery()
-  const { data: paidLeaves } = getRemainingPaidLeaves(user?.userById?.id as number)
+
+  const { data: remainingLeaves } = getLeaveQuery(
+    router.query.id !== undefined
+      ? parseInt(router.query.id as string)
+      : (user?.userById.id as number),
+    router.query.year !== undefined
+      ? parseInt(router.query.year as string)
+      : new Date().getFullYear()
+  )
 
   const isListOfLeaveTabPage = router.pathname === '/leave-management/list-of-leave'
   const isLeaveSummaryTabPage = router.pathname === '/leave-management/leave-summary'
@@ -75,7 +85,7 @@ const LeaveManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Element 
                   <div className="hidden sm:block">
                     <span className="text-slate-500 line-clamp-1">Remaining Paid Leaves:</span>
                   </div>
-                  <Chip count={paidLeaves?.paidLeaves} />
+                  <Chip count={remainingLeaves?.leaves.user.paidLeaves ?? 0} />
                 </div>
               ) : null}
               {!isListOfLeaveTabPage ? <SummaryFilterDropdown /> : null}

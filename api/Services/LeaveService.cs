@@ -30,8 +30,13 @@ namespace api.Services
                             .OrderBy(o => o.LeaveDate.Day)
                             .Select(s => new LeavesTableDTO(s))
                             .ToListAsync();
+
+                var user = await context.Users
+                            .Where(u => u.Id == userId)
+                            .FirstAsync();
+
                 LeaveHeatMapDTO heatmap = new LeaveHeatMapDTO(leaves);
-                return new LeavesDTO(new LeaveHeatMapDTO(leaves), leaves);
+                return new LeavesDTO(new LeaveHeatMapDTO(leaves), leaves, user);
             }
         }
 

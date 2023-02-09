@@ -66,6 +66,10 @@ export type Breakdown = {
 }
 export type Leaves = {
   leaves: {
+    user: {
+      id: number
+      paidLeaves: number
+    }
     breakdown: Breakdown
     heatmap: Heatmap
     table: LeaveTable[]
