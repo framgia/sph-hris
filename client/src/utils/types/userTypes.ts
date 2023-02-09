@@ -4,6 +4,7 @@ export type User = {
   role: Role
   timeEntry: TimeEntry
   employeeSchedule: EmployeeSchedule
+  avatarLink: string
 }
 export type Role = {
   id: number

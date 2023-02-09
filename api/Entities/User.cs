@@ -14,8 +14,10 @@ namespace api.Entities
         public int EmployeeScheduleId { get; set; }
         public float PaidLeaves { get; set; }
         public bool IsOnline { get; set; }
+        public int? ProfileImageId { get; set; }
         public Role Role { get; set; } = default!;
         public EmployeeSchedule EmployeeSchedule { get; set; } = default!;
         public ICollection<TimeEntry> TimeEntries { get; set; } = default!;
+        public Media? ProfileImage { get; set; }
     }
 }
