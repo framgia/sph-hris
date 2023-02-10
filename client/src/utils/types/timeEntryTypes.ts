@@ -73,6 +73,12 @@ export interface ISpecificTimeEntryById {
 export interface ISpecificUserDetail {
   name: string
   avatarLink: string
+  employeeSchedule: {
+    name: string
+  }
+  role: {
+    name: string
+  }
 }
 
 export interface ITimesheetSummary {

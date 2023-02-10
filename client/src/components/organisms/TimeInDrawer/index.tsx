@@ -104,12 +104,7 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
       <div className="flex flex-col space-y-3 px-6 py-2">
         {/* User */}
         <div className="flex items-center space-x-3 border-b border-slate-200 py-3">
-          <Avatar
-            src="https://avatars.githubusercontent.com/u/38458781?v=4"
-            alt="user-avatar"
-            size="lg"
-            rounded="full"
-          />
+          <Avatar src={data?.userById.avatarLink} alt="user-avatar" size="lg" rounded="full" />
           <div>
             <Text theme="md" size="sm" weight="bold">
               {data?.userById.name}

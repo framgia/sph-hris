@@ -92,6 +92,12 @@ export const GET_SPECIFIC_USER_PROFILE_LINK = gql`
     specificUserProfileDetail(id: $id) {
       name
       avatarLink
+      employeeSchedule {
+        name
+      }
+      role {
+        name
+      }
     }
   }
 `
