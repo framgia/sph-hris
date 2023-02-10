@@ -3,8 +3,10 @@ module.exports = {
   async rewrites() {
     return [
       {
-        source: '/media/:path*',
-        destination: 'http://localhost:5257/media/timeinservice/:path*'
+        source: '/timeinservice/:path*',
+        destination: `${
+          process.env.NEXT_PUBLIC_MEDIA_URL_PROXY ?? 'http://localhost:5257/'
+        }media/timeinservice/:path*`
       }
     ]
   },

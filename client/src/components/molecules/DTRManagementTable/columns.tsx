@@ -6,6 +6,8 @@ import React, { useState } from 'react'
 import { Clock, Edit } from 'react-feather'
 import { createColumnHelper } from '@tanstack/react-table'
 
+import { getUserProfileLink } from '~/hooks/useTimesheetQuery'
+
 import Chip from '~/components/atoms/Chip'
 import Avatar from '~/components/atoms/Avatar'
 import CellHeader from '~/components/atoms/CellHeader'
@@ -24,7 +26,10 @@ export const columns = [
     cell: (props) => (
       <div className="flex items-center space-x-2">
         <Avatar
-          src={`https://placeimg.com/640/480/abstract/${props.row.id}`}
+          src={
+            getUserProfileLink(Number(props.row.original.user.id)).data?.specificUserProfileDetail
+              ?.avatarLink
+          }
           size="base"
           rounded="full"
         />

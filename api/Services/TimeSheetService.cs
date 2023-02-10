@@ -9,9 +9,12 @@ namespace api.Services
     public class TimeSheetService
     {
         private readonly IDbContextFactory<HrisContext> _contextFactory = default!;
-        public TimeSheetService(IDbContextFactory<HrisContext> contextFactory)
+        private readonly HttpContextService _httpService;
+
+        public TimeSheetService(IDbContextFactory<HrisContext> contextFactory, IHttpContextAccessor accessor)
         {
             _contextFactory = contextFactory;
+            _httpService = new HttpContextService(accessor);
         }
 
         public async Task<Time?> GetTimeById(int id)
@@ -52,6 +55,31 @@ namespace api.Services
                     .Select(x => ToTimeEntryDTO(x))
                     .FirstOrDefaultAsync(c => c.UserId == id);
             }
+        }
+
+        public async Task<TimeEntry?> GetSpecificTimeEntryById(int id)
+        {
+            using HrisContext context = _contextFactory.CreateDbContext();
+            return await context.TimeEntries
+        .Include(entity => entity.User)
+                .FirstOrDefaultAsync(c => c.TimeInId == id || c.TimeOutId == id);
+        }
+
+        public async Task<UserDTO?> GetSpecificUserProfileDetail(int id)
+        {
+            using HrisContext context = _contextFactory.CreateDbContext();
+            var domain = _httpService.getDomainURL();
+            return await context.Users
+            .Include(i => i.Role)
+                .Include(i => i.EmployeeSchedule)
+                .Include(i => i.TimeEntries.OrderByDescending(o => o.CreatedAt))
+                    .ThenInclude(i => i.TimeIn)
+                .Include(i => i.TimeEntries.OrderByDescending(o => o.CreatedAt))
+                    .ThenInclude(i => i.TimeOut)
+                .Include(i => i.ProfileImage)
+                .Where(x => x.Id == id)
+            .Select(x => new UserDTO(x, domain))
+                .FirstAsync();
         }
 
         public async Task<List<TimeEntryDTO>> GetAll(String? date = null, String? status = null)

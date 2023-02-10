@@ -7,9 +7,12 @@ import { Calendar, Clock, Download, X } from 'react-feather'
 
 import Text from '~/components/atoms/Text'
 import Avatar from '~/components/atoms/Avatar'
-import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
+import {
+  getSpecificTimeEntry,
+  getSpecificTimeEntryById,
+  getUserProfileLink
+} from '~/hooks/useTimesheetQuery'
 import DrawerTemplate from '~/components/templates/DrawerTemplate'
-import useUserQuery from '~/hooks/useUserQuery'
 
 type Props = {
   isOpenViewDetailsDrawer: boolean
@@ -24,8 +27,8 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
   const res = getSpecificTimeEntry(Number(timeIdExists))
   const timeIn = parse(res.data?.timeById?.timeHour ?? 'PT0H')
   const date = res.data?.timeById?.createdAt
-  const { handleUserQuery } = useUserQuery()
-  const { data: user } = handleUserQuery()
+  const { data } = getSpecificTimeEntryById(Number(timeIdExists))
+  const { data: profileLink } = getUserProfileLink(Number(data?.specificTimeEntryById?.user?.id))
 
   const {
     isOpenViewDetailsDrawer,
@@ -36,8 +39,8 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
     void router.replace(router.pathname, undefined, { shallow: false })
   }
 
-  const handleDownloadFile = (fileName: string): void => {
-    void fetch(`${process.env.NEXT_PUBLIC_MEDIA_URL as string}/${fileName}`)
+  const handleDownloadFile = (collectionName: string, fileName: string): void => {
+    void fetch(`${process.env.NEXT_PUBLIC_MEDIA_URL as string}/${collectionName}/${fileName}`)
       .then(async (resp) => await resp.blob())
       .then((blobobject) => {
         const blob = window.URL.createObjectURL(blobobject)
@@ -72,14 +75,14 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
         {/* User */}
         <div className="flex items-center space-x-3 border-b border-slate-200 py-3">
           <Avatar
-            src="https://avatars.githubusercontent.com/u/38458781?v=4"
+            src={profileLink?.specificUserProfileDetail?.avatarLink as string}
             alt="user-avatar"
             size="lg"
             rounded="full"
           />
           <div>
             <Text theme="md" size="sm" weight="bold">
-              {user?.userById?.name as string}
+              {profileLink?.specificUserProfileDetail?.name as string}
             </Text>
             <p className="text-[11px] leading-tight text-slate-500">Clocking from GMT +8</p>
             <p className="text-[11px] leading-tight text-slate-500">Last in a few seconds ago</p>
@@ -185,7 +188,9 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
                       </div>
                       <a
                         className="flex w-full truncate"
-                        href={`${process.env.NEXT_PUBLIC_MEDIA_URL as string}/${i.fileName}`}
+                        href={`${process.env.NEXT_PUBLIC_MEDIA_URL as string}${i.collectionName}/${
+                          i.fileName
+                        }`}
                         rel="noreferrer"
                         target="_blank"
                       >
@@ -195,7 +200,7 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
                       </a>
                       <button
                         className="rounded bg-white p-0.5 opacity-0 focus:outline-slate-400 group-hover:opacity-100"
-                        onClick={() => handleDownloadFile(i.fileName)}
+                        onClick={() => handleDownloadFile(i.collectionName, i.fileName)}
                       >
                         <Download className="h-4 w-4 text-slate-500" />
                       </button>

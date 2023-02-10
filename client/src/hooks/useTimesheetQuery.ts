@@ -5,14 +5,18 @@ import {
   GET_ALL_EMPLOYEE_TIMESHEET,
   GET_EMPLOYEE_TIMESHEET,
   GET_SPECIFIC_TIME_ENTRY,
-  GET_TIMESHEET_SUMMARY
+  GET_TIMESHEET_SUMMARY,
+  GET_SPECIFIC_TIME_ENTRY_BY_ID,
+  GET_SPECIFIC_USER_PROFILE_LINK
 } from '~/graphql/queries/timesheetQueries'
 import { QueryVariablesType } from '~/pages/dtr-management'
 import {
   ITimeEntry,
   IEmployeeTimeEntry,
   ITimeEntryById,
-  ITimesheetSummary
+  ITimesheetSummary,
+  ISpecificTimeEntryById,
+  ISpecificUserDetail
 } from '~/utils/types/timeEntryTypes'
 
 export const getAllEmployeeTimesheet = (
@@ -86,6 +90,40 @@ export const getTimesheetSummary = (
     queryFn: async () => await client.request(GET_TIMESHEET_SUMMARY(input, argument), variables),
     select: (data: { timesheetSummary: ITimesheetSummary[] }) => data,
     enabled: ready
+  })
+  return result
+}
+
+export const getSpecificTimeEntryById = (
+  timeEntryId: number
+): UseQueryResult<
+  {
+    specificTimeEntryById: ISpecificTimeEntryById
+  },
+  unknown
+> => {
+  const result = useQuery({
+    queryKey: ['GET_SPECIFIC_TIME_ENTRY_BY_ID', timeEntryId],
+    queryFn: async () => await client.request(GET_SPECIFIC_TIME_ENTRY_BY_ID, { id: timeEntryId }),
+    select: (data: { specificTimeEntryById: ISpecificTimeEntryById }) => data,
+    enabled: !isNaN(timeEntryId)
+  })
+  return result
+}
+
+export const getUserProfileLink = (
+  userId: number
+): UseQueryResult<
+  {
+    specificUserProfileDetail: ISpecificUserDetail
+  },
+  unknown
+> => {
+  const result = useQuery({
+    queryKey: ['GET_SPECIFIC_USER_PROFILE_LINK', userId],
+    queryFn: async () => await client.request(GET_SPECIFIC_USER_PROFILE_LINK, { id: userId }),
+    select: (data: { specificUserProfileDetail: ISpecificUserDetail }) => data,
+    enabled: !isNaN(userId)
   })
   return result
 }
