@@ -1,6 +1,4 @@
 using api.Entities;
-using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.AspNetCore.Hosting.Server.Features;
 
 namespace api.DTOs
 {
@@ -8,7 +6,7 @@ namespace api.DTOs
     {
         public TimeEntry? TimeEntry { get; set; }
 
-        public UserDTO(User user, IServer? server = null)
+        public UserDTO(User user, string domain)
         {
             Id = user.Id;
             Name = user.Name;
@@ -19,7 +17,7 @@ namespace api.DTOs
             EmployeeSchedule = user.EmployeeSchedule;
             Role = user.Role;
             TimeEntry = checkLatestTimeEntry(user);
-            AvatarLink = $"{server?.Features.Get<IServerAddressesFeature>()?.Addresses.ElementAt(1)}/static/{user.ProfileImage?.CollectionName}/{user.ProfileImage?.FileName}";
+            AvatarLink = $"{domain}/static/{user.ProfileImage?.CollectionName}/{user.ProfileImage?.FileName}";
         }
         private TimeEntry? checkLatestTimeEntry(User user)
         {

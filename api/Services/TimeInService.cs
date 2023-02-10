@@ -4,8 +4,8 @@ using api.Entities;
 using api.Requests;
 using api.Utils;
 using LiteX.Storage.Core;
-using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace api.Services
 {
@@ -13,17 +13,18 @@ namespace api.Services
     {
         private readonly IDbContextFactory<HrisContext> _contextFactory = default!;
         private readonly FileUpload _fileUpload;
-        private readonly IServer _server;
-        public TimeInService(IDbContextFactory<HrisContext> contextFactory, ILiteXBlobService blobService, IServer server)
+        private readonly HttpContextService _httpService;
+        public TimeInService(IDbContextFactory<HrisContext> contextFactory, ILiteXBlobService blobService, IHttpContextAccessor accessor)
         {
             _contextFactory = contextFactory;
             _fileUpload = new FileUpload(blobService);
-            _server = server;
+            _httpService = new HttpContextService(accessor);
         }
         public async Task<UserDTO?> GetByIdSchedule(string token, string schedule)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
+                var domain = _httpService.getDomainURL();
                 var personal_token = await context.Personal_Access_Tokens.Where(x => x.Token == token).FirstAsync();
                 return await context.Users
                     .Include(i => i.Role)
@@ -35,7 +36,7 @@ namespace api.Services
                         .ThenInclude(i => i.TimeOut)
                     .Include(i => i.ProfileImage)
                     .Where(x => x.Id == personal_token.UserId)
-                    .Select(x => new UserDTO(x, _server))
+                    .Select(x => new UserDTO(x, domain))
                     .FirstAsync();
             }
         }
