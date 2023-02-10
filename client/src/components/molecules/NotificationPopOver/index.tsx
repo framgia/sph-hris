@@ -60,7 +60,7 @@ const NotificationPopover: FC<Props> = ({ className }): JSX.Element => {
                 ))}
               </main>
               <footer className="block bg-amber-500 py-2 text-center text-sm font-semibold text-white">
-                <a href="#">See all notifications</a>
+                <a href="notification-management">See all notifications</a>
               </footer>
             </Popover.Panel>
           </PopoverTransition>

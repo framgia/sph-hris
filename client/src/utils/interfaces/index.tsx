@@ -51,6 +51,16 @@ export interface IMyOvertime {
   supervisor: string
   dateFiled: string
   remarks: string
+}
+export interface IDTRNotificationManagement {
+  id: number
+  name: string
+  project: string
+  type: string
+  date: string
+  remarks: string
+  duration: number
+  dateFiled: string
   status: string
 }
 
