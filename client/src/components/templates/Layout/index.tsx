@@ -36,24 +36,24 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
     defaultValue: true
   })
   const [isOpenTimeInDrawer, setIsOpenTimeInDrawer] = useLocalStorageState('timeInDrawerToggle', {
-    defaultValue: false
+    defaultValue: true
   })
   const [isOpenViewDetailsDrawer, setIsOpenViewDetailsDrawer] = useLocalStorageState(
     'viewDetailsDrawerToggle',
     {
-      defaultValue: false
+      defaultValue: true
     }
   )
   const [isOpenWorkInterruptionDrawer, setIsOpenWorkInterruptionDrawer] = useLocalStorageState(
     'workInterruptionDrawerToggle',
     {
-      defaultValue: false
+      defaultValue: true
     }
   )
   const [isOpenTimeOutDrawer, setIsOpenTimeOutDrawer] = useLocalStorageState(
     'timeOutDrawerToggle',
     {
-      defaultValue: false
+      defaultValue: true
     }
   )
   const [isOpenDrawer, setIsOpenDrawer] = useState<boolean>(false)
@@ -115,39 +115,48 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
           <div className="overflow-hidden">{children}</div>
         </main>
         {/* Time In Drawer */}
-        <TimeInDrawer
-          {...{
-            isOpenTimeInDrawer,
-            actions: {
-              handleToggleTimeInDrawer
-            }
-          }}
-        />
-        <WorkInterruptionDrawer
-          {...{
-            isOpenWorkInterruptionDrawer,
-            actions: {
-              handleToggleWorkInterruptionDrawer
-            }
-          }}
-        />
-        <TimeOutDrawer
-          {...{
-            isOpenTimeOutDrawer,
-            workedHours,
-            actions: {
-              handleToggleTimeOutDrawer
-            }
-          }}
-        />
-        <ViewDetailsDrawer
-          {...{
-            isOpenViewDetailsDrawer,
-            actions: {
-              handleToggleViewDetailsDrawer
-            }
-          }}
-        />
+        {typeof isOpenTimeInDrawer !== 'undefined' && isOpenTimeInDrawer !== null ? (
+          <TimeInDrawer
+            {...{
+              isOpenTimeInDrawer,
+              actions: {
+                handleToggleTimeInDrawer
+              }
+            }}
+          />
+        ) : null}
+        {typeof isOpenWorkInterruptionDrawer !== 'undefined' &&
+        isOpenWorkInterruptionDrawer !== null ? (
+          <WorkInterruptionDrawer
+            {...{
+              isOpenWorkInterruptionDrawer,
+              actions: {
+                handleToggleWorkInterruptionDrawer
+              }
+            }}
+          />
+        ) : null}
+        {typeof isOpenTimeOutDrawer !== 'undefined' && isOpenTimeOutDrawer !== null ? (
+          <TimeOutDrawer
+            {...{
+              isOpenTimeOutDrawer,
+              workedHours,
+              actions: {
+                handleToggleTimeOutDrawer
+              }
+            }}
+          />
+        ) : null}
+        {typeof isOpenViewDetailsDrawer !== 'undefined' && isOpenViewDetailsDrawer !== null ? (
+          <ViewDetailsDrawer
+            {...{
+              isOpenViewDetailsDrawer,
+              actions: {
+                handleToggleViewDetailsDrawer
+              }
+            }}
+          />
+        ) : null}
       </Wrapper>
     </>
   )

@@ -85,7 +85,7 @@ const LeaveManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Element 
                   <div className="hidden sm:block">
                     <span className="text-slate-500 line-clamp-1">Remaining Paid Leaves:</span>
                   </div>
-                  <Chip count={remainingLeaves?.leaves.user.paidLeaves ?? 0} />
+                  <Chip count={remainingLeaves?.leaves?.user?.paidLeaves} />
                 </div>
               ) : null}
               {!isListOfLeaveTabPage ? <SummaryFilterDropdown /> : null}
@@ -99,6 +99,14 @@ const LeaveManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Element 
 }
 
 export const Chip = ({ count }: { count: number | undefined }): JSX.Element => {
+  const decimalFormatter = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 3,
+    maximumFractionDigits: 3
+  })
+
+  const formattedNumber = decimalFormatter.format(count as number)
+  const parsedNumber = parseFloat(formattedNumber)
+
   return (
     <Tippy content="Remaining Paid Leaves" placement="left" className="!text-xs">
       <span
@@ -107,7 +115,7 @@ export const Chip = ({ count }: { count: number | undefined }): JSX.Element => {
           'flex h-5 w-5 items-center justify-center font-semibold text-white'
         )}
       >
-        {count}
+        {isNaN(parsedNumber) ? 0 : parsedNumber}
       </span>
     </Tippy>
   )
