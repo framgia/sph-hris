@@ -49,6 +49,7 @@ export interface ITimeEntry {
 }
 
 export interface ITimeEntryById {
+  id: number
   timeHour: string
   remarks: string
   createdAt: string
@@ -60,6 +61,24 @@ export interface ITimeEntryById {
       mimeType: string
     }
   ]
+}
+
+export interface ISpecificTimeEntryById {
+  user: {
+    id: number
+    name: string
+  }
+}
+
+export interface ISpecificUserDetail {
+  name: string
+  avatarLink: string
+  employeeSchedule: {
+    name: string
+  }
+  role: {
+    name: string
+  }
 }
 
 export interface ITimesheetSummary {

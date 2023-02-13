@@ -121,7 +121,7 @@ const WorkInterruptionDrawer: FC<Props> = (props): JSX.Element => {
           {/* User */}
           <div className="flex items-center space-x-3 border-b border-slate-200 py-3">
             <Avatar
-              src="https://avatars.githubusercontent.com/u/38458781?v=4"
+              src={userData?.userById.avatarLink}
               alt="user-avatar"
               size="lg"
               rounded="full"

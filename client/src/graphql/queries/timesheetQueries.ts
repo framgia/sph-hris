@@ -62,6 +62,7 @@ export const GET_EMPLOYEE_TIMESHEET = gql`
 export const GET_SPECIFIC_TIME_ENTRY = gql`
   query ($id: Int!) {
     timeById(id: $id) {
+      id
       timeHour
       remarks
       createdAt
@@ -70,6 +71,32 @@ export const GET_SPECIFIC_TIME_ENTRY = gql`
         name
         fileName
         mimeType
+      }
+    }
+  }
+`
+
+export const GET_SPECIFIC_TIME_ENTRY_BY_ID = gql`
+  query ($id: Int!) {
+    specificTimeEntryById(id: $id) {
+      user {
+        id
+        name
+      }
+    }
+  }
+`
+
+export const GET_SPECIFIC_USER_PROFILE_LINK = gql`
+  query ($id: Int!) {
+    specificUserProfileDetail(id: $id) {
+      name
+      avatarLink
+      employeeSchedule {
+        name
+      }
+      role {
+        name
       }
     }
   }

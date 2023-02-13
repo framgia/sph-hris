@@ -21,6 +21,7 @@ const ListOfLeave: NextPage = (): JSX.Element => {
       temp.push({
         id: i?.id,
         name: i?.user?.name,
+        userId: i?.user?.id,
         project: i?.projects[0]?.name,
         leaveDate: moment(i?.leaveDate).format('MM/DD/YYYY'),
         type: i?.leaveType?.name,

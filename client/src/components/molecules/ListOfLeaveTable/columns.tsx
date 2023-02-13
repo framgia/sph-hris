@@ -8,6 +8,7 @@ import ShowReasonModal from './ShowReasonModal'
 import { IListOfLeave } from '~/utils/interfaces'
 import CellHeader from '~/components/atoms/CellHeader'
 import Button from '~/components/atoms/Buttons/Button'
+import { getUserProfileLink } from '~/hooks/useTimesheetQuery'
 
 const columnHelper = createColumnHelper<IListOfLeave>()
 
@@ -18,7 +19,10 @@ export const columns = [
     cell: (props) => (
       <div className="flex items-center space-x-2">
         <Avatar
-          src={`https://placeimg.com/640/480/abstract/${props.row.id}`}
+          src={
+            getUserProfileLink(Number(props?.row?.original?.userId)).data?.specificUserProfileDetail
+              ?.avatarLink as string
+          }
           size="base"
           rounded="full"
         />

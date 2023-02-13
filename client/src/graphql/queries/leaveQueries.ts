@@ -11,6 +11,7 @@ export const GET_ALL_REQUESTED_LEAVES = gql`
         }
       }
       user {
+        id
         name
         role {
           name

@@ -12,7 +12,7 @@ const Document = (): JSX.Element => {
           rel="stylesheet"
         />
       </Head>
-      <body className="font-inter antialiased">
+      <body className="font-inter antialiased selection:bg-amber-400">
         <Main />
         <NextScript />
       </body>
