@@ -4,9 +4,7 @@ module.exports = {
     return [
       {
         source: '/timeinservice/:path*',
-        destination: `${
-          process.env.NEXT_PUBLIC_MEDIA_URL_PROXY ?? 'http://localhost:5257/'
-        }media/timeinservice/:path*`
+        destination: `${process.env.NEXT_PUBLIC_MEDIA_URL_PROXY ?? ''}/media/timeinservice/:path*`
       }
     ]
   },

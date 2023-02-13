@@ -23,6 +23,7 @@ export interface ILeaveManagementSummaryTable {
 
 export interface IListOfLeave {
   id: number
+  userId: number
   name: string
   project: string
   leaveDate: string

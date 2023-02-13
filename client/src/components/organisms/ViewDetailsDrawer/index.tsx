@@ -107,7 +107,6 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
             <p className="text-[11px] leading-tight text-slate-500">
               Schedule: {profileLink?.specificUserProfileDetail?.employeeSchedule?.name}
             </p>
-            {/* <p className="text-[11px] leading-tight text-slate-500">Split time: 12:00 am</p> */}
           </div>
         </div>
         {/* Error Message */}

@@ -9,6 +9,7 @@ export interface ILeave {
     }
   ]
   user: {
+    id: number
     name: string
     role: {
       name: string
