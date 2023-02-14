@@ -6,15 +6,14 @@ import React, { useState } from 'react'
 import { Clock, Edit } from 'react-feather'
 import { createColumnHelper } from '@tanstack/react-table'
 
-import { getUserProfileLink } from '~/hooks/useTimesheetQuery'
-
 import Chip from '~/components/atoms/Chip'
 import Avatar from '~/components/atoms/Avatar'
-import CellHeader from '~/components/atoms/CellHeader'
 import Button from '~/components/atoms/Buttons/Button'
+import CellHeader from '~/components/atoms/CellHeader'
+import EditTimeEntriesModal from '../EditTimeEntryModal'
 import { ITimeEntry } from '~/utils/types/timeEntryTypes'
 import InterruptionTimeEntriesModal from './../InterruptionTimeEntriesModal'
-import EditTimeEntriesModal from '../EditTimeEntryModal'
+import { getSpecificTimeEntry, getUserProfileLink } from '~/hooks/useTimesheetQuery'
 
 const columnHelper = createColumnHelper<ITimeEntry>()
 const EMPTY = 'N/A'
@@ -46,8 +45,10 @@ export const columns = [
     footer: (info) => info.column.id,
     cell: (props) => (
       <>
-        {props.row.original.timeIn?.remarks !== undefined &&
-        props.row.original.timeIn?.remarks !== '' ? (
+        {(props.row.original.timeIn?.remarks !== undefined &&
+          props.row.original.timeIn?.remarks !== '') ||
+        getSpecificTimeEntry(Number(props.row.original.timeIn?.id)).data?.timeById?.media[0]
+          ?.fileName !== undefined ? (
           <Tippy
             content={moment(props.row.original.date).format('MMM D, YYYY')}
             placement="left"

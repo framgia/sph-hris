@@ -12,6 +12,7 @@ import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 import InterruptionTimeEntriesModal from './../InterruptionTimeEntriesModal'
+import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
 
 const columnHelper = createColumnHelper<IEmployeeTimeEntry>()
 const EMPTY = 'N/A'
@@ -28,8 +29,10 @@ export const columns = [
     footer: (info) => info.column.id,
     cell: (props) => (
       <>
-        {props.row.original.timeIn?.remarks !== undefined &&
-        props.row.original.timeIn?.remarks !== '' ? (
+        {(props.row.original.timeIn?.remarks !== undefined &&
+          props.row.original.timeIn?.remarks !== '') ||
+        getSpecificTimeEntry(Number(props.row.original.timeIn?.id)).data?.timeById?.media[0]
+          ?.fileName !== undefined ? (
           <Tippy
             content={moment(props.row.original.date).format('MMM D, YYYY')}
             placement="left"
