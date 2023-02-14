@@ -5,15 +5,15 @@ import { Disclosure } from '@headlessui/react'
 import { Check, ChevronRight, X } from 'react-feather'
 
 import Avatar from '~/components/atoms/Avatar'
-import { IDTRNotificationManagement } from '~/utils/interfaces'
+import { INotification } from '~/utils/interfaces'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 
 type Props = {
-  table: Table<IDTRNotificationManagement>
+  table: Table<INotification>
   isLoading: boolean
 }
 
-const DesktopDisclose: FC<Props> = ({ table, isLoading }): JSX.Element => {
+const NotificationList: FC<Props> = ({ table, isLoading }): JSX.Element => {
   return (
     <>
       {isLoading ? (
@@ -26,8 +26,7 @@ const DesktopDisclose: FC<Props> = ({ table, isLoading }): JSX.Element => {
         <>
           {table.getPageCount() === 0 ? (
             <div className="h-[50vh]">
-              <DiscloseMessage message="No Available Data" />
-              <DiscloseMessage message="Something went wrong" type="error" />
+              <DiscloseMessage message="No Notification Available" />
             </div>
           ) : (
             <>
@@ -42,25 +41,23 @@ const DesktopDisclose: FC<Props> = ({ table, isLoading }): JSX.Element => {
                         )}
                       >
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <div className="flex items-center space-x-2">
-                              <Avatar
-                                src={`https://placeimg.com/640/480/abstract/${row.id}`}
-                                size="base"
-                                rounded="full"
-                              />
-                              <div className="flex items-start">
-                                <h1 className="font-semibold">{row.original.name}</h1>
-                                <p className="mx-1 text-slate-500">
-                                  has requested for your approval for
-                                </p>
-                                <h1 className="font-semibold">
-                                  {row.original.type}({row.original.date} - {row.original.duration}{' '}
-                                  Hours)
-                                </h1>
-                                <p className="absolute right-10 text-slate-500">1m</p>
-                              </div>
-                            </div>
+                          <div className="flex items-center">
+                            <Avatar
+                              src={`https://placeimg.com/640/480/abstract/${row.id}`}
+                              size="base"
+                              rounded="full"
+                            />
+                            <p className="ml-3 text-left">
+                              <span className="font-semibold">{row.original.name}</span>
+                              <span className="mx-1 text-slate-500">
+                                has requested for your approval for
+                              </span>
+                              <span className="font-semibold">
+                                {row.original.type}({row.original.date} - {row.original.duration}{' '}
+                                Hours)
+                              </span>
+                              <span className="absolute right-10 text-slate-500">1m</span>
+                            </p>
                           </div>
                           <ChevronRight
                             className={classNames(
@@ -73,8 +70,8 @@ const DesktopDisclose: FC<Props> = ({ table, isLoading }): JSX.Element => {
                       <Disclosure.Panel
                         className={classNames('text-slate-600', open ? 'bg-white shadow-md' : '')}
                       >
-                        <ul>
-                          <li className="flex w-full px-5 py-3">
+                        <ul className="hidden w-full md:block">
+                          <li className="flex px-5 py-3">
                             <div className="w-5/6">
                               <div className="mb-2 flex items-center justify-between">
                                 <p>
@@ -134,6 +131,55 @@ const DesktopDisclose: FC<Props> = ({ table, isLoading }): JSX.Element => {
                             </div>
                           </li>
                         </ul>
+                        <ul className="block flex-col divide-y divide-slate-200 md:hidden">
+                          <li className="px-4 py-2">
+                            Project: <span className="font-semibold">{row.original.project}</span>
+                          </li>
+                          <li className="px-4 py-2">
+                            Type: <span className="font-semibold">{row.original.type}</span>
+                          </li>
+                          <li className="px-4 py-2">
+                            Date: <span className="font-semibold">{row.original.date}</span>
+                          </li>
+                          <li className="px-4 py-2">
+                            Requested Hours:{' '}
+                            <span className="font-semibold">{row.original.duration}</span>
+                          </li>
+                          <li className="px-4 py-2">
+                            Date Filed:{' '}
+                            <span className="font-semibold">{row.original.dateFiled}</span>
+                          </li>
+                          <li className="px-4 py-2">
+                            Status:{' '}
+                            <span
+                              className={classNames(
+                                'py-0.25  ml-1 rounded-full border  px-1.5',
+                                row.original.status === 'Pending' &&
+                                  'border-amber-200 bg-amber-50 text-amber-600',
+                                row.original.status === 'Approved' &&
+                                  'border-green-200 bg-green-50 text-green-600',
+                                row.original.status === 'Disapproved' &&
+                                  'border-rose-200 bg-rose-50 text-rose-600'
+                              )}
+                            >
+                              {row.original.status}
+                            </span>
+                          </li>
+                          <li className="px-4 py-2">
+                            Remarks: <span className="font-semibold">{row.original.remarks}</span>
+                          </li>
+                          <li className="px-4 py-2">
+                            Actions:{' '}
+                            <span>
+                              <button className="mx-2 border">
+                                <Check className="h-4 w-4 p-0.5 text-slate-500" />
+                              </button>
+                              <button className="border">
+                                <X className="h-4 w-4 p-0.5 text-slate-500" />
+                              </button>
+                            </span>
+                          </li>
+                        </ul>
                       </Disclosure.Panel>
                     </>
                   )}
@@ -167,4 +213,4 @@ const DiscloseMessage = ({
   )
 }
 
-export default DesktopDisclose
+export default NotificationList

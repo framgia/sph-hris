@@ -120,7 +120,7 @@ const Header: FC<Props> = (props): JSX.Element => {
           <div className="flex items-center space-x-2">
             <h1 className="text-lg font-semibold text-slate-700">
               <>
-                {router.pathname.includes('/notification-management') && 'Notification Management'}
+                {router.pathname.includes('/notification') && 'Notifications'}
                 {Menus.map((item, index) => (
                   <div key={index}>
                     {router.pathname === item.href && item.name}

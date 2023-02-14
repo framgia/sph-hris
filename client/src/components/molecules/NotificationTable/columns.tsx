@@ -3,9 +3,9 @@ import { createColumnHelper } from '@tanstack/react-table'
 
 import SortIcon from '~/utils/icons/SortIcon'
 import Avatar from '~/components/atoms/Avatar'
-import { IDTRNotificationManagement } from '~/utils/interfaces'
+import { INotification } from '~/utils/interfaces'
 
-const columnHelper = createColumnHelper<IDTRNotificationManagement>()
+const columnHelper = createColumnHelper<INotification>()
 
 const CellHeader = ({ label }: { label: string }): JSX.Element => {
   return (

@@ -3,7 +3,7 @@ import { Menu } from '@headlessui/react'
 import React, { FC, ReactNode } from 'react'
 
 import Text from '~/components/atoms/Text'
-import { Filters } from '~/pages/notification-management'
+import { Filters } from '~/pages/notifications'
 import Button from '~/components/atoms/Buttons/Button'
 import MenuTransition from '~/components/templates/MenuTransition'
 
@@ -51,7 +51,7 @@ const NotificationFilterDropdown: FC<Props> = (props): JSX.Element => {
       <MenuTransition>
         <Menu.Items
           className={classNames(
-            'fixed right-6 top-[138px] flex w-80 flex-col overflow-hidden rounded-md sm:right-16 md:top-[102px]',
+            'fixed right-4 top-[138px] flex w-80 flex-col overflow-hidden rounded-md md:top-[102px]',
             'flex flex-col bg-white shadow-xl ring-1 ring-black',
             'shadow-slate-200 ring-opacity-5 focus:outline-none'
           )}

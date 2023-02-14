@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import React, { useState } from 'react'
 
 import FilterIcon from '~/utils/icons/FilterIcon'
-import { dtrNotificationManagement } from '~/utils/constants/dummyNotificationData'
+import { dummyNotificationData } from '~/utils/constants/dummyNotificationData'
 import Layout from '~/components/templates/Layout'
 import NotificationTable from '~/components/molecules/NotificationTable'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
@@ -63,7 +63,7 @@ const NotificationManagement: NextPage = (): JSX.Element => {
         <NotificationTable
           {...{
             query: {
-              data: dtrNotificationManagement
+              data: dummyNotificationData
             },
             table: {
               columns,

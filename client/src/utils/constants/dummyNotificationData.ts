@@ -1,6 +1,6 @@
-import { IDTRNotificationManagement } from '../interfaces'
+import { INotification } from '../interfaces'
 
-export const dtrNotificationManagement: IDTRNotificationManagement[] = [
+export const dummyNotificationData: INotification[] = [
   {
     id: 1,
     name: 'Joshua Galit',
@@ -10,7 +10,7 @@ export const dtrNotificationManagement: IDTRNotificationManagement[] = [
     remarks: 'I need to work harder',
     duration: 5,
     dateFiled: 'December 3, 2023',
-    status: 'Pending'
+    status: 'Approved'
   },
   {
     id: 2,

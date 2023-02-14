@@ -6,6 +6,7 @@ import { Popover } from '@headlessui/react'
 import Text from '~/components/atoms/Text'
 import Avatar from '~/components/atoms/Avatar'
 import PopoverTransition from '~/components/templates/PopoverTransition'
+import Link from 'next/link'
 
 type Props = {
   className: string
@@ -60,7 +61,7 @@ const NotificationPopover: FC<Props> = ({ className }): JSX.Element => {
                 ))}
               </main>
               <footer className="block bg-amber-500 py-2 text-center text-sm font-semibold text-white">
-                <a href="notification-management">See all notifications</a>
+                <Link href="notifications">See all notifications</Link>
               </footer>
             </Popover.Panel>
           </PopoverTransition>

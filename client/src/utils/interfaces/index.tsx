@@ -52,7 +52,7 @@ export interface IMyOvertime {
   dateFiled: string
   remarks: string
 }
-export interface IDTRNotificationManagement {
+export interface INotification {
   id: number
   name: string
   project: string

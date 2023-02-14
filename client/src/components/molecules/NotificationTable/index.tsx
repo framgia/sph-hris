@@ -11,16 +11,15 @@ import React, { Dispatch, FC, SetStateAction, useState } from 'react'
 
 import DesktopTable from './DesktopTable'
 import FooterTable from './../FooterTable'
-import MobileDisclose from './MobileDisclose'
 import { fuzzyFilter } from '~/utils/fuzzyFilter'
-import { IDTRNotificationManagement } from '~/utils/interfaces'
+import { INotification } from '~/utils/interfaces'
 
 type Props = {
   query: {
-    data: IDTRNotificationManagement[]
+    data: INotification[]
   }
   table: {
-    columns: Array<ColumnDef<IDTRNotificationManagement, any>>
+    columns: Array<ColumnDef<INotification, any>>
     globalFilter: string
     setGlobalFilter: Dispatch<SetStateAction<string>>
   }
@@ -28,14 +27,14 @@ type Props = {
 
 const NotificationTable: FC<Props> = (props): JSX.Element => {
   const {
-    query: { data: dtrNotificationManagement },
+    query: { data: dummyNotificationData },
     table: { columns, globalFilter, setGlobalFilter }
   } = props
 
   const [sorting, setSorting] = useState<SortingState>([])
 
   const table = useReactTable({
-    data: dtrNotificationManagement,
+    data: dummyNotificationData,
     columns,
     // Options
     state: {
@@ -58,17 +57,8 @@ const NotificationTable: FC<Props> = (props): JSX.Element => {
 
   return (
     <>
-      {/* Show only on mobile size */}
-      <div className="block md:hidden">
-        <MobileDisclose
-          {...{
-            table,
-            isLoading: false
-          }}
-        />
-      </div>
-      {/* Show on medium size and beyond */}
-      <div className="mx-auto hidden w-full max-w-fit md:block">
+      {/* Show on mobile size and beyond */}
+      <div>
         <DesktopTable
           {...{
             table,
