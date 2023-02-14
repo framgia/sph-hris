@@ -108,7 +108,11 @@ export const Chip = ({ count }: { count: number | undefined }): JSX.Element => {
   const parsedNumber = parseFloat(formattedNumber)
 
   return (
-    <Tippy content="Remaining Paid Leaves" placement="left" className="!text-xs">
+    <Tippy
+      content="Remaining Paid Leaves"
+      placement="left"
+      className="!text-xs opacity-100 sm:opacity-0"
+    >
       <span
         className={classNames(
           'w-fit shrink-0 rounded-full border border-green-600 bg-green-500 px-1',
