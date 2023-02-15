@@ -51,6 +51,7 @@ export interface IMyOvertime {
   supervisor: string
   dateFiled: string
   remarks: string
+  status: string
 }
 export interface INotification {
   id: number

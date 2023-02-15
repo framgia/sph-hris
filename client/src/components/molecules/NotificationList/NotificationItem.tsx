@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import { Table } from '@tanstack/react-table'
 import { Disclosure } from '@headlessui/react'
@@ -6,6 +7,7 @@ import { Check, ChevronRight, X } from 'react-feather'
 
 import Avatar from '~/components/atoms/Avatar'
 import { INotification } from '~/utils/interfaces'
+import Button from '~/components/atoms/Buttons/Button'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 
 type Props = {
@@ -13,7 +15,7 @@ type Props = {
   isLoading: boolean
 }
 
-const NotificationList: FC<Props> = ({ table, isLoading }): JSX.Element => {
+const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
   return (
     <>
       {isLoading ? (
@@ -70,86 +72,26 @@ const NotificationList: FC<Props> = ({ table, isLoading }): JSX.Element => {
                       <Disclosure.Panel
                         className={classNames('text-slate-600', open ? 'bg-white shadow-md' : '')}
                       >
-                        <ul className="hidden w-full md:block">
-                          <li className="flex px-5 py-3">
-                            <div className="w-5/6">
-                              <div className="mb-2 flex items-center justify-between">
-                                <p>
-                                  <span className="font-semibold">Project: </span>
-                                  {row.original.project}
-                                </p>
-                                <p>
-                                  <span className="font-semibold">Type: </span>
-                                  {row.original.type}
-                                </p>
-                                <p>
-                                  <span className="font-semibold">Date: </span>
-                                  {row.original.date}
-                                </p>
-                                <p>
-                                  <span className="font-semibold">Requested Hours: </span>
-                                  {row.original.duration}
-                                </p>
-                                <p>
-                                  <span className="font-semibold">Date Filed: </span>
-                                  {row.original.dateFiled}
-                                </p>
-                                <p className="flex items-center">
-                                  <span className="font-semibold">Status: </span>
-                                  <div
-                                    className={classNames(
-                                      'py-0.25  ml-1 rounded-full border  px-1.5',
-                                      row.original.status === 'Pending' &&
-                                        'border-amber-200 bg-amber-50 text-amber-600',
-                                      row.original.status === 'Approved' &&
-                                        'border-green-200 bg-green-50 text-green-600',
-                                      row.original.status === 'Disapproved' &&
-                                        'border-rose-200 bg-rose-50 text-rose-600'
-                                    )}
-                                  >
-                                    {row.original.status}
-                                  </div>
-                                </p>
-                              </div>
-                              <div>
-                                <p>
-                                  <span className="font-semibold">Remarks: </span>
-                                  {row.original.remarks}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex w-1/6 flex-col items-end">
-                              <span className="mb-2 font-semibold">Actions: </span>
-                              <div>
-                                <button className="mr-2 border">
-                                  <Check className="h-5 w-5 p-0.5 text-slate-500" />
-                                </button>
-                                <button className="border">
-                                  <X className="h-5 w-5 p-0.5 text-slate-500" />
-                                </button>
-                              </div>
-                            </div>
-                          </li>
-                        </ul>
-                        <ul className="block flex-col divide-y divide-slate-200 md:hidden">
-                          <li className="px-4 py-2">
+                        <ul className="flex flex-col flex-wrap divide-y divide-slate-200 md:flex-row md:items-center md:divide-none">
+                          <li className="px-4 py-2 md:py-3">
                             Project: <span className="font-semibold">{row.original.project}</span>
                           </li>
-                          <li className="px-4 py-2">
+                          <li className="px-4 py-2 md:py-3">
                             Type: <span className="font-semibold">{row.original.type}</span>
                           </li>
-                          <li className="px-4 py-2">
-                            Date: <span className="font-semibold">{row.original.date}</span>
+                          <li className="px-4 py-2 md:py-3">
+                            Date Requested:{' '}
+                            <span className="font-semibold">{row.original.date}</span>
                           </li>
-                          <li className="px-4 py-2">
+                          <li className="px-4 py-2 md:py-3">
                             Requested Hours:{' '}
                             <span className="font-semibold">{row.original.duration}</span>
                           </li>
-                          <li className="px-4 py-2">
+                          <li className="px-4 py-2 md:py-3">
                             Date Filed:{' '}
                             <span className="font-semibold">{row.original.dateFiled}</span>
                           </li>
-                          <li className="px-4 py-2">
+                          <li className="inline-flex items-center px-4 py-2 md:py-3">
                             Status:{' '}
                             <span
                               className={classNames(
@@ -165,19 +107,23 @@ const NotificationList: FC<Props> = ({ table, isLoading }): JSX.Element => {
                               {row.original.status}
                             </span>
                           </li>
-                          <li className="px-4 py-2">
+                          <li className="px-4 py-2 md:py-3">
                             Remarks: <span className="font-semibold">{row.original.remarks}</span>
                           </li>
-                          <li className="px-4 py-2">
+                          <li className="inline-flex items-center px-4 py-2 md:py-3">
                             Actions:{' '}
-                            <span>
-                              <button className="mx-2 border">
-                                <Check className="h-4 w-4 p-0.5 text-slate-500" />
-                              </button>
-                              <button className="border">
-                                <X className="h-4 w-4 p-0.5 text-slate-500" />
-                              </button>
-                            </span>
+                            <div className="ml-2 inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
+                              <Tippy placement="left" content="Approve" className="!text-xs">
+                                <Button rounded="none" className="py-0.5 px-1 text-slate-500">
+                                  <Check className="h-4 w-4" />
+                                </Button>
+                              </Tippy>
+                              <Tippy placement="left" content="Disapprove" className="!text-xs">
+                                <Button rounded="none" className="py-0.5 px-1 text-slate-500">
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </Tippy>
+                            </div>
                           </li>
                         </ul>
                       </Disclosure.Panel>
@@ -213,4 +159,4 @@ const DiscloseMessage = ({
   )
 }
 
-export default NotificationList
+export default NotificationItem

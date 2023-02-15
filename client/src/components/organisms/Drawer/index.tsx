@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import classNames from 'classnames'
-import { Bell, ChevronRight, X } from 'react-feather'
+import { ChevronRight, X } from 'react-feather'
 
 import Logo from '~/components/atoms/Logo'
 import Avatar from '~/components/atoms/Avatar'
@@ -49,16 +49,6 @@ const Drawer: FC<Props> = (props): JSX.Element => {
         </nav>
         {/* Footer Options */}
         <section className="mt-auto text-slate-500">
-          <button
-            className={classNames(
-              'flex w-full items-center space-x-3 border-t border-slate-200',
-              'px-6 py-2 text-xs text-slate-500 outline-none active:scale-95',
-              'hover:bg-slate-100'
-            )}
-          >
-            <Bell className="h-5 w-5 stroke-0.5" />
-            <span>Notifications</span>
-          </button>
           <UserMenuDropDown
             position="top"
             className="flex w-full items-center border-t border-slate-200 outline-none"

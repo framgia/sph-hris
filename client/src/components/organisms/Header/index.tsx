@@ -200,10 +200,10 @@ const Header: FC<Props> = (props): JSX.Element => {
               <ClockOutIcon className="h-7 w-7 fill-current" />
             </Button>
           </Tooltip>
+          <NotificationPopover className="h-5 w-5 text-slate-400" />
         </div>
         <div className="hidden text-slate-500 sm:block">
           <div className="inline-flex items-center space-x-4">
-            <NotificationPopover className="h-5 w-5 text-slate-400" />
             {/* User Avatar */}
             <UserMenuDropDown position="bottom">
               <Avatar src={data?.userById.avatarLink} alt="user-avatar" size="md" rounded="full" />

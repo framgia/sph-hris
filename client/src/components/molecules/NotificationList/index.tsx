@@ -9,10 +9,10 @@ import {
 } from '@tanstack/react-table'
 import React, { Dispatch, FC, SetStateAction, useState } from 'react'
 
-import DesktopTable from './DesktopTable'
-import FooterTable from './../FooterTable'
+import FooterTable from '../FooterTable'
 import { fuzzyFilter } from '~/utils/fuzzyFilter'
 import { INotification } from '~/utils/interfaces'
+import NotificationItem from './NotificationItem'
 
 type Props = {
   query: {
@@ -25,7 +25,7 @@ type Props = {
   }
 }
 
-const NotificationTable: FC<Props> = (props): JSX.Element => {
+const NotificationList: FC<Props> = (props): JSX.Element => {
   const {
     query: { data: dummyNotificationData },
     table: { columns, globalFilter, setGlobalFilter }
@@ -59,7 +59,7 @@ const NotificationTable: FC<Props> = (props): JSX.Element => {
     <>
       {/* Show on mobile size and beyond */}
       <div>
-        <DesktopTable
+        <NotificationItem
           {...{
             table,
             isLoading: false
@@ -78,4 +78,4 @@ const NotificationTable: FC<Props> = (props): JSX.Element => {
   )
 }
 
-export default NotificationTable
+export default NotificationList
