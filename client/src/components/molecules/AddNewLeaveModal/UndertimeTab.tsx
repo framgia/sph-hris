@@ -10,7 +10,6 @@ import { X, Save, Coffee, FileText, Calendar, UserCheck, User } from 'react-feat
 
 import TextField from './../TextField'
 import Input from '~/components/atoms/Input'
-import Select from '~/components/atoms/Select'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import { UndertimeLeaveSchema } from '~/utils/validation'
 import Button from '~/components/atoms/Buttons/ButtonAction'
@@ -23,7 +22,11 @@ import useUserQuery from '~/hooks/useUserQuery'
 import useLeave from '~/hooks/useLeave'
 import { User as UserType } from '~/utils/types/userTypes'
 import { Roles } from '~/utils/constants/roles'
-import { generateProjectsMultiSelect } from '~/utils/createLeaveHelpers'
+import {
+  generateNumberOfDaysSelect,
+  generateProjectsMultiSelect,
+  generateUserSelect
+} from '~/utils/createLeaveHelpers'
 import { ProjectDetails } from '~/utils/types/projectTypes'
 import { LeaveTypes } from '~/utils/constants/leaveTypes'
 
@@ -91,23 +94,27 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
   // This will handle form submit and save
   const handleSave = async (data: UndertimeFormValues): Promise<void> => {
     return await new Promise((resolve) => {
-      leaveMutation.mutate({
-        userId: user?.userById.id as number,
-        projectIds: selectedOtherProjectOption.map((p) => parseInt(p.value)),
-        leaveTypeId: LeaveTypes.UNDERTIME,
-        managerId: parseInt(data.manager),
-        otherProject: data.other_project as string,
-        reason: data.reason,
-        leaveDates: [
-          {
-            leaveDate: data.leave_date,
-            isWithPay: false,
-            days: parseFloat(data.number_of_days_in_leave_undertime)
-          }
-        ]
-      })
+      leaveMutation.mutate(
+        {
+          userId: user?.userById.id as number,
+          projectIds: selectedOtherProjectOption.map((p) => parseInt(p.value)),
+          leaveTypeId: LeaveTypes.UNDERTIME,
+          managerId: parseInt(data.manager.value),
+          otherProject: data.other_project as string,
+          reason: data.reason,
+          leaveDates: [
+            {
+              leaveDate: data.leave_date,
+              isWithPay: false,
+              days: parseFloat(data.number_of_days_in_leave_undertime.value)
+            }
+          ]
+        },
+        {
+          onSuccess: () => closeModal()
+        }
+      )
       resolve()
-      closeModal()
     })
   }
 
@@ -144,6 +151,15 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
               render={({ field }) => {
                 return (
                   <ReactSelect
+                    className="w-full"
+                    classNames={{
+                      control: (state) =>
+                        state.isFocused
+                          ? 'border-primary'
+                          : errors.project !== null && errors.project !== undefined
+                          ? 'border-rose-500 ring-rose-500'
+                          : 'border-slate-300'
+                    }}
                     isMulti
                     {...field}
                     isClearable
@@ -152,9 +168,12 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                     closeMenuOnSelect={false}
                     isDisabled={isSubmitting}
                     backspaceRemovesValue={true}
-                    onChange={handleChangeProject}
+                    value={field.value}
+                    onChange={(options) => {
+                      field.onChange(options.map((c) => c))
+                      return handleChangeProject(options)
+                    }}
                     components={animatedComponents}
-                    className="w-full"
                   />
                 )
               }}
@@ -197,25 +216,37 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
         <section className="col-span-2 flex-1">
           <label>
             Number of leaves in days (Undertime) <span className="text-rose-500">*</span>
-            <Select
-              className="py-2.5 text-xs"
-              disabled={isSubmitting}
-              {...register('number_of_days_in_leave_undertime')}
-              iserror={
-                errors.number_of_days_in_leave_undertime !== null &&
-                errors?.number_of_days_in_leave_undertime !== undefined
-              }
-            >
-              {numberOfDaysInLeavesByUndertime.map(({ id, value }) => (
-                <option key={id} value={value}>
-                  {value}
-                </option>
-              ))}
-            </Select>
+            <Controller
+              name="number_of_days_in_leave_undertime"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <ReactSelect
+                  styles={customStyles}
+                  className="w-full"
+                  classNames={{
+                    control: (state) =>
+                      state.isFocused
+                        ? 'border-primary'
+                        : errors.number_of_days_in_leave_undertime !== null &&
+                          errors?.number_of_days_in_leave_undertime !== undefined
+                        ? 'border-rose-500 ring-rose-500'
+                        : 'border-slate-300'
+                  }}
+                  {...field}
+                  defaultValue={null}
+                  value={field.value}
+                  onChange={field.onChange}
+                  options={generateNumberOfDaysSelect(numberOfDaysInLeavesByUndertime)}
+                  isDisabled={isSubmitting}
+                  components={animatedComponents}
+                />
+              )}
+            />
             {errors?.number_of_days_in_leave_undertime !== null &&
               errors?.number_of_days_in_leave_undertime !== undefined && (
                 <span className="error text-[10px]">
-                  {errors.number_of_days_in_leave_undertime?.message}
+                  {errors.number_of_days_in_leave_undertime?.value?.message}
                 </span>
               )}
           </label>
@@ -224,35 +255,71 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
         {/* Manager & Project leader */}
         <section className="col-span-2 sm:col-span-1">
           <TextField title="Manager" Icon={UserCheck} isRequired>
-            <Select
-              className="py-2.5 pl-11 text-xs"
-              disabled={isSubmitting}
-              {...register('manager')}
-            >
-              {managers.map((manager, i) => (
-                <option key={i} value={manager?.id}>
-                  {manager?.name}
-                </option>
-              ))}
-            </Select>
+            <Controller
+              name="manager"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <ReactSelect
+                  styles={customStyles}
+                  className="w-full"
+                  classNames={{
+                    control: (state) =>
+                      state.isFocused
+                        ? 'border-primary'
+                        : errors?.manager !== null && errors.manager !== undefined
+                        ? 'border-rose-500 ring-rose-500'
+                        : 'border-slate-300'
+                  }}
+                  {...field}
+                  options={generateUserSelect(managers)}
+                  defaultValue={null}
+                  value={field.value}
+                  onChange={field.onChange}
+                  isDisabled={isSubmitting}
+                  components={animatedComponents}
+                />
+              )}
+            />
           </TextField>
+          {errors?.manager !== null && errors?.manager !== undefined && (
+            <span className="error text-[10px]">{errors.manager?.value?.message}</span>
+          )}
         </section>
 
         {/* Project Leaders Field */}
         <section className="col-span-2 sm:col-span-1">
           <TextField title="Project Leader" Icon={User} isRequired>
-            <Select
-              className="py-2.5 pl-11 text-xs"
-              disabled={isSubmitting}
-              {...register('project_leader')}
-            >
-              {leaders.map((leader, i) => (
-                <option key={i} value={leader?.id}>
-                  {leader?.name}
-                </option>
-              ))}
-            </Select>
+            <Controller
+              name="project_leader"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <ReactSelect
+                  styles={customStyles}
+                  className="w-full"
+                  classNames={{
+                    control: (state) =>
+                      state.isFocused
+                        ? 'border-primary'
+                        : errors?.project_leader !== null && errors.project_leader !== undefined
+                        ? 'border-rose-500 ring-rose-500'
+                        : 'border-slate-300'
+                  }}
+                  {...field}
+                  options={generateUserSelect(leaders)}
+                  defaultValue={null}
+                  value={field.value}
+                  onChange={field.onChange}
+                  isDisabled={isSubmitting}
+                  components={animatedComponents}
+                />
+              )}
+            />
           </TextField>
+          {errors?.project_leader !== null && errors?.project_leader !== undefined && (
+            <span className="error text-[10px]">{errors.project_leader?.value?.message}</span>
+          )}
         </section>
 
         {/* Reason for leave Field */}

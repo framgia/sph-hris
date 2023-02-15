@@ -24,39 +24,77 @@ export const TimeEntrySchema = Yup.object().shape({
 })
 
 export const NewLeaveSchema = Yup.object().shape({
-  project: Yup.array().of(
+  project: Yup.array(
     Yup.object().shape({
       label: Yup.string().required(),
       value: Yup.string().required()
     })
-  ),
+  )
+    .min(1, 'Project is required')
+    .required('Project is required'),
   other_project: Yup.string().label('Other Project'),
-  leave_type: Yup.string().required().label('Leave Type'),
+  leave_type: Yup.object({
+    label: Yup.string().required('Leave type is required'),
+    value: Yup.string().required('Leave type is required')
+  })
+    .nullable()
+    .required('Leave type is required')
+    .label('Leave type'),
   leave_date: Yup.array().of(
     Yup.object()
       .shape({
         date: Yup.string().required(),
-        number_of_days_in_leave: Yup.string().required(),
+        number_of_days_in_leave: Yup.object().shape({
+          label: Yup.string().required(),
+          value: Yup.string().required()
+        }),
         is_with_pay: Yup.boolean().default(false)
       })
       .label('Leave Date')
   ),
-  manager: Yup.string().required().label('Manager'),
-  project_leader: Yup.string().required().label('Project leader'),
+  manager: Yup.object({
+    label: Yup.string().required('Manager is required'),
+    value: Yup.string().required('Manager is required')
+  })
+    .required('Manager is required')
+    .label('Manager'),
+  project_leader: Yup.object({
+    label: Yup.string().required('Project Leader is required'),
+    value: Yup.string().required('Project Leader is required')
+  })
+    .required('Project Leader is required')
+    .label('Project Leader'),
   reason: Yup.string().required().label('Reason')
 })
 
 export const UndertimeLeaveSchema = Yup.object().shape({
-  project: Yup.array().of(
+  project: Yup.array(
     Yup.object().shape({
       label: Yup.string().required(),
       value: Yup.string().required()
     })
-  ),
+  )
+    .min(1, 'Project is required')
+    .required('Project is required'),
   other_project: Yup.string().label('Other Project'),
   leave_date: Yup.string().required().label('Leave Date'),
-  number_of_days_in_leave_undertime: Yup.string()
-    .required()
+  number_of_days_in_leave_undertime: Yup.object({
+    label: Yup.string().required('Number of days is required'),
+    value: Yup.string().required('Number of days is required')
+  })
+    .required('Number of days is required')
     .label('Number of days in leave (undertime)'),
+  manager: Yup.object({
+    label: Yup.string().required('Manager is required'),
+    value: Yup.string().required('Manager is required')
+  })
+    .required('Manager is required')
+    .label('Manager'),
+  project_leader: Yup.object({
+    label: Yup.string().required('Project Leader is required'),
+    value: Yup.string().required('Project Leader is required')
+  })
+    .required('Project Leader is required')
+    .label('Project Leader'),
   reason: Yup.string().required().label('Reason')
 })

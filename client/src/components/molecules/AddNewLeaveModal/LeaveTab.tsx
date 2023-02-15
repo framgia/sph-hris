@@ -21,7 +21,6 @@ import {
 
 import TextField from './../TextField'
 import Input from '~/components/atoms/Input'
-import Select from '~/components/atoms/Select'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import { NewLeaveSchema } from '~/utils/validation'
 import Button from '~/components/atoms/Buttons/ButtonAction'
@@ -33,10 +32,15 @@ import useProject from '~/hooks/useProject'
 import useUserQuery from '~/hooks/useUserQuery'
 import { User as UserType } from '~/utils/types/userTypes'
 import { Roles } from '~/utils/constants/roles'
-import { generateProjectsMultiSelect } from '~/utils/createLeaveHelpers'
+import {
+  generateUserSelect,
+  generateProjectsMultiSelect,
+  generateLeaveTypeSelect,
+  generateNumberOfDaysSelect
+} from '~/utils/createLeaveHelpers'
 import { ProjectDetails } from '~/utils/types/projectTypes'
 import useLeave from '~/hooks/useLeave'
-import { LeaveTypes } from '~/utils/constants/leaveTypes'
+import { LeaveType } from '~/utils/types/leaveTypes'
 
 type Props = {
   isOpen: boolean
@@ -63,6 +67,16 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
   const { data: leaveTypes } = handleLeaveTypeQuery()
   const { data: projects, isSuccess: isProjectsSuccess } = handleProjectQuery()
   const { data: users, isSuccess: isUsersSuccess } = handleAllUsersQuery()
+
+  // modify custom style control
+  customStyles.control = (provided: Record<string, unknown>, state: any): any => ({
+    ...provided,
+    boxShadow: 'none',
+    borderColor: 'none',
+    '&:hover': {
+      color: '#75c55e'
+    }
+  })
 
   useEffect(() => {
     if (isUsersSuccess) {
@@ -104,23 +118,28 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
   // This will handle form submit and save
   const handleSave = async (data: NewLeaveFormValues): Promise<void> => {
     return await new Promise((resolve) => {
-      leaveMutation.mutate({
-        userId: user?.userById.id as number,
-        projectIds: selectedOtherProjectOption.map((p) => parseInt(p.value)),
-        leaveTypeId: parseInt(data.leave_type),
-        managerId: parseInt(data.manager),
-        otherProject: data.other_project as string,
-        reason: data.reason,
-        leaveDates: data.leave_date.map((date) => {
-          return {
-            leaveDate: date.date,
-            isWithPay: date.is_with_pay,
-            days: parseFloat(date.number_of_days_in_leave)
-          }
-        })
-      })
+      leaveMutation.mutate(
+        {
+          userId: user?.userById.id as number,
+          projectIds: selectedOtherProjectOption.map((p) => parseInt(p.value)),
+          leaveTypeId: parseInt(data.leave_type.value),
+          managerId: parseInt(data.manager.value),
+          otherProject: data.other_project as string,
+          reason: data.reason,
+          leaveDates: data.leave_date.map((date) => {
+            return {
+              leaveDate: date.date,
+              isWithPay: date.is_with_pay,
+              days: parseFloat(date.number_of_days_in_leave.value)
+            }
+          })
+        },
+        {
+          onSuccess: () => closeModal()
+        }
+      )
       resolve()
-      closeModal()
+      // closeModal()
     })
   }
 
@@ -140,11 +159,17 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
   useEffect(() => {
     if (isOpen) {
       reset({
-        leave_type: '',
+        leave_type: {
+          label: '',
+          value: ''
+        },
         leave_date: [
           {
             date: '',
-            number_of_days_in_leave: '',
+            number_of_days_in_leave: {
+              label: '',
+              value: ''
+            },
             is_with_pay: false
           }
         ],
@@ -156,7 +181,14 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
 
   // Add New Date
   const handleAddNewDate = (): void =>
-    append({ date: '', number_of_days_in_leave: '', is_with_pay: false })
+    append({
+      date: '',
+      number_of_days_in_leave: {
+        label: '',
+        value: ''
+      },
+      is_with_pay: false
+    })
 
   // Remove Date
   const handleRemoveDate = (index: number): void => remove(index)
@@ -167,7 +199,7 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
       onSubmit={handleSubmit(handleSave)}
     >
       <main className="grid grid-cols-2 gap-x-4 gap-y-6 py-6 px-8 text-xs text-slate-800">
-        {/* Project & Leave Type */}
+        {/* Project */}
         <section className="col-span-2">
           <TextField title="Project" Icon={Coffee} isRequired>
             <Controller
@@ -176,6 +208,15 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
               render={({ field }) => {
                 return (
                   <ReactSelect
+                    className="w-full"
+                    classNames={{
+                      control: (state) =>
+                        state.isFocused
+                          ? 'border-primary'
+                          : errors.project !== null && errors.project !== undefined
+                          ? 'border-rose-500 ring-rose-500'
+                          : 'border-slate-300'
+                    }}
                     isMulti
                     {...field}
                     isClearable
@@ -184,19 +225,20 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                     closeMenuOnSelect={false}
                     isDisabled={isSubmitting}
                     backspaceRemovesValue={true}
-                    onChange={handleChangeProject}
+                    value={field.value}
+                    onChange={(options) => {
+                      field.onChange(options.map((c) => c))
+                      return handleChangeProject(options)
+                    }}
                     components={animatedComponents}
-                    className="w-full"
                   />
                 )
               }}
             />
-            {errors?.project !== null && errors?.project !== undefined && (
-              <span className="error absolute -bottom-4 text-[10px]">
-                {errors.project?.message}
-              </span>
-            )}
           </TextField>
+          {errors.project !== null && errors.project !== undefined && (
+            <span className="error text-[10px]">{errors?.project.message}</span>
+          )}
         </section>
 
         {/* Other Projects */}
@@ -211,24 +253,35 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
         {/* Leave Types */}
         <section className={`${otherProject ? 'col-span-2 sm:col-span-1' : 'col-span-2'} `}>
           <TextField title="Leave Type" Icon={Activity} isRequired>
-            <Select
-              className="py-2.5 pl-11 text-xs"
-              disabled={isSubmitting}
-              {...register('leave_type')}
-              iserror={errors.leave_type !== null && errors?.leave_type !== undefined}
-            >
-              {leaveTypes?.leaveTypes?.map(
-                (leave) =>
-                  leave.id !== LeaveTypes.UNDERTIME && (
-                    <option key={leave.id} value={leave.id}>
-                      {leave.name}
-                    </option>
-                  )
+            <Controller
+              name="leave_type"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <ReactSelect
+                  styles={customStyles}
+                  className="w-full"
+                  classNames={{
+                    control: (state) =>
+                      state.isFocused
+                        ? 'border-primary'
+                        : errors?.leave_type !== null && errors.leave_type !== undefined
+                        ? 'border-rose-500 ring-rose-500'
+                        : 'border-slate-300'
+                  }}
+                  {...field}
+                  defaultValue={null}
+                  value={field.value}
+                  options={generateLeaveTypeSelect(leaveTypes?.leaveTypes as LeaveType[])}
+                  onChange={(option) => field.onChange(option)}
+                  isDisabled={isSubmitting}
+                  components={animatedComponents}
+                />
               )}
-            </Select>
+            />
           </TextField>
           {errors?.leave_type !== null && errors?.leave_type !== undefined && (
-            <span className="error text-[10px]">{errors.leave_type?.message}</span>
+            <span className="error text-[10px]">{errors.leave_type?.value?.message}</span>
           )}
         </section>
 
@@ -268,30 +321,46 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
             </section>
             {/* Number of days in leave */}
             <section className="w-full flex-1">
-              <label>
-                Number of days in leaves (Leave) <span className="text-rose-500">*</span>
-                <Select
-                  className="py-2.5 text-xs"
-                  disabled={isSubmitting}
-                  {...register(`leave_date.${index}.number_of_days_in_leave` as any)}
-                  iserror={
-                    errors.leave_date?.[index]?.number_of_days_in_leave !== null &&
-                    errors.leave_date?.[index]?.number_of_days_in_leave !== undefined
-                  }
-                >
-                  {numberOfDaysInLeaves.map(({ id, value }) => (
-                    <option key={id} value={value}>
-                      {value}
-                    </option>
-                  ))}
-                </Select>
-                {errors.leave_date?.[index]?.number_of_days_in_leave !== null &&
-                  errors.leave_date?.[index]?.number_of_days_in_leave !== undefined && (
-                    <span className="error absolute text-[10px]">
-                      Number of days in leave is required field
-                    </span>
+              <TextField
+                title="Number of Days in Leave"
+                Icon={User}
+                isRequired
+                className="py-2.5 text-xs"
+              >
+                <Controller
+                  name={`leave_date.${index}.number_of_days_in_leave`}
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <ReactSelect
+                      styles={customStyles}
+                      className="w-full"
+                      classNames={{
+                        control: (state) =>
+                          state.isFocused
+                            ? 'border-primary'
+                            : errors.leave_date?.[index]?.number_of_days_in_leave !== null &&
+                              errors.leave_date?.[index]?.number_of_days_in_leave !== undefined
+                            ? 'border-rose-500 ring-rose-500'
+                            : 'border-slate-300'
+                      }}
+                      {...field}
+                      defaultValue={null}
+                      value={field.value}
+                      onChange={field.onChange}
+                      options={generateNumberOfDaysSelect(numberOfDaysInLeaves)}
+                      isDisabled={isSubmitting}
+                      components={animatedComponents}
+                    />
                   )}
-              </label>
+                />
+              </TextField>
+              {errors.leave_date?.[index]?.number_of_days_in_leave !== null &&
+                errors.leave_date?.[index]?.number_of_days_in_leave !== undefined && (
+                  <span className="error absolute text-[10px]">
+                    Number of days in leave is required
+                  </span>
+                )}
             </section>
             <div className="ml-4 flex items-center space-x-2 sm:ml-0">
               {/* With Pay boolean */}
@@ -335,35 +404,71 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
         {/* Manager & Project leader */}
         <section className="col-span-2 sm:col-span-1">
           <TextField title="Manager" Icon={UserCheck} isRequired>
-            <Select
-              className="py-2.5 pl-11 text-xs"
-              disabled={isSubmitting}
-              {...register('manager')}
-            >
-              {managers.map((manager, i) => (
-                <option key={i} value={manager?.id}>
-                  {manager?.name}
-                </option>
-              ))}
-            </Select>
+            <Controller
+              name="manager"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <ReactSelect
+                  styles={customStyles}
+                  className="w-full"
+                  classNames={{
+                    control: (state) =>
+                      state.isFocused
+                        ? 'border-primary'
+                        : errors?.manager !== null && errors.manager !== undefined
+                        ? 'border-rose-500 ring-rose-500'
+                        : 'border-slate-300'
+                  }}
+                  {...field}
+                  options={generateUserSelect(managers)}
+                  defaultValue={null}
+                  value={field.value}
+                  onChange={field.onChange}
+                  isDisabled={isSubmitting}
+                  components={animatedComponents}
+                />
+              )}
+            />
           </TextField>
+          {errors?.manager !== null && errors?.manager !== undefined && (
+            <span className="error text-[10px]">{errors.manager?.value?.message}</span>
+          )}
         </section>
 
         {/* Project Leaders Field */}
         <section className="col-span-2 sm:col-span-1">
           <TextField title="Project Leader" Icon={User} isRequired>
-            <Select
-              className="py-2.5 pl-11 text-xs"
-              disabled={isSubmitting}
-              {...register('project_leader')}
-            >
-              {leaders.map((leader, i) => (
-                <option key={i} value={leader?.id}>
-                  {leader?.name}
-                </option>
-              ))}
-            </Select>
+            <Controller
+              name="project_leader"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <ReactSelect
+                  styles={customStyles}
+                  className="w-full"
+                  classNames={{
+                    control: (state) =>
+                      state.isFocused
+                        ? 'border-primary'
+                        : errors?.project_leader !== null && errors.project_leader !== undefined
+                        ? 'border-rose-500 ring-rose-500'
+                        : 'border-slate-300'
+                  }}
+                  {...field}
+                  options={generateUserSelect(leaders)}
+                  defaultValue={null}
+                  value={field.value}
+                  onChange={field.onChange}
+                  isDisabled={isSubmitting}
+                  components={animatedComponents}
+                />
+              )}
+            />
           </TextField>
+          {errors?.project_leader !== null && errors?.project_leader !== undefined && (
+            <span className="error text-[10px]">{errors.project_leader?.value?.message}</span>
+          )}
         </section>
 
         {/* Reason for leave Field */}
