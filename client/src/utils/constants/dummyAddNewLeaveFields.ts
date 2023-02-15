@@ -84,63 +84,74 @@ export const projectLeaders = [
   }
 ]
 
-export const leaveTypes = [
+export const dummyLeaveTypes = [
   {
-    id: 1,
+    label: 'Sick leave',
     value: 'Sick leave'
   },
   {
-    id: 2,
+    label: 'Bereavement leave',
     value: 'Bereavement leave'
   },
   {
-    id: 3,
+    label: 'Vacation leave',
     value: 'Vacation leave'
   },
   {
-    id: 4,
+    label: 'Maternity/Paternity leave',
     value: 'Maternity/Paternity leave'
   }
 ]
 
 export const numberOfDaysInLeaves = [
   {
-    id: 1,
+    label: '0.5 = 4hrs',
     value: '0.5 = 4hrs'
   },
   {
-    id: 2,
+    label: '0.625 = 5hrs',
     value: '0.625 = 5hrs'
   },
   {
-    id: 3,
+    label: '0.69 = 5.5hrs (afternoon only)',
     value: '0.69 = 5.5hrs (afternoon only)'
   },
   {
-    id: 4,
+    label: '1 = 8 (whole day)',
     value: '1 = 8 (whole day)'
   }
 ]
 
 export const numberOfDaysInLeavesByUndertime = [
   {
-    id: 1,
+    label: '0.125 = 1hr',
     value: '0.125 = 1hr'
   },
   {
-    id: 2,
+    label: '0.19 = 1.5hrs',
     value: '0.19 = 1.5hrs'
   },
   {
-    id: 3,
+    label: '0.25 = 2hrs',
     value: '0.25 = 2hrs'
   },
   {
-    id: 4,
+    label: '0.31 = 2.5hrs',
     value: '0.31 = 2.5hrs'
   },
   {
-    id: 5,
+    label: '0.38 = 3hrs',
     value: '0.38 = 3hrs'
+  }
+]
+
+export const dummyManagers = [
+  {
+    label: 'Daisuke Nishide',
+    value: 'Daisuke Nishide'
+  },
+  {
+    label: 'Ryan Dupay',
+    value: 'Ryan Dupay'
   }
 ]

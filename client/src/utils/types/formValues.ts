@@ -11,35 +11,38 @@ export type TimeEntryFormValues = Required<
   Pick<ConfirmInterruptionValues, 'time_out' | 'time_in' | 'remarks'>
 >
 
+export type ReactSelectOption = {
+  value: string
+  label: string
+  __isNew__?: boolean
+}
+
 export type NewLeaveFormValues = {
   // eslint-disable-next-line @typescript-eslint/array-type
-  project: {
-    label: string
-    value: string
+  projects: {
+    project_name: ReactSelectOption
+    project_leader: ReactSelectOption
   }[]
-  other_project?: string
-  leave_type: string
+  leave_type: ReactSelectOption
   leave_date: Array<{
     date: string
     number_of_days_in_leave: string
     is_with_pay: boolean
   }>
   manager: string
-  project_leader: string
   reason: string
 }
 
 export type UndertimeFormValues = {
   // eslint-disable-next-line @typescript-eslint/array-type
-  project: {
-    label: string
-    value: string
+  projects: {
+    project_name: ReactSelectOption
+    project_leader: ReactSelectOption
+    __isNew__?: boolean
   }[]
-  other_project?: string
-  leave_date: string
-  number_of_days_in_leave_undertime: string
-  manager: string
-  project_leader: string
+  undertime_leave_date: string
+  number_of_days_in_leave_undertime: ReactSelectOption
+  manager: ReactSelectOption
   reason: string
 }
 
