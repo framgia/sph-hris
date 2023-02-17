@@ -1,5 +1,6 @@
 import { Clock, FileText, Filter, Home, Layers, Layout, Sunrise, Users } from 'react-feather'
 
+import { Roles } from './roles'
 import MyOvertimeIcon from './../icons/MyOvertimeIcon'
 
 export interface IMenu {
@@ -10,6 +11,7 @@ export interface IMenu {
   spacing?: boolean
   submenu?: boolean
   submenuItems?: ISubMenu
+  role: string[]
 }
 
 export type ISubMenu = Array<{
@@ -23,44 +25,51 @@ export const Menus: IMenu[] = [
     name: 'Home',
     Icon: Home,
     href: '/',
-    isMenu: true
+    role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
   },
   {
     name: 'My Leaves',
     Icon: FileText,
-    href: '/my-leaves'
+    href: '/my-leaves',
+    role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
   },
   {
     name: 'My Daily Time Record',
     Icon: Clock,
-    href: '/my-daily-time-record'
+    href: '/my-daily-time-record',
+    role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
   },
   {
     name: 'My Overtime',
     href: '/my-overtime',
-    Icon: MyOvertimeIcon
+    Icon: MyOvertimeIcon,
+    role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
   },
   {
     name: 'My Forms',
     Icon: Layout,
     href: '/my-forms',
+    role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER],
     spacing: true,
     isMenu: true
   },
   {
     name: 'Schedule Management',
     Icon: Sunrise,
-    href: '/schedule-management'
+    href: '/schedule-management',
+    role: [Roles.HR_ADMIN]
   },
   {
     name: 'Employee Management',
     Icon: Users,
-    href: '/employee-management'
+    href: '/employee-management',
+    role: [Roles.HR_ADMIN]
   },
   {
     name: 'Leave Management',
     Icon: FileText,
     href: '/leave-management',
+    role: [Roles.HR_ADMIN],
     submenu: true,
     submenuItems: [
       {
@@ -83,11 +92,13 @@ export const Menus: IMenu[] = [
   {
     name: 'DTR Management',
     Icon: Clock,
-    href: '/dtr-management'
+    href: '/dtr-management',
+    role: [Roles.HR_ADMIN]
   },
   {
     name: 'Overtime Management',
     Icon: Layers,
-    href: '/overtime-management'
+    href: '/overtime-management',
+    role: [Roles.HR_ADMIN, Roles.MANAGER]
   }
 ]

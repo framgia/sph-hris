@@ -12,7 +12,6 @@ import TextField from './../TextField'
 import Input from '~/components/atoms/Input'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import { MyOvertimeSchema } from '~/utils/validation'
-import { IOvertimeManagement } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import ModalTemplate from '~/components/templates/ModalTemplate'
@@ -20,11 +19,12 @@ import { NewOvertimeFormValues } from '~/utils/types/formValues'
 import { projectList } from '~/utils/constants/dummyAddNewLeaveFields'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
+import { IOvertimeManagement, IOvertimeManagementManager } from '~/utils/interfaces'
 
 type Props = {
   isOpen: boolean
   closeModal: () => void
-  row: IOvertimeManagement
+  row: IOvertimeManagement | IOvertimeManagementManager
 }
 
 type ReactSelectProps = { label: string; value: string }

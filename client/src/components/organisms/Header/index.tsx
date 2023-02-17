@@ -120,10 +120,9 @@ const Header: FC<Props> = (props): JSX.Element => {
           <div className="flex items-center space-x-2">
             <h1 className="text-lg font-semibold text-slate-700">
               <>
-                {router.pathname === '/' ? 'Home' : ''}
                 {Menus.map((item, index) => (
                   <div key={index}>
-                    {router.pathname === item.href && router.pathname !== '/' && item.name}
+                    {router.pathname === item.href && item.name}
                     {item?.submenu === true &&
                       item?.submenuItems?.map((sub) =>
                         router.pathname.includes(sub.href) ? sub.name : ''

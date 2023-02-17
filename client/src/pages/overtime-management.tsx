@@ -2,14 +2,19 @@ import { NextPage } from 'next'
 import classNames from 'classnames'
 import React, { useState } from 'react'
 
+import useUserQuery from '~/hooks/useUserQuery'
+import { Roles } from '~/utils/constants/roles'
 import Layout from '~/components/templates/Layout'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
-import { columns } from '~/components/molecules/OvertimeManagementTable/columns'
 import OvertimeManagementTable from '~/components/molecules/OvertimeManagementTable'
 import { dummyOvertimeManagementData } from '~/utils/constants/dummyOvertimeManagementData'
+import { hrColumns, managerColumns } from '~/components/molecules/OvertimeManagementTable/columns'
 import YearlyFilterDropdown from '~/components/molecules/MyDailyTimeRecordTable/YearlyFilterDropdown'
 
 const OvertimeManagement: NextPage = (): JSX.Element => {
+  const { handleUserQuery } = useUserQuery()
+  const { data: user } = handleUserQuery()
+
   const [globalFilter, setGlobalFilter] = useState<string>('')
 
   return (
@@ -40,7 +45,7 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
               error: null
             },
             table: {
-              columns,
+              columns: user?.userById.role.name === Roles.HR_ADMIN ? hrColumns : managerColumns,
               globalFilter,
               setGlobalFilter
             }

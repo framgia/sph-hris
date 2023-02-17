@@ -13,15 +13,15 @@ import DesktopTable from './DesktopTable'
 import FooterTable from './../FooterTable'
 import MobileDisclose from './MobileDisclose'
 import { fuzzyFilter } from '~/utils/fuzzyFilter'
-import { IOvertimeManagement } from '~/utils/interfaces'
+import { IOvertimeManagement, IOvertimeManagementManager } from '~/utils/interfaces'
 
 type Props = {
   query: {
-    data: IOvertimeManagement[]
+    data: IOvertimeManagement[] | IOvertimeManagementManager[]
     error: unknown
   }
   table: {
-    columns: Array<ColumnDef<IOvertimeManagement, any>>
+    columns: Array<ColumnDef<IOvertimeManagement | IOvertimeManagementManager, any>>
     globalFilter: string
     setGlobalFilter: Dispatch<SetStateAction<string>>
   }
@@ -29,14 +29,14 @@ type Props = {
 
 const OvertimeManagementTable: FC<Props> = (props): JSX.Element => {
   const {
-    query: { data: myDailyTimeData, error },
+    query: { data: overtimeData, error },
     table: { columns, globalFilter, setGlobalFilter }
   } = props
 
   const [sorting, setSorting] = useState<SortingState>([])
 
   const table = useReactTable({
-    data: myDailyTimeData,
+    data: overtimeData,
     columns,
     // Options
     state: {
