@@ -32,32 +32,28 @@ const AddNewLeaveModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
       />
       <Tab.Group>
         {/* Tab header */}
-        <Tab.List className="flex items-center space-x-6 border-b border-slate-200 px-4">
+        <Tab.List className="flex items-center space-x-6 border-b border-slate-200 px-6">
           {tabLinks.map((item, index) => (
-            <Tab key={index}>{({ selected }) => <TabButton {...{ item, selected }} />}</Tab>
+            <Tab key={index} className="focus:outline-none">
+              {({ selected }) => <TabButton {...{ item, selected }} />}
+            </Tab>
           ))}
         </Tab.List>
         <Tab.Panels className="overflow-y-auto">
-          {/* Leave Tab Content */}
-          <Tab.Panel>
-            {/* Leave Tab Form */}
-            <LeaveTab
-              {...{
-                isOpen,
-                closeModal
-              }}
-            />
-          </Tab.Panel>
-          {/* Undertime Tab Content */}
-          <Tab.Panel>
-            {/* Undertime Tab Form */}
-            <UndertimeTab
-              {...{
-                isOpen,
-                closeModal
-              }}
-            />
-          </Tab.Panel>
+          {/* Leave Tab Form */}
+          <LeaveTab
+            {...{
+              isOpen,
+              closeModal
+            }}
+          />
+          {/* Undertime Tab Form */}
+          <UndertimeTab
+            {...{
+              isOpen,
+              closeModal
+            }}
+          />
         </Tab.Panels>
       </Tab.Group>
     </ModalTemplate>
@@ -68,7 +64,7 @@ const TabButton = ({ item, selected }: { item: string; selected: boolean }): JSX
   return (
     <div
       className={classNames(
-        'cursor-pointer border-b-[3px] py-1.5 transition duration-150 ease-in-out',
+        'cursor-pointer border-b-[3px] py-1 transition duration-150 ease-in-out',
         selected
           ? 'border-amber-500 text-amber-500'
           : 'border-transparent text-slate-600 hover:border-slate-300'

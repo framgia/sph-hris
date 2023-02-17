@@ -1,10 +1,16 @@
-import * as Yup from 'yup'
+import * as yup from 'yup'
 
 import { WorkInterruptionType } from './../constants/work-status'
 
-export const ConfirmInterruptionSchema = Yup.object().shape({
-  work_interruption: Yup.string().required().label('Work Interruption'),
-  specify_reason: Yup.string()
+export const SelectSchema = yup.object().shape({
+  label: yup.string().required(),
+  value: yup.string().required()
+})
+
+export const ConfirmInterruptionSchema = yup.object().shape({
+  work_interruption: yup.string().required().label('Work Interruption'),
+  specify_reason: yup
+    .string()
     .nullable(true)
     .label('Specify Reason')
     .when('work_interruption', (workInterruption, schema) => {
@@ -12,68 +18,66 @@ export const ConfirmInterruptionSchema = Yup.object().shape({
         ? schema.required()
         : schema
     }),
-  time_out: Yup.string().required().label('Time out'),
-  time_in: Yup.string().required().label('Time in'),
-  remarks: Yup.string().label('Remarks')
+  time_out: yup.string().required().label('Time out'),
+  time_in: yup.string().required().label('Time in'),
+  remarks: yup.string().label('Remarks')
 })
 
-export const TimeEntrySchema = Yup.object().shape({
-  time_out: Yup.string().required().label('Time out'),
-  time_in: Yup.string().required().label('Time in'),
-  remarks: Yup.string().label('Remarks')
+export const TimeEntrySchema = yup.object().shape({
+  time_out: yup.string().required().label('Time out'),
+  time_in: yup.string().required().label('Time in'),
+  remarks: yup.string().label('Remarks')
 })
 
-export const NewLeaveSchema = Yup.object().shape({
-  project: Yup.array().of(
-    Yup.object().shape({
-      label: Yup.string().required(),
-      value: Yup.string().required()
+export const NewLeaveSchema = yup.object().shape({
+  projects: yup.array().of(
+    yup.object().shape({
+      project_name: SelectSchema,
+      project_leader: SelectSchema
     })
   ),
-  other_project: Yup.string().label('Other Project'),
-  leave_type: Yup.string().required().label('Leave Type'),
-  leave_date: Yup.array().of(
-    Yup.object()
+  leave_type: SelectSchema,
+  leave_date: yup.array().of(
+    yup
+      .object()
       .shape({
-        date: Yup.string().required(),
-        number_of_days_in_leave: Yup.string().required(),
-        is_with_pay: Yup.boolean().default(false)
+        date: yup.string().required(),
+        number_of_days_in_leave: SelectSchema,
+        is_with_pay: yup.boolean().default(false)
       })
       .label('Leave Date')
   ),
-  manager: Yup.string().required().label('Manager'),
-  project_leader: Yup.string().required().label('Project leader'),
-  reason: Yup.string().required().label('Reason')
+  manager: SelectSchema,
+  reason: yup.string().required().label('Reason')
 })
 
-export const UndertimeLeaveSchema = Yup.object().shape({
-  project: Yup.array().of(
-    Yup.object().shape({
-      label: Yup.string().required(),
-      value: Yup.string().required()
+export const UndertimeLeaveSchema = yup.object().shape({
+  projects: yup.array().of(
+    yup.object().shape({
+      project_name: SelectSchema,
+      project_leader: SelectSchema
     })
   ),
-  other_project: Yup.string().label('Other Project'),
-  leave_date: Yup.string().required().label('Leave Date'),
-  number_of_days_in_leave_undertime: Yup.string()
-    .required()
-    .label('Number of days in leave (undertime)'),
-  reason: Yup.string().required().label('Reason')
+  other_project: yup.string().label('Other Project'),
+  undertime_leave_date: yup.string().required().label('Leave Date'),
+  number_of_days_in_leave_undertime: SelectSchema.label('Number of days in leave (undertime)'),
+  manager: SelectSchema.label('Manager'),
+  reason: yup.string().required().label('Reason')
 })
 
-export const MyOvertimeSchema = Yup.object().shape({
-  project: Yup.array().of(
-    Yup.object().shape({
-      label: Yup.string().required(),
-      value: Yup.string().required()
+export const MyOvertimeSchema = yup.object().shape({
+  project: yup.array().of(
+    yup.object().shape({
+      label: yup.string().required(),
+      value: yup.string().required()
     })
   ),
-  other_project: Yup.string().label('Other Project'),
-  date_effective: Yup.string().required().label('Date Effective'),
-  requested_hours: Yup.number().required().label('Requested hours'),
-  remarks: Yup.string().required().label('Reason')
+  other_project: yup.string().label('Other Project'),
+  date_effective: yup.string().required().label('Date Effective'),
+  requested_hours: yup.number().required().label('Requested hours'),
+  remarks: yup.string().required().label('Reason')
 })
 
-export const ApproveConfirmationSchema = Yup.object().shape({
-  requested_hours: Yup.number().required().label('Requested hours')
+export const ApproveConfirmationSchema = yup.object().shape({
+  requested_hours: yup.number().required().label('Requested hours')
 })

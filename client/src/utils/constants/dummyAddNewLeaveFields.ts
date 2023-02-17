@@ -1,3 +1,6 @@
+import { ConstLeaveTypes } from './leaveTypes'
+import { NumberOfDaysInLeave, NumberOfDaysInLeaveByUndertime } from './numberOfDaysInLeaves'
+
 export const projectList = [
   {
     label: 'Admin',
@@ -84,63 +87,74 @@ export const projectLeaders = [
   }
 ]
 
-export const leaveTypes = [
+export const dummyLeaveTypes = [
   {
-    id: 1,
-    value: 'Sick leave'
+    label: ConstLeaveTypes.SICK_LEAVE,
+    value: ConstLeaveTypes.SICK_LEAVE
   },
   {
-    id: 2,
-    value: 'Bereavement leave'
+    label: ConstLeaveTypes.BEREAVEMENT_LEAVE,
+    value: ConstLeaveTypes.BEREAVEMENT_LEAVE
   },
   {
-    id: 3,
-    value: 'Vacation leave'
+    label: ConstLeaveTypes.VACATION_LEAVE,
+    value: ConstLeaveTypes.VACATION_LEAVE
   },
   {
-    id: 4,
-    value: 'Maternity/Paternity leave'
+    label: ConstLeaveTypes.MATERNITY_PATERNITY_LEAVE,
+    value: ConstLeaveTypes.MATERNITY_PATERNITY_LEAVE
   }
 ]
 
 export const numberOfDaysInLeaves = [
   {
-    id: 1,
-    value: '0.5 = 4hrs'
+    label: NumberOfDaysInLeave.FourHours,
+    value: NumberOfDaysInLeave.FourHours
   },
   {
-    id: 2,
-    value: '0.625 = 5hrs'
+    label: NumberOfDaysInLeave.FiveHours,
+    value: NumberOfDaysInLeave.FiveHours
   },
   {
-    id: 3,
-    value: '0.69 = 5.5hrs (afternoon only)'
+    label: NumberOfDaysInLeave.AfternoonOnly,
+    value: NumberOfDaysInLeave.AfternoonOnly
   },
   {
-    id: 4,
-    value: '1 = 8 (whole day)'
+    label: NumberOfDaysInLeave.WholeDay,
+    value: NumberOfDaysInLeave.WholeDay
   }
 ]
 
 export const numberOfDaysInLeavesByUndertime = [
   {
-    id: 1,
-    value: '0.125 = 1hr'
+    label: NumberOfDaysInLeaveByUndertime.OneHour,
+    value: NumberOfDaysInLeaveByUndertime.OneHour
   },
   {
-    id: 2,
-    value: '0.19 = 1.5hrs'
+    label: NumberOfDaysInLeaveByUndertime.OneAndHalfHour,
+    value: NumberOfDaysInLeaveByUndertime.OneAndHalfHour
   },
   {
-    id: 3,
-    value: '0.25 = 2hrs'
+    label: NumberOfDaysInLeaveByUndertime.TwoHours,
+    value: NumberOfDaysInLeaveByUndertime.TwoHours
   },
   {
-    id: 4,
-    value: '0.31 = 2.5hrs'
+    label: NumberOfDaysInLeaveByUndertime.TwoAndHalfHours,
+    value: NumberOfDaysInLeaveByUndertime.TwoAndHalfHours
   },
   {
-    id: 5,
-    value: '0.38 = 3hrs'
+    label: NumberOfDaysInLeaveByUndertime.ThreeHours,
+    value: NumberOfDaysInLeaveByUndertime.ThreeHours
+  }
+]
+
+export const dummyManagers = [
+  {
+    label: 'Daisuke Nishide',
+    value: 'Daisuke Nishide'
+  },
+  {
+    label: 'Ryan Dupay',
+    value: 'Ryan Dupay'
   }
 ]
