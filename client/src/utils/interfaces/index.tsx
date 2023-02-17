@@ -53,3 +53,28 @@ export interface IMyOvertime {
   remarks: string
   status: string
 }
+
+export interface IOvertimeManagement {
+  id: number
+  user: {
+    id: number
+    name: string
+    role: {
+      id: number
+      name: string
+    }
+  }
+  // eslint-disable-next-line @typescript-eslint/array-type
+  project: {
+    label: string
+    value: string
+  }[]
+  date: string
+  overtimeIn: string
+  overtimeOut: string
+  requestedHours: number
+  supervisor: string
+  dateFiled: string
+  remarks: string
+  status: string
+}
