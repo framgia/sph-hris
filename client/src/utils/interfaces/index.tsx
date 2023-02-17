@@ -36,3 +36,20 @@ export interface IListOfLeave {
   dateFiled: string
   reason: string
 }
+
+export interface IMyOvertime {
+  id: number
+  // eslint-disable-next-line @typescript-eslint/array-type
+  project: {
+    value: string
+    label: string
+  }[]
+  date: string
+  overtimeIn: string
+  overtimeOut: string
+  requestedHours: number
+  supervisor: string
+  dateFiled: string
+  remarks: string
+  status: string
+}

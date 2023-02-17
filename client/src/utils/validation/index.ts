@@ -60,3 +60,16 @@ export const UndertimeLeaveSchema = Yup.object().shape({
     .label('Number of days in leave (undertime)'),
   reason: Yup.string().required().label('Reason')
 })
+
+export const MyOvertimeSchema = Yup.object().shape({
+  project: Yup.array().of(
+    Yup.object().shape({
+      label: Yup.string().required(),
+      value: Yup.string().required()
+    })
+  ),
+  other_project: Yup.string().label('Other Project'),
+  date_effective: Yup.string().required().label('Date Effective'),
+  requested_hours: Yup.string().required().label('Requested hours'),
+  remarks: Yup.string().required().label('Reason')
+})

@@ -58,6 +58,10 @@ export const projectList = [
   {
     label: 'Osaka Metro',
     value: 'Osaka Metro'
+  },
+  {
+    label: 'Others',
+    value: 'Others'
   }
 ]
 

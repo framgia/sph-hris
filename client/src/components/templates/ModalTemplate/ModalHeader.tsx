@@ -16,7 +16,7 @@ const ModalHeader: FC<Props> = ({ title, Icon, closeModal }): JSX.Element => {
         <Icon className="h-5 w-5 text-slate-600" />
         <h1 className="text-base font-medium">{title}</h1>
       </div>
-      <Button onClick={closeModal} className="text-slate-600 hover:text-slate-800">
+      <Button type="button" onClick={closeModal} className="text-slate-600 hover:text-slate-800">
         <X className="h-5 w-5" />
       </Button>
     </header>
