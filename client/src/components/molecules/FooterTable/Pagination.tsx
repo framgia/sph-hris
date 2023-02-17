@@ -9,8 +9,7 @@ type Props = {
 }
 
 const Pagination: FC<Props> = ({ table }): JSX.Element => {
-  const btnStyle =
-    'select-none px-1.5 py-1.5 text-slate-600 disabled:text-slate-400 disabled:active:scale-100'
+  const btnStyle = 'select-none px-1.5 py-1.5 text-slate-600'
 
   return (
     <div className="flex items-center divide-x divide-slate-200 rounded-md border bg-white shadow-sm">
