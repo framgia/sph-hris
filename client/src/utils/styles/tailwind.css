@@ -14,5 +14,6 @@
     @apply border border-slate-300 bg-white bg-clip-padding focus:border-primary focus:ring-primary;
     @apply resize-none px-3 py-1.5 text-xs font-normal text-slate-700 transition;
     @apply ease-in-out focus:bg-white focus:text-slate-700 focus:outline-none;
+    @apply disabled:cursor-not-allowed disabled:opacity-50;
   }
 }

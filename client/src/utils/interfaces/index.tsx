@@ -78,3 +78,7 @@ export interface IOvertimeManagement {
   remarks: string
   status: string
 }
+
+export type IOvertimeManagementManager = Required<
+  Omit<IOvertimeManagement, 'overtimeIn' | 'overtimeOut' | 'supervisor'>
+>

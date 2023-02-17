@@ -4,16 +4,19 @@ import classNames from 'classnames'
 import React, { FC, useState } from 'react'
 import { Table } from '@tanstack/react-table'
 import { Disclosure } from '@headlessui/react'
-import { ChevronRight, Edit, Eye } from 'react-feather'
+import { Check, ChevronRight, Edit, Eye, X } from 'react-feather'
 
 import Chip from './Chip'
 import Avatar from '~/components/atoms/Avatar'
+import { Roles } from '~/utils/constants/roles'
+import useUserQuery from '~/hooks/useUserQuery'
 import ShowRemarksModal from './ShowRemarksModal'
 import Button from '~/components/atoms/Buttons/Button'
 import UpdateOvertimeModal from './UpdateOvertimeModal'
 import { IOvertimeManagement } from '~/utils/interfaces'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import DisclosureTransition from '~/components/templates/DisclosureTransition'
+import ApproveConfirmationModal from './ApproveConfirmationModal'
 
 type Props = {
   table: Table<IOvertimeManagement>
@@ -22,11 +25,21 @@ type Props = {
 }
 
 const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
+  const { handleUserQuery } = useUserQuery()
+  const { data: user } = handleUserQuery()
+
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [isOpenUpdateModal, setIsOpenUpdateModal] = useState<boolean>(false)
+  const [isOpenRemarksModal, setIsOpenRemarksModal] = useState<boolean>(false)
+  const [isOpenConfirmationModal, setIsOpenConfirmationModal] = useState<boolean>(false)
 
   const handleToggle = (): void => setIsOpen(!isOpen)
   const handleUpdateToggle = (): void => setIsOpenUpdateModal(!isOpenUpdateModal)
+  const handleShowRemarksToggle = (): void => setIsOpenRemarksModal(!isOpenRemarksModal)
+  const handleConfirmationToggle = (): void => setIsOpenConfirmationModal(!isOpenConfirmationModal)
+
+  const isManagerRole = user?.userById.role.name === Roles.MANAGER
+  const isHrRole = user?.userById.role.name === Roles.HR_ADMIN
 
   return (
     <>
@@ -107,10 +120,30 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                   {moment(new Date(row.original.date)).format('MMMM DD, YYYY')}
                                 </span>
                               </li>
+                              {isHrRole ? (
+                                <>
+                                  <li className="px-4 py-2.5">
+                                    Overtime In:{' '}
+                                    <span className="font-semibold">{row.original.overtimeIn}</span>
+                                  </li>
+                                  <li className="px-4 py-2.5">
+                                    Overtime Out:{' '}
+                                    <span className="font-semibold">
+                                      {row.original.overtimeOut}
+                                    </span>
+                                  </li>
+                                </>
+                              ) : null}
                               <li className="px-4 py-2.5">
                                 Approved hours:{' '}
                                 <span className="font-semibold">{row.original.requestedHours}</span>
                               </li>
+                              {isHrRole ? (
+                                <li className="px-4 py-2.5">
+                                  Supervisor:{' '}
+                                  <span className="font-semibold">{row.original.supervisor}</span>
+                                </li>
+                              ) : null}
                               <li className="px-4 py-2.5">
                                 Date Filed:{' '}
                                 <span className="font-semibold">
@@ -126,50 +159,120 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                               <li className="flex items-center space-x-2 px-4 py-2">
                                 <span>Actions:</span>
                                 <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
-                                  <Tippy placement="left" content="Edit" className="!text-xs">
-                                    <Button
-                                      onClick={handleUpdateToggle}
-                                      rounded="none"
-                                      className="py-0.5 px-1 text-slate-500"
-                                    >
-                                      <Edit className="h-4 w-4" />
+                                  {/* === FOR HR ACTION BUTTONS ==== */}
+                                  {isHrRole ? (
+                                    <>
+                                      <Tippy placement="left" content="Edit" className="!text-xs">
+                                        <Button
+                                          onClick={handleUpdateToggle}
+                                          rounded="none"
+                                          className="py-0.5 px-1 text-slate-500"
+                                        >
+                                          <Edit className="h-4 w-4" />
 
-                                      {/* This will show the Update Overtime Modal */}
-                                      {isOpenUpdateModal ? (
-                                        <UpdateOvertimeModal
-                                          {...{
-                                            isOpen: isOpenUpdateModal,
-                                            closeModal: () => handleUpdateToggle(),
-                                            row: row.original
-                                          }}
-                                        />
-                                      ) : null}
-                                    </Button>
-                                  </Tippy>
-                                  <Tippy
-                                    placement="left"
-                                    className="!text-xs"
-                                    content="View Remarks"
-                                  >
-                                    <Button
-                                      onClick={handleToggle}
-                                      rounded="none"
-                                      className="py-0.5 px-1 text-slate-500"
-                                    >
-                                      <Eye className="h-4 w-4" />
+                                          {/* This will show the Update Overtime Modal */}
+                                          {isOpenUpdateModal ? (
+                                            <UpdateOvertimeModal
+                                              {...{
+                                                isOpen: isOpenUpdateModal,
+                                                closeModal: () => handleUpdateToggle(),
+                                                row: row.original
+                                              }}
+                                            />
+                                          ) : null}
+                                        </Button>
+                                      </Tippy>
+                                      <Tippy
+                                        placement="left"
+                                        className="!text-xs"
+                                        content="View Remarks"
+                                      >
+                                        <Button
+                                          onClick={handleToggle}
+                                          rounded="none"
+                                          className="py-0.5 px-1 text-slate-500"
+                                        >
+                                          <Eye className="h-4 w-4" />
 
-                                      {/* This will show the remarks modal */}
-                                      {isOpen ? (
-                                        <ShowRemarksModal
-                                          {...{
-                                            isOpen,
-                                            closeModal: () => handleToggle(),
-                                            row: row.original
-                                          }}
-                                        />
-                                      ) : null}
-                                    </Button>
-                                  </Tippy>
+                                          {/* This will show the remarks modal */}
+                                          {isOpen ? (
+                                            <ShowRemarksModal
+                                              {...{
+                                                isOpen,
+                                                closeModal: () => handleToggle(),
+                                                row: row.original
+                                              }}
+                                            />
+                                          ) : null}
+                                        </Button>
+                                      </Tippy>
+                                    </>
+                                  ) : null}
+
+                                  {/* === FOR MANAGER ACTION BUTTONS ==== */}
+                                  {isManagerRole ? (
+                                    <>
+                                      <Tippy
+                                        placement="left"
+                                        content="Approve"
+                                        className="!text-xs"
+                                      >
+                                        <Button
+                                          rounded="none"
+                                          onClick={handleConfirmationToggle}
+                                          className="py-0.5 px-1 text-slate-500"
+                                        >
+                                          <Check className="h-4 w-4 stroke-[3px]" />
+                                          {/* This will show the Approve Confirmation Modal */}
+                                          {isOpenConfirmationModal ? (
+                                            <ApproveConfirmationModal
+                                              {...{
+                                                isOpen: isOpenConfirmationModal,
+                                                closeModal: () => handleConfirmationToggle(),
+                                                row: row.original
+                                              }}
+                                            />
+                                          ) : null}
+                                        </Button>
+                                      </Tippy>
+                                      <Tippy
+                                        placement="left"
+                                        content="Disapprove"
+                                        className="!text-xs"
+                                      >
+                                        <Button
+                                          rounded="none"
+                                          className="py-0.5 px-1 text-slate-500"
+                                        >
+                                          <X className="h-4 w-4 stroke-[3px]" />
+                                        </Button>
+                                      </Tippy>
+                                      <Tippy
+                                        placement="left"
+                                        content="View Remarks"
+                                        className="!text-xs"
+                                      >
+                                        <Button
+                                          rounded="none"
+                                          onClick={handleShowRemarksToggle}
+                                          className="py-0.5 px-1 text-slate-500"
+                                        >
+                                          <Eye className="h-4 w-4" />
+
+                                          {/* This will show the remarks modal */}
+                                          {isOpenRemarksModal ? (
+                                            <ShowRemarksModal
+                                              {...{
+                                                isOpen: isOpenRemarksModal,
+                                                closeModal: () => handleShowRemarksToggle(),
+                                                row: row.original
+                                              }}
+                                            />
+                                          ) : null}
+                                        </Button>
+                                      </Tippy>
+                                    </>
+                                  ) : null}
                                 </div>
                               </li>
                             </ul>

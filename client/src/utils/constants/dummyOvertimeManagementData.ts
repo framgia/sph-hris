@@ -1,6 +1,6 @@
-import { IOvertimeManagement } from '../interfaces'
+import { IOvertimeManagement, IOvertimeManagementManager } from '../interfaces'
 
-export const dummyOvertimeManagementData: IOvertimeManagement[] = [
+export const dummyOvertimeManagementData: IOvertimeManagement[] | IOvertimeManagementManager[] = [
   {
     id: 1,
     project: [

@@ -1,16 +1,16 @@
 import React, { FC } from 'react'
 import { Eye } from 'react-feather'
 
-import { IOvertimeManagement } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
+import { IOvertimeManagement, IOvertimeManagementManager } from '~/utils/interfaces'
 
 type Props = {
   isOpen: boolean
   closeModal: () => void
-  row: IOvertimeManagement
+  row: IOvertimeManagement | IOvertimeManagementManager
 }
 
 const ShowRemarksModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Element => {

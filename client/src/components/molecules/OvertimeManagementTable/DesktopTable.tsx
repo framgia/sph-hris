@@ -3,10 +3,10 @@ import classNames from 'classnames'
 import { flexRender, Table } from '@tanstack/react-table'
 
 import TableSkeleton from './../SkeletonTable'
-import { IMyOvertime } from '~/utils/interfaces'
+import { IOvertimeManagement, IOvertimeManagementManager } from '~/utils/interfaces'
 
 type Props = {
-  table: Table<IMyOvertime>
+  table: Table<IOvertimeManagement | IOvertimeManagementManager>
   isLoading: boolean
   error: unknown
 }
