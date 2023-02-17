@@ -70,6 +70,6 @@ export const MyOvertimeSchema = Yup.object().shape({
   ),
   other_project: Yup.string().label('Other Project'),
   date_effective: Yup.string().required().label('Date Effective'),
-  requested_hours: Yup.string().required().label('Requested hours'),
+  requested_hours: Yup.number().required().label('Requested hours'),
   remarks: Yup.string().required().label('Reason')
 })
