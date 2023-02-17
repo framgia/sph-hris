@@ -10,6 +10,7 @@ import { Listbox, Transition } from '@headlessui/react'
 import { createColumnHelper } from '@tanstack/react-table'
 
 import Chip from './Chip'
+import Card from '~/components/atoms/Card'
 import Avatar from '~/components/atoms/Avatar'
 import ShowRemarksModal from './ShowRemarksModal'
 import Button from '~/components/atoms/Buttons/Button'
@@ -18,7 +19,6 @@ import UpdateOvertimeModal from './UpdateOvertimeModal'
 import ApproveConfirmationModal from './ApproveConfirmationModal'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
 import { IOvertimeManagement, IOvertimeManagementManager } from '~/utils/interfaces'
-import Card from '~/components/atoms/Card'
 
 const columnHelper = createColumnHelper<IOvertimeManagement | IOvertimeManagementManager>()
 
@@ -275,6 +275,11 @@ export const managerColumns = [
       )
     }
   }),
+  columnHelper.display({
+    id: 'empty1',
+    header: () => '',
+    footer: (info) => info.column.id
+  }),
   columnHelper.accessor('date', {
     header: () => <CellHeader label="Date" />,
     footer: (info) => info.column.id,
@@ -282,8 +287,18 @@ export const managerColumns = [
       <span>{moment(new Date(props.row.original.date)).format('MMMM DD, YYYY')}</span>
     )
   }),
+  columnHelper.display({
+    id: 'empty2',
+    header: () => '',
+    footer: (info) => info.column.id
+  }),
   columnHelper.accessor('requestedHours', {
     header: () => <CellHeader label="Approved Hours" />,
+    footer: (info) => info.column.id
+  }),
+  columnHelper.display({
+    id: 'empty3',
+    header: () => '',
     footer: (info) => info.column.id
   }),
   columnHelper.accessor('dateFiled', {
@@ -297,6 +312,11 @@ export const managerColumns = [
     header: () => <CellHeader label="Status" />,
     footer: (info) => info.column.id,
     cell: (props) => <Chip label={props.getValue()} />
+  }),
+  columnHelper.display({
+    id: 'empty4',
+    header: () => '',
+    footer: (info) => info.column.id
   }),
   columnHelper.display({
     id: 'id',

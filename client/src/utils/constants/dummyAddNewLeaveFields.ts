@@ -1,3 +1,6 @@
+import { ConstLeaveTypes } from './leaveTypes'
+import { NumberOfDaysInLeave, NumberOfDaysInLeaveByUndertime } from './numberOfDaysInLeaves'
+
 export const projectList = [
   {
     label: 'Admin',
@@ -86,62 +89,62 @@ export const projectLeaders = [
 
 export const dummyLeaveTypes = [
   {
-    label: 'Sick leave',
-    value: 'Sick leave'
+    label: ConstLeaveTypes.SICK_LEAVE,
+    value: ConstLeaveTypes.SICK_LEAVE
   },
   {
-    label: 'Bereavement leave',
-    value: 'Bereavement leave'
+    label: ConstLeaveTypes.BEREAVEMENT_LEAVE,
+    value: ConstLeaveTypes.BEREAVEMENT_LEAVE
   },
   {
-    label: 'Vacation leave',
-    value: 'Vacation leave'
+    label: ConstLeaveTypes.VACATION_LEAVE,
+    value: ConstLeaveTypes.VACATION_LEAVE
   },
   {
-    label: 'Maternity/Paternity leave',
-    value: 'Maternity/Paternity leave'
+    label: ConstLeaveTypes.MATERNITY_PATERNITY_LEAVE,
+    value: ConstLeaveTypes.MATERNITY_PATERNITY_LEAVE
   }
 ]
 
 export const numberOfDaysInLeaves = [
   {
-    label: '0.5 = 4hrs',
-    value: '0.5 = 4hrs'
+    label: NumberOfDaysInLeave.FourHours,
+    value: NumberOfDaysInLeave.FourHours
   },
   {
-    label: '0.625 = 5hrs',
-    value: '0.625 = 5hrs'
+    label: NumberOfDaysInLeave.FiveHours,
+    value: NumberOfDaysInLeave.FiveHours
   },
   {
-    label: '0.69 = 5.5hrs (afternoon only)',
-    value: '0.69 = 5.5hrs (afternoon only)'
+    label: NumberOfDaysInLeave.AfternoonOnly,
+    value: NumberOfDaysInLeave.AfternoonOnly
   },
   {
-    label: '1 = 8 (whole day)',
-    value: '1 = 8 (whole day)'
+    label: NumberOfDaysInLeave.WholeDay,
+    value: NumberOfDaysInLeave.WholeDay
   }
 ]
 
 export const numberOfDaysInLeavesByUndertime = [
   {
-    label: '0.125 = 1hr',
-    value: '0.125 = 1hr'
+    label: NumberOfDaysInLeaveByUndertime.OneHour,
+    value: NumberOfDaysInLeaveByUndertime.OneHour
   },
   {
-    label: '0.19 = 1.5hrs',
-    value: '0.19 = 1.5hrs'
+    label: NumberOfDaysInLeaveByUndertime.OneAndHalfHour,
+    value: NumberOfDaysInLeaveByUndertime.OneAndHalfHour
   },
   {
-    label: '0.25 = 2hrs',
-    value: '0.25 = 2hrs'
+    label: NumberOfDaysInLeaveByUndertime.TwoHours,
+    value: NumberOfDaysInLeaveByUndertime.TwoHours
   },
   {
-    label: '0.31 = 2.5hrs',
-    value: '0.31 = 2.5hrs'
+    label: NumberOfDaysInLeaveByUndertime.TwoAndHalfHours,
+    value: NumberOfDaysInLeaveByUndertime.TwoAndHalfHours
   },
   {
-    label: '0.38 = 3hrs',
-    value: '0.38 = 3hrs'
+    label: NumberOfDaysInLeaveByUndertime.ThreeHours,
+    value: NumberOfDaysInLeaveByUndertime.ThreeHours
   }
 ]
 
