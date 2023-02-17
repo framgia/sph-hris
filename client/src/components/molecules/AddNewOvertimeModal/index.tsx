@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import ReactSelect, { MultiValue } from 'react-select'
 import React, { FC, useEffect, useState } from 'react'
 import ReactTextareaAutosize from 'react-textarea-autosize'
-import { Calendar, Clock, Coffee, FileText, Save, X } from 'react-feather'
+import { Calendar, Clock, Coffee, FileText, RefreshCcw, Save, X } from 'react-feather'
 
 import TextField from './../TextField'
 import Input from '~/components/atoms/Input'
@@ -55,18 +55,33 @@ const AddNewOvertimeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => 
     })
   }
 
+  // modify custom style control
+  customStyles.control = (provided) => ({
+    ...provided,
+    boxShadow: 'none',
+    borderColor: 'none',
+    '&:hover': {
+      color: '#75c55e'
+    }
+  })
+
   // This will reset all form values
   useEffect(() => {
     if (isOpen) {
-      reset({
-        other_project: '',
-        date_effective: '',
-        requested_hours: '',
-        remarks: ''
-      })
-      setOtherProject(false)
+      handleReset()
     }
   }, [isOpen])
+
+  const handleReset = (): void => {
+    reset({
+      project: '' as any,
+      other_project: '',
+      date_effective: '',
+      requested_hours: undefined,
+      remarks: ''
+    })
+    setOtherProject(false)
+  }
 
   const handleChangeProject = (selectedOption: MultiValue<ReactSelectProps>): void => {
     setOtherProject(false)
@@ -103,30 +118,41 @@ const AddNewOvertimeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => 
               <Controller
                 name="project"
                 control={control}
-                render={({ field }) => {
+                rules={{ required: true }}
+                render={({ field: { value, onChange } }) => {
                   return (
                     <ReactSelect
                       isMulti
-                      {...field}
                       isClearable
+                      placeholder=""
+                      value={value}
                       styles={customStyles}
                       options={projectList}
-                      closeMenuOnSelect={false}
+                      onChange={(options) => {
+                        onChange(options.map((c) => c))
+                        return handleChangeProject(options)
+                      }}
+                      classNames={{
+                        control: (state) =>
+                          state.isFocused
+                            ? 'border-primary'
+                            : errors.project !== null && errors.project !== undefined
+                            ? 'border-rose-500 ring-rose-500'
+                            : 'border-slate-300'
+                      }}
                       isDisabled={isSubmitting}
+                      closeMenuOnSelect={false}
                       backspaceRemovesValue={true}
-                      onChange={handleChangeProject}
                       components={animatedComponents}
                       className="w-full"
                     />
                   )
                 }}
               />
-              {errors?.project !== null && errors?.project !== undefined && (
-                <span className="error absolute -bottom-4 text-[10px]">
-                  {errors.project?.message}
-                </span>
-              )}
             </TextField>
+            {errors.project !== null && errors.project !== undefined && (
+              <span className="error text-[10px]">Project is required</span>
+            )}
           </section>
 
           {/* Other Projects */}
@@ -140,6 +166,7 @@ const AddNewOvertimeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => 
               >
                 <Input
                   type="text"
+                  required
                   {...register('other_project')}
                   className="py-2.5 pl-11 text-xs"
                 />
@@ -186,6 +213,7 @@ const AddNewOvertimeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => 
             <TextField title="Remarks" Icon={FileText} isRequired>
               <ReactTextareaAutosize
                 id="remarks"
+                placeholder=""
                 {...register('remarks')}
                 className={classNames(
                   'text-area-auto-resize min-h-[14vh] pl-12',
@@ -194,7 +222,6 @@ const AddNewOvertimeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => 
                     : ''
                 )}
                 disabled={isSubmitting}
-                placeholder="Write down your remarks"
               />
             </TextField>
             {errors.remarks !== null && errors.remarks !== undefined && (
@@ -205,6 +232,16 @@ const AddNewOvertimeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => 
 
         {/* Custom Modal Footer Style */}
         <ModalFooter>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={handleReset}
+            disabled={isSubmitting}
+            className="flex items-center space-x-2 px-4 py-1 text-sm"
+          >
+            <RefreshCcw className="h-4 w-4" />
+            <span>Reset</span>
+          </Button>
           <Button
             type="button"
             variant="secondary"
@@ -223,7 +260,7 @@ const AddNewOvertimeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => 
           >
             {isSubmitting ? (
               <>
-                <SpinnerIcon className="h-3 w-3 fill-amber-600" />
+                <SpinnerIcon className="h-3 w-3 fill-white" />
                 <span>Saving..</span>
               </>
             ) : (

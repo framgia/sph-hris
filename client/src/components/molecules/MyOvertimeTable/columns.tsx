@@ -76,8 +76,10 @@ export const columns = [
       )
     }
   }),
-  columnHelper.accessor('id', {
-    header: () => ''
+  columnHelper.display({
+    id: 'empty1',
+    header: () => '',
+    footer: (info) => info.column.id
   }),
   columnHelper.accessor('date', {
     header: () => <CellHeader label="Date" />,
@@ -114,8 +116,10 @@ export const columns = [
     footer: (info) => info.column.id,
     cell: (props) => <Chip label={props.getValue()} />
   }),
-  columnHelper.accessor('id', {
-    header: () => ''
+  columnHelper.display({
+    id: 'empty2',
+    header: () => '',
+    footer: (info) => info.column.id
   }),
   columnHelper.display({
     id: 'id',

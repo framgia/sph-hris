@@ -51,6 +51,6 @@ export type NewOvertimeFormValues = {
   }[]
   other_project?: string
   date_effective: string
-  requested_hours: string
+  requested_hours: number
   remarks: string
 }
