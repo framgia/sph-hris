@@ -1,7 +1,10 @@
 using api.Context;
 using api.DTOs;
 using api.Entities;
+using api.Enums;
 using api.Requests;
+using api.Utils;
+using HotChocolate.Subscriptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Services
@@ -9,9 +12,13 @@ namespace api.Services
     public class LeaveService
     {
         private readonly IDbContextFactory<HrisContext> _contextFactory = default!;
-        public LeaveService(IDbContextFactory<HrisContext> contextFactory)
+        private readonly ITopicEventSender _eventSender;
+        private readonly CustomInputValidation _customInputValidation;
+        public LeaveService(IDbContextFactory<HrisContext> contextFactory, ITopicEventSender eventSender)
         {
             _contextFactory = contextFactory;
+            _eventSender = eventSender;
+            _customInputValidation = new CustomInputValidation(_contextFactory);
         }
         public async Task<List<LeaveType>> GetLeaveTypes()
         {
@@ -60,19 +67,63 @@ namespace api.Services
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
-                var leaves = new List<Leave>();
-                var projects = new List<Project>();
-                leave.ProjectIds?.ForEach(project =>
+                // validate inputs
+                var errors = new List<IError>();
+
+                if (!_customInputValidation.checkUserExist(leave.UserId)) errors.Add(ErrorBuilder.New()
+                    .SetMessage(InputValidationMessageEnum.INVALID_USER)
+                    .Build());
+
+                if (!_customInputValidation.checkUserExist(leave.ManagerId)) errors.Add(ErrorBuilder.New()
+                    .SetMessage(InputValidationMessageEnum.INVALID_MANAGER)
+                    .Build());
+
+                if (!_customInputValidation.checkLeaveType(leave.LeaveTypeId)) errors.Add(ErrorBuilder.New()
+                    .SetMessage(InputValidationMessageEnum.INVALID_LEAVE_TYPE)
+                    .Build());
+
+                leave.LeaveProjects?.ForEach(project =>
                 {
-                    projects.Add(context.Projects.First(p => p.Id == project));
+                    if (!_customInputValidation.checkProjectExist(project.ProjectId)) errors.Add(ErrorBuilder.New()
+                    .SetMessage(InputValidationMessageEnum.INVALID_PROJECT)
+                    .Build());
+
+                    if (!_customInputValidation.checkUserExist(project.ProjectLeaderId)) errors.Add(ErrorBuilder.New()
+                    .SetMessage(InputValidationMessageEnum.INVALID_PROJECT_LEADER)
+                    .Build());
                 });
+
                 leave.LeaveDates?.ForEach(date =>
                 {
+                    if (!_customInputValidation.checkDateFormat(date.LeaveDate)) errors.Add(ErrorBuilder.New()
+                    .SetMessage(InputValidationMessageEnum.INVALID_DATE)
+                    .Build());
+                });
+
+                if (errors.Count > 0) throw new GraphQLException(errors);
+
+                var leaves = new List<Leave>();
+                leave.LeaveDates?.ForEach(date =>
+                {
+                    // Create LeaveProjects
+                    var leaveProjectsList = new List<LeaveProject>();
+                    leave.LeaveProjects?.ForEach(project =>
+                    {
+                        var projectLeave = new LeaveProject
+                        {
+                            ProjectId = project.ProjectId,
+                            ProjectLeaderId = project.ProjectLeaderId
+                        };
+                        leaveProjectsList.Add(context.LeaveProjects.Add(projectLeave).Entity);
+
+                    });
+
+                    // Create Leaves
                     var myLeaves = new Leave
                     {
                         UserId = leave.UserId,
                         LeaveTypeId = leave.LeaveTypeId,
-                        Projects = projects,
+                        LeaveProjects = leaveProjectsList,
                         ManagerId = leave.ManagerId,
                         OtherProject = leave.OtherProject,
                         Reason = leave.Reason,
@@ -95,7 +146,7 @@ namespace api.Services
                 .Include(x => x.User.Role)
                 .Include(x => x.LeaveType)
                 .Include(x => x.Manager)
-                .Include(x => x.Projects)
+                .Include(x => x.LeaveProjects)
                 .ToListAsync();
             }
         }

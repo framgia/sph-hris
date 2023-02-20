@@ -3,6 +3,7 @@ using api.Schedulers;
 using api.Schema.Mutations;
 using api.Schema.Queries;
 using api.Services;
+using api.Subscriptions;
 using LiteX.Storage.FileSystem;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,6 +35,8 @@ builder.Services.AddGraphQLServer()
     .AddType<LeaveMutation>();
 
 builder.Services.AddGraphQLServer().AddProjections().AddFiltering().AddSorting();
+builder.Services.AddGraphQLServer().AddInMemorySubscriptions()
+    .AddSubscriptionType<SubscriptionObjectType>();
 
 builder.Services.AddGraphQLServer().AddType<UploadType>();
 builder.Services.AddPooledDbContextFactory<HrisContext>(o => o.UseSqlServer(connectionString));
@@ -51,6 +54,7 @@ builder.Services.AddScoped<InterruptionService>();
 builder.Services.AddScoped<LeaveService>();
 builder.Services.AddScoped<ProjectService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<NotificationService>();
 
 
 builder.Services.AddCors(options =>
@@ -66,6 +70,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseStaticFiles();
+app.UseWebSockets();
 app.UseRouting();
 
 app.UseCors(MyAllowSpecificOrigins);
