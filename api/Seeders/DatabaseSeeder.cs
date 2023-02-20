@@ -1358,7 +1358,6 @@ namespace api.Seeders
             new Leave {
                 Id = 1,
                 UserId = 1,
-                ProjectId = 1,
                 LeaveTypeId = 1,
                 ManagerId = 1,
                 OtherProject = "None",
@@ -1374,7 +1373,6 @@ namespace api.Seeders
             new Leave {
                 Id = 2,
                 UserId = 2,
-                ProjectId = 4,
                 LeaveTypeId = 6,
                 ManagerId = 1,
                 OtherProject = "None",
@@ -1387,6 +1385,25 @@ namespace api.Seeders
                 UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                 Days = 2.0f
             },
+        };
+
+        public static List<LeaveProject> leaveProjects = new List<LeaveProject>(){
+            new LeaveProject {
+                Id = 1,
+                LeaveId = 1,
+                ProjectId = 1,
+                ProjectLeaderId = 1
+            }
+        };
+
+        public static List<LeaveNotification> notifications_leave = new List<LeaveNotification>(){
+            new LeaveNotification {
+                Id = 1,
+                RecipientId = 70,
+                Type = NotificationTypeEnum.LEAVE,
+                Data = "Some JSON Data",
+                LeaveId = 1
+            }
         };
     }
 }

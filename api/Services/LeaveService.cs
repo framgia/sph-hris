@@ -2,6 +2,7 @@ using api.Context;
 using api.DTOs;
 using api.Entities;
 using api.Requests;
+using HotChocolate.Subscriptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Services
@@ -9,9 +10,11 @@ namespace api.Services
     public class LeaveService
     {
         private readonly IDbContextFactory<HrisContext> _contextFactory = default!;
-        public LeaveService(IDbContextFactory<HrisContext> contextFactory)
+        private readonly ITopicEventSender _eventSender;
+        public LeaveService(IDbContextFactory<HrisContext> contextFactory, ITopicEventSender eventSender)
         {
             _contextFactory = contextFactory;
+            _eventSender = eventSender;
         }
         public async Task<List<LeaveType>> GetLeaveTypes()
         {
@@ -61,18 +64,27 @@ namespace api.Services
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 var leaves = new List<Leave>();
-                var projects = new List<Project>();
-                leave.ProjectIds?.ForEach(project =>
-                {
-                    projects.Add(context.Projects.First(p => p.Id == project));
-                });
                 leave.LeaveDates?.ForEach(date =>
                 {
+                    // Create LeaveProjects
+                    var leaveProjectsList = new List<LeaveProject>();
+                    leave.LeaveProjects?.ForEach(project =>
+                    {
+                        var projectLeave = new LeaveProject
+                        {
+                            ProjectId = project.ProjectId,
+                            ProjectLeaderId = project.ProjectLeaderId
+                        };
+                        leaveProjectsList.Add(context.LeaveProjects.Add(projectLeave).Entity);
+
+                    });
+
+                    // Create Leaves
                     var myLeaves = new Leave
                     {
                         UserId = leave.UserId,
                         LeaveTypeId = leave.LeaveTypeId,
-                        Projects = projects,
+                        LeaveProjects = leaveProjectsList,
                         ManagerId = leave.ManagerId,
                         OtherProject = leave.OtherProject,
                         Reason = leave.Reason,
@@ -95,7 +107,7 @@ namespace api.Services
                 .Include(x => x.User.Role)
                 .Include(x => x.LeaveType)
                 .Include(x => x.Manager)
-                .Include(x => x.Projects)
+                .Include(x => x.LeaveProjects)
                 .ToListAsync();
             }
         }

@@ -1,4 +1,5 @@
 ﻿using api.Entities;
+using api.Enums;
 using api.Seeders;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,9 @@ public partial class HrisContext : DbContext
     public DbSet<LeaveType> LeaveTypes { get; set; } = default!;
     public DbSet<Project> Projects { get; set; } = default!;
     public DbSet<Leave> Leaves { get; set; } = default!;
+    public DbSet<LeaveProject> LeaveProjects { get; set; } = default!;
+    public DbSet<Notification> Notifications { get; set; } = default!;
+    public DbSet<LeaveNotification> LeaveNotifications { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -56,6 +60,14 @@ public partial class HrisContext : DbContext
         );
         modelBuilder.Entity<Media>().HasData(
             DatabaseSeeder.media
+        );
+        modelBuilder.Entity<LeaveProject>().HasData(
+            DatabaseSeeder.leaveProjects
+        );
+
+        modelBuilder.Entity<Notification>().HasDiscriminator(b => b.Type).HasValue<LeaveNotification>(NotificationTypeEnum.LEAVE);
+        modelBuilder.Entity<LeaveNotification>().HasData(
+            DatabaseSeeder.notifications_leave
         );
     }
 
