@@ -53,6 +53,17 @@ export interface IMyOvertime {
   remarks: string
   status: string
 }
+export interface INotification {
+  id: number
+  name: string
+  project: string
+  type: string
+  date: string
+  remarks: string
+  duration: number
+  dateFiled: string
+  status: string
+}
 
 export interface IOvertimeManagement {
   id: number
