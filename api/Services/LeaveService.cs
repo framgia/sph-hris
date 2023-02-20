@@ -1,7 +1,9 @@
 using api.Context;
 using api.DTOs;
 using api.Entities;
+using api.Enums;
 using api.Requests;
+using api.Utils;
 using HotChocolate.Subscriptions;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +13,12 @@ namespace api.Services
     {
         private readonly IDbContextFactory<HrisContext> _contextFactory = default!;
         private readonly ITopicEventSender _eventSender;
+        private readonly CustomInputValidation _customInputValidation;
         public LeaveService(IDbContextFactory<HrisContext> contextFactory, ITopicEventSender eventSender)
         {
             _contextFactory = contextFactory;
             _eventSender = eventSender;
+            _customInputValidation = new CustomInputValidation(_contextFactory);
         }
         public async Task<List<LeaveType>> GetLeaveTypes()
         {
@@ -63,6 +67,41 @@ namespace api.Services
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
+                // validate inputs
+                var errors = new List<IError>();
+
+                if (!_customInputValidation.checkUserExist(leave.UserId)) errors.Add(ErrorBuilder.New()
+                    .SetMessage(InputValidationMessageEnum.INVALID_USER)
+                    .Build());
+
+                if (!_customInputValidation.checkUserExist(leave.ManagerId)) errors.Add(ErrorBuilder.New()
+                    .SetMessage(InputValidationMessageEnum.INVALID_MANAGER)
+                    .Build());
+
+                if (!_customInputValidation.checkLeaveType(leave.LeaveTypeId)) errors.Add(ErrorBuilder.New()
+                    .SetMessage(InputValidationMessageEnum.INVALID_LEAVE_TYPE)
+                    .Build());
+
+                leave.LeaveProjects?.ForEach(project =>
+                {
+                    if (!_customInputValidation.checkProjectExist(project.ProjectId)) errors.Add(ErrorBuilder.New()
+                    .SetMessage(InputValidationMessageEnum.INVALID_PROJECT)
+                    .Build());
+
+                    if (!_customInputValidation.checkUserExist(project.ProjectLeaderId)) errors.Add(ErrorBuilder.New()
+                    .SetMessage(InputValidationMessageEnum.INVALID_PROJECT_LEADER)
+                    .Build());
+                });
+
+                leave.LeaveDates?.ForEach(date =>
+                {
+                    if (!_customInputValidation.checkDateFormat(date.LeaveDate)) errors.Add(ErrorBuilder.New()
+                    .SetMessage(InputValidationMessageEnum.INVALID_DATE)
+                    .Build());
+                });
+
+                if (errors.Count > 0) throw new GraphQLException(errors);
+
                 var leaves = new List<Leave>();
                 leave.LeaveDates?.ForEach(date =>
                 {
