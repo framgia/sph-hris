@@ -177,7 +177,7 @@ const MyLeaves: NextPage = (): JSX.Element => {
               <article
                 className={classNames(
                   'flex flex-col space-y-4 pb-24 text-xs',
-                  'md:flex-row md:space-y-0 md:space-x-4'
+                  'lg:flex-row lg:space-y-0 lg:space-x-4'
                 )}
               >
                 {/* Pass the needed props of these components */}

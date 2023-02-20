@@ -12,7 +12,7 @@ type Props = {
 
 const BreakdownOfLeaveCard: FC<Props> = ({ data }): JSX.Element => {
   return (
-    <MaxWidthContainer maxWidth="md:max-w-[18rem]">
+    <MaxWidthContainer maxWidth="lg:max-w-[18rem]">
       <Card className="shrink-0 overflow-hidden">
         <header
           className={classNames(

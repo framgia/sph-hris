@@ -9,6 +9,7 @@ import Avatar from '~/components/atoms/Avatar'
 import { INotification } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/Button'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
+import DisclosureTransition from '~/components/templates/DisclosureTransition'
 
 type Props = {
   table: Table<INotification>
@@ -69,64 +70,66 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
                           />
                         </div>
                       </Disclosure.Button>
-                      <Disclosure.Panel
-                        className={classNames('text-slate-600', open ? 'bg-white shadow-md' : '')}
-                      >
-                        <ul className="flex flex-col flex-wrap divide-y divide-slate-200 md:flex-row md:items-center md:divide-none">
-                          <li className="px-4 py-2 md:py-3">
-                            Project: <span className="font-semibold">{row.original.project}</span>
-                          </li>
-                          <li className="px-4 py-2 md:py-3">
-                            Type: <span className="font-semibold">{row.original.type}</span>
-                          </li>
-                          <li className="px-4 py-2 md:py-3">
-                            Date Requested:{' '}
-                            <span className="font-semibold">{row.original.date}</span>
-                          </li>
-                          <li className="px-4 py-2 md:py-3">
-                            Requested Hours:{' '}
-                            <span className="font-semibold">{row.original.duration}</span>
-                          </li>
-                          <li className="px-4 py-2 md:py-3">
-                            Date Filed:{' '}
-                            <span className="font-semibold">{row.original.dateFiled}</span>
-                          </li>
-                          <li className="inline-flex items-center px-4 py-2 md:py-3">
-                            Status:{' '}
-                            <span
-                              className={classNames(
-                                'py-0.25  ml-1 rounded-full border  px-1.5',
-                                row.original.status === 'Pending' &&
-                                  'border-amber-200 bg-amber-50 text-amber-600',
-                                row.original.status === 'Approved' &&
-                                  'border-green-200 bg-green-50 text-green-600',
-                                row.original.status === 'Disapproved' &&
-                                  'border-rose-200 bg-rose-50 text-rose-600'
-                              )}
-                            >
-                              {row.original.status}
-                            </span>
-                          </li>
-                          <li className="px-4 py-2 md:py-3">
-                            Remarks: <span className="font-semibold">{row.original.remarks}</span>
-                          </li>
-                          <li className="inline-flex items-center px-4 py-2 md:py-3">
-                            Actions:{' '}
-                            <div className="ml-2 inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
-                              <Tippy placement="left" content="Approve" className="!text-xs">
-                                <Button rounded="none" className="py-0.5 px-1 text-slate-500">
-                                  <Check className="h-4 w-4" />
-                                </Button>
-                              </Tippy>
-                              <Tippy placement="left" content="Disapprove" className="!text-xs">
-                                <Button rounded="none" className="py-0.5 px-1 text-slate-500">
-                                  <X className="h-4 w-4" />
-                                </Button>
-                              </Tippy>
-                            </div>
-                          </li>
-                        </ul>
-                      </Disclosure.Panel>
+                      <DisclosureTransition>
+                        <Disclosure.Panel
+                          className={classNames('text-slate-600', open ? 'bg-white shadow-md' : '')}
+                        >
+                          <ul className="flex flex-col flex-wrap divide-y divide-slate-200 md:flex-row md:items-center md:divide-none">
+                            <li className="px-4 py-2 md:py-3">
+                              Project: <span className="font-semibold">{row.original.project}</span>
+                            </li>
+                            <li className="px-4 py-2 md:py-3">
+                              Type: <span className="font-semibold">{row.original.type}</span>
+                            </li>
+                            <li className="px-4 py-2 md:py-3">
+                              Date Requested:{' '}
+                              <span className="font-semibold">{row.original.date}</span>
+                            </li>
+                            <li className="px-4 py-2 md:py-3">
+                              Requested Hours:{' '}
+                              <span className="font-semibold">{row.original.duration}</span>
+                            </li>
+                            <li className="px-4 py-2 md:py-3">
+                              Date Filed:{' '}
+                              <span className="font-semibold">{row.original.dateFiled}</span>
+                            </li>
+                            <li className="inline-flex items-center px-4 py-2 md:py-3">
+                              Status:{' '}
+                              <span
+                                className={classNames(
+                                  'py-0.25  ml-1 rounded-full border  px-1.5',
+                                  row.original.status === 'Pending' &&
+                                    'border-amber-200 bg-amber-50 text-amber-600',
+                                  row.original.status === 'Approved' &&
+                                    'border-green-200 bg-green-50 text-green-600',
+                                  row.original.status === 'Disapproved' &&
+                                    'border-rose-200 bg-rose-50 text-rose-600'
+                                )}
+                              >
+                                {row.original.status}
+                              </span>
+                            </li>
+                            <li className="px-4 py-2 md:py-3">
+                              Remarks: <span className="font-semibold">{row.original.remarks}</span>
+                            </li>
+                            <li className="inline-flex items-center px-4 py-2 md:py-3">
+                              Actions:{' '}
+                              <div className="ml-2 inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
+                                <Tippy placement="left" content="Approve" className="!text-xs">
+                                  <Button rounded="none" className="py-0.5 px-1 text-slate-500">
+                                    <Check className="h-4 w-4" />
+                                  </Button>
+                                </Tippy>
+                                <Tippy placement="left" content="Disapprove" className="!text-xs">
+                                  <Button rounded="none" className="py-0.5 px-1 text-slate-500">
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </Tippy>
+                              </div>
+                            </li>
+                          </ul>
+                        </Disclosure.Panel>
+                      </DisclosureTransition>
                     </>
                   )}
                 </Disclosure>
