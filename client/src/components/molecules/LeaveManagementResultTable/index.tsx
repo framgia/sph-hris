@@ -12,6 +12,7 @@ import { columns } from './columns'
 import FooterTable from './../FooterTable'
 import LeaveManagementTable from './Table'
 import Card from '~/components/atoms/Card'
+import MobileDisclose from './MobileDisclose'
 import { LeaveTable } from '~/utils/types/leaveTypes'
 
 type Props = {
@@ -50,8 +51,21 @@ const LeaveManagementResultTable: FC<Props> = (props): JSX.Element => {
 
   return (
     <div className="flex flex-1 flex-col space-y-1">
-      <Card className="overflow-hidden" shadow-size="sm">
+      {/* Show on Desktop */}
+      <Card className="hidden overflow-hidden md:block" shadow-size="sm">
         <LeaveManagementTable
+          {...{
+            query: {
+              isLoading,
+              isError
+            },
+            table
+          }}
+        />
+      </Card>
+      {/* Shows on Mobile */}
+      <Card className="block overflow-hidden md:hidden" shadow-size="sm">
+        <MobileDisclose
           {...{
             query: {
               isLoading,

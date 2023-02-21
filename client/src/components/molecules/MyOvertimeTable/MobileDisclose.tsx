@@ -60,7 +60,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                             </div>
                             <ChevronRight
                               className={classNames(
-                                'h-4 w-4 text-slate-600',
+                                'h-4 w-4 text-slate-600 duration-300',
                                 open ? 'rotate-90' : ''
                               )}
                             />

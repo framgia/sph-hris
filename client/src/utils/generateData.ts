@@ -33,6 +33,7 @@ export const getHeatmapData = (count: number, heatmap: HeatmapDetails[]): Series
 export const initialChartOptions = {
   chart: {
     id: 'LeavesHeatMap',
+    fontFamily: 'Poppins, Inter',
     toolbar: {
       show: false,
       tools: {
