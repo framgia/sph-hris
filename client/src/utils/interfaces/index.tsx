@@ -65,6 +65,15 @@ export interface INotification {
   status: string
 }
 
+export interface IEmployeeManagement {
+  id: number
+  name: string
+  email: string
+  position: string
+  date_joined: string
+  status: string
+}
+
 export interface IOvertimeManagement {
   id: number
   user: {
