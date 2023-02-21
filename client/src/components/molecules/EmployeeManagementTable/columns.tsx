@@ -1,13 +1,13 @@
 import React from 'react'
+import Tippy from '@tippyjs/react'
+import classNames from 'classnames'
+import { Edit, Trash2 } from 'react-feather'
 import { createColumnHelper } from '@tanstack/react-table'
 
 import SortIcon from '~/utils/icons/SortIcon'
 import Avatar from '~/components/atoms/Avatar'
 import { IEmployeeManagement } from '~/utils/interfaces'
-import Tippy from '@tippyjs/react'
 import Button from '~/components/atoms/Buttons/Button'
-import { Edit, Trash2 } from 'react-feather'
-import classNames from 'classnames'
 
 const columnHelper = createColumnHelper<IEmployeeManagement>()
 
@@ -51,7 +51,7 @@ export const columns = [
     footer: (info) => info.column.id
   }),
   columnHelper.accessor('status', {
-    id: 'Time In',
+    id: 'Status',
     header: () => <CellHeader label="Status" />,
     footer: (info) => info.column.id,
     cell: (props) => (

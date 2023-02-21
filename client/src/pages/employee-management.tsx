@@ -1,14 +1,14 @@
 import { NextPage } from 'next'
 import classNames from 'classnames'
+import { Plus } from 'react-feather'
 import React, { useState } from 'react'
 
-import { dummyEmployeeManagement } from '~/utils/constants/dummyEmployeeManagement'
 import Layout from '~/components/templates/Layout'
-import EmployeeManagementTable from '~/components/molecules/EmployeeManagementTable'
+import Button from '~/components/atoms/Buttons/ButtonAction'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import { columns } from '~/components/molecules/EmployeeManagementTable/columns'
-import Button from '~/components/atoms/Buttons/Button'
-import { Plus } from 'react-feather'
+import { dummyEmployeeManagement } from '~/utils/constants/dummyEmployeeManagement'
+import EmployeeManagementTable from '~/components/molecules/EmployeeManagementTable'
 
 export type Filters = {
   type: string
@@ -44,9 +44,9 @@ const EmployeeManagement: NextPage = (): JSX.Element => {
           />
           <div className="flex items-center space-x-2 text-slate-500">
             <Button
-              rounded="none"
-              position="center"
-              className="flex bg-primary py-1.5 px-2 text-white"
+              type="button"
+              variant="primary"
+              className="flex items-center space-x-0.5 px-1.5 py-[3px]"
             >
               <Plus className="h-4 w-4" /> {''}
               Add Employee

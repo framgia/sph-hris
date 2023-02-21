@@ -55,7 +55,10 @@ const MobileDisclose: FC<Props> = ({ table }): JSX.Element => {
                         </div>
                       </div>
                       <ChevronRight
-                        className={classNames('h-4 w-4 text-slate-600', open ? 'rotate-90' : '')}
+                        className={classNames(
+                          'h-4 w-4 text-slate-600 duration-300',
+                          open ? 'rotate-90' : ''
+                        )}
                       />
                     </div>
                   </Disclosure.Button>
