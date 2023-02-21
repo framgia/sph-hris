@@ -1,0 +1,36 @@
+import { IEmployeeManagement } from '../interfaces'
+
+export const dummyEmployeeManagement: IEmployeeManagement[] = [
+  {
+    id: 1,
+    name: 'Joshua Galit',
+    email: 'joshuaG@sun-asterisk.com',
+    position: 'Frontend Developer',
+    date_joined: 'March 20,2023',
+    status: 'Active'
+  },
+  {
+    id: 2,
+    name: 'John Doe',
+    email: 'johndoe@sun-asterisk.com',
+    position: 'Backend Developer',
+    date_joined: 'July 20,2023',
+    status: 'Active'
+  },
+  {
+    id: 3,
+    name: 'Jay Miya',
+    email: 'jay@sun-asterisk.com',
+    position: 'Frontend Developer',
+    date_joined: 'January 20,2023',
+    status: 'Inactive'
+  },
+  {
+    id: 4,
+    name: 'Zain Lipshutz',
+    email: 'zain@sun-asterisk.com',
+    position: 'Backend Developer',
+    date_joined: 'February 20,2023',
+    status: 'Inactive'
+  }
+]
