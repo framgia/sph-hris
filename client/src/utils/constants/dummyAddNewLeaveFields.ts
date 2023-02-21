@@ -108,42 +108,42 @@ export const dummyLeaveTypes = [
 
 export const numberOfDaysInLeaves = [
   {
-    label: NumberOfDaysInLeave.FourHours,
+    id: 1,
     value: NumberOfDaysInLeave.FourHours
   },
   {
-    label: NumberOfDaysInLeave.FiveHours,
+    id: 2,
     value: NumberOfDaysInLeave.FiveHours
   },
   {
-    label: NumberOfDaysInLeave.AfternoonOnly,
+    id: 3,
     value: NumberOfDaysInLeave.AfternoonOnly
   },
   {
-    label: NumberOfDaysInLeave.WholeDay,
+    id: 4,
     value: NumberOfDaysInLeave.WholeDay
   }
 ]
 
 export const numberOfDaysInLeavesByUndertime = [
   {
-    label: NumberOfDaysInLeaveByUndertime.OneHour,
+    id: 1,
     value: NumberOfDaysInLeaveByUndertime.OneHour
   },
   {
-    label: NumberOfDaysInLeaveByUndertime.OneAndHalfHour,
+    id: 2,
     value: NumberOfDaysInLeaveByUndertime.OneAndHalfHour
   },
   {
-    label: NumberOfDaysInLeaveByUndertime.TwoHours,
+    id: 3,
     value: NumberOfDaysInLeaveByUndertime.TwoHours
   },
   {
-    label: NumberOfDaysInLeaveByUndertime.TwoAndHalfHours,
+    id: 4,
     value: NumberOfDaysInLeaveByUndertime.TwoAndHalfHours
   },
   {
-    label: NumberOfDaysInLeaveByUndertime.ThreeHours,
+    id: 5,
     value: NumberOfDaysInLeaveByUndertime.ThreeHours
   }
 ]

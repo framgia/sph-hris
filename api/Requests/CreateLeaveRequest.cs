@@ -7,7 +7,7 @@ namespace api.Requests
         public int ManagerId { get; set; }
         public string? OtherProject { get; set; }
         public string? Reason { get; set; }
-        public List<LeaveProjectRequest>? LeaveProjects { get; set; }
-        public List<LeaveDateRequest>? LeaveDates { get; set; }
+        public List<LeaveProjectRequest> LeaveProjects { get; set; } = default!;
+        public List<LeaveDateRequest> LeaveDates { get; set; } = default!;
     }
 }

@@ -26,6 +26,7 @@ const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
         expiration: session?.data?.expires
       })
       localStorage.setItem('cookies', cookies)
+      localStorage.setItem('newNotificationCount', '0')
     }
   }, [session?.status])
 

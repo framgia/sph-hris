@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import ReactSelect from 'react-select'
+import { useRouter } from 'next/router'
 import { Tab } from '@headlessui/react'
 import makeAnimated from 'react-select/animated'
 import CreatableSelect from 'react-select/creatable'
@@ -22,12 +23,15 @@ import { NewLeaveFormValues } from '~/utils/types/formValues'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import {
-  projectList,
-  dummyManagers,
-  projectLeaders,
-  dummyLeaveTypes,
-  numberOfDaysInLeaves
-} from '~/utils/constants/dummyAddNewLeaveFields'
+  generateUserSelect,
+  generateProjectsMultiSelect,
+  generateLeaveTypeSelect,
+  generateNumberOfDaysSelect
+} from '~/utils/createLeaveHelpers'
+import useLeave from '~/hooks/useLeave'
+import { LeaveType } from '~/utils/types/leaveTypes'
+import { ProjectDetails } from '~/utils/types/projectTypes'
+import { numberOfDaysInLeaves } from '~/utils/constants/dummyAddNewLeaveFields'
 
 type Props = {
   isOpen: boolean
@@ -37,12 +41,25 @@ type Props = {
 const animatedComponents = makeAnimated()
 
 const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
+  const router = useRouter()
   const [managers, setManagers] = useState<UserType[]>([])
   const [leaders, setLeaders] = useState<UserType[]>([])
   const { handleProjectQuery } = useProject()
-  const { handleAllUsersQuery } = useUserQuery()
+  const { handleAllUsersQuery, handleUserQuery } = useUserQuery()
+  const { handleLeaveTypeQuery, handleLeaveMutation } = useLeave()
+  const { data: user } = handleUserQuery()
+  const leaveMutation = handleLeaveMutation(
+    user?.userById.id as number,
+    parseInt(router.query.year as string)
+  )
+  const { data: leaveTypes } = handleLeaveTypeQuery()
   const { data: projects, isSuccess: isProjectsSuccess } = handleProjectQuery()
   const { data: users, isSuccess: isUsersSuccess } = handleAllUsersQuery()
+
+  const emptyReactSelectOption = {
+    label: '',
+    value: ''
+  }
 
   // modify custom style control
   customStyles.control = (provided: Record<string, unknown>, state: any): any => ({
@@ -95,23 +112,39 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
         (project) => project.project_name.__isNew__ === true && project.project_name.value
       )
 
-      alert(
-        JSON.stringify(
-          {
-            data: {
-              ...data,
-              others
-            },
-            // I didn't use the managers state
-            // Because I want the integrator to do it
-            managers: { ...managers }
-          },
-          null,
-          2
-        )
+      leaveMutation.mutate(
+        {
+          userId: user?.userById.id as number,
+          leaveTypeId: parseInt(data.leave_type.value),
+          managerId: parseInt(data.manager.value),
+          reason: data.reason,
+          otherProject: others.filter((value) => value !== false).toString(),
+          leaveDates: data.leave_date.map((date) => {
+            return {
+              leaveDate: date.date,
+              isWithPay: date.is_with_pay,
+              days: parseFloat(date.number_of_days_in_leave.value)
+            }
+          }),
+          leaveProjects: data.projects.map((project) => {
+            const otherProjectType = projects?.projects.find(
+              (project) => project.name.toLowerCase() === 'others'
+            ) as ProjectDetails
+
+            return {
+              projectId: (project.project_name.__isNew__ as boolean)
+                ? otherProjectType.id
+                : parseInt(project.project_name.value),
+              projectLeaderId: parseInt(project.project_leader.value)
+            }
+          })
+        },
+        {
+          onSuccess: () => closeModal()
+        }
       )
+
       resolve()
-      closeModal()
     })
   }
 
@@ -143,35 +176,30 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
     reset({
       projects: [
         {
-          project_name: {
-            label: '',
-            value: ''
-          },
-          project_leader: {
-            label: '',
-            value: ''
-          }
+          project_name: emptyReactSelectOption,
+          project_leader: emptyReactSelectOption
         }
       ],
-      leave_type: {
-        label: '',
-        value: ''
-      },
+      leave_type: emptyReactSelectOption,
       leave_date: [
         {
           date: '',
-          number_of_days_in_leave: '',
+          number_of_days_in_leave: emptyReactSelectOption,
           is_with_pay: false
         }
       ],
-      manager: '',
+      manager: emptyReactSelectOption,
       reason: ''
     })
   }
 
   // Add New Date
   const handleAddNewDate = (): void =>
-    leaveDateAppend({ date: '', number_of_days_in_leave: '', is_with_pay: false })
+    leaveDateAppend({
+      date: '',
+      number_of_days_in_leave: emptyReactSelectOption,
+      is_with_pay: false
+    })
 
   // Remove Date
   const handleRemoveDate = (index: number): void => leaveDateRemove(index)
@@ -179,14 +207,8 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
   // Add Project
   const handleAddNewProject = (): void =>
     projectAppend({
-      project_name: {
-        label: '',
-        value: ''
-      },
-      project_leader: {
-        label: '',
-        value: ''
-      }
+      project_name: emptyReactSelectOption,
+      project_leader: emptyReactSelectOption
     })
 
   // Remove Date
@@ -239,7 +261,9 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                           isDisabled={isSubmitting}
                           backspaceRemovesValue={true}
                           components={animatedComponents}
-                          options={projectList}
+                          options={generateProjectsMultiSelect(
+                            projects?.projects as ProjectDetails[]
+                          )}
                           className="w-full"
                         />
                       )
@@ -277,7 +301,7 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                                 : 'border-slate-300'
                           }}
                           backspaceRemovesValue={true}
-                          options={projectLeaders}
+                          options={generateUserSelect(leaders)}
                           components={animatedComponents}
                           className="w-full"
                         />
@@ -341,7 +365,7 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                     value={field.value}
                     onChange={field.onChange}
                     isDisabled={isSubmitting}
-                    options={dummyLeaveTypes as any}
+                    options={generateLeaveTypeSelect(leaveTypes?.leaveTypes as LeaveType[])}
                   />
                 )}
               />
@@ -425,7 +449,7 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                         value={field.value}
                         onChange={field.onChange}
                         isDisabled={isSubmitting}
-                        options={numberOfDaysInLeaves as any}
+                        options={generateNumberOfDaysSelect(numberOfDaysInLeaves)}
                       />
                     )}
                   />
@@ -501,7 +525,7 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                     value={field.value}
                     onChange={field.onChange}
                     isDisabled={isSubmitting}
-                    options={dummyManagers as any}
+                    options={generateUserSelect(managers)}
                   />
                 )}
               />
