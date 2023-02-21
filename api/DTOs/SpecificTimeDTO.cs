@@ -2,9 +2,9 @@ using api.Entities;
 
 namespace api.DTOs
 {
-    public class FileDTO : Time
+    public class SpecificTimeDTO : Time
     {
-        public FileDTO(Time times, string domain)
+        public SpecificTimeDTO(Time times, string domain)
         {
             Id = times.Id;
             TimeHour = times.TimeHour;

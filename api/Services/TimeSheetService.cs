@@ -17,14 +17,14 @@ namespace api.Services
             _httpService = new HttpContextService(accessor);
         }
 
-        public async Task<FileDTO?> GetTimeById(int id)
+        public async Task<SpecificTimeDTO?> GetTimeById(int id)
         {
             var domain = _httpService.getDomainURL();
             using HrisContext context = _contextFactory.CreateDbContext();
             return await context.Times
                 .Include(entry => entry.Media)
                 .Where(c => c.Id == id)
-                .Select(entry => new FileDTO(entry, domain))
+                .Select(entry => new SpecificTimeDTO(entry, domain))
                 .FirstAsync();
         }
 
