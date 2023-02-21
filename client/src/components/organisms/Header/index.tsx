@@ -234,22 +234,22 @@ const Header: FC<Props> = (props): JSX.Element => {
               <ClockOutIcon className="h-7 w-7 fill-current" />
             </Button>
           </Tooltip>
-          <div className="relative">
-            {newNotificationCount > 0 && (
-              <span
-                className={classNames(
-                  'shrink-0 rounded-full border border-red-600 bg-red-500 px-1 !text-xs font-semibold text-white',
-                  'absolute -right-1 -top-1 z-50 flex h-5 w-5 items-center justify-center'
-                )}
-              >
-                {newNotificationCount > 9 ? '9+' : newNotificationCount}
-              </span>
-            )}
-            <NotificationPopover className="h-5 w-5 text-slate-400" />
-          </div>
         </div>
         <div className="hidden text-slate-500 sm:block">
           <div className="inline-flex items-center space-x-4">
+            <div className="relative">
+              {newNotificationCount > 0 && (
+                <span
+                  className={classNames(
+                    'shrink-0 rounded-full border border-red-600 bg-red-500 px-1 !text-xs font-semibold text-white',
+                    'absolute -right-1 -top-1 z-50 flex h-5 w-5 items-center justify-center'
+                  )}
+                >
+                  {newNotificationCount > 9 ? '9+' : newNotificationCount}
+                </span>
+              )}
+              <NotificationPopover className="h-5 w-5 text-slate-400" />
+            </div>
             {/* User Avatar */}
             <UserMenuDropDown position="bottom">
               <Avatar src={data?.userById.avatarLink} alt="user-avatar" size="md" rounded="full" />
