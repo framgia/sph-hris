@@ -13,7 +13,7 @@ namespace api.Schema.Queries
             _timeSheetService = timeSheetService;
         }
 
-        public async Task<Time?> GetTimeById(int id)
+        public async Task<FileDTO?> GetTimeById(int id)
         {
             return await _timeSheetService.GetTimeById(id);
         }

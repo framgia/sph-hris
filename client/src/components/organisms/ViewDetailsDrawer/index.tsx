@@ -50,8 +50,8 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
     })
   }
 
-  const handleDownloadFile = (collectionName: string, fileName: string): void => {
-    void fetch(`${process.env.NEXT_PUBLIC_MEDIA_URL as string}/${collectionName}/${fileName}`)
+  const handleDownloadFile = (link: string, fileName: string): void => {
+    void fetch(link)
       .then(async (resp) => {
         if (!resp.ok) {
           throw Error(resp.statusText)
@@ -154,7 +154,7 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
                     <Calendar className="h-4 w-4 text-slate-500" />
                   </div>
                   <div className="border-l-4 border-slate-300"></div>
-                  <p className="text-xs">{moment(date).format('YYYY/MM/DD')}</p>
+                  <p className="text-xs">{moment(date).format('MM/DD/YYYY')}</p>
                 </div>
               </div>
             </label>
@@ -206,21 +206,12 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
                           width={'17px'}
                         ></img>
                       </div>
-                      <div
-                        className="flex w-full truncate"
-                        onClick={() =>
-                          LinkChecker(
-                            `${process.env.NEXT_PUBLIC_MEDIA_URL as string}${i.collectionName}/${
-                              i.fileName
-                            }`
-                          )
-                        }
-                      >
+                      <div className="flex w-full truncate" onClick={() => LinkChecker(i.link)}>
                         <div>{i.fileName}</div>
                       </div>
                       <button
                         className="rounded bg-white p-0.5 opacity-0 focus:outline-slate-400 group-hover:opacity-100"
-                        onClick={() => handleDownloadFile(i.collectionName, i.fileName)}
+                        onClick={() => handleDownloadFile(i.link, i.fileName)}
                       >
                         <Download className="h-4 w-4 text-slate-500" />
                       </button>
