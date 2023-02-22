@@ -1,9 +1,11 @@
 import moment from 'moment'
 import dynamic from 'next/dynamic'
+import toast from 'react-hot-toast'
 import classNames from 'classnames'
 import { Menu } from 'react-feather'
 import { useRouter } from 'next/router'
 import { parse } from 'iso8601-duration'
+import { createClient } from 'graphql-ws'
 import React, { FC, useEffect, useState } from 'react'
 
 import Text from '~/components/atoms/Text'
@@ -12,11 +14,12 @@ import BreakIcon from '~/utils/icons/BreakIcon'
 import useUserQuery from '~/hooks/useUserQuery'
 import ClockInIcon from '~/utils/icons/ClockInIcon'
 import ClockOutIcon from '~/utils/icons/ClockOutIcon'
+import { Menus } from '~/utils/constants/sidebarMenu'
 import Button from '~/components/atoms/Buttons/Button'
 import LegendTooltip from '~/components/molecules/LegendTooltip'
 import UserMenuDropDown from '~/components/molecules/UserMenuDropdown'
 import NotificationPopover from '~/components/molecules/NotificationPopOver'
-import { Menus } from '~/utils/constants/sidebarMenu'
+import { getLeaveNotificationSubQuery } from '~/graphql/subscriptions/leaveSubscription'
 
 const Tooltip = dynamic(async () => await import('rc-tooltip'), { ssr: false })
 
@@ -46,10 +49,12 @@ const Header: FC<Props> = (props): JSX.Element => {
   const { handleUserQuery } = useUserQuery()
   const { data, status } = handleUserQuery()
 
+  const [newNotificationCount, setNewNotificationCount] = useState(0)
   const [seconds, setSeconds] = useState(0)
   useEffect(() => {
     setRunning(false)
     setTime(0)
+    if (status === 'success') startNotificationService(data.userById.id)
     if (
       status === 'success' &&
       data.userById?.timeEntry?.timeIn !== null &&
@@ -94,6 +99,35 @@ const Header: FC<Props> = (props): JSX.Element => {
     }
     return () => clearInterval(interval)
   }, [running])
+
+  useEffect(() => {
+    if (window !== undefined)
+      setNewNotificationCount(parseInt(localStorage.getItem('newNotificationCount') as string))
+  }, [typeof window])
+
+  // Notification
+  let count = 0
+  const startNotificationService = (userId: number): void => {
+    const clientWebsocket = createClient({
+      url: process.env.NEXT_PUBLIC_BACKEND_WEBSOCKET_URL as string
+    })
+
+    clientWebsocket.subscribe(
+      {
+        query: getLeaveNotificationSubQuery(userId)
+      },
+      {
+        next: ({ data }: any) => {
+          count++
+          // TO DO: change implementation when integrating with notification modal
+          localStorage.setItem('newNotificationCount', `${newNotificationCount + count}`)
+          setNewNotificationCount(newNotificationCount + count)
+        },
+        error: () => toast.error('There was a notification error'),
+        complete: () => null
+      }
+    )
+  }
 
   return (
     <header
@@ -200,10 +234,22 @@ const Header: FC<Props> = (props): JSX.Element => {
               <ClockOutIcon className="h-7 w-7 fill-current" />
             </Button>
           </Tooltip>
-          <NotificationPopover className="h-5 w-5 text-slate-400" />
         </div>
         <div className="hidden text-slate-500 sm:block">
           <div className="inline-flex items-center space-x-4">
+            <div className="relative">
+              {newNotificationCount > 0 && (
+                <span
+                  className={classNames(
+                    'shrink-0 rounded-full border border-red-600 bg-red-500 px-1 !text-xs font-semibold text-white',
+                    'absolute -right-1 -top-1 z-50 flex h-5 w-5 items-center justify-center'
+                  )}
+                >
+                  {newNotificationCount > 9 ? '9+' : newNotificationCount}
+                </span>
+              )}
+              <NotificationPopover className="h-5 w-5 text-slate-400" />
+            </div>
             {/* User Avatar */}
             <UserMenuDropDown position="bottom">
               <Avatar src={data?.userById.avatarLink} alt="user-avatar" size="md" rounded="full" />

@@ -26,10 +26,10 @@ export type NewLeaveFormValues = {
   leave_type: ReactSelectOption
   leave_date: Array<{
     date: string
-    number_of_days_in_leave: string
+    number_of_days_in_leave: ReactSelectOption
     is_with_pay: boolean
   }>
-  manager: string
+  manager: ReactSelectOption
   reason: string
 }
 

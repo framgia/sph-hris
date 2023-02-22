@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import ReactSelect from 'react-select'
+import { useRouter } from 'next/router'
 import { Tab } from '@headlessui/react'
 import makeAnimated from 'react-select/animated'
 import CreatableSelect from 'react-select/creatable'
@@ -10,23 +11,26 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { X, Save, Coffee, FileText, Calendar, User, Minus, Plus, RefreshCcw } from 'react-feather'
 
 import TextField from './../TextField'
+import useLeave from '~/hooks/useLeave'
 import useProject from '~/hooks/useProject'
 import Input from '~/components/atoms/Input'
 import useUserQuery from '~/hooks/useUserQuery'
 import { Roles } from '~/utils/constants/roles'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import { UndertimeLeaveSchema } from '~/utils/validation'
+import { LeaveTypes } from '~/utils/constants/leaveTypes'
+import { ProjectDetails } from '~/utils/types/projectTypes'
 import { User as UserType } from '~/utils/types/userTypes'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import { UndertimeFormValues } from '~/utils/types/formValues'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
+import { numberOfDaysInLeavesByUndertime } from '~/utils/constants/dummyAddNewLeaveFields'
 import {
-  projectList,
-  dummyManagers,
-  projectLeaders,
-  numberOfDaysInLeavesByUndertime
-} from '~/utils/constants/dummyAddNewLeaveFields'
+  generateNumberOfDaysSelect,
+  generateProjectsMultiSelect,
+  generateUserSelect
+} from '~/utils/createLeaveHelpers'
 
 type Props = {
   isOpen: boolean
@@ -36,12 +40,24 @@ type Props = {
 const animatedComponents = makeAnimated()
 
 const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
+  const router = useRouter()
   const [managers, setManagers] = useState<UserType[]>([])
   const [leaders, setLeaders] = useState<UserType[]>([])
   const { handleProjectQuery } = useProject()
-  const { handleAllUsersQuery } = useUserQuery()
+  const { handleAllUsersQuery, handleUserQuery } = useUserQuery()
+  const { handleLeaveMutation } = useLeave()
+  const { data: user } = handleUserQuery()
+  const leaveMutation = handleLeaveMutation(
+    user?.userById.id as number,
+    parseInt(router.query.year as string)
+  )
   const { data: projects, isSuccess: isProjectsSuccess } = handleProjectQuery()
   const { data: users, isSuccess: isUsersSuccess } = handleAllUsersQuery()
+
+  const emptyReactSelectOption = {
+    label: '',
+    value: ''
+  }
 
   // modify custom style control
   customStyles.control = (provided: Record<string, unknown>, state: any): any => ({
@@ -103,23 +119,39 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
         (project) => project.project_name.__isNew__ === true && project.project_name.value
       )
 
-      alert(
-        JSON.stringify(
-          {
-            data: {
-              ...data,
-              others
-            },
-            // I didn't use the managers state
-            // Because I want the integrator to do it
-            managers: { ...managers }
-          },
-          null,
-          2
-        )
+      leaveMutation.mutate(
+        {
+          userId: user?.userById.id as number,
+          leaveTypeId: LeaveTypes.UNDERTIME,
+          managerId: parseInt(data.manager.value),
+          reason: data.reason,
+          otherProject: others.filter((value) => value !== false).toString(),
+          leaveProjects: data.projects.map((project) => {
+            const otherProjectType = projects?.projects.find(
+              (project) => project.name.toLowerCase() === 'others'
+            ) as ProjectDetails
+
+            return {
+              projectId: (project.project_name.__isNew__ as boolean)
+                ? otherProjectType.id
+                : parseInt(project.project_name.value),
+              projectLeaderId: parseInt(project.project_leader.value)
+            }
+          }),
+          leaveDates: [
+            {
+              leaveDate: data.undertime_leave_date,
+              isWithPay: false,
+              days: parseFloat(data.number_of_days_in_leave_undertime.value)
+            }
+          ]
+        },
+        {
+          onSuccess: () => closeModal()
+        }
       )
+
       resolve()
-      closeModal()
     })
   }
 
@@ -133,25 +165,13 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
     reset({
       projects: [
         {
-          project_name: {
-            label: '',
-            value: ''
-          },
-          project_leader: {
-            label: '',
-            value: ''
-          }
+          project_name: emptyReactSelectOption,
+          project_leader: emptyReactSelectOption
         }
       ],
       undertime_leave_date: '',
-      number_of_days_in_leave_undertime: {
-        label: '',
-        value: ''
-      },
-      manager: {
-        label: '',
-        value: ''
-      },
+      number_of_days_in_leave_undertime: emptyReactSelectOption,
+      manager: emptyReactSelectOption,
       reason: ''
     })
   }
@@ -159,14 +179,8 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
   // Add Project
   const handleAddNewProject = (): void =>
     projectAppend({
-      project_name: {
-        label: '',
-        value: ''
-      },
-      project_leader: {
-        label: '',
-        value: ''
-      }
+      project_name: emptyReactSelectOption,
+      project_leader: emptyReactSelectOption
     })
 
   // Remove Date
@@ -219,7 +233,9 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                           isDisabled={isSubmitting}
                           backspaceRemovesValue={true}
                           components={animatedComponents}
-                          options={projectList}
+                          options={generateProjectsMultiSelect(
+                            projects?.projects as ProjectDetails[]
+                          )}
                           className="w-full"
                         />
                       )
@@ -257,7 +273,7 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                                 : 'border-slate-300'
                           }}
                           backspaceRemovesValue={true}
-                          options={projectLeaders}
+                          options={generateUserSelect(leaders)}
                           components={animatedComponents}
                           className="w-full"
                         />
@@ -347,7 +363,7 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                     value={field.value}
                     onChange={field.onChange}
                     isDisabled={isSubmitting}
-                    options={numberOfDaysInLeavesByUndertime as any}
+                    options={generateNumberOfDaysSelect(numberOfDaysInLeavesByUndertime)}
                   />
                 )}
               />
@@ -383,7 +399,7 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                     value={field.value}
                     onChange={field.onChange}
                     isDisabled={isSubmitting}
-                    options={dummyManagers as any}
+                    options={generateUserSelect(managers)}
                   />
                 )}
               />

@@ -86,17 +86,22 @@ export type YearlyLeaves = {
 }
 export type LeaveRequest = {
   userId: number
-  projectIds: number[]
   leaveTypeId: number
   managerId: number
   otherProject: string
   reason: string
   leaveDates: LeaveDateRequest[]
+  leaveProjects: LeaveProjectsRequest[]
 }
 export type LeaveDateRequest = {
   leaveDate: string
   isWithPay: boolean
   days: number
+}
+
+export type LeaveProjectsRequest = {
+  projectId: number
+  projectLeaderId: number
 }
 export type LeaveTypes = {
   leaveTypes: LeaveType[]

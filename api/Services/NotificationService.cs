@@ -26,6 +26,16 @@ namespace api.Services
                 var user = await context.Users.FindAsync(leave.UserId);
                 var data = JsonSerializer.Serialize(new { User = user?.Name, Date = leave.LeaveDate, Type = NotificationDataTypeEnum.REQUEST });
 
+                // Notification to Manager
+                var notificationToManager = new LeaveNotification
+                {
+                    RecipientId = leave.ManagerId,
+                    LeaveId = leave.Id,
+                    Type = NotificationTypeEnum.LEAVE,
+                    Data = data
+                };
+                notifications.Add(notificationToManager);
+
                 // Notification per project
                 leave.LeaveProjects.ToList().ForEach(project =>
                 {
@@ -36,16 +46,6 @@ namespace api.Services
                         Type = NotificationTypeEnum.LEAVE,
                         Data = data
                     };
-
-                    var notificationToManager = new LeaveNotification
-                    {
-                        RecipientId = leave.ManagerId,
-                        LeaveId = leave.Id,
-                        Type = NotificationTypeEnum.LEAVE,
-                        Data = data
-                    };
-
-                    notifications.Add(notificationToManager);
                     notifications.Add(notificationToProjectLeader);
                 });
 

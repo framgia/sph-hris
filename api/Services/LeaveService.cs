@@ -69,35 +69,42 @@ namespace api.Services
             {
                 // validate inputs
                 var errors = new List<IError>();
+                int index = 0;
 
-                if (!_customInputValidation.checkUserExist(leave.UserId)) errors.Add(ErrorBuilder.New()
-                    .SetMessage(InputValidationMessageEnum.INVALID_USER)
-                    .Build());
+                if (!_customInputValidation.checkUserExist(leave.UserId))
+                    errors.Add(_customInputValidation.buildError(nameof(leave.UserId), InputValidationMessageEnum.INVALID_USER));
 
-                if (!_customInputValidation.checkUserExist(leave.ManagerId)) errors.Add(ErrorBuilder.New()
-                    .SetMessage(InputValidationMessageEnum.INVALID_MANAGER)
-                    .Build());
+                if (!_customInputValidation.checkUserExist(leave.ManagerId))
+                    errors.Add(_customInputValidation.buildError(nameof(leave.ManagerId), InputValidationMessageEnum.INVALID_MANAGER));
 
-                if (!_customInputValidation.checkLeaveType(leave.LeaveTypeId)) errors.Add(ErrorBuilder.New()
-                    .SetMessage(InputValidationMessageEnum.INVALID_LEAVE_TYPE)
-                    .Build());
+                if (!_customInputValidation.checkLeaveType(leave.LeaveTypeId))
+                    errors.Add(_customInputValidation.buildError(nameof(leave.LeaveTypeId), InputValidationMessageEnum.INVALID_LEAVE_TYPE));
 
+                if (!_customInputValidation.checkLeaveDates(leave.LeaveDates))
+                    errors.Add(_customInputValidation.buildError(nameof(leave.LeaveDates), InputValidationMessageEnum.MISSING_LEAVE_DATES));
+
+                if (!_customInputValidation.checkLeaveProjects(leave.LeaveProjects))
+                    errors.Add(_customInputValidation.buildError(nameof(leave.LeaveProjects), InputValidationMessageEnum.MISSING_LEAVE_PROJECTS));
+
+                index = 0;
                 leave.LeaveProjects?.ForEach(project =>
                 {
-                    if (!_customInputValidation.checkProjectExist(project.ProjectId)) errors.Add(ErrorBuilder.New()
-                    .SetMessage(InputValidationMessageEnum.INVALID_PROJECT)
-                    .Build());
+                    if (!_customInputValidation.checkProjectExist(project.ProjectId))
+                        errors.Add(_customInputValidation.buildError(nameof(project.ProjectId), InputValidationMessageEnum.INVALID_PROJECT, index));
 
-                    if (!_customInputValidation.checkUserExist(project.ProjectLeaderId)) errors.Add(ErrorBuilder.New()
-                    .SetMessage(InputValidationMessageEnum.INVALID_PROJECT_LEADER)
-                    .Build());
+                    if (!_customInputValidation.checkUserExist(project.ProjectLeaderId))
+                        errors.Add(_customInputValidation.buildError(nameof(project.ProjectLeaderId), InputValidationMessageEnum.INVALID_PROJECT_LEADER, index));
+
+                    index++;
                 });
 
+                index = 0;
                 leave.LeaveDates?.ForEach(date =>
                 {
-                    if (!_customInputValidation.checkDateFormat(date.LeaveDate)) errors.Add(ErrorBuilder.New()
-                    .SetMessage(InputValidationMessageEnum.INVALID_DATE)
-                    .Build());
+                    if (!_customInputValidation.checkDateFormat(date.LeaveDate))
+                        errors.Add(_customInputValidation.buildError(nameof(date.LeaveDate), InputValidationMessageEnum.INVALID_DATE, index));
+
+                    index++;
                 });
 
                 if (errors.Count > 0) throw new GraphQLException(errors);
