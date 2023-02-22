@@ -71,14 +71,12 @@ namespace api.Utils
 
         public bool checkLeaveDates(List<LeaveDateRequest> leaveDates)
         {
-            if (leaveDates == null || leaveDates.Count == 0) return false;
-            return true;
+            return !(leaveDates == null || leaveDates.Count == 0);
         }
 
         public bool checkLeaveProjects(List<LeaveProjectRequest> leaveProjects)
         {
-            if (leaveProjects == null || leaveProjects.Count == 0) return false;
-            return true;
+            return !(leaveProjects == null || leaveProjects.Count == 0);
         }
     }
 }
