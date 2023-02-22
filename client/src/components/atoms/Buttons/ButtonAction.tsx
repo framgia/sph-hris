@@ -55,8 +55,8 @@ const Button = w.button(
           hover:border-amber-700  shadow-amber-200
         `,
         'info-outline': `
-          text-sky-500 bg-white border border-sky-600 hover:text-sky-600
-          hover:border-sky-700  shadow-sky-200
+          text-sky-500 bg-white border border-slate-300 hover:text-sky-600
+          hover:border-sky-600  shadow-sky-200
         `,
         'dark-outline': `
           text-slate-500 bg-slate-100 border border-slate-600 hover:text-slate-600

@@ -24,7 +24,7 @@ const Sidebar: FC<Props> = (props): JSX.Element => {
       className={classNames(
         'flex h-screen shrink-0 flex-col border-r border-slate-200',
         'w-full bg-white transition-all duration-300',
-        isOpenSidebar ? 'max-w-0 md:max-w-[253px]' : 'max-w-0 md:max-w-[80px]'
+        isOpenSidebar ? 'max-w-0 md:max-w-[254px]' : 'max-w-0 md:max-w-[80px]'
       )}
     >
       {/* Business Logo */}

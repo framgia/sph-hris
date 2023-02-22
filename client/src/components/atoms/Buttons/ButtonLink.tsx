@@ -14,11 +14,12 @@ type Props = {
     submenu: boolean | undefined
   }
   state: {
+    index: number
     isOpenSidebar: boolean
-    isOpenSubMenu: boolean
+    openIndexes: number[]
   }
   actions: {
-    handleOpenSubMenu: () => void
+    toggleSubmenu: (index: number) => void
   }
 }
 
@@ -27,8 +28,8 @@ const ButtonLink: FC<Props> = (props): JSX.Element => {
 
   const {
     item: { name, href, Icon, submenu },
-    state: { isOpenSidebar, isOpenSubMenu },
-    actions: { handleOpenSubMenu }
+    state: { index, isOpenSidebar, openIndexes },
+    actions: { toggleSubmenu }
   } = props
 
   return (
@@ -38,6 +39,8 @@ const ButtonLink: FC<Props> = (props): JSX.Element => {
           ? ''
           : href === '/leave-management'
           ? `${href}/list-of-leave`
+          : href === '/my-forms'
+          ? `${href}/first-day-onboarding`
           : href
       }
       className={classNames(
@@ -64,12 +67,12 @@ const ButtonLink: FC<Props> = (props): JSX.Element => {
       {submenu === true && (
         <Button
           className={classNames('group ml-2 mr-4', !isOpenSidebar && 'hidden')}
-          onClick={handleOpenSubMenu}
+          onClick={() => toggleSubmenu(index)}
         >
           <ChevronRight
             className={classNames(
               'h-4 w-4 shrink-0 stroke-1 group-hover:stroke-2',
-              isOpenSubMenu ? 'rotate-90' : ''
+              openIndexes.includes(index) ? 'rotate-90' : ''
             )}
           />
         </Button>
