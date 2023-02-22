@@ -56,24 +56,18 @@ builder.Services.AddScoped<ProjectService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<NotificationService>();
 
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
-        policy =>
-        {
-            policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
-        });
+        policy => policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod());
 });
-
 
 var app = builder.Build();
 
+app.UseCors(MyAllowSpecificOrigins);
 app.UseStaticFiles();
 app.UseWebSockets();
 app.UseRouting();
-
-app.UseCors(MyAllowSpecificOrigins);
 
 app.UseEndpoints(endpoints => endpoints.MapGraphQL());
 

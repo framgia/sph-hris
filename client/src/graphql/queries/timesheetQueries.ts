@@ -67,10 +67,9 @@ export const GET_SPECIFIC_TIME_ENTRY = gql`
       remarks
       createdAt
       media {
-        collectionName
-        name
-        fileName
         mimeType
+        link
+        fileName
       }
     }
   }

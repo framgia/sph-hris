@@ -55,10 +55,9 @@ export interface ITimeEntryById {
   createdAt: string
   media: [
     {
-      collectionName: string
-      name: string
-      fileName: string
       mimeType: string
+      link: string
+      fileName: string
     }
   ]
 }
