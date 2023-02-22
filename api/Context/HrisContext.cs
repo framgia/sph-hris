@@ -1,5 +1,4 @@
 ﻿using api.Entities;
-using api.Enums;
 using api.Seeders;
 using Microsoft.EntityFrameworkCore;
 
@@ -65,7 +64,7 @@ public partial class HrisContext : DbContext
             DatabaseSeeder.leaveProjects
         );
 
-        modelBuilder.Entity<Notification>().HasDiscriminator(b => b.Type).HasValue<LeaveNotification>(NotificationTypeEnum.LEAVE);
+        modelBuilder.Entity<Notification>().HasDiscriminator();
         modelBuilder.Entity<LeaveNotification>().HasData(
             DatabaseSeeder.notifications_leave
         );

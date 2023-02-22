@@ -167,5 +167,39 @@ namespace api.Services
 
             }
         }
+
+        public float LeaveDaysToHours(float days)
+        {
+            switch (days)
+            {
+                case 0.125f:
+                    return 4;
+                case 0.19f:
+                    return 1.5f;
+                case 0.25f:
+                    return 2;
+                case 0.31f:
+                    return 2.5f;
+                case 0.38f:
+                    return 3;
+                case 0.5f:
+                    return 4;
+                case 0.625f:
+                    return 5;
+                case 0.69f:
+                    return 5.5f;
+                case 1:
+                    return 8;
+                default:
+                    return 0;
+            }
+        }
+
+        public string GetLeaveRequestStatus(Leave leave)
+        {
+            if (leave.IsLeaderApproved == true && leave.IsManagerApproved == true) return RequestStatus.APPROVED;
+            if (leave.IsLeaderApproved == false && leave.IsManagerApproved == false) return RequestStatus.DISAPPROVED;
+            return RequestStatus.PENDING;
+        }
     }
 }

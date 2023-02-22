@@ -16,8 +16,8 @@ namespace api.Entities
         public DateTime LeaveDate { get; set; }
         public float Days { get; set; }
         public bool IsWithPay { get; set; }
-        public bool IsLeaderApproved { get; set; } = false;
-        public bool IsManagerApproved { get; set; } = false;
+        public bool? IsLeaderApproved { get; set; }
+        public bool? IsManagerApproved { get; set; }
         public ICollection<LeaveProject> LeaveProjects { get; set; } = default!;
         public LeaveType LeaveType { get; set; } = default!;
         public User Manager { get; set; } = default!;
