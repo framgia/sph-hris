@@ -1,14 +1,19 @@
 import { NextPage } from 'next'
 import classNames from 'classnames'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import FilterIcon from '~/utils/icons/FilterIcon'
-import { dummyNotificationData } from '~/utils/constants/dummyNotificationData'
 import Layout from '~/components/templates/Layout'
 import NotificationList from '~/components/molecules/NotificationList'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import { columns } from '~/components/molecules/NotificationList/columns'
 import NotificationFilterDropdown from '~/components/molecules/NotificationFilterDropdown'
+import useNotification from '~/hooks/useNotificationQuery'
+import useUserQuery from '~/hooks/useUserQuery'
+import { INotification } from '~/utils/interfaces'
+import { NotificationData } from '~/utils/types/notificationTypes'
+import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
+import moment from 'moment'
 
 export type Filters = {
   type: string
@@ -21,11 +26,46 @@ export type QueryVariablesType = {
 }
 
 const Notifications: NextPage = (): JSX.Element => {
+  const { getUserNotificationsQuery } = useNotification()
+  const { handleUserQuery } = useUserQuery()
+
+  const { data: user } = handleUserQuery()
+  const { data: notificationsData, isLoading: notificationLoading } = getUserNotificationsQuery(
+    user?.userById.id as number
+  )
+
+  const [notifications, setNotifications] = useState<INotification[]>()
+  const [loading, setLoading] = useState(true)
   const [globalFilter, setGlobalFilter] = useState<string>('')
   const [filters, setFilters] = useState({
     type: '',
     status: ''
   })
+
+  useEffect(() => {
+    if (notificationsData != null && !notificationLoading) {
+      const mappedNotifications = notificationsData.notificationByRecipientId.map((notif) => {
+        const parsedData: NotificationData = JSON.parse(notif.data)
+        const mapped: INotification = {
+          id: notif.id,
+          name: parsedData.User.Name,
+          project: parsedData.Projects.join(', '),
+          type: notif.type.charAt(0).toUpperCase() + notif.type.slice(1),
+          specificType: parsedData.Type,
+          date: moment(parsedData.DateRequested).format('MMMM D, YYYY'),
+          remarks: parsedData.Remarks,
+          duration: parsedData.RequestedHours,
+          dateFiled: parsedData.DateFiled,
+          status: parsedData.Status,
+          isRead: notif.isRead,
+          userAvatarLink: parsedData.User.AvatarLink
+        }
+        return mapped
+      })
+      setNotifications(mappedNotifications)
+      setLoading(false)
+    }
+  }, [notificationsData])
 
   return (
     <Layout metaTitle="Notifications">
@@ -60,18 +100,24 @@ const Notifications: NextPage = (): JSX.Element => {
             </NotificationFilterDropdown>
           </div>
         </header>
-        <NotificationList
-          {...{
-            query: {
-              data: dummyNotificationData
-            },
-            table: {
-              columns,
-              globalFilter,
-              setGlobalFilter
-            }
-          }}
-        />
+        {!loading && !notificationLoading && notificationsData !== undefined ? (
+          <NotificationList
+            {...{
+              query: {
+                data: notifications as INotification[]
+              },
+              table: {
+                columns,
+                globalFilter,
+                setGlobalFilter
+              }
+            }}
+          />
+        ) : (
+          <div className="flex min-h-[50vh] items-center justify-center">
+            <BarsLoadingIcon className="h-7 w-7 fill-current text-amber-500" />
+          </div>
+        )}
       </section>
     </Layout>
   )

@@ -20,6 +20,7 @@ import LegendTooltip from '~/components/molecules/LegendTooltip'
 import UserMenuDropDown from '~/components/molecules/UserMenuDropdown'
 import NotificationPopover from '~/components/molecules/NotificationPopOver'
 import { getLeaveNotificationSubQuery } from '~/graphql/subscriptions/leaveSubscription'
+import { useQueryClient } from '@tanstack/react-query'
 
 const Tooltip = dynamic(async () => await import('rc-tooltip'), { ssr: false })
 
@@ -35,6 +36,7 @@ type Props = {
 
 const Header: FC<Props> = (props): JSX.Element => {
   const router = useRouter()
+  const queryClient = useQueryClient()
 
   const {
     actions: {
@@ -122,6 +124,7 @@ const Header: FC<Props> = (props): JSX.Element => {
           // TO DO: change implementation when integrating with notification modal
           localStorage.setItem('newNotificationCount', `${newNotificationCount + count}`)
           setNewNotificationCount(newNotificationCount + count)
+          void queryClient.invalidateQueries({ queryKey: ['GET_ALL_USER_NOTIFICATION'] })
         },
         error: () => toast.error('There was a notification error'),
         complete: () => null
@@ -235,7 +238,7 @@ const Header: FC<Props> = (props): JSX.Element => {
             </Button>
           </Tooltip>
         </div>
-        <div className="hidden text-slate-500 sm:block">
+        <div className="text-slate-500 sm:block">
           <div className="inline-flex items-center space-x-4">
             <div className="relative">
               {newNotificationCount > 0 && (
@@ -251,9 +254,16 @@ const Header: FC<Props> = (props): JSX.Element => {
               <NotificationPopover className="h-5 w-5 text-slate-400" />
             </div>
             {/* User Avatar */}
-            <UserMenuDropDown position="bottom">
-              <Avatar src={data?.userById.avatarLink} alt="user-avatar" size="md" rounded="full" />
-            </UserMenuDropDown>
+            <span className="hidden text-slate-500 sm:block">
+              <UserMenuDropDown position="bottom">
+                <Avatar
+                  src={data?.userById.avatarLink}
+                  alt="user-avatar"
+                  size="md"
+                  rounded="full"
+                />
+              </UserMenuDropDown>
+            </span>
           </div>
         </div>
       </section>
