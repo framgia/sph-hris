@@ -57,3 +57,12 @@ export type NewOvertimeFormValues = {
   requested_hours: number
   remarks: string
 }
+
+export type NewEmployeeFormValues = {
+  // eslint-disable-next-line @typescript-eslint/array-type
+  email: string
+  position: string
+  first_name: string
+  middle_name?: string
+  last_name: string
+}

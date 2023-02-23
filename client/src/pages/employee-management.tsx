@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 import Layout from '~/components/templates/Layout'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
+import AddNewEmployeeModal from '~/components/molecules/AddNewEmployeeModal'
 import { columns } from '~/components/molecules/EmployeeManagementTable/columns'
 import { dummyEmployeeManagement } from '~/utils/constants/dummyEmployeeManagement'
 import EmployeeManagementTable from '~/components/molecules/EmployeeManagementTable'
@@ -21,7 +22,10 @@ export type QueryVariablesType = {
 }
 
 const EmployeeManagement: NextPage = (): JSX.Element => {
+  const [isOpen, setIsOpen] = useState<boolean>(false)
   const [globalFilter, setGlobalFilter] = useState<string>('')
+
+  const handleToggle = (): void => setIsOpen(!isOpen)
 
   return (
     <Layout metaTitle="Employee Management">
@@ -46,12 +50,20 @@ const EmployeeManagement: NextPage = (): JSX.Element => {
             <Button
               type="button"
               variant="primary"
+              onClick={handleToggle}
               className="flex items-center space-x-0.5 px-1.5 py-[3px]"
             >
               <Plus className="h-4 w-4" /> {''}
               Add Employee
             </Button>
           </div>
+          {/* File New Overtime Modal */}
+          <AddNewEmployeeModal
+            {...{
+              isOpen,
+              closeModal: handleToggle
+            }}
+          />
         </header>
         <EmployeeManagementTable
           {...{

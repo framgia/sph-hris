@@ -78,6 +78,14 @@ export const MyOvertimeSchema = yup.object().shape({
   remarks: yup.string().required().label('Reason')
 })
 
+export const NewEmployeeSchema = yup.object().shape({
+  email: yup.string().required().label('Email'),
+  position: yup.string().required().label('Position'),
+  first_name: yup.string().required().label('First Name'),
+  middle_name: yup.string().label('Middle Name'),
+  last_name: yup.string().required().label('Last Name')
+})
+
 export const ApproveConfirmationSchema = yup.object().shape({
   requested_hours: yup.number().required().label('Requested hours')
 })
