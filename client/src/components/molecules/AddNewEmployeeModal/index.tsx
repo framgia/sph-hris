@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import React, { FC, useEffect } from 'react'
-import { User, Save, Mail, Award } from 'react-feather'
+import { User, Save, Mail, Award, RefreshCcw, X } from 'react-feather'
 
 import TextField from './../TextField'
 import Input from '~/components/atoms/Input'
@@ -73,7 +73,7 @@ const AddNewEmployeeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => 
         isOpen,
         closeModal
       }}
-      className="w-full max-w-[700px]"
+      className="w-full max-w-[430px]"
     >
       <form
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -182,6 +182,26 @@ const AddNewEmployeeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => 
 
         {/* Custom Modal Footer Style */}
         <ModalFooter>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={handleReset}
+            disabled={isSubmitting}
+            className="flex items-center space-x-2 px-4 py-1 text-sm"
+          >
+            <RefreshCcw className="h-4 w-4" />
+            <span>Reset</span>
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={closeModal}
+            disabled={isSubmitting}
+            className="flex items-center space-x-2 px-4 py-1 text-sm"
+          >
+            <X className="h-4 w-4" />
+            <span>Close</span>
+          </Button>
           <Button
             type="submit"
             variant="success"
