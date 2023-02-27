@@ -1,7 +1,8 @@
+import React from 'react'
 import classNames from 'classnames'
 import type { NextPage } from 'next'
 import isEmpty from 'lodash/isEmpty'
-import React, { Fragment } from 'react'
+import useFormPersist from 'react-hook-form-persist'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { AlertCircle, Upload, X } from 'react-feather'
 import { Controller, useForm, SubmitHandler } from 'react-hook-form'
@@ -25,7 +26,7 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
     handleSubmit,
     formState: { errors, isSubmitting }
   } = useForm<FirstDayOnBoardingFormValues>({
-    mode: 'onTouched',
+    mode: 'onChange',
     resolver: yupResolver(FirstDayOnBoardingSchema)
   })
 
@@ -34,6 +35,11 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
   const signatureForCompanyIDImage = watch('signature_for_company_id_image')
   const pictureForCompanyID = watch('picture_2x2_company_id')
 
+  useFormPersist('firstDayOnBoardingFormValues', {
+    watch,
+    setValue
+  })
+
   // This will handle saving the form data
   const handleSaveFirstDayOnBoarding: SubmitHandler<FirstDayOnBoardingFormValues> = async (
     data
@@ -41,6 +47,7 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
     return await new Promise((resolve) => {
       setTimeout(() => {
         // console.log(data)
+        alert(JSON.stringify(data, null, 2))
         resolve()
         alert(JSON.stringify(data, null, 2))
       }, 2000)
@@ -49,7 +56,7 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
 
   const handleAuthForEmailImageChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const file = event.target.files?.[0]
-    if (file !== undefined) {
+    if (file !== undefined && file !== null) {
       const dt = new DataTransfer()
       dt.items.add(file)
       const fileList = dt.files
@@ -60,7 +67,7 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
 
   const handleAuthForGitHubImageChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const file = event.target.files?.[0]
-    if (file !== undefined) {
+    if (file !== undefined && file !== null) {
       const dt = new DataTransfer()
       dt.items.add(file)
       const fileList = dt.files
@@ -73,7 +80,7 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
     event: React.ChangeEvent<HTMLInputElement>
   ): void => {
     const file = event.target.files?.[0]
-    if (file !== undefined) {
+    if (file !== undefined && file !== null) {
       const dt = new DataTransfer()
       dt.items.add(file)
       const fileList = dt.files
@@ -84,7 +91,7 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
 
   const handlePictureForCompanyIDChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const file = event.target.files?.[0]
-    if (file !== undefined) {
+    if (file !== undefined && file !== null) {
       const dt = new DataTransfer()
       dt.items.add(file)
       const fileList = dt.files
@@ -94,39 +101,18 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
   }
 
   const installBelowErrors =
-    (errors?.install_below?.docker_toolbox !== null &&
-      errors?.install_below?.docker_toolbox !== undefined) ||
-    (errors?.install_below?.vscode !== null && errors?.install_below?.vscode !== undefined) ||
-    (errors?.install_below?.mysql_workbench !== null &&
-      errors?.install_below?.mysql_workbench !== undefined) ||
-    (errors?.install_below?.docker_for_windows !== null &&
-      errors?.install_below?.docker_for_windows !== undefined)
-
-  const githubAccountLinkErrors =
-    errors?.github_account_link !== null && errors?.github_account_link !== undefined
-
-  const authForEmailImageErrors =
-    errors?.ss_auth_for_email_image !== null && errors?.ss_auth_for_email_image !== undefined
-
-  const authForGitHubImageErrors =
-    errors?.ss_auth_for_github_image !== null && errors?.ss_auth_for_github_image !== undefined
-
-  const signatureForCompanyIDImageErrors =
-    errors?.signature_for_company_id_image !== null &&
-    errors?.signature_for_company_id_image !== undefined
-
-  const picture2x2ForCompanyIDImageErrors =
-    errors?.picture_2x2_company_id !== null && errors?.picture_2x2_company_id !== undefined
-
-  const isSigningProbationaryContractErrors =
-    errors?.is_signing_probationary_contract !== null &&
-    errors?.is_signing_probationary_contract !== undefined
-
-  const isExistingSSSLoanErrors =
-    errors?.is_existing_sss_loan !== null && errors?.is_existing_sss_loan !== undefined
-
-  const isExistingPagIbigLoanErrors =
-    errors?.is_existing_pag_ibig_loan !== null && errors?.is_existing_pag_ibig_loan !== undefined
+    !isEmpty(errors?.install_below?.docker_toolbox) ||
+    !isEmpty(errors?.install_below?.vscode) ||
+    !isEmpty(errors?.install_below?.mysql_workbench) ||
+    !isEmpty(errors?.install_below?.docker_for_windows)
+  const githubAccountLinkErrors = !isEmpty(errors?.github_account_link)
+  const authForEmailImageErrors = !isEmpty(errors?.ss_auth_for_email_image)
+  const authForGitHubImageErrors = !isEmpty(errors?.ss_auth_for_github_image)
+  const signatureForCompanyIDImageErrors = !isEmpty(errors?.signature_for_company_id_image)
+  const picture2x2ForCompanyIDImageErrors = !isEmpty(errors?.picture_2x2_company_id)
+  const isSigningProbationaryContractErrors = !isEmpty(errors?.is_signing_probationary_contract)
+  const isExistingSSSLoanErrors = !isEmpty(errors?.is_existing_sss_loan)
+  const isExistingPagIbigLoanErrors = !isEmpty(errors?.is_existing_pag_ibig_loan)
 
   return (
     <MyFormsLayout metaTitle="First day Onboarding">
@@ -184,7 +170,7 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
                           'line-clamp-1 hover:text-sky-600 hover:no-underline'
                         )}
                       >
-                        https://www.docker.com/products/docker-desktop
+                        docker-desktop-installation
                       </a>
                     </div>
                   </label>
@@ -211,7 +197,7 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
                           'line-clamp-1 hover:text-sky-600 hover:no-underline'
                         )}
                       >
-                        https://code.visualstudio.com/download
+                        visual-studio-code-download
                       </a>
                     </div>
                   </label>
@@ -238,7 +224,7 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
                           'line-clamp-1 hover:text-sky-600 hover:no-underline'
                         )}
                       >
-                        https://dev.mysql.com/downloads/workbench
+                        mysql-workbench-download
                       </a>
                     </div>
                   </label>
@@ -265,7 +251,7 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
                           'line-clamp-1 hover:text-sky-600 hover:no-underline'
                         )}
                       >
-                        https://docs.docker.com/docker-for-windows/install/
+                        docker-for-window-download
                       </a>
                     </div>
                   </label>
@@ -305,10 +291,10 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
               </div>
               <div className="w-full md:w-1/2">
                 <Input
-                  {...register('github_account_link')}
                   type="text"
-                  placeholder="Your answer"
                   className="text-sm"
+                  placeholder="Your answer"
+                  {...register('github_account_link')}
                 />
               </div>
               {githubAccountLinkErrors ? (
@@ -358,7 +344,9 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
                     'border border-slate-200 px-1.5 py-1 text-sm'
                   )}
                 >
-                  <span className="line-clamp-1">{ssAuthForEmailImage[0]?.name}</span>
+                  <span className="line-clamp-1">
+                    {ssAuthForEmailImage[0]?.name ?? 'image-file'}
+                  </span>
                   <button
                     type="button"
                     className="outline-none"
@@ -415,7 +403,9 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
                     'border border-slate-200 px-1.5 py-1 text-sm'
                   )}
                 >
-                  <span className="line-clamp-1">{ssAuthForGitHubImage[0]?.name}</span>
+                  <span className="line-clamp-1">
+                    {ssAuthForGitHubImage[0]?.name ?? 'image-file'}
+                  </span>
                   <button
                     type="button"
                     className="outline-none"
@@ -473,7 +463,9 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
                     'border border-slate-200 px-1.5 py-1 text-sm'
                   )}
                 >
-                  <span className="line-clamp-1">{signatureForCompanyIDImage[0]?.name}</span>
+                  <span className="line-clamp-1">
+                    {signatureForCompanyIDImage[0]?.name ?? 'image-file'}
+                  </span>
                   <button
                     type="button"
                     className="outline-none"
@@ -531,7 +523,9 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
                     'border border-slate-200 px-1.5 py-1 text-sm'
                   )}
                 >
-                  <span className="line-clamp-1">{pictureForCompanyID[0]?.name}</span>
+                  <span className="line-clamp-1">
+                    {pictureForCompanyID[0]?.name ?? 'image-file'}
+                  </span>
                   <button
                     type="button"
                     className="outline-none"
@@ -562,49 +556,46 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
                 Are you done signing your probationary contract?{' '}
                 <span className="text-rose-500">*</span>
               </h2>
-              <div className="flex flex-col justify-center space-y-3 text-sm">
-                <div>
-                  <Controller
-                    name="is_signing_probationary_contract"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <Fragment>
+              <div className="space-y-3 text-sm">
+                <Controller
+                  name="is_signing_probationary_contract"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <div className="flex flex-col justify-center space-y-3">
+                      <div>
                         <input
+                          type="radio"
                           {...field}
                           value={1}
                           id="yes"
-                          type="radio"
+                          // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
+                          checked={field.value === true}
+                          onChange={() => field.onChange(true)}
                           className="h-4 w-4 text-sky-500 focus:ring-sky-400"
                         />
                         <label htmlFor="yes" className="ml-2 text-slate-500">
                           Yes
                         </label>
-                      </Fragment>
-                    )}
-                  />
-                </div>
-                <div>
-                  <Controller
-                    name="is_signing_probationary_contract"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <Fragment>
+                      </div>
+                      <div>
                         <input
+                          type="radio"
                           {...field}
                           value={0}
                           id="no"
-                          type="radio"
+                          // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
+                          checked={field.value === false}
+                          onChange={() => field.onChange(false)}
                           className="h-4 w-4 text-sky-500 focus:ring-sky-400"
                         />
                         <label htmlFor="no" className="ml-2 text-slate-500">
                           No
                         </label>
-                      </Fragment>
-                    )}
-                  />
-                </div>
+                      </div>
+                    </div>
+                  )}
+                />
                 {isSigningProbationaryContractErrors ? (
                   <div className="flex items-center space-x-2 text-xs text-rose-500">
                     <AlertCircle className="h-5 w-5 shrink-0" />
@@ -626,50 +617,46 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
               <h2 className="text-sm md:text-base">
                 Do you have existing SSS loan? <span className="text-rose-500">*</span>
               </h2>
-              <div className="flex flex-col justify-center space-y-3 text-sm">
-                <div>
-                  <Controller
-                    name="is_existing_sss_loan"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <Fragment>
+              <div className="space-y-3 text-sm">
+                <Controller
+                  name="is_existing_sss_loan"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <div className="flex flex-col justify-center space-y-3">
+                      <div>
                         <input
+                          type="radio"
                           {...field}
                           value={1}
-                          id="is_existing_sss_loan_yes"
-                          type="radio"
+                          id="yes"
+                          // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
+                          checked={field.value === true}
+                          onChange={() => field.onChange(true)}
                           className="h-4 w-4 text-sky-500 focus:ring-sky-400"
                         />
-                        <label htmlFor="is_existing_sss_loan_yes" className="ml-2 text-slate-500">
+                        <label htmlFor="yes" className="ml-2 text-slate-500">
                           Yes
                         </label>
-                      </Fragment>
-                    )}
-                  />
-                </div>
-                <div>
-                  <Controller
-                    name="is_existing_sss_loan"
-                    control={control}
-                    defaultValue={true}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <Fragment>
+                      </div>
+                      <div>
                         <input
+                          type="radio"
                           {...field}
                           value={0}
-                          id="is_existing_sss_loan_no"
-                          type="radio"
+                          id="no"
+                          // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
+                          checked={field.value === false}
+                          onChange={() => field.onChange(false)}
                           className="h-4 w-4 text-sky-500 focus:ring-sky-400"
                         />
-                        <label htmlFor="is_existing_sss_loan_no" className="ml-2 text-slate-500">
+                        <label htmlFor="no" className="ml-2 text-slate-500">
                           No
                         </label>
-                      </Fragment>
-                    )}
-                  />
-                </div>
+                      </div>
+                    </div>
+                  )}
+                />
                 {isExistingSSSLoanErrors ? (
                   <div className="flex items-center space-x-2 text-xs text-rose-500">
                     <AlertCircle className="h-5 w-5 shrink-0" />
@@ -691,55 +678,46 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
               <h2 className="text-sm md:text-base">
                 Do you have existing Pag ibig loan <span className="text-rose-500">*</span>
               </h2>
-              <div className="flex flex-col justify-center space-y-3 text-sm">
-                <div>
-                  <Controller
-                    name="is_existing_pag_ibig_loan"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <Fragment>
+              <div className="space-y-3 text-sm">
+                <Controller
+                  name="is_existing_pag_ibig_loan"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <div className="flex flex-col justify-center space-y-3">
+                      <div>
                         <input
                           {...field}
                           value={1}
-                          id="is_existing_pag_ibig_loan_yes"
+                          id="yes"
                           type="radio"
+                          // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
+                          checked={field.value === true}
+                          onChange={() => field.onChange(true)}
                           className="h-4 w-4 text-sky-500 focus:ring-sky-400"
                         />
-                        <label
-                          htmlFor="is_existing_pag_ibig_loan_yes"
-                          className="ml-2 text-slate-500"
-                        >
+                        <label htmlFor="yes" className="ml-2 text-slate-500">
                           Yes
                         </label>
-                      </Fragment>
-                    )}
-                  />
-                </div>
-                <div>
-                  <Controller
-                    name="is_existing_pag_ibig_loan"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <Fragment>
+                      </div>
+                      <div>
                         <input
                           {...field}
                           value={0}
-                          id="is_existing_pag_ibig_loan_no"
+                          id="no"
                           type="radio"
+                          // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
+                          checked={field.value === false}
+                          onChange={() => field.onChange(false)}
                           className="h-4 w-4 text-sky-500 focus:ring-sky-400"
                         />
-                        <label
-                          htmlFor="is_existing_pag_ibig_loan_no"
-                          className="ml-2 text-slate-500"
-                        >
+                        <label htmlFor="no" className="ml-2 text-slate-500">
                           No
                         </label>
-                      </Fragment>
-                    )}
-                  />
-                </div>
+                      </div>
+                    </div>
+                  )}
+                />
                 {isExistingPagIbigLoanErrors ? (
                   <div className="flex items-center space-x-2 text-xs text-rose-500">
                     <AlertCircle className="h-5 w-5 shrink-0" />

@@ -1,18 +1,17 @@
-import { X, Info } from 'react-feather'
+import moment from 'moment'
 import classNames from 'classnames'
+import toast from 'react-hot-toast'
+import { X, Info } from 'react-feather'
 import React, { FC, useEffect } from 'react'
 import { FieldError, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import TextareaAutosize from 'react-textarea-autosize'
-import toast from 'react-hot-toast'
-import moment from 'moment'
 
-import Text from '~/components/atoms/Text'
-import Avatar from '~/components/atoms/Avatar'
 import useUserQuery from '~/hooks/useUserQuery'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import useInterruptionType from '~/hooks/useInterruptionType'
 import { ConfirmInterruptionSchema } from '~/utils/validation'
+import UserTimeZone from '~/components/molecules/UserTimeZone'
 import DrawerTemplate from '~/components/templates/DrawerTemplate'
 import { ConfirmInterruptionValues } from '~/utils/types/formValues'
 import { WorkInterruptionType } from '~/utils/constants/work-status'
@@ -106,7 +105,7 @@ const WorkInterruptionDrawer: FC<Props> = (props): JSX.Element => {
     >
       {/* Header */}
       <header className="flex items-center justify-between border-b border-slate-200 px-6 py-3">
-        <h1 className="text-base font-medium text-slate-900">Confirm Interruption</h1>
+        <h1 className="font-inter text-base font-medium text-slate-900">Confirm Interruption</h1>
         <button onClick={handleToggleWorkInterruptionDrawer} className="active:scale-95">
           <X className="h-6 w-6 stroke-0.5 text-slate-400" />
         </button>
@@ -117,30 +116,10 @@ const WorkInterruptionDrawer: FC<Props> = (props): JSX.Element => {
         className="default-scrollbar flex h-full flex-col justify-between overflow-y-auto"
       >
         {/* Body */}
-        <main className="flex flex-col space-y-3 px-6 py-2">
+        <main className="flex flex-col space-y-3 px-6">
           {/* User */}
-          <div className="flex items-center space-x-3 border-b border-slate-200 py-3">
-            <Avatar
-              src={userData?.userById.avatarLink}
-              alt="user-avatar"
-              size="lg"
-              rounded="full"
-            />
-            <div>
-              <Text theme="md" size="sm" weight="bold">
-                {userData?.userById.name}
-              </Text>
-              <p className="text-[11px] leading-tight text-slate-500">
-                Clocking from {Intl.DateTimeFormat().resolvedOptions().timeZone}
-              </p>
-              <p className="text-[11px] leading-tight text-slate-500">
-                {moment(new Date()).format('dddd, MMMM Do YYYY')}
-              </p>
-              <p className="text-[11px] leading-tight text-slate-500">
-                Schedule: {userData?.userById.employeeSchedule.name}
-              </p>
-            </div>
-          </div>
+          <UserTimeZone user={userData?.userById} />
+
           {/* Error Message */}
           {interruptionMutation.isError ? (
             <div className="relative flex items-center justify-center rounded-md border border-rose-400 bg-rose-50 py-2.5 px-4 shadow-md">
