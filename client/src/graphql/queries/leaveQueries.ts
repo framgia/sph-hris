@@ -4,16 +4,18 @@ export const GET_ALL_REQUESTED_LEAVES = gql`
   query {
     allLeaves {
       id
-      projects {
-        name
-        projectLeader {
-          name
-        }
-      }
       user {
         id
         name
         role {
+          name
+        }
+      }
+      leaveProjects {
+        project {
+          name
+        }
+        projectLeader {
           name
         }
       }

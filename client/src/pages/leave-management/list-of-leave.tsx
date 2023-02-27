@@ -22,12 +22,12 @@ const ListOfLeave: NextPage = (): JSX.Element => {
         id: i?.id,
         name: i?.user?.name,
         userId: i?.user?.id,
-        project: i?.projects[0]?.name,
+        project: i?.leaveProjects[0].project?.name,
         leaveDate: moment(i?.leaveDate).format('MM/DD/YYYY'),
         type: i?.leaveType?.name,
         isWithPay: i?.isWithPay,
         manager: i?.manager?.name,
-        projectLeader: i?.projects[0]?.projectLeader?.name,
+        projectLeader: i?.leaveProjects[0]?.projectLeader?.name,
         totalUndertime:
           i?.leaveType?.name === 'Undertime' ? parseFloat(i?.days.toFixed(3).toString()) : 0,
         totalLeaves:
