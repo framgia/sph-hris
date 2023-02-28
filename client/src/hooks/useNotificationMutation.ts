@@ -1,6 +1,7 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query'
-import { NOTIFICATION_READ_AT_MUTATION } from '~/graphql/mutations/notificationMutation'
+
 import { client } from '~/utils/shared/client'
+import { NOTIFICATION_READ_AT_MUTATION } from '~/graphql/mutations/notificationMutation'
 
 type NotificationRequestInput = {
   id: number

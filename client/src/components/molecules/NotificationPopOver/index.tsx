@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React, { FC } from 'react'
 import classNames from 'classnames'
 import { Bell } from 'react-feather'
@@ -5,16 +6,15 @@ import { Popover } from '@headlessui/react'
 
 import Text from '~/components/atoms/Text'
 import Avatar from '~/components/atoms/Avatar'
-import PopoverTransition from '~/components/templates/PopoverTransition'
-import Link from 'next/link'
 import { INotification } from '~/utils/interfaces'
 import useNotificationMutation from '~/hooks/useNotificationMutation'
+import PopoverTransition from '~/components/templates/PopoverTransition'
 
 type Props = {
   className: string
   notificationsData: INotification[] | undefined
-  checkNotification: any
-  setReady: any
+  checkNotification: () => void
+  setReady: (state: boolean) => void
 }
 
 const NotificationPopover: FC<Props> = ({
