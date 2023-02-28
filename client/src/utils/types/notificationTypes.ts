@@ -17,6 +17,7 @@ export type NotificationData = {
     Name: string
     AvatarLink: string
   }
+  ReadAt: string | null
   DateFiled: string
   DateRequested: string
   Projects: string[]

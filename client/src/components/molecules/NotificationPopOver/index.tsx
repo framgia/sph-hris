@@ -7,24 +7,43 @@ import Text from '~/components/atoms/Text'
 import Avatar from '~/components/atoms/Avatar'
 import PopoverTransition from '~/components/templates/PopoverTransition'
 import Link from 'next/link'
+import { INotification } from '~/utils/interfaces'
+import useNotificationMutation from '~/hooks/useNotificationMutation'
 
 type Props = {
   className: string
+  notificationsData: INotification[] | undefined
+  checkNotification: any
+  setReady: any
 }
 
-const NotificationPopover: FC<Props> = ({ className }): JSX.Element => {
+const NotificationPopover: FC<Props> = ({
+  className,
+  notificationsData,
+  checkNotification,
+  setReady
+}): JSX.Element => {
   const panel = classNames(
     'absolute right-0 mt-2 w-72 origin-top-right divide-y divide-gray-200 overflow-hidden',
     'rounded-md border border-slate-200 bg-white shadow-xl shadow-slate-300 focus:outline-none'
   )
   const main = 'default-scrollbar max-h-[25vh] min-h-[25vh] py-2'
+  const { handleNotificationMutation } = useNotificationMutation()
+  const notificationMutations = handleNotificationMutation()
 
+  const handleLink = (id: number): void => {
+    void notificationMutations.mutate({ id })
+  }
   return (
     <Popover className="relative z-30">
       {({ open }) => (
         <>
+          {setReady(open)}
           <Popover.Button className="flex cursor-pointer items-center rounded-full p-1 outline-none active:scale-95">
             <Bell
+              onClick={() => {
+                checkNotification()
+              }}
               className="h-[22px] w-[22px] text-slate-400"
               fill={open ? 'currentColor' : 'transparent'}
             />
@@ -37,28 +56,36 @@ const NotificationPopover: FC<Props> = ({ className }): JSX.Element => {
                 </Text>
               </header>
               <main className={main}>
-                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
-                  <a
-                    key={i}
-                    href="#"
-                    className="flex items-start border-b border-slate-200 px-4 py-3 hover:bg-slate-50"
-                  >
-                    <Avatar
-                      src="https://avatars.githubusercontent.com/u/38458781?v=4"
-                      className="mt-1"
-                      size="base"
-                      rounded="full"
-                      alt="avatar"
-                    />
-                    <p className="mx-2 text-xs text-gray-600">
-                      <span className="font-semibold">Anika Franci</span> has requested your
-                      approval for <span className="font-semibold">Undertime</span>
-                      <span className="font-semibold text-primary">
-                        (Dec. 1, 2022 - 13:30-18:30)
-                      </span>
-                    </p>
-                  </a>
-                ))}
+                {notificationsData
+                  ?.sort(
+                    (a: INotification, b: INotification) =>
+                      (a.isRead as unknown as number) - (b.isRead as unknown as number)
+                  )
+                  .map((i, index) => (
+                    <a
+                      key={index}
+                      href={'#'}
+                      target={'_blank'}
+                      onClick={() => handleLink(i.id)}
+                      className={`${
+                        !i.isRead || i.readAt == null ? 'bg-slate-300' : ''
+                      } flex cursor-pointer items-start border-b border-slate-200 px-4 py-3 hover:bg-slate-50`}
+                      rel="noreferrer"
+                    >
+                      <Avatar
+                        src={`${i.userAvatarLink}`}
+                        className="mt-1"
+                        size="base"
+                        rounded="full"
+                        alt="avatar"
+                      />
+                      <p className="mx-2 text-xs text-gray-600">
+                        <span className="font-semibold">{i.name}</span> has requested your approval
+                        for <span className="font-semibold">{i.type} </span>
+                        <span className="font-semibold text-primary">({i.date})</span>
+                      </p>
+                    </a>
+                  ))}
               </main>
               <footer className="block bg-amber-500 py-2 text-center text-sm font-semibold text-white">
                 <Link href="/notifications">See all notifications</Link>

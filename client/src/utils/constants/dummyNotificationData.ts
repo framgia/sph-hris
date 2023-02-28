@@ -12,6 +12,7 @@ export const dummyNotificationData: INotification[] = [
     dateFiled: 'December 3, 2023',
     status: 'Approved',
     specificType: 'request',
+    readAt: 'December 3, 2023',
     isRead: false,
     userAvatarLink: 'null'
   },
@@ -26,6 +27,7 @@ export const dummyNotificationData: INotification[] = [
     dateFiled: 'December 3, 2023',
     status: 'Pending',
     specificType: 'approve',
+    readAt: 'December 3, 2023',
     isRead: false,
     userAvatarLink: 'null'
   },
@@ -40,6 +42,7 @@ export const dummyNotificationData: INotification[] = [
     dateFiled: 'December 3, 2023',
     status: 'Pending',
     specificType: 'request',
+    readAt: 'December 3, 2023',
     isRead: true,
     userAvatarLink: 'null'
   },
@@ -54,6 +57,7 @@ export const dummyNotificationData: INotification[] = [
     dateFiled: 'December 3, 2023',
     status: 'Pending',
     specificType: 'disapprove',
+    readAt: 'December 3, 2023',
     isRead: true,
     userAvatarLink: 'null'
   },
@@ -68,6 +72,7 @@ export const dummyNotificationData: INotification[] = [
     dateFiled: 'December 3, 2023',
     status: 'Pending',
     specificType: 'request',
+    readAt: 'December 3, 2023',
     isRead: false,
     userAvatarLink: 'null'
   },
@@ -81,6 +86,7 @@ export const dummyNotificationData: INotification[] = [
     duration: 5,
     dateFiled: 'December 3, 2023',
     status: 'Pending',
+    readAt: 'December 3, 2023',
     specificType: 'true',
     isRead: false,
     userAvatarLink: 'null'

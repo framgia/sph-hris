@@ -2,6 +2,7 @@ using System.Text.Json;
 using api.Context;
 using api.Entities;
 using api.Enums;
+using api.Requests;
 using api.Subscriptions;
 using HotChocolate.Subscriptions;
 using Microsoft.EntityFrameworkCore;
@@ -118,6 +119,34 @@ namespace api.Services
             {
                 throw;
             }
+        }
+        public async Task<List<Notification>> IsReadAll(int id)
+        {
+            using HrisContext context = _contextFactory.CreateDbContext();
+            var Notif = await context.Notifications.Where(x => x.RecipientId == id).ToListAsync();
+            foreach (var notification in Notif)
+            {
+                notification.IsRead = true;
+                context.Notifications.Update(notification);
+                await context.SaveChangesAsync();
+            }
+            return await context.Notifications.Where(x => x.RecipientId == id).ToListAsync();
+        }
+
+        public async Task<int> ReadNotification(NotificationRequest notification)
+        {
+            using HrisContext context = _contextFactory.CreateDbContext();
+            using var transaction = context.Database.BeginTransaction();
+            try
+            {
+                Notification notificationDetial = await context.Notifications.Where(c => c.Id == notification.Id).FirstAsync();
+                notificationDetial.ReadAt = DateTime.Now;
+                await context.SaveChangesAsync();
+                transaction.Commit();
+                return 1;
+            }
+            catch (Exception)
+            { return 0; }
         }
     }
 }
