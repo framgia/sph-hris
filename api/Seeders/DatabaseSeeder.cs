@@ -1354,38 +1354,6 @@ namespace api.Seeders
                 UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
             },
         };
-        public static List<Leave> leaves = new List<Leave>(){
-            new Leave {
-                Id = 1,
-                UserId = 1,
-                LeaveTypeId = 1,
-                ManagerId = 1,
-                OtherProject = "None",
-                Reason = "Leave lang guds",
-                LeaveDate = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                IsWithPay = false,
-                IsLeaderApproved = true,
-                IsManagerApproved = true,
-                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                Days = 1.5f
-            },
-            new Leave {
-                Id = 2,
-                UserId = 2,
-                LeaveTypeId = 6,
-                ManagerId = 1,
-                OtherProject = "None",
-                Reason = "Vacation leave",
-                LeaveDate = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                IsWithPay = true,
-                IsLeaderApproved = true,
-                IsManagerApproved = true,
-                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                Days = 2.0f
-            },
-        };
 
         public static List<LeaveProject> leaveProjects = new List<LeaveProject>(){
             new LeaveProject {
