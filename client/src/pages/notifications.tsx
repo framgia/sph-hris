@@ -58,6 +58,7 @@ const Notifications: NextPage = (): JSX.Element => {
           dateFiled: parsedData.DateFiled,
           status: parsedData.Status,
           isRead: notif.isRead,
+          readAt: notif.readAt,
           userAvatarLink: parsedData.User.AvatarLink
         }
         return mapped

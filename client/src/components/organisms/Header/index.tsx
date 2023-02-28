@@ -6,21 +6,24 @@ import { Menu } from 'react-feather'
 import { useRouter } from 'next/router'
 import { parse } from 'iso8601-duration'
 import { createClient } from 'graphql-ws'
+import { useQueryClient } from '@tanstack/react-query'
 import React, { FC, useEffect, useState } from 'react'
 
 import Text from '~/components/atoms/Text'
 import Avatar from '~/components/atoms/Avatar'
 import BreakIcon from '~/utils/icons/BreakIcon'
 import useUserQuery from '~/hooks/useUserQuery'
+import { INotification } from '~/utils/interfaces'
 import ClockInIcon from '~/utils/icons/ClockInIcon'
 import ClockOutIcon from '~/utils/icons/ClockOutIcon'
 import { Menus } from '~/utils/constants/sidebarMenu'
 import Button from '~/components/atoms/Buttons/Button'
 import LegendTooltip from '~/components/molecules/LegendTooltip'
+import { NotificationData } from '~/utils/types/notificationTypes'
 import UserMenuDropDown from '~/components/molecules/UserMenuDropdown'
 import NotificationPopover from '~/components/molecules/NotificationPopOver'
+import useNotification, { updateIsRead } from '~/hooks/useNotificationQuery'
 import { getLeaveNotificationSubQuery } from '~/graphql/subscriptions/leaveSubscription'
-import { useQueryClient } from '@tanstack/react-query'
 
 const Tooltip = dynamic(async () => await import('rc-tooltip'), { ssr: false })
 
@@ -37,6 +40,8 @@ type Props = {
 const Header: FC<Props> = (props): JSX.Element => {
   const router = useRouter()
   const queryClient = useQueryClient()
+  const [notifications, setNotifications] = useState<INotification[]>()
+  const [newNotificationCount, setNewNotificationCount] = useState(0)
 
   const {
     actions: {
@@ -50,8 +55,45 @@ const Header: FC<Props> = (props): JSX.Element => {
 
   const { handleUserQuery } = useUserQuery()
   const { data, status } = handleUserQuery()
+  const { getUserNotificationsQuery } = useNotification()
+  const {
+    data: notificationsData,
+    isLoading: notificationLoading,
+    refetch
+  } = getUserNotificationsQuery(data?.userById.id as number)
+  const [ready, setReady] = useState(false)
+  updateIsRead(data?.userById.id as number, ready)
 
-  const [newNotificationCount, setNewNotificationCount] = useState(0)
+  useEffect(() => {
+    if (notificationsData != null && !notificationLoading) {
+      let count = 0
+      const mappedNotifications = notificationsData.notificationByRecipientId.map((notif) => {
+        if (!notif.isRead) {
+          count++
+        }
+        const parsedData: NotificationData = JSON.parse(notif.data)
+        const mapped: INotification = {
+          id: notif.id,
+          name: parsedData.User.Name,
+          project: parsedData.Projects.join(', '),
+          type: notif.type.charAt(0).toUpperCase() + notif.type.slice(1),
+          specificType: parsedData.Type,
+          date: moment(parsedData.DateRequested).format('MMMM D, YYYY'),
+          remarks: parsedData.Remarks,
+          duration: parsedData.RequestedHours,
+          dateFiled: moment(parsedData.DateFiled).format('MMMM D, YYYY'),
+          status: parsedData.Status,
+          readAt: notif.readAt,
+          isRead: notif.isRead,
+          userAvatarLink: parsedData.User.AvatarLink
+        }
+        return mapped
+      })
+      setNewNotificationCount(count)
+      setNotifications(mappedNotifications)
+    }
+  }, [notificationsData])
+
   const [seconds, setSeconds] = useState(0)
   useEffect(() => {
     setRunning(false)
@@ -102,13 +144,7 @@ const Header: FC<Props> = (props): JSX.Element => {
     return () => clearInterval(interval)
   }, [running])
 
-  useEffect(() => {
-    if (window !== undefined)
-      setNewNotificationCount(parseInt(localStorage.getItem('newNotificationCount') as string))
-  }, [typeof window])
-
   // Notification
-  let count = 0
   const startNotificationService = (userId: number): void => {
     const clientWebsocket = createClient({
       url: process.env.NEXT_PUBLIC_BACKEND_WEBSOCKET_URL as string
@@ -120,16 +156,18 @@ const Header: FC<Props> = (props): JSX.Element => {
       },
       {
         next: ({ data }: any) => {
-          count++
           // TO DO: change implementation when integrating with notification modal
-          localStorage.setItem('newNotificationCount', `${newNotificationCount + count}`)
-          setNewNotificationCount(newNotificationCount + count)
           void queryClient.invalidateQueries({ queryKey: ['GET_ALL_USER_NOTIFICATION'] })
         },
         error: () => toast.error('There was a notification error'),
         complete: () => null
       }
     )
+  }
+
+  const handleCheckNotifications = (): void => {
+    setNewNotificationCount(0)
+    void refetch()
   }
 
   return (
@@ -251,7 +289,12 @@ const Header: FC<Props> = (props): JSX.Element => {
                   {newNotificationCount > 9 ? '9+' : newNotificationCount}
                 </span>
               )}
-              <NotificationPopover className="h-5 w-5 text-slate-400" />
+              <NotificationPopover
+                className="h-5 w-5 text-slate-400"
+                notificationsData={notifications}
+                checkNotification={() => handleCheckNotifications()}
+                setReady={(state: boolean) => setReady(state)}
+              />
             </div>
             {/* User Avatar */}
             <span className="hidden text-slate-500 sm:block">

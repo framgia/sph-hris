@@ -16,6 +16,12 @@ var dbName = Environment.GetEnvironmentVariable("DB_NAME") ?? "hris";
 var dbUser = Environment.GetEnvironmentVariable("DB_USER") ?? "sa";
 var connectionString = $"Data Source={dbHost};Initial Catalog={dbName};User ID={dbUser};Password={dbPassword};Encrypt=True;TrustServerCertificate=True;";
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy => policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod());
+});
+
 builder.Services.AddGraphQLServer()
     .AddQueryType(q => q.Name("Query"))
     .AddType<UserQuery>()
@@ -33,7 +39,8 @@ builder.Services.AddGraphQLServer()
     .AddType<LogoutMutation>()
     .AddType<InterruptionMutation>()
     .AddType<TimeEntryMutation>()
-    .AddType<LeaveMutation>();
+    .AddType<LeaveMutation>()
+    .AddType<NotificationMutation>();
 
 builder.Services.AddGraphQLServer().AddProjections().AddFiltering().AddSorting();
 builder.Services.AddGraphQLServer().AddInMemorySubscriptions()
@@ -57,11 +64,6 @@ builder.Services.AddScoped<ProjectService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<NotificationService>();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-        policy => policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod());
-});
 
 var app = builder.Build();
 

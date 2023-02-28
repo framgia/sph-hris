@@ -64,6 +64,7 @@ export interface INotification {
   duration: number
   dateFiled: string
   status: string
+  readAt: string | null
   isRead: boolean
   userAvatarLink: string
 }
