@@ -1,8 +1,10 @@
 export interface ILeave {
   id: number
-  projects: [
-    projectLeader: {
-      name: string
+  leaveProjects: [
+    {
+      project: {
+        name: string
+      }
       projectLeader: {
         name: string
       }

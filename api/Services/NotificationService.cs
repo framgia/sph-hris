@@ -13,11 +13,13 @@ namespace api.Services
         private readonly IDbContextFactory<HrisContext> _contextFactory = default!;
         private readonly ITopicEventSender _eventSender;
         private readonly LeaveService _leaveService;
-        public NotificationService(IDbContextFactory<HrisContext> contextFactory, LeaveService leaveService, [Service] ITopicEventSender eventSender)
+        private readonly UserService _userService;
+        public NotificationService(IDbContextFactory<HrisContext> contextFactory, LeaveService leaveService, UserService userService, [Service] ITopicEventSender eventSender)
         {
             _contextFactory = contextFactory;
             _eventSender = eventSender;
             _leaveService = leaveService;
+            _userService = userService;
         }
 
         public async Task<List<LeaveNotification>> createLeaveNotification(Leave leave)
@@ -25,18 +27,19 @@ namespace api.Services
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 var notifications = new List<LeaveNotification>();
-                var user = await context.Users.FindAsync(leave.UserId);
+                var user = context.Users.Find(leave.UserId);
                 var undertimeLeave = context.LeaveTypes.Where(x => x.Name != null && x.Name.ToLower() == "undertime").First();
-                var data = JsonSerializer.Serialize(new { User = user?.Name, Date = leave.LeaveDate, Type = NotificationDataTypeEnum.REQUEST });
+                var projectNames = context.LeaveProjects.Where(x => x.LeaveId == leave.Id).Select(x => x.ProjectId == 17 ? leave.OtherProject : x.Project.Name);
 
                 var dataToManager = JsonSerializer.Serialize(new
                 {
                     User = new
                     {
                         Id = user?.Id,
-                        Name = user?.Name
+                        Name = user?.Name,
+                        AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
                     },
-                    Projects = leave.LeaveProjects,
+                    Projects = projectNames,
                     RequestedHours = _leaveService.LeaveDaysToHours(leave.Days),
                     DateRequested = leave.LeaveDate,
                     DateFiled = leave.CreatedAt,
@@ -55,18 +58,19 @@ namespace api.Services
                     Data = dataToManager
                 };
                 notifications.Add(notificationToManager);
-
                 // Notification per project
-                leave.LeaveProjects.ToList().ForEach(project =>
+                leave.LeaveProjects.ToList().ForEach(leaveProject =>
                 {
+                    var project = context.Projects.FindAsync(leaveProject.ProjectId);
                     var dataToProjectLeader = JsonSerializer.Serialize(new
                     {
                         User = new
                         {
                             Id = user?.Id,
-                            Name = user?.Name
+                            Name = user?.Name,
+                            AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
                         },
-                        Projects = new List<LeaveProject> { project },
+                        Projects = new List<string> { project.Result!.Name == "Others" ? leave.OtherProject! : project.Result.Name! },
                         RequestedHours = _leaveService.LeaveDaysToHours(leave.Days),
                         DateRequested = leave.LeaveDate,
                         DateFiled = leave.CreatedAt,
@@ -77,7 +81,7 @@ namespace api.Services
                     );
                     var notificationToProjectLeader = new LeaveNotification
                     {
-                        RecipientId = project.ProjectLeaderId,
+                        RecipientId = leaveProject.ProjectLeaderId,
                         LeaveId = leave.Id,
                         Type = leave.LeaveTypeId == undertimeLeave.Id ? NotificationTypeEnum.UNDERTIME : NotificationTypeEnum.LEAVE,
                         Data = dataToProjectLeader
@@ -99,7 +103,7 @@ namespace api.Services
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
-                return await context.Notifications.Where(notif => notif.RecipientId == id).ToListAsync();
+                return await context.Notifications.Where(notif => notif.RecipientId == id).OrderByDescending(notif => notif.CreatedAt).ToListAsync();
             }
         }
 

@@ -58,11 +58,14 @@ export interface INotification {
   name: string
   project: string
   type: string
+  specificType: string
   date: string
   remarks: string
   duration: number
   dateFiled: string
   status: string
+  isRead: boolean
+  userAvatarLink: string
 }
 
 export interface IEmployeeManagement {

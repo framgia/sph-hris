@@ -148,12 +148,18 @@ namespace api.Services
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
+                var project = await context.Projects.FindAsync(1);
+                Console.WriteLine("----------------->" + project);
+
                 return
                 await context.Leaves
                 .Include(x => x.User.Role)
                 .Include(x => x.LeaveType)
                 .Include(x => x.Manager)
                 .Include(x => x.LeaveProjects)
+                    .ThenInclude(x => x.Project)
+                .Include(x => x.LeaveProjects)
+                    .ThenInclude(x => x.ProjectLeader)
                 .ToListAsync();
             }
         }

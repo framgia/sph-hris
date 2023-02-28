@@ -10,7 +10,10 @@ export const dummyNotificationData: INotification[] = [
     remarks: 'I need to work harder',
     duration: 5,
     dateFiled: 'December 3, 2023',
-    status: 'Approved'
+    status: 'Approved',
+    specificType: 'request',
+    isRead: false,
+    userAvatarLink: 'null'
   },
   {
     id: 2,
@@ -21,7 +24,10 @@ export const dummyNotificationData: INotification[] = [
     remarks: 'I need to work harder',
     duration: 5,
     dateFiled: 'December 3, 2023',
-    status: 'Pending'
+    status: 'Pending',
+    specificType: 'approve',
+    isRead: false,
+    userAvatarLink: 'null'
   },
   {
     id: 3,
@@ -32,7 +38,10 @@ export const dummyNotificationData: INotification[] = [
     remarks: 'I need to sleep harder',
     duration: 5,
     dateFiled: 'December 3, 2023',
-    status: 'Pending'
+    status: 'Pending',
+    specificType: 'request',
+    isRead: true,
+    userAvatarLink: 'null'
   },
   {
     id: 4,
@@ -43,7 +52,10 @@ export const dummyNotificationData: INotification[] = [
     remarks: 'I need to sleep harder',
     duration: 5,
     dateFiled: 'December 3, 2023',
-    status: 'Pending'
+    status: 'Pending',
+    specificType: 'disapprove',
+    isRead: true,
+    userAvatarLink: 'null'
   },
   {
     id: 5,
@@ -54,7 +66,10 @@ export const dummyNotificationData: INotification[] = [
     remarks: 'I need to sleep harder',
     duration: 5,
     dateFiled: 'December 3, 2023',
-    status: 'Pending'
+    status: 'Pending',
+    specificType: 'request',
+    isRead: false,
+    userAvatarLink: 'null'
   },
   {
     id: 6,
@@ -65,6 +80,9 @@ export const dummyNotificationData: INotification[] = [
     remarks: 'I need to sleep harder',
     duration: 5,
     dateFiled: 'December 3, 2023',
-    status: 'Pending'
+    status: 'Pending',
+    specificType: 'true',
+    isRead: false,
+    userAvatarLink: 'null'
   }
 ]
