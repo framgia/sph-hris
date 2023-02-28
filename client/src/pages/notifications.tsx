@@ -1,5 +1,6 @@
 import { NextPage } from 'next'
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import FilterIcon from '~/utils/icons/FilterIcon'
@@ -14,6 +15,7 @@ import { INotification } from '~/utils/interfaces'
 import { NotificationData } from '~/utils/types/notificationTypes'
 import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
 import moment from 'moment'
+import { STATUS_OPTIONS, TYPE_OPTIONS } from '~/utils/constants/notificationFilter'
 
 export type Filters = {
   type: string
@@ -21,13 +23,16 @@ export type Filters = {
 }
 
 export type QueryVariablesType = {
-  type: string | null
-  status: string | null
+  type: string
+  status: string
 }
 
 const Notifications: NextPage = (): JSX.Element => {
   const { getUserNotificationsQuery } = useNotification()
   const { handleUserQuery } = useUserQuery()
+
+  const router = useRouter()
+  const { query } = router
 
   const { data: user } = handleUserQuery()
   const { data: notificationsData, isLoading: notificationLoading } = getUserNotificationsQuery(
@@ -35,11 +40,12 @@ const Notifications: NextPage = (): JSX.Element => {
   )
 
   const [notifications, setNotifications] = useState<INotification[]>()
+  const [filteredNotifications, setFilteredNotifications] = useState<INotification[]>()
   const [loading, setLoading] = useState(true)
   const [globalFilter, setGlobalFilter] = useState<string>('')
   const [filters, setFilters] = useState({
-    type: '',
-    status: ''
+    type: TYPE_OPTIONS.ALL.toLowerCase(),
+    status: STATUS_OPTIONS.ALL.toLowerCase()
   })
 
   useEffect(() => {
@@ -64,9 +70,46 @@ const Notifications: NextPage = (): JSX.Element => {
         return mapped
       })
       setNotifications(mappedNotifications)
-      setLoading(false)
+      setFilteredNotifications(mappedNotifications)
+      if (query.status !== undefined && query.type !== undefined)
+        setFilters(query as QueryVariablesType)
     }
   }, [notificationsData])
+
+  useEffect(() => {
+    if (router.isReady) {
+      if (query.status !== undefined && query.type !== undefined) {
+        setFilters(query as QueryVariablesType)
+        startFilter()
+      }
+      if (router.asPath === '/notifications') setLoading(false)
+    }
+  }, [router, notifications])
+
+  const startFilter = (): void => {
+    if (notifications !== undefined) {
+      const filtered = notifications.filter(
+        (x) =>
+          (x.status.toLowerCase() === (query.status as string).toLowerCase() ||
+            (query.status as string) === STATUS_OPTIONS.ALL.toLowerCase()) &&
+          (x.type.toLowerCase() === (query.type as string).toLowerCase() ||
+            (query.type as string) === TYPE_OPTIONS.ALL.toLowerCase())
+      )
+
+      setFilteredNotifications(filtered)
+      setLoading(false)
+    }
+  }
+
+  const handleURLParameterChange = (): void => {
+    void router.replace({
+      pathname: '/notifications',
+      query: {
+        status: filters.status,
+        type: filters.type
+      }
+    })
+  }
 
   return (
     <Layout metaTitle="Notifications">
@@ -95,6 +138,7 @@ const Notifications: NextPage = (): JSX.Element => {
               )}
               filters={filters}
               setFilters={setFilters}
+              startFilter={handleURLParameterChange}
             >
               <FilterIcon className="h-4 w-4 fill-current" />
               <span>Filters</span>
@@ -105,7 +149,7 @@ const Notifications: NextPage = (): JSX.Element => {
           <NotificationList
             {...{
               query: {
-                data: notifications as INotification[]
+                data: filteredNotifications as INotification[]
               },
               table: {
                 columns,
