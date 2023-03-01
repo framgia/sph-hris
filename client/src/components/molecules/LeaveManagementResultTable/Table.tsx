@@ -2,7 +2,9 @@ import React, { FC } from 'react'
 import classNames from 'classnames'
 import { flexRender, Table } from '@tanstack/react-table'
 
+import Tr from '~/components/atoms/Tr'
 import TableSkeleton from './../SkeletonTable'
+import AnimatedTable from '~/components/atoms/Table'
 import { LeaveTable } from '~/utils/types/leaveTypes'
 
 type Props = {
@@ -20,7 +22,7 @@ const LeaveManagementTable: FC<Props> = (props) => {
   } = props
 
   return (
-    <table className="w-full">
+    <AnimatedTable>
       <thead className="border-b border-slate-200 bg-slate-50">
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
@@ -60,7 +62,7 @@ const LeaveManagementTable: FC<Props> = (props) => {
             ) : (
               <>
                 {table.getRowModel().rows.map((row) => (
-                  <tr
+                  <Tr
                     key={row.id}
                     className={classNames(
                       'group hover:bg-slate-50 hover:shadow-md hover:shadow-slate-200'
@@ -74,7 +76,7 @@ const LeaveManagementTable: FC<Props> = (props) => {
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </td>
                     ))}
-                  </tr>
+                  </Tr>
                 ))}
               </>
             )
@@ -83,7 +85,7 @@ const LeaveManagementTable: FC<Props> = (props) => {
           )}
         </>
       </tbody>
-    </table>
+    </AnimatedTable>
   )
 }
 

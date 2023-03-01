@@ -179,3 +179,84 @@ export const PersonalInformationSchema = yup.object().shape({
   address_incase_of_emergency: yup.string().label('Address w/ postal code (....., XXXX)'),
   contact_incase_of_emergency: yup.number().label('Contact Number (+XX-XXX-XXX-XXXX)')
 })
+
+export const ScheduleSchema = yup.object().shape({
+  scheduleName: yup.string().required('Schedule Name is required'),
+  monday: yup.object().when('mondaySelected', {
+    is: true,
+    then: yup.object().shape({
+      timeIn: yup.string().required('Time In is required'),
+      timeOut: yup.string().required('Time Out is required')
+    }),
+    otherwise: yup.object().shape({
+      timeIn: yup.string(),
+      timeOut: yup.string()
+    })
+  }),
+  tuesday: yup.object().when('tuesdaySelected', {
+    is: true,
+    then: yup.object().shape({
+      timeIn: yup.string().required('Time In is required'),
+      timeOut: yup.string().required('Time Out is required')
+    }),
+    otherwise: yup.object().shape({
+      timeIn: yup.string(),
+      timeOut: yup.string()
+    })
+  }),
+  wednesday: yup.object().when('wednesdaySelected', {
+    is: true,
+    then: yup.object().shape({
+      timeIn: yup.string().required('Time In is required'),
+      timeOut: yup.string().required('Time Out is required')
+    }),
+    otherwise: yup.object().shape({
+      timeIn: yup.string(),
+      timeOut: yup.string()
+    })
+  }),
+  thursday: yup.object().when('thursdaySelected', {
+    is: true,
+    then: yup.object().shape({
+      timeIn: yup.string().required('Time In is required'),
+      timeOut: yup.string().required('Time Out is required')
+    }),
+    otherwise: yup.object().shape({
+      timeIn: yup.string(),
+      timeOut: yup.string()
+    })
+  }),
+  friday: yup.object().when('fridaySelected', {
+    is: true,
+    then: yup.object().shape({
+      timeIn: yup.string().required('Time In is required'),
+      timeOut: yup.string().required('Time Out is required')
+    }),
+    otherwise: yup.object().shape({
+      timeIn: yup.string(),
+      timeOut: yup.string()
+    })
+  }),
+  saturday: yup.object().when('saturdaySelected', {
+    is: true,
+    then: yup.object().shape({
+      timeIn: yup.string().required('Time In is required'),
+      timeOut: yup.string().required('Time Out is required')
+    }),
+    otherwise: yup.object().shape({
+      timeIn: yup.string(),
+      timeOut: yup.string()
+    })
+  }),
+  sunday: yup.object().when('sundaySelected', {
+    is: true,
+    then: yup.object().shape({
+      timeIn: yup.string().required('Time In is required'),
+      timeOut: yup.string().required('Time Out is required')
+    }),
+    otherwise: yup.object().shape({
+      timeIn: yup.string(),
+      timeOut: yup.string()
+    })
+  })
+})

@@ -1,9 +1,9 @@
 import Head from 'next/head'
 import { NextPage } from 'next'
 import classNames from 'classnames'
+import { toast } from 'react-hot-toast'
 import React, { useEffect } from 'react'
 import { FcGoogle } from 'react-icons/fc'
-import { Toaster, toast } from 'react-hot-toast'
 import { signOut, signIn, useSession } from 'next-auth/react'
 
 import Logo from '~/components/atoms/Logo'
@@ -42,17 +42,6 @@ const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
 
   return (
     <>
-      <Toaster
-        position="top-right"
-        reverseOrder={false}
-        toastOptions={{
-          style: {
-            borderRadius: '10px',
-            background: '#2D3D63',
-            color: '#fff'
-          }
-        }}
-      />
       <Head>
         <title>Sign In</title>
       </Head>

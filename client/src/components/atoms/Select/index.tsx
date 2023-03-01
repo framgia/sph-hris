@@ -1,4 +1,5 @@
 import { w, W } from 'windstitch'
+import classNames from 'classnames'
 import { FieldError } from 'react-hook-form'
 
 import { rounded } from '~/utils/windstitchUtils'
@@ -9,12 +10,12 @@ const iserror = (value: boolean | FieldError | undefined): string =>
     : ''
 
 const Select = w.select(
-  `
-    outline-none disabled:cursor-not-allowed disabled:opacity-50 
-    placeholder:font-light placeholder:text-slate-400
-    border border-slate-300 focus:outline-none w-full
-    transition ease-in-out duration-150
-  `,
+  classNames(
+    'outline-none disabled:cursor-not-allowed disabled:opacity-50',
+    'placeholder:font-light placeholder:text-slate-400',
+    'border border-slate-300 focus:outline-none w-full',
+    'transition ease-in-out duration-150'
+  ),
   {
     variants: {
       color: {

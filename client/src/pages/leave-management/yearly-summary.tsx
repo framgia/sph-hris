@@ -1,25 +1,25 @@
+import moment from 'moment'
 import { NextPage } from 'next'
 import dynamic from 'next/dynamic'
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
+import { PulseLoader } from 'react-spinners'
 import React, { useEffect, useState } from 'react'
 
+import {
+  Series,
+  getHeatmapData,
+  initialSeriesData,
+  initialChartOptions
+} from '~/utils/generateData'
+import useLeave from '~/hooks/useLeave'
 import Card from '~/components/atoms/Card'
+import FadeInOut from '~/components/templates/FadeInOut'
+import { Breakdown, LeaveTable } from '~/utils/types/leaveTypes'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import BreakdownOfLeaveCard from '~/components/molecules/BreakdownOfLeavesCard'
 import LeaveManagementLayout from '~/components/templates/LeaveManagementLayout'
 import LeaveManagementResultTable from '~/components/molecules/LeaveManagementResultTable'
-
-import {
-  getHeatmapData,
-  initialChartOptions,
-  initialSeriesData,
-  Series
-} from '~/utils/generateData'
-import useLeave from '~/hooks/useLeave'
-import { Breakdown, LeaveTable } from '~/utils/types/leaveTypes'
-import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
-import moment from 'moment'
-import { useRouter } from 'next/router'
 
 const ReactApexChart = dynamic(async () => await import('react-apexcharts'), {
   ssr: false
@@ -104,47 +104,49 @@ const YearlySummary: NextPage = (): JSX.Element => {
 
   return (
     <LeaveManagementLayout metaTitle="Yearly Summary">
-      {!isLeavesLoading ? (
-        <main className="default-scrollbar h-full flex-col space-y-4 overflow-y-auto px-4">
-          <MaxWidthContainer>
-            <Card className="default-scrollbar mt-4 overflow-x-auto overflow-y-hidden">
-              <div className="w-full min-w-[647px] px-5 pt-4 md:max-w-full">
-                <ReactApexChart
-                  options={initialChartOptions}
-                  series={series}
-                  type="heatmap"
-                  width={'100%'}
-                  height={450}
+      <FadeInOut className="default-scrollbar h-full overflow-y-auto px-4">
+        {!isLeavesLoading ? (
+          <main className="flex flex-col space-y-4">
+            <MaxWidthContainer>
+              <Card className="default-scrollbar mt-4 overflow-x-auto overflow-y-hidden">
+                <div className="w-full min-w-[647px] px-5 pt-4 md:max-w-full">
+                  <ReactApexChart
+                    options={initialChartOptions}
+                    series={series}
+                    type="heatmap"
+                    width={'100%'}
+                    height={450}
+                  />
+                </div>
+              </Card>
+            </MaxWidthContainer>
+            <MaxWidthContainer>
+              <article
+                className={classNames(
+                  'flex flex-col space-y-4 pb-24 text-xs',
+                  'lg:flex-row lg:space-y-0 lg:space-x-4'
+                )}
+              >
+                {/* Pass the needed props of these components */}
+                <BreakdownOfLeaveCard data={leaves?.yearlyAllLeaves.breakdown as Breakdown} />
+                <LeaveManagementResultTable
+                  {...{
+                    query: {
+                      data: leaves?.yearlyAllLeaves.table as LeaveTable[],
+                      isLoading: isLeavesLoading,
+                      isError: isLeavesError
+                    }
+                  }}
                 />
-              </div>
-            </Card>
-          </MaxWidthContainer>
-          <MaxWidthContainer>
-            <article
-              className={classNames(
-                'flex flex-col space-y-4 pb-24 text-xs',
-                'lg:flex-row lg:space-y-0 lg:space-x-4'
-              )}
-            >
-              {/* Pass the needed props of these components */}
-              <BreakdownOfLeaveCard data={leaves?.yearlyAllLeaves.breakdown as Breakdown} />
-              <LeaveManagementResultTable
-                {...{
-                  query: {
-                    data: leaves?.yearlyAllLeaves.table as LeaveTable[],
-                    isLoading: isLeavesLoading,
-                    isError: isLeavesError
-                  }
-                }}
-              />
-            </article>
-          </MaxWidthContainer>
-        </main>
-      ) : (
-        <div className="flex min-h-[50vh] items-center justify-center">
-          <BarsLoadingIcon className="h-7 w-7 fill-current text-amber-500" />
-        </div>
-      )}
+              </article>
+            </MaxWidthContainer>
+          </main>
+        ) : (
+          <div className="flex min-h-[50vh] items-center justify-center">
+            <PulseLoader color="#ffb40b" size={10} />
+          </div>
+        )}
+      </FadeInOut>
     </LeaveManagementLayout>
   )
 }

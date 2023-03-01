@@ -108,3 +108,26 @@ export type PersonalInformationFormValues = {
   address_incase_of_emergency: string
   contact_incase_of_emergency: number
 }
+
+export type TimeEntry = {
+  timeIn: string
+  timeOut: string
+}
+
+export type ScheduleFormData = {
+  scheduleName: string
+  mondaySelected: boolean
+  tuesdaySelected: boolean
+  wednesdaySelected: boolean
+  thursdaySelected: boolean
+  fridaySelected: boolean
+  saturdaySelected: boolean
+  sundaySelected: boolean
+  monday: TimeEntry
+  tuesday: TimeEntry
+  wednesday: TimeEntry
+  thursday: TimeEntry
+  friday: TimeEntry
+  saturday: TimeEntry
+  sunday: TimeEntry
+}

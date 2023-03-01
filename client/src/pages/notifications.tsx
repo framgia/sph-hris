@@ -2,15 +2,16 @@ import moment from 'moment'
 import { NextPage } from 'next'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
+import { PulseLoader } from 'react-spinners'
 import React, { useEffect, useState } from 'react'
 
 import useUserQuery from '~/hooks/useUserQuery'
 import FilterIcon from '~/utils/icons/FilterIcon'
 import Layout from '~/components/templates/Layout'
 import { INotification } from '~/utils/interfaces'
+import FadeInOut from '~/components/templates/FadeInOut'
 import { getDuration } from '~/utils/notificationHelpers'
 import useNotification from '~/hooks/useNotificationQuery'
-import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
 import { NotificationData } from '~/utils/types/notificationTypes'
 import NotificationList from '~/components/molecules/NotificationList'
 import { columns } from '~/components/molecules/NotificationList/columns'
@@ -118,7 +119,7 @@ const Notifications: NextPage = (): JSX.Element => {
 
   return (
     <Layout metaTitle="Notifications">
-      <section className="default-scrollbar relative h-full min-h-full overflow-auto text-xs text-slate-800">
+      <FadeInOut className="default-scrollbar relative h-full min-h-full overflow-auto text-xs text-slate-800">
         <div className="sticky top-0 z-20 mx-auto block w-full max-w-4xl border-b border-slate-200 bg-slate-100 md:hidden">
           <div className="flex items-center space-x-2 px-4 py-2">
             <h1 className="text-base font-semibold text-slate-700">Notifications</h1>
@@ -165,10 +166,10 @@ const Notifications: NextPage = (): JSX.Element => {
           />
         ) : (
           <div className="flex min-h-[50vh] items-center justify-center">
-            <BarsLoadingIcon className="h-7 w-7 fill-current text-amber-500" />
+            <PulseLoader color="#ffb40b" size={10} />
           </div>
         )}
-      </section>
+      </FadeInOut>
     </Layout>
   )
 }

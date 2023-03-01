@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import classNames from 'classnames'
 import { flexRender, Table } from '@tanstack/react-table'
 
+import Tr from '~/components/atoms/Tr'
 import TableSkeleton from './../SkeletonTable'
 import { IListOfLeave } from '~/utils/interfaces'
 
@@ -64,7 +65,7 @@ const DesktopTable: FC<Props> = (props): JSX.Element => {
                 ) : (
                   <>
                     {table.getRowModel().rows.map((row) => (
-                      <tr
+                      <Tr
                         key={row.id}
                         className={classNames(
                           'group hover:bg-white hover:shadow-md hover:shadow-slate-200'
@@ -75,7 +76,7 @@ const DesktopTable: FC<Props> = (props): JSX.Element => {
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </td>
                         ))}
-                      </tr>
+                      </Tr>
                     ))}
                   </>
                 )}
