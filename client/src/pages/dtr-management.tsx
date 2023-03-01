@@ -2,12 +2,12 @@ import moment from 'moment'
 import { NextPage } from 'next'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
+import { PulseLoader } from 'react-spinners'
 import { MoreHorizontal } from 'react-feather'
 import React, { useEffect, useState } from 'react'
 
 import FilterIcon from '~/utils/icons/FilterIcon'
 import Layout from '~/components/templates/Layout'
-import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
 import LegendTooltip from '~/components/molecules/LegendTooltip'
 import DTRTable from '~/components/molecules/DTRManagementTable'
 import DTRSummaryTable from '~/components/molecules/DTRSummaryTable'
@@ -311,7 +311,7 @@ const DTRManagement: NextPage = (): JSX.Element => {
           </>
         ) : (
           <div className="flex min-h-[50vh] items-center justify-center">
-            <BarsLoadingIcon className="h-7 w-7 fill-current text-amber-500" />
+            <PulseLoader color="#ffb40b" size={10} />
           </div>
         )}
       </section>

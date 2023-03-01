@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic'
 import classNames from 'classnames'
 import { Plus } from 'react-feather'
 import { useRouter } from 'next/router'
+import { PulseLoader } from 'react-spinners'
 import React, { useEffect, useState } from 'react'
 
 import Card from '~/components/atoms/Card'
@@ -15,7 +16,6 @@ import {
 } from '~/utils/generateData'
 import useLeave from '~/hooks/useLeave'
 import useUserQuery from '~/hooks/useUserQuery'
-import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { getRemainingPaidLeaves } from '~/hooks/useLeaveQuery'
 import { Chip } from '~/components/templates/LeaveManagementLayout'
@@ -196,7 +196,7 @@ const MyLeaves: NextPage = (): JSX.Element => {
           </div>
         ) : (
           <div className="flex min-h-[50vh] items-center justify-center">
-            <BarsLoadingIcon className="h-7 w-7 fill-current text-amber-500" />
+            <PulseLoader color="#ffb40b" size={10} />
           </div>
         )}
       </main>

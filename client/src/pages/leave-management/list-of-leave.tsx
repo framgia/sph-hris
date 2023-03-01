@@ -1,10 +1,12 @@
 import moment from 'moment'
 import { NextPage } from 'next'
 import classNames from 'classnames'
+import { PulseLoader } from 'react-spinners'
 import React, { useState, useEffect } from 'react'
 
 import { getLeave } from '~/hooks/useLeaveQuery'
 import { IListOfLeave } from '~/utils/interfaces'
+import FadeInOut from '~/components/templates/FadeInOut'
 import ListOfLeaveTable from '~/components/molecules/ListOfLeaveTable'
 import { columns } from '~/components/molecules/ListOfLeaveTable/columns'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
@@ -41,7 +43,7 @@ const ListOfLeave: NextPage = (): JSX.Element => {
 
   return (
     <LeaveManagementLayout metaTitle="List of leave">
-      <section className="default-scrollbar relative overflow-auto text-xs text-slate-800">
+      <FadeInOut className="default-scrollbar relative h-full overflow-auto text-xs text-slate-800">
         <header
           className={classNames(
             'sticky left-0 top-0 z-20 flex items-center justify-between',
@@ -54,21 +56,27 @@ const ListOfLeave: NextPage = (): JSX.Element => {
             placeholder="Search"
           />
         </header>
-        <ListOfLeaveTable
-          {...{
-            query: {
-              data: mappedLeave,
-              isLoading: false,
-              error: null
-            },
-            table: {
-              columns,
-              globalFilter,
-              setGlobalFilter
-            }
-          }}
-        />
-      </section>
+        {mappedLeave !== undefined && data !== undefined ? (
+          <ListOfLeaveTable
+            {...{
+              query: {
+                data: mappedLeave,
+                isLoading: false,
+                error: null
+              },
+              table: {
+                columns,
+                globalFilter,
+                setGlobalFilter
+              }
+            }}
+          />
+        ) : (
+          <div className="flex min-h-[50vh] items-center justify-center">
+            <PulseLoader color="#ffb40b" size={10} />
+          </div>
+        )}
+      </FadeInOut>
     </LeaveManagementLayout>
   )
 }
