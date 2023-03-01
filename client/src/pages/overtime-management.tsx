@@ -1,5 +1,6 @@
 import { NextPage } from 'next'
 import classNames from 'classnames'
+import { PulseLoader } from 'react-spinners'
 import React, { useEffect, useState } from 'react'
 
 import useUserQuery from '~/hooks/useUserQuery'
@@ -7,7 +8,6 @@ import { Roles } from '~/utils/constants/roles'
 import Layout from '~/components/templates/Layout'
 import { getAllovertime } from '~/hooks/useOvertime'
 import { IOvertimeManagement } from '~/utils/interfaces'
-import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
 import { STATUS_OPTIONS } from '~/utils/constants/notificationFilter'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import OvertimeManagementTable from '~/components/molecules/OvertimeManagementTable'
@@ -131,7 +131,7 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
           />
         ) : (
           <div className="flex min-h-[50vh] items-center justify-center">
-            <BarsLoadingIcon className="h-7 w-7 fill-current text-amber-500" />
+            <PulseLoader color="#ffb40b" size={10} />
           </div>
         )}
       </section>

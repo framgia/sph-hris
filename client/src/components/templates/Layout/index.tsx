@@ -1,8 +1,10 @@
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/router'
 import React, { FC, ReactNode, useState } from 'react'
 import useLocalStorageState from 'use-local-storage-state'
 
+import FadeInOut from './../FadeInOut'
 import Drawer from '~/components/organisms/Drawer'
 import Header from '~/components/organisms/Header'
 
@@ -32,6 +34,8 @@ type Props = {
 }
 
 const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
+  const router = useRouter()
+
   const [isOpenSidebar, setIsOpenSidebar] = useLocalStorageState('sidebarToggle', {
     defaultValue: true
   })
@@ -70,6 +74,9 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
     setIsOpenTimeOutDrawer(!isOpenTimeOutDrawer)
     setWorkedHours(workedHours)
   }
+
+  const isTabPages =
+    router.pathname.includes('/my-forms') || router.pathname.includes('/leave-management')
 
   return (
     <>
@@ -112,7 +119,11 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
             }}
           />
           {/* Dynamic Content */}
-          <div className="overflow-hidden">{children}</div>
+          {isTabPages ? (
+            <div className="overflow-hidden">{children}</div>
+          ) : (
+            <FadeInOut className="overflow-hidden">{children}</FadeInOut>
+          )}
         </main>
         {/* Time In Drawer */}
         {typeof isOpenTimeInDrawer !== 'undefined' && isOpenTimeInDrawer !== null ? (

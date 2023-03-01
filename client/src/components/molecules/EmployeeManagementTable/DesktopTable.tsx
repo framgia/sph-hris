@@ -2,6 +2,8 @@ import React, { FC } from 'react'
 import classNames from 'classnames'
 import { flexRender, Table } from '@tanstack/react-table'
 
+import Tr from '~/components/atoms/Tr'
+import AnimatedTable from '~/components/atoms/Table'
 import { IEmployeeManagement } from '~/utils/interfaces'
 
 type Props = {
@@ -12,11 +14,9 @@ const DesktopTable: FC<Props> = (props): JSX.Element => {
   const { table } = props
 
   return (
-    <table
+    <AnimatedTable
       {...{
-        style: {
-          width: table.getCenterTotalSize()
-        }
+        table
       }}
     >
       <thead className="border-b border-slate-200">
@@ -50,7 +50,7 @@ const DesktopTable: FC<Props> = (props): JSX.Element => {
         ) : (
           <>
             {table.getRowModel().rows.map((row) => (
-              <tr
+              <Tr
                 key={row.id}
                 className={classNames(
                   'group hover:bg-white hover:shadow-md hover:shadow-slate-200'
@@ -61,12 +61,12 @@ const DesktopTable: FC<Props> = (props): JSX.Element => {
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
-              </tr>
+              </Tr>
             ))}
           </>
         )}
       </tbody>
-    </table>
+    </AnimatedTable>
   )
 }
 
