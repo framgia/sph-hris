@@ -24,9 +24,11 @@ public partial class HrisContext : DbContext
     public DbSet<LeaveType> LeaveTypes { get; set; } = default!;
     public DbSet<Project> Projects { get; set; } = default!;
     public DbSet<Leave> Leaves { get; set; } = default!;
-    public DbSet<LeaveProject> LeaveProjects { get; set; } = default!;
+    public DbSet<MultiProject> MultiProjects { get; set; } = default!;
     public DbSet<Notification> Notifications { get; set; } = default!;
     public DbSet<LeaveNotification> LeaveNotifications { get; set; } = default!;
+    public DbSet<OvertimeNotification> OvertimeNotifications { get; set; } = default!;
+    public DbSet<Overtime> Overtimes { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -60,9 +62,12 @@ public partial class HrisContext : DbContext
         modelBuilder.Entity<Media>().HasData(
             DatabaseSeeder.media
         );
-        modelBuilder.Entity<LeaveProject>().HasData(
-            DatabaseSeeder.leaveProjects
+
+        modelBuilder.Entity<MultiProject>().HasData(
+            DatabaseSeeder.multiProjects
         );
+
+        modelBuilder.Entity<Overtime>().HasOne(x => x.User).WithMany(e => e.Overtimes).OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<Notification>().HasDiscriminator();
         modelBuilder.Entity<LeaveNotification>().HasData(

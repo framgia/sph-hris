@@ -74,7 +74,7 @@ namespace api.Utils
             return !(leaveDates == null || leaveDates.Count == 0);
         }
 
-        public bool checkLeaveProjects(List<LeaveProjectRequest> leaveProjects)
+        public bool checkLeaveProjects(List<MultiProjectRequest> leaveProjects)
         {
             return !(leaveProjects == null || leaveProjects.Count == 0);
         }

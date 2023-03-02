@@ -1,6 +1,6 @@
 namespace api.Requests
 {
-    public class LeaveProjectRequest
+    public class MultiProjectRequest
     {
         public int ProjectId { get; set; }
         public int ProjectLeaderId { get; set; }

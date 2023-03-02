@@ -113,15 +113,16 @@ namespace api.Services
                 leave.LeaveDates?.ForEach(date =>
                 {
                     // Create LeaveProjects
-                    var leaveProjectsList = new List<LeaveProject>();
+                    var leaveProjectsList = new List<MultiProject>();
                     leave.LeaveProjects?.ForEach(project =>
                     {
-                        var projectLeave = new LeaveProject
+                        var projectLeave = new MultiProject
                         {
                             ProjectId = project.ProjectId,
-                            ProjectLeaderId = project.ProjectLeaderId
+                            ProjectLeaderId = project.ProjectLeaderId,
+                            Type = MultiProjectTypeEnum.LEAVE
                         };
-                        leaveProjectsList.Add(context.LeaveProjects.Add(projectLeave).Entity);
+                        leaveProjectsList.Add(context.MultiProjects.Add(projectLeave).Entity);
 
                     });
 
