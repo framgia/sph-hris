@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Context;
 
@@ -11,9 +12,11 @@ using api.Context;
 namespace api.Migrations
 {
     [DbContext(typeof(HrisContext))]
-    partial class HrisContextModelSnapshot : ModelSnapshot
+    [Migration("20230302040253_Overtime_LeaveProjectToMultiProject")]
+    partial class OvertimeLeaveProjectToMultiProject
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,7 +44,7 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EmployeeSchedules", (string)null);
+                    b.ToTable("EmployeeSchedules");
 
                     b.HasData(
                         new
@@ -110,7 +113,7 @@ namespace api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Leaves", (string)null);
+                    b.ToTable("Leaves");
                 });
 
             modelBuilder.Entity("api.Entities.LeaveType", b =>
@@ -133,7 +136,7 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("LeaveTypes", (string)null);
+                    b.ToTable("LeaveTypes");
 
                     b.HasData(
                         new
@@ -213,7 +216,7 @@ namespace api.Migrations
 
                     b.HasIndex("TimeId");
 
-                    b.ToTable("Medias", (string)null);
+                    b.ToTable("Medias");
 
                     b.HasData(
                         new
@@ -268,7 +271,7 @@ namespace api.Migrations
 
                     b.HasIndex("ProjectLeaderId");
 
-                    b.ToTable("MultiProjects", (string)null);
+                    b.ToTable("MultiProjects");
 
                     b.HasData(
                         new
@@ -322,7 +325,7 @@ namespace api.Migrations
 
                     b.HasIndex("RecipientId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Notification");
 
@@ -376,7 +379,7 @@ namespace api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Overtimes", (string)null);
+                    b.ToTable("Overtimes");
                 });
 
             modelBuilder.Entity("api.Entities.Personal_Access_Token", b =>
@@ -407,7 +410,7 @@ namespace api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Personal_Access_Tokens", (string)null);
+                    b.ToTable("Personal_Access_Tokens");
                 });
 
             modelBuilder.Entity("api.Entities.Project", b =>
@@ -440,7 +443,7 @@ namespace api.Migrations
 
                     b.HasIndex("ProjectSubLeaderId");
 
-                    b.ToTable("Projects", (string)null);
+                    b.ToTable("Projects");
 
                     b.HasData(
                         new
@@ -615,7 +618,7 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
 
                     b.HasData(
                         new
@@ -663,7 +666,7 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Times", (string)null);
+                    b.ToTable("Times");
 
                     b.HasData(
                         new
@@ -762,7 +765,7 @@ namespace api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TimeEntries", (string)null);
+                    b.ToTable("TimeEntries");
 
                     b.HasData(
                         new
@@ -852,7 +855,7 @@ namespace api.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
 
                     b.HasData(
                         new
@@ -1922,7 +1925,7 @@ namespace api.Migrations
 
                     b.HasIndex("WorkInterruptionTypeId");
 
-                    b.ToTable("WorkInterruptions", (string)null);
+                    b.ToTable("WorkInterruptions");
                 });
 
             modelBuilder.Entity("api.Entities.WorkInterruptionType", b =>
@@ -1944,7 +1947,7 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("WorkInterruptionTypes", (string)null);
+                    b.ToTable("WorkInterruptionTypes");
 
                     b.HasData(
                         new
@@ -2014,7 +2017,7 @@ namespace api.Migrations
 
                     b.HasIndex("EmployeeScheduleId");
 
-                    b.ToTable("WorkingDayTimes", (string)null);
+                    b.ToTable("WorkingDayTimes");
 
                     b.HasData(
                         new

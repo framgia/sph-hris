@@ -1355,12 +1355,13 @@ namespace api.Seeders
             },
         };
 
-        public static List<LeaveProject> leaveProjects = new List<LeaveProject>(){
-            new LeaveProject {
+        public static List<MultiProject> multiProjects = new List<MultiProject>(){
+            new MultiProject {
                 Id = 1,
                 LeaveId = 1,
                 ProjectId = 1,
-                ProjectLeaderId = 1
+                ProjectLeaderId = 1,
+                Type = MultiProjectTypeEnum.LEAVE
             }
         };
 

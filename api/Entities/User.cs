@@ -18,6 +18,8 @@ namespace api.Entities
         public Role Role { get; set; } = default!;
         public EmployeeSchedule EmployeeSchedule { get; set; } = default!;
         public ICollection<TimeEntry> TimeEntries { get; set; } = default!;
+        public ICollection<Overtime> Overtimes { get; set; } = default!;
         public Media? ProfileImage { get; set; }
+
     }
 }

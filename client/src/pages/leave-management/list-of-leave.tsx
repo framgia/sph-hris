@@ -22,7 +22,7 @@ const ListOfLeave: NextPage = (): JSX.Element => {
         id: i?.id,
         name: i?.user?.name,
         userId: i?.user?.id,
-        project: i?.leaveProjects[0].project?.name,
+        project: i?.leaveProjects[0]?.project?.name,
         leaveDate: moment(i?.leaveDate).format('MM/DD/YYYY'),
         type: i?.leaveType?.name,
         isWithPay: i?.isWithPay,
