@@ -12,6 +12,7 @@ import { INotification } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/Button'
 import { SpecificType } from '~/utils/constants/notificationTypes'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
+import useNotificationMutation from '~/hooks/useNotificationMutation'
 import DisclosureTransition from '~/components/templates/DisclosureTransition'
 
 type Props = {
@@ -22,6 +23,8 @@ type Props = {
 const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
   const router = useRouter()
   const [notificationId, setNotificationId] = useState(router.query.id)
+  const { handleNotificationMutation } = useNotificationMutation()
+  const notificationMutations = handleNotificationMutation()
 
   const switchMessage = (type: string): string => {
     switch (type) {
@@ -71,6 +74,16 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
                   {({ open }) => (
                     <>
                       <Disclosure.Button
+                        onClick={() => {
+                          notificationMutations.mutate(
+                            { id: row.original.id },
+                            {
+                              onSuccess: () => {
+                                row.original.readAt = moment().format('MM ddd, YYYY hh:mm:ss a')
+                              }
+                            }
+                          )
+                        }}
                         className={classNames(
                           'w-full border-b border-slate-200 py-2 px-4 hover:bg-white',
                           open ? 'bg-white' : 'hover:shadow-md hover:shadow-slate-200',
