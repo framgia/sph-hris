@@ -61,7 +61,12 @@ const Header: FC<Props> = (props): JSX.Element => {
     isLoading: notificationLoading,
     refetch
   } = getUserNotificationsQuery(data?.userById.id as number)
+  const [seconds, setSeconds] = useState(0)
   const [ready, setReady] = useState(false)
+  const [running, setRunning] = useState(false)
+  const [time, setTime] = useState<string | number>(() => {
+    return '0 UTC'
+  })
   updateIsRead(data?.userById.id as number, ready)
 
   useEffect(() => {
@@ -94,7 +99,6 @@ const Header: FC<Props> = (props): JSX.Element => {
     }
   }, [notificationsData])
 
-  const [seconds, setSeconds] = useState(0)
   useEffect(() => {
     setRunning(false)
     setTime(0)
@@ -117,10 +121,7 @@ const Header: FC<Props> = (props): JSX.Element => {
       }
     }
   }, [status, data])
-  const [time, setTime] = useState<string | number>(() => {
-    return '0 UTC'
-  })
-  const [running, setRunning] = useState(false)
+
   useMemo(() => {
     setTime(seconds)
   }, [seconds])
@@ -165,9 +166,10 @@ const Header: FC<Props> = (props): JSX.Element => {
     )
   }
 
-  const handleCheckNotifications = (): void => {
-    setNewNotificationCount(0)
+  const handleCheckNotifications = (state: boolean): void => {
+    setReady(state)
     void refetch()
+    setNewNotificationCount(0)
   }
 
   return (
@@ -292,8 +294,7 @@ const Header: FC<Props> = (props): JSX.Element => {
               <NotificationPopover
                 className="h-5 w-5 text-slate-400"
                 notificationsData={notifications}
-                checkNotification={() => handleCheckNotifications()}
-                setReady={(state: boolean) => setReady(state)}
+                checkNotification={(state: boolean) => handleCheckNotifications(state)}
               />
             </div>
             {/* User Avatar */}

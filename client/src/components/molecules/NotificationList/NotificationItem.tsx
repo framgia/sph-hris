@@ -1,10 +1,11 @@
 import moment from 'moment'
-import React, { FC } from 'react'
 import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
 import { Table } from '@tanstack/react-table'
 import { Disclosure } from '@headlessui/react'
 import { Check, ChevronRight, X } from 'react-feather'
+import React, { FC, useEffect, useState } from 'react'
 
 import Avatar from '~/components/atoms/Avatar'
 import { INotification } from '~/utils/interfaces'
@@ -19,6 +20,10 @@ type Props = {
 }
 
 const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
+  const router = useRouter()
+  const [notificationId, setNotificationId] = useState(router.query.id)
+  const [state, setState] = useState(isLoading)
+
   const switchMessage = (type: string): string => {
     switch (type) {
       case SpecificType.REQUEST:
@@ -32,9 +37,24 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
     }
   }
 
+  useEffect(() => {
+    setState(true)
+    setNotificationId(router.query.id)
+    if (router.query.id !== undefined) {
+      void table.options.data.forEach((row, index) => {
+        if (row.id === Number(router.query.id)) {
+          void table.setPageIndex(~~(index / 10))
+        }
+      })
+    }
+    setTimeout(() => {
+      setState(false)
+    }, 1000)
+  }, [router.query.id])
+
   return (
     <>
-      {isLoading ? (
+      {state ? (
         <div className="flex flex-col px-4 py-3">
           {Array.from({ length: 30 }, (_, i) => (
             <LineSkeleton key={i} className="py-1" />
@@ -49,7 +69,7 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
           ) : (
             <>
               {table.getRowModel().rows.map((row) => (
-                <Disclosure key={row.id}>
+                <Disclosure key={row.id} defaultOpen={row.original?.id === Number(notificationId)}>
                   {({ open }) => (
                     <>
                       <Disclosure.Button

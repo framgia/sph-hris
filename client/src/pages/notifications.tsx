@@ -1,21 +1,21 @@
+import moment from 'moment'
 import { NextPage } from 'next'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
+import useUserQuery from '~/hooks/useUserQuery'
 import FilterIcon from '~/utils/icons/FilterIcon'
 import Layout from '~/components/templates/Layout'
-import NotificationList from '~/components/molecules/NotificationList'
-import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
-import { columns } from '~/components/molecules/NotificationList/columns'
-import NotificationFilterDropdown from '~/components/molecules/NotificationFilterDropdown'
-import useNotification from '~/hooks/useNotificationQuery'
-import useUserQuery from '~/hooks/useUserQuery'
 import { INotification } from '~/utils/interfaces'
-import { NotificationData } from '~/utils/types/notificationTypes'
+import useNotification from '~/hooks/useNotificationQuery'
 import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
-import moment from 'moment'
+import { NotificationData } from '~/utils/types/notificationTypes'
+import NotificationList from '~/components/molecules/NotificationList'
+import { columns } from '~/components/molecules/NotificationList/columns'
+import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import { STATUS_OPTIONS, TYPE_OPTIONS } from '~/utils/constants/notificationFilter'
+import NotificationFilterDropdown from '~/components/molecules/NotificationFilterDropdown'
 
 export type Filters = {
   type: string
@@ -82,7 +82,11 @@ const Notifications: NextPage = (): JSX.Element => {
         setFilters(query as QueryVariablesType)
         startFilter()
       }
-      if (router.asPath === '/notifications') setLoading(false)
+      if (
+        router.asPath === '/notifications' ||
+        router.asPath === `/notifications?id=${router.query.id as string}`
+      )
+        setLoading(false)
     }
   }, [router, notifications])
 

@@ -29,7 +29,7 @@ const useNotificationMutation = (): returnType => {
       mutationFn: async (notification: NotificationRequestInput) => {
         return await client.request(NOTIFICATION_READ_AT_MUTATION, { notification })
       },
-      onSuccess: async (data) => {}
+      onSuccess: async () => {}
     })
   return { handleNotificationMutation }
 }

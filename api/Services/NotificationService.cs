@@ -229,18 +229,21 @@ namespace api.Services
 
         public async Task<int> ReadNotification(NotificationRequest notification)
         {
-            using HrisContext context = _contextFactory.CreateDbContext();
-            using var transaction = context.Database.BeginTransaction();
-            try
+            using (HrisContext context = _contextFactory.CreateDbContext())
             {
-                Notification notificationDetial = await context.Notifications.Where(c => c.Id == notification.Id).FirstAsync();
-                notificationDetial.ReadAt = DateTime.Now;
-                await context.SaveChangesAsync();
-                transaction.Commit();
-                return 1;
+                using var transaction = context.Database.BeginTransaction();
+                try
+                {
+                    var notificationDetial = await context.Notifications.Where(c => c.Id == notification.Id).FirstAsync();
+                    notificationDetial.ReadAt = DateTime.Now;
+                    context.Notifications.Update(notificationDetial);
+                    await context.SaveChangesAsync();
+                    transaction.Commit();
+                    return 1;
+                }
+                catch (Exception)
+                { return 0; }
             }
-            catch (Exception)
-            { return 0; }
         }
     }
 }
