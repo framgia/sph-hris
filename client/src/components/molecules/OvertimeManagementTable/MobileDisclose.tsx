@@ -104,12 +104,12 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                               <li className="flex items-center px-4 py-2.5">
                                 Projects:{' '}
                                 <div className="ml-2 flex flex-wrap items-center space-x-2">
-                                  {row.original.project.map(({ label }, index) => (
+                                  {row.original.projects.map((project, index) => (
                                     <span
                                       key={index}
                                       className="rounded border border-slate-300 bg-slate-50 px-1.5 font-medium"
                                     >
-                                      {label}
+                                      {project.project_name.label}
                                     </span>
                                   ))}
                                 </div>

@@ -2,17 +2,19 @@ import moment from 'moment'
 import Link from 'next/link'
 import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
+import { HiFire } from 'react-icons/hi'
 import React, { useState } from 'react'
-import { Clock, Edit } from 'react-feather'
 import { createColumnHelper } from '@tanstack/react-table'
+import { Check, Clock, Edit, RefreshCw, ThumbsDown } from 'react-feather'
 
 import Chip from '~/components/atoms/Chip'
 import useUserQuery from '~/hooks/useUserQuery'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
+import AddNewOvertimeModal from '../AddNewOvertimeModal'
+import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 import InterruptionTimeEntriesModal from './../InterruptionTimeEntriesModal'
-import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
 
 const columnHelper = createColumnHelper<IEmployeeTimeEntry>()
 const EMPTY = 'N/A'
@@ -132,7 +134,69 @@ export const columns = [
   }),
   columnHelper.accessor('overtime', {
     header: () => <CellHeader label="Overtime(min)" />,
-    footer: (info) => info.column.id
+    footer: (info) => info.column.id,
+    cell: (props) => {
+      const [isOpen, setIsOpen] = useState<boolean>(false)
+
+      const handleToggle = (): void => setIsOpen(!isOpen)
+
+      return (
+        <div className="flex items-center space-x-2">
+          {/* If the user has an overtime */}
+          <Button type="button" className="flex items-center" onClick={handleToggle}>
+            <span>60</span>
+            <HiFire className="h-4 w-4 text-red-500" />
+
+            {/* File New Overtime Modal */}
+            {isOpen ? (
+              <AddNewOvertimeModal
+                {...{
+                  isOpen,
+                  closeModal: handleToggle,
+                  overtime: props.row.original
+                }}
+              />
+            ) : null}
+          </Button>
+
+          {/* If Approved Request */}
+          <Tippy placement="left" content="Approved request" className="!text-xs">
+            <Button
+              type="button"
+              className="inline-flex items-center rounded border-y border-r border-slate-300 group-hover:bg-white"
+            >
+              <Check className="h-4 w-5 rounded-l bg-green-500 text-white" />
+              <span className="px-1 text-green-600">20</span>
+            </Button>
+          </Tippy>
+
+          {/* If Pending Request */}
+          <Tippy placement="left" content="Pending request" className="!text-xs">
+            <Button
+              type="button"
+              className="inline-flex items-center rounded border-y border-r border-slate-300 group-hover:bg-white"
+            >
+              <RefreshCw className="h-4 w-5 rounded-l bg-amber-500 px-1 text-white" />
+              <span className="px-1 text-amber-600">16</span>
+            </Button>
+          </Tippy>
+
+          {/* If Pending Request */}
+          <Tippy placement="left" content="Disapproved request" className="!text-xs">
+            <Button
+              type="button"
+              className="inline-flex items-center rounded border-y border-r border-slate-300 group-hover:bg-white"
+            >
+              <ThumbsDown className="h-4 w-5 rounded-l bg-rose-500 px-1 text-white" />
+              <span className="px-1 text-rose-600">120</span>
+            </Button>
+          </Tippy>
+
+          {/* Just a normal number */}
+          <span>0</span>
+        </div>
+      )
+    }
   }),
   columnHelper.accessor('status', {
     header: () => <CellHeader label="Status" />,

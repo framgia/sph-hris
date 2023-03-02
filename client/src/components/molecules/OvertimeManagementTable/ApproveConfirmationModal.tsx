@@ -67,8 +67,8 @@ const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.E
       >
         <Text theme="lg" weight="semibold" className="text-slate-7s00">
           Do you approve the requested overtime hours for the Project of{' '}
-          {row.project.map(({ label }, index) => (
-            <span key={index}>{`${label}, `}</span>
+          {row.projects.map((project, index) => (
+            <span key={index}>{`${project.project_name.label}, `}</span>
           ))}
           of <span className="text-amber-800 underline">{row.user.name}?</span>
         </Text>
