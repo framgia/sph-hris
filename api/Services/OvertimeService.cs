@@ -25,31 +25,9 @@ namespace api.Services
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
-                var errors = new List<IError>();
-                var index = 0;
+                var errors = _customInputValidation.checkOvertimeRequestInput(overtime);
 
-                // input validation
-                if (!_customInputValidation.checkUserExist(overtime.UserId))
-                    errors.Add(_customInputValidation.buildError(nameof(overtime.UserId), InputValidationMessageEnum.INVALID_USER));
-
-                if (!_customInputValidation.checkUserExist(overtime.UserId))
-                    errors.Add(_customInputValidation.buildError(nameof(overtime.ManagerId), InputValidationMessageEnum.INVALID_MANAGER));
-
-                if (!_customInputValidation.checkDateFormat(overtime.Date))
-                    errors.Add(_customInputValidation.buildError(nameof(overtime.Date), InputValidationMessageEnum.INVALID_DATE));
-
-
-                index = 0;
-                overtime.OvertimeProjects?.ForEach(project =>
-                {
-                    if (!_customInputValidation.checkProjectExist(project.ProjectId))
-                        errors.Add(_customInputValidation.buildError(nameof(project.ProjectId), InputValidationMessageEnum.INVALID_PROJECT, index));
-
-                    if (!_customInputValidation.checkUserExist(project.ProjectLeaderId))
-                        errors.Add(_customInputValidation.buildError(nameof(project.ProjectLeaderId), InputValidationMessageEnum.INVALID_PROJECT_LEADER, index));
-
-                    index++;
-                });
+                if (errors.Count > 0) throw new GraphQLException(errors);
 
                 // Create LeaveProjects
                 var overtimeProjectsList = new List<MultiProject>();
