@@ -66,13 +66,13 @@ export const UndertimeLeaveSchema = yup.object().shape({
 })
 
 export const MyOvertimeSchema = yup.object().shape({
-  project: yup.array().of(
+  projects: yup.array().of(
     yup.object().shape({
-      label: yup.string().required(),
-      value: yup.string().required()
+      project_name: SelectSchema,
+      project_leader: SelectSchema
     })
   ),
-  other_project: yup.string().label('Other Project'),
+  manager: SelectSchema.label('Manager'),
   date_effective: yup.string().required().label('Date Effective'),
   requested_hours: yup.number().required().label('Requested hours'),
   remarks: yup.string().required().label('Reason')

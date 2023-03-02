@@ -48,11 +48,12 @@ export type UndertimeFormValues = {
 
 export type NewOvertimeFormValues = {
   // eslint-disable-next-line @typescript-eslint/array-type
-  project: {
-    label: string
-    value: string
+  projects: {
+    project_name: ReactSelectOption
+    project_leader: ReactSelectOption
+    __isNew__?: boolean
   }[]
-  other_project?: string
+  manager: ReactSelectOption
   date_effective: string
   requested_hours: number
   remarks: string

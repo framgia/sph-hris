@@ -1,15 +1,18 @@
 import moment from 'moment'
 import Link from 'next/link'
 import Tooltip from 'rc-tooltip'
-import React, { FC, useState } from 'react'
+import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
+import { HiFire } from 'react-icons/hi'
+import React, { FC, useState } from 'react'
 import { Table } from '@tanstack/react-table'
 import { Disclosure } from '@headlessui/react'
-import { ChevronRight, Clock, Edit } from 'react-feather'
+import { Check, ChevronRight, Clock, Edit, RefreshCw, ThumbsDown } from 'react-feather'
 
 import Chip from '~/components/atoms/Chip'
 import useUserQuery from '~/hooks/useUserQuery'
 import Button from '~/components/atoms/Buttons/Button'
+import AddNewOvertimeModal from '../AddNewOvertimeModal'
 import { WorkStatus } from '~/utils/constants/work-status'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
@@ -24,6 +27,7 @@ type Props = {
 
 const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
   const [isOpenTimeEntry, setIsOpenTimeEntry] = useState<boolean>(false)
+  const [isOpenNewOvertime, setIsOpenNewOvertime] = useState<boolean>(false)
   const [timeEntryId, setTimeEntryId] = useState<number>(-1)
   const { handleUserQuery } = useUserQuery()
   const { data: user } = handleUserQuery()
@@ -32,6 +36,8 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
     setIsOpenTimeEntry(!isOpenTimeEntry)
     setTimeEntryId(parseInt(id as string))
   }
+
+  const handleIsOpenNewOvertime = (): void => setIsOpenNewOvertime(!isOpenNewOvertime)
 
   const EMPTY = 'N/A'
 
@@ -189,9 +195,78 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                 Undertime(min):{' '}
                                 <span className="font-semibold">{row.original.undertime}</span>
                               </li>
-                              <li className="px-4 py-2">
-                                Overtime(min):{' '}
-                                <span className="font-semibold">{row.original.overtime}</span>
+                              <li className="flex flex-wrap items-center space-x-2 px-4 py-2">
+                                <span>Overtime(min):</span>
+                                <div className="flex items-center space-x-2">
+                                  {/* If the user has an overtime */}
+                                  <Button
+                                    type="button"
+                                    className="flex items-center"
+                                    onClick={handleIsOpenNewOvertime}
+                                  >
+                                    <span>60</span>
+                                    <HiFire className="h-4 w-4 text-red-500" />
+
+                                    {/* File New Overtime Modal */}
+                                    {isOpenNewOvertime ? (
+                                      <AddNewOvertimeModal
+                                        {...{
+                                          isOpen: isOpenNewOvertime,
+                                          closeModal: handleIsOpenNewOvertime,
+                                          overtime: row.original
+                                        }}
+                                      />
+                                    ) : null}
+                                  </Button>
+
+                                  {/* If Approved Request */}
+                                  <Tippy
+                                    placement="left"
+                                    content="Approved request"
+                                    className="!text-xs"
+                                  >
+                                    <Button
+                                      type="button"
+                                      className="inline-flex items-center rounded border-y border-r border-slate-300 group-hover:bg-white"
+                                    >
+                                      <Check className="h-4 w-5 rounded-l bg-green-500 text-white" />
+                                      <span className="px-1 text-green-600">20</span>
+                                    </Button>
+                                  </Tippy>
+
+                                  {/* If Pending Request */}
+                                  <Tippy
+                                    placement="left"
+                                    content="Pending request"
+                                    className="!text-xs"
+                                  >
+                                    <Button
+                                      type="button"
+                                      className="inline-flex items-center rounded border-y border-r border-slate-300 group-hover:bg-white"
+                                    >
+                                      <RefreshCw className="h-4 w-5 rounded-l bg-amber-500 px-1 text-white" />
+                                      <span className="px-1 text-amber-600">16</span>
+                                    </Button>
+                                  </Tippy>
+
+                                  {/* If Pending Request */}
+                                  <Tippy
+                                    placement="left"
+                                    content="Disapproved request"
+                                    className="!text-xs"
+                                  >
+                                    <Button
+                                      type="button"
+                                      className="inline-flex items-center rounded border-y border-r border-slate-300 group-hover:bg-white"
+                                    >
+                                      <ThumbsDown className="h-4 w-5 rounded-l bg-rose-500 px-1 text-white" />
+                                      <span className="px-1 text-rose-600">120</span>
+                                    </Button>
+                                  </Tippy>
+
+                                  {/* Just a normal number */}
+                                  <span className="font-semibold">{row.original.workedHours}</span>
+                                </div>
                               </li>
                               <li className="flex items-center space-x-2 px-4 py-2">
                                 <span>Actions:</span>

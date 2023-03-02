@@ -46,12 +46,12 @@ export const hrColumns = [
     header: () => '',
     footer: (info) => info.column.id
   }),
-  columnHelper.accessor('project', {
+  columnHelper.accessor('projects', {
     header: () => <CellHeader label="Project" />,
     footer: (info) => info.column.id,
     cell: (props) => {
       return (
-        <Listbox value={props.row.original.project[0].value}>
+        <Listbox value={props.row.original.projects[0]}>
           <div className="relative mt-1">
             <Listbox.Button
               className={classNames(
@@ -59,7 +59,9 @@ export const hrColumns = [
                 'text-xs outline-none focus:scale-95'
               )}
             >
-              <span className="block truncate">{props.row.original.project[0].label}</span>
+              <span className="block truncate">
+                {props.row.original.projects[0].project_name.label}
+              </span>
               <AiOutlineCaretDown className="h-3 w-3 text-gray-400" aria-hidden="true" />
             </Listbox.Button>
             <Transition
@@ -74,7 +76,7 @@ export const hrColumns = [
                   'py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'
                 )}
               >
-                {props.row.original.project.map(({ label, value }, index) => (
+                {props.row.original.projects.map((project, index) => (
                   <Listbox.Option
                     key={index}
                     className={({ active }) =>
@@ -83,7 +85,7 @@ export const hrColumns = [
                         active ? 'bg-amber-100 text-amber-900' : 'text-slate-800'
                       )
                     }
-                    value={value}
+                    value={project.project_name.value}
                   >
                     {({ selected }) => (
                       <>
@@ -93,7 +95,7 @@ export const hrColumns = [
                             selected ? 'font-medium' : 'font-normal'
                           )}
                         >
-                          {label}
+                          {project.project_name.label}
                         </span>
                       </>
                     )}
@@ -215,12 +217,12 @@ export const managerColumns = [
       </div>
     )
   }),
-  columnHelper.accessor('project', {
+  columnHelper.accessor('projects', {
     header: () => <CellHeader label="Project" />,
     footer: (info) => info.column.id,
     cell: (props) => {
       return (
-        <Listbox value={props.row.original.project[0].value}>
+        <Listbox value={props.row.original.projects[0]}>
           <div className="relative mt-1">
             <Listbox.Button
               className={classNames(
@@ -228,7 +230,9 @@ export const managerColumns = [
                 'text-xs outline-none focus:scale-95'
               )}
             >
-              <span className="block truncate">{props.row.original.project[0].label}</span>
+              <span className="block truncate">
+                {props.row.original.projects[0].project_name.label}
+              </span>
               <AiOutlineCaretDown className="h-3 w-3 text-gray-400" aria-hidden="true" />
             </Listbox.Button>
             <Transition
@@ -243,7 +247,7 @@ export const managerColumns = [
                   'py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'
                 )}
               >
-                {props.row.original.project.map(({ label, value }, index) => (
+                {props.row.original.projects.map((project, index) => (
                   <Listbox.Option
                     key={index}
                     className={({ active }) =>
@@ -252,7 +256,7 @@ export const managerColumns = [
                         active ? 'bg-amber-100 text-amber-900' : 'text-slate-800'
                       )
                     }
-                    value={value}
+                    value={project.project_name.value}
                   >
                     {({ selected }) => (
                       <>
@@ -262,7 +266,7 @@ export const managerColumns = [
                             selected ? 'font-medium' : 'font-normal'
                           )}
                         >
-                          {label}
+                          {project.project_name.label}
                         </span>
                       </>
                     )}
@@ -345,18 +349,18 @@ export const managerColumns = [
                 </p>
                 <div className="mt-6 flex items-center justify-center space-x-2 text-white">
                   <ButtonAction
-                    onClick={onClose}
-                    variant="secondary"
-                    className="w-full py-1 px-4 text-slate-500"
-                  >
-                    No
-                  </ButtonAction>
-                  <ButtonAction
                     variant="danger"
                     onClick={() => handleDeleteMessage(onClose)}
                     className="w-full py-1 px-4"
                   >
                     Yes
+                  </ButtonAction>
+                  <ButtonAction
+                    onClick={onClose}
+                    variant="secondary"
+                    className="w-full py-1 px-4 text-slate-500"
+                  >
+                    No
                   </ButtonAction>
                 </div>
               </Card>

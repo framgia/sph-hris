@@ -89,10 +89,20 @@ export interface IOvertimeManagement {
     }
   }
   // eslint-disable-next-line @typescript-eslint/array-type
-  project: {
+  projects: {
+    project_name: {
+      label: string
+      value: string
+    }
+    project_leader: {
+      label: string
+      value: string
+    }
+  }[]
+  manager: {
     label: string
     value: string
-  }[]
+  }
   date: string
   overtimeIn: string
   overtimeOut: string
