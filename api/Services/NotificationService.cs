@@ -227,7 +227,7 @@ namespace api.Services
             return await context.Notifications.Where(x => x.RecipientId == id).ToListAsync();
         }
 
-        public async Task<int> ReadNotification(NotificationRequest notification)
+        public async Task<string> ReadNotification(NotificationRequest notification)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
@@ -239,10 +239,10 @@ namespace api.Services
                     context.Notifications.Update(notificationDetial);
                     await context.SaveChangesAsync();
                     transaction.Commit();
-                    return 1;
+                    return "Updated successfully!";
                 }
                 catch (Exception)
-                { return 0; }
+                { return "There's an error!"; }
             }
         }
     }

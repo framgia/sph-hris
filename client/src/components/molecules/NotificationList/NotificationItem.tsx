@@ -22,7 +22,6 @@ type Props = {
 const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
   const router = useRouter()
   const [notificationId, setNotificationId] = useState(router.query.id)
-  const [state, setState] = useState(isLoading)
 
   const switchMessage = (type: string): string => {
     switch (type) {
@@ -38,7 +37,6 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
   }
 
   useEffect(() => {
-    setState(true)
     setNotificationId(router.query.id)
     if (router.query.id !== undefined) {
       void table.options.data.forEach((row, index) => {
@@ -47,14 +45,11 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
         }
       })
     }
-    setTimeout(() => {
-      setState(false)
-    }, 1000)
   }, [router.query.id])
 
   return (
     <>
-      {state ? (
+      {isLoading ? (
         <div className="flex flex-col px-4 py-3">
           {Array.from({ length: 30 }, (_, i) => (
             <LineSkeleton key={i} className="py-1" />
@@ -69,14 +64,17 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
           ) : (
             <>
               {table.getRowModel().rows.map((row) => (
-                <Disclosure key={row.id} defaultOpen={row.original?.id === Number(notificationId)}>
+                <Disclosure
+                  key={row.original?.id}
+                  defaultOpen={row.original?.id === Number(notificationId)}
+                >
                   {({ open }) => (
                     <>
                       <Disclosure.Button
                         className={classNames(
                           'w-full border-b border-slate-200 py-2 px-4 hover:bg-white',
                           open ? 'bg-white' : 'hover:shadow-md hover:shadow-slate-200',
-                          !row.original.isRead ? 'bg-slate-300' : ''
+                          !row.original.isRead || row.original.readAt == null ? 'bg-slate-300' : ''
                         )}
                       >
                         <div className="flex items-center justify-between">

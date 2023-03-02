@@ -69,6 +69,10 @@ const Header: FC<Props> = (props): JSX.Element => {
   })
   updateIsRead(data?.userById.id as number, ready)
 
+  // useEffect(() => {
+  //   console.log(table.)
+  // })
+
   useEffect(() => {
     if (notificationsData != null && !notificationLoading) {
       let count = 0
@@ -285,7 +289,7 @@ const Header: FC<Props> = (props): JSX.Element => {
                 <span
                   className={classNames(
                     'shrink-0 rounded-full border border-red-600 bg-red-500 px-1 !text-xs font-semibold text-white',
-                    'absolute -right-1 -top-1 z-50 flex h-5 w-5 items-center justify-center'
+                    'absolute -right-2 -top-2 z-50 flex h-5 w-5 items-center justify-center'
                   )}
                 >
                   {newNotificationCount > 9 ? '9+' : newNotificationCount}

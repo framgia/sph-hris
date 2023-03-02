@@ -115,6 +115,13 @@ const Notifications: NextPage = (): JSX.Element => {
     })
   }
 
+  useEffect(() => {
+    setLoading(true)
+    setTimeout(() => {
+      setLoading(false)
+    }, 500)
+  }, [router.query.id])
+
   return (
     <Layout metaTitle="Notifications">
       <section className="default-scrollbar relative h-full min-h-full overflow-auto text-xs text-slate-800">

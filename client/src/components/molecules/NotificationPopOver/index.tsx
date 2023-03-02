@@ -39,7 +39,7 @@ const NotificationPopover: FC<Props> = ({
     <Popover className="relative z-30">
       {({ open }) => (
         <>
-          <Popover.Button className="flex cursor-pointer items-center rounded-full p-1 outline-none active:scale-95">
+          <Popover.Button className="flex cursor-pointer items-center rounded-full outline-none active:scale-95">
             <Bell
               onClick={() => {
                 checkNotification(open)
