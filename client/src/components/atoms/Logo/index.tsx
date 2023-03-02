@@ -14,8 +14,8 @@ const Logo: FC<Props> = ({ isOpen = true, href = '/' }): JSX.Element => {
     <Link
       href={href}
       className={classNames(
-        'flex items-center py-6 text-2xl font-bold',
-        'space-x-2 outline-none duration-300',
+        'flex items-center py-5 text-2xl font-bold',
+        'space-x-2 font-inter outline-none duration-300',
         isOpen ? 'px-7' : 'px-3'
       )}
     >

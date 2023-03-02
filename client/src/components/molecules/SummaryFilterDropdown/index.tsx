@@ -3,12 +3,12 @@ import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import Select from 'react-select'
 
-import useUserQuery from '~/hooks/useUserQuery'
-import { customStyles } from '~/utils/customReactSelectStyles'
 import Text from '~/components/atoms/Text'
-import RadioButton from '~/components/atoms/RadioButton'
+import useUserQuery from '~/hooks/useUserQuery'
+import CheckBox from '~/components/atoms/CheckBox'
 import { WorkStatus } from '~/utils/constants/work-status'
 import Button from '~/components/atoms/Buttons/ButtonAction'
+import { customStyles } from '~/utils/customReactSelectStyles'
 import FilterDropdownTemplate from '~/components/templates/FilterDropdownTemplate'
 import { optionType, usersSelectOptions, yearSelectOptions } from '~/utils/maps/filterOptions'
 
@@ -182,8 +182,8 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
               </label>
               <hr />
               <div className="flex items-center justify-between">
-                <RadioButton label="With Pay" />
-                <RadioButton label="Without Pay" />
+                <CheckBox label="With Pay" />
+                <CheckBox label="Without Pay" />
               </div>
             </div>
           )}

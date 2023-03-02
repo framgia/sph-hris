@@ -1,19 +1,18 @@
-import React, { FC, useEffect, useState } from 'react'
+import moment from 'moment'
 import { X } from 'react-feather'
 import classNames from 'classnames'
-import TextareaAutosize from 'react-textarea-autosize'
-import moment from 'moment'
-import { serialize } from 'tinyduration'
 import { toast } from 'react-hot-toast'
 import { parse } from 'iso8601-duration'
+import { serialize } from 'tinyduration'
+import React, { FC, useEffect, useState } from 'react'
+import TextareaAutosize from 'react-textarea-autosize'
 
 import Alert from '~/components/atoms/Alert'
-import Text from '~/components/atoms/Text'
-import Avatar from '~/components/atoms/Avatar'
-import DrawerTemplate from '~/components/templates/DrawerTemplate'
+import useUserQuery from '~/hooks/useUserQuery'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import useTimeInMutation from '~/hooks/useTimeInMutation'
-import useUserQuery from '~/hooks/useUserQuery'
+import UserTimeZone from '~/components/molecules/UserTimeZone'
+import DrawerTemplate from '~/components/templates/DrawerTemplate'
 
 type Props = {
   isOpenTimeInDrawer: boolean
@@ -93,7 +92,7 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
     >
       {/* Header */}
       <header className="flex items-center justify-between border-b border-slate-200 px-6 py-3">
-        <h1 className="text-base font-medium text-slate-900">
+        <h1 className="font-inter text-base font-medium text-slate-700">
           Confirm {afterStartTime ? 'Late' : ''} Time In
         </h1>
         <button onClick={handleToggleTimeInDrawer} className="active:scale-95">
@@ -101,25 +100,10 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
         </button>
       </header>
       {/* Body */}
-      <div className="flex flex-col space-y-3 px-6 py-2">
+      <div className="flex flex-col space-y-3 px-6">
         {/* User */}
-        <div className="flex items-center space-x-3 border-b border-slate-200 py-3">
-          <Avatar src={data?.userById.avatarLink} alt="user-avatar" size="lg" rounded="full" />
-          <div>
-            <Text theme="md" size="sm" weight="bold">
-              {data?.userById.name}
-            </Text>
-            <p className="text-[11px] leading-tight text-slate-500">
-              Clocking from {Intl.DateTimeFormat().resolvedOptions().timeZone}
-            </p>
-            <p className="text-[11px] leading-tight text-slate-500">
-              {moment(new Date()).format('dddd, MMMM Do YYYY')}
-            </p>
-            <p className="text-[11px] leading-tight text-slate-500">
-              Schedule: {data?.userById.employeeSchedule.name}
-            </p>
-          </div>
-        </div>
+        <UserTimeZone user={data?.userById} />
+
         {/* Error Message */}
         {timeInMutation.isError && <Alert type="error" />}
 

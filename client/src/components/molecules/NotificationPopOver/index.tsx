@@ -51,7 +51,7 @@ const NotificationPopover: FC<Props> = ({
           <PopoverTransition>
             <Popover.Panel className={panel}>
               <header className="bg-slate-50 px-3 py-2">
-                <Text theme="sm" weight="bold" color="slate">
+                <Text theme="sm" weight="bold" className="font-inter !text-slate-600">
                   Notifications
                 </Text>
               </header>

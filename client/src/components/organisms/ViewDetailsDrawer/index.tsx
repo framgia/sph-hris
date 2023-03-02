@@ -88,7 +88,7 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
         </button>
       </header>
       {/* Body */}
-      <div className="default-scrollbar flex h-full flex-col space-y-3 overflow-y-auto px-6 py-2">
+      <div className="default-scrollbar flex h-full flex-col space-y-3 overflow-y-auto px-6">
         {/* User */}
         <div className="flex items-center space-x-3 border-b border-slate-200 py-3">
           <Avatar
@@ -98,7 +98,12 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
             rounded="full"
           />
           <div>
-            <Text theme="md" size="sm" weight="bold">
+            <Text
+              theme="md"
+              size="sm"
+              weight="semibold"
+              className="font-inter !text-slate-600 line-clamp-1"
+            >
               {profileLink?.specificUserProfileDetail?.name as string}
             </Text>
             <p className="text-[11px] leading-tight text-slate-500">

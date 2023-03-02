@@ -66,3 +66,22 @@ export type NewEmployeeFormValues = {
   middle_name?: string
   last_name: string
 }
+
+export type FirstDayOnBoardingFormValues = {
+  install_below: {
+    docker_toolbox: boolean
+    vscode: boolean
+    mysql_workbench: boolean
+    docker_for_windows: boolean
+  }
+  github_account_link: string
+  ss_auth_for_email_image: FileList
+  ss_auth_for_github_image: FileList
+  signature_for_company_id_image: FileList
+  picture_2x2_company_id: FileList
+  is_signing_probationary_contract: boolean
+  is_existing_sss_loan: boolean
+  is_existing_pag_ibig_loan: boolean
+  monthly_amortization_for_sss_loan: string
+  monthly_amortization_for_pag_ibig_loan: string
+}

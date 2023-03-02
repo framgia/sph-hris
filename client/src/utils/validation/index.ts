@@ -89,3 +89,53 @@ export const NewEmployeeSchema = yup.object().shape({
 export const ApproveConfirmationSchema = yup.object().shape({
   requested_hours: yup.number().required().label('Requested hours')
 })
+
+const fileSchema = yup
+  .mixed()
+  .required('Please select an image file')
+  .test(
+    'sizeLimit',
+    'The selected file is too large',
+    (value: FileList) => value !== null && value !== undefined && value[0]?.size <= 5000000 // 5 MB
+  )
+  .test(
+    'imageFormat',
+    'Only image files are allowed',
+    (value: FileList) =>
+      value !== null &&
+      value !== undefined &&
+      ['image/jpeg', 'image/png', 'image/gif'].includes(value[0]?.type)
+  )
+
+export const FirstDayOnBoardingSchema = yup.object().shape({
+  install_below: yup.object().shape({
+    docker_toolbox: yup
+      .boolean()
+      .required()
+      .default(true)
+      .oneOf([true], 'You must install docker toolbox'),
+    vscode: yup.boolean().required().default(true).oneOf([true], 'You must install vscode'),
+    mysql_workbench: yup
+      .boolean()
+      .required()
+      .default(true)
+      .oneOf([true], 'You must install mysql workbench'),
+    docker_for_windows: yup
+      .boolean()
+      .required()
+      .default(true)
+      .oneOf([true], 'You must install docker for windows')
+  }),
+  github_account_link: yup.string().required().label('Github account link'),
+  ss_auth_for_email_image: fileSchema,
+  ss_auth_for_github_image: fileSchema,
+  signature_for_company_id_image: fileSchema,
+  picture_2x2_company_id: fileSchema,
+  is_signing_probationary_contract: yup.boolean().required().label('Signing probationary contract'),
+  is_existing_sss_loan: yup.boolean().required().label('Existing SSS loan'),
+  is_existing_pag_ibig_loan: yup.boolean().required().label('Existing Pag-ibig Loan'),
+  monthly_amortization_for_sss_loan: yup.string().label('Monthly amortization for sss loan'),
+  monthly_amortization_for_pag_ibig_loan: yup
+    .string()
+    .label('Monthly amortization for pag-ibig loan')
+})

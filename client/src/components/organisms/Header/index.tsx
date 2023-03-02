@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import { parse } from 'iso8601-duration'
 import { createClient } from 'graphql-ws'
 import { useQueryClient } from '@tanstack/react-query'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 
 import Text from '~/components/atoms/Text'
 import Avatar from '~/components/atoms/Avatar'
@@ -121,7 +121,7 @@ const Header: FC<Props> = (props): JSX.Element => {
     return '0 UTC'
   })
   const [running, setRunning] = useState(false)
-  useEffect(() => {
+  useMemo(() => {
     setTime(seconds)
   }, [seconds])
 
@@ -193,7 +193,7 @@ const Header: FC<Props> = (props): JSX.Element => {
         {/* Header Title */}
         <div className="hidden md:block">
           <div className="flex items-center space-x-2">
-            <h1 className="text-lg font-semibold text-slate-700">
+            <h1 className="font-inter text-lg font-semibold text-slate-700">
               <>
                 {router.pathname.includes('/notification') && 'Notifications'}
                 {Menus.map((item, index) => (

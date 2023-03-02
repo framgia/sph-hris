@@ -1,4 +1,16 @@
-import { Clock, FileText, Filter, Home, Layers, Layout, Sunrise, Users } from 'react-feather'
+import {
+  Home,
+  Clock,
+  Users,
+  Filter,
+  Layers,
+  Layout,
+  Sunrise,
+  FileText,
+  UserCheck,
+  CreditCard
+} from 'react-feather'
+import { AiOutlineLaptop } from 'react-icons/ai'
 
 import { Roles } from './roles'
 import MyOvertimeIcon from './../icons/MyOvertimeIcon'
@@ -50,8 +62,30 @@ export const Menus: IMenu[] = [
     Icon: Layout,
     href: '/my-forms',
     role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER],
+    submenu: true,
     spacing: true,
-    isMenu: true
+    submenuItems: [
+      {
+        name: 'First Day Onboarding',
+        Icon: FileText,
+        href: '/my-forms/first-day-onboarding'
+      },
+      {
+        name: 'Personal Information',
+        Icon: UserCheck,
+        href: '/my-forms/personal-information'
+      },
+      {
+        name: 'ATM Applications',
+        Icon: CreditCard,
+        href: '/my-forms/atm-applications'
+      },
+      {
+        name: 'Laptop Monitoring',
+        Icon: AiOutlineLaptop,
+        href: '/my-forms/laptop-monitoring'
+      }
+    ]
   },
   {
     name: 'Schedule Management',

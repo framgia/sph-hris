@@ -25,7 +25,7 @@ const Drawer: FC<Props> = (props): JSX.Element => {
     <aside>
       <div
         className={classNames(
-          'flex h-screen max-w-[253px] shrink-0 flex-col border-r border-slate-200',
+          'flex h-screen w-[254px] shrink-0 flex-col border-r border-slate-200',
           'fixed top-0 left-0 z-50 w-full bg-white shadow-lg transition-all duration-300',
           isOpenDrawer ? 'translate-x-0' : '-translate-x-full'
         )}
