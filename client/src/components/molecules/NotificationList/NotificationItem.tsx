@@ -1,19 +1,20 @@
 import moment from 'moment'
 import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
+import { Eye } from 'react-feather'
 import { useRouter } from 'next/router'
+import React, { FC, useEffect } from 'react'
 import { Table } from '@tanstack/react-table'
-import { Disclosure } from '@headlessui/react'
-import { Check, ChevronRight, X } from 'react-feather'
-import React, { FC, useEffect, useState } from 'react'
 
 import Avatar from '~/components/atoms/Avatar'
+import useUserQuery from '~/hooks/useUserQuery'
+import ViewDetailsModal from './ViewDetailsModal'
 import { INotification } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/Button'
+import useNotification from '~/hooks/useNotificationQuery'
 import { SpecificType } from '~/utils/constants/notificationTypes'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import useNotificationMutation from '~/hooks/useNotificationMutation'
-import DisclosureTransition from '~/components/templates/DisclosureTransition'
 
 type Props = {
   table: Table<INotification>
@@ -22,9 +23,15 @@ type Props = {
 
 const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
   const router = useRouter()
-  const [notificationId, setNotificationId] = useState(router.query.id)
+  const id = Number(router.query.id)
+
   const { handleNotificationMutation } = useNotificationMutation()
   const notificationMutations = handleNotificationMutation()
+
+  const { handleUserQuery } = useUserQuery()
+  const { data } = handleUserQuery()
+  const { getUserNotificationsQuery } = useNotification()
+  const { refetch } = getUserNotificationsQuery(data?.userById.id as number)
 
   const switchMessage = (type: string): string => {
     switch (type) {
@@ -40,7 +47,6 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
   }
 
   useEffect(() => {
-    setNotificationId(router.query.id)
     if (router.query.id !== undefined) {
       void table.options.data.forEach((row, index) => {
         if (row.id === Number(router.query.id)) {
@@ -48,7 +54,23 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
         }
       })
     }
-  }, [router.query.id])
+  }, [id])
+
+  const handleViewDetails = (row: INotification): void => {
+    void router.push(`/notifications/?id=${row.id}`)
+  }
+
+  const handleLink = (id: number): void => {
+    void notificationMutations.mutate(
+      { id },
+      {
+        // eslint-disable-next-line @typescript-eslint/promise-function-async
+        onSuccess: () => {
+          void refetch()
+        }
+      }
+    )
+  }
 
   return (
     <>
@@ -62,129 +84,72 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
         <>
           {table.getPageCount() === 0 ? (
             <div className="h-[50vh]">
-              <DiscloseMessage message="No Notification Available" />
+              <Message message="No Notification Available" />
             </div>
           ) : (
             <>
-              {table.getRowModel().rows.map((row) => (
-                <Disclosure
-                  key={row.original?.id}
-                  defaultOpen={row.original?.id === Number(notificationId)}
-                >
-                  {({ open }) => (
-                    <>
-                      <Disclosure.Button
-                        onClick={() => {
-                          notificationMutations.mutate(
-                            { id: row.original.id },
-                            {
-                              onSuccess: () => {
-                                row.original.readAt = moment().format('MM ddd, YYYY hh:mm:ss a')
-                              }
-                            }
-                          )
-                        }}
-                        className={classNames(
-                          'w-full border-b border-slate-200 py-2 px-4 hover:bg-white',
-                          open ? 'bg-white' : 'hover:shadow-md hover:shadow-slate-200',
-                          !row.original.isRead || row.original.readAt == null ? 'bg-slate-300' : ''
-                        )}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            <Avatar
-                              src={`${row.original.userAvatarLink}`}
-                              size="base"
-                              rounded="full"
-                            />
-                            <p className="ml-3 text-left">
+              {table.getRowModel().rows.map((row) => {
+                const isActive = !row.original.isRead || row.original.readAt == null
+                return (
+                  <div key={row.original.id} className="my-2 px-4">
+                    <div
+                      className={classNames(
+                        'group rounded-md border border-slate-200',
+                        'py-2.5 px-3 shadow-slate-200 hover:shadow',
+                        'transition duration-75 ease-in-out ',
+                        isActive || row.original.id === id
+                          ? 'border-l-4 border-l-amber-300 bg-white'
+                          : 'bg-transparent pl-4'
+                      )}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex w-full items-start space-x-2 md:items-center">
+                          <Avatar src={`${row.original.userAvatarLink}`} size="md" rounded="lg" />
+                          <div
+                            className={classNames(
+                              'flex flex-col space-y-0.5',
+                              isActive ? 'text-slate-700' : 'text-slate-500'
+                            )}
+                          >
+                            <p className="flex flex-wrap items-center space-x-2">
                               <span className="font-semibold">{row.original.name}</span>
-                              <span className="mx-1 text-slate-500">
-                                {switchMessage(row.original.specificType)}
-                              </span>
-                              <span className="font-semibold">
-                                {row.original.type}({row.original.date} - {row.original.duration}{' '}
-                                Hours)
-                              </span>
-                              <span className="absolute right-10 text-slate-500">
-                                {moment(row.original.dateFiled).fromNow()}
+                              <span>{switchMessage(row.original.specificType)}</span>
+                              <span className="font-semibold">{row.original.type}</span>
+                            </p>
+                            <p>
+                              {moment(row.original.dateFiled).fromNow()} &bull; {row.original.date}{' '}
+                              -{' '}
+                              <span className={`font-medium ${isActive ? 'text-amber-500' : ''}`}>
+                                {row.original.duration}Hrs
                               </span>
                             </p>
                           </div>
-                          <ChevronRight
-                            className={classNames(
-                              'h-4 w-4 text-slate-600',
-                              open ? 'rotate-90' : ''
-                            )}
-                          />
                         </div>
-                      </Disclosure.Button>
-                      <DisclosureTransition>
-                        <Disclosure.Panel
-                          className={classNames('text-slate-600', open ? 'bg-white shadow-md' : '')}
-                        >
-                          <ul className="flex flex-col flex-wrap divide-y divide-slate-200 md:flex-row md:items-center md:divide-none">
-                            <li className="px-4 py-2 md:py-3">
-                              Project: <span className="font-semibold">{row.original.project}</span>
-                            </li>
-                            <li className="px-4 py-2 md:py-3">
-                              Type: <span className="font-semibold">{row.original.type}</span>
-                            </li>
-                            <li className="px-4 py-2 md:py-3">
-                              Date Requested:{' '}
-                              <span className="font-semibold">{row.original.date}</span>
-                            </li>
-                            <li className="px-4 py-2 md:py-3">
-                              Requested Hours:{' '}
-                              <span className="font-semibold">{row.original.duration}</span>
-                            </li>
-                            <li className="px-4 py-2 md:py-3">
-                              Date Filed:{' '}
-                              <span className="font-semibold">
-                                {moment(row.original.dateFiled).format('MMMM D, YYYY')}
-                              </span>
-                            </li>
-                            <li className="inline-flex items-center px-4 py-2 md:py-3">
-                              Status:{' '}
-                              <span
-                                className={classNames(
-                                  'py-0.25  ml-1 rounded-full border  px-1.5',
-                                  row.original.status === 'Pending' &&
-                                    'border-amber-200 bg-amber-50 text-amber-600',
-                                  row.original.status === 'Approved' &&
-                                    'border-green-200 bg-green-50 text-green-600',
-                                  row.original.status === 'Disapproved' &&
-                                    'border-rose-200 bg-rose-50 text-rose-600'
-                                )}
-                              >
-                                {row.original.status}
-                              </span>
-                            </li>
-                            <li className="px-4 py-2 md:py-3">
-                              Remarks: <span className="font-semibold">{row.original.remarks}</span>
-                            </li>
-                            <li className="inline-flex items-center px-4 py-2 md:py-3">
-                              Actions:{' '}
-                              <div className="ml-2 inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
-                                <Tippy placement="left" content="Approve" className="!text-xs">
-                                  <Button rounded="none" className="py-0.5 px-1 text-slate-500">
-                                    <Check className="h-4 w-4" />
-                                  </Button>
-                                </Tippy>
-                                <Tippy placement="left" content="Disapprove" className="!text-xs">
-                                  <Button rounded="none" className="py-0.5 px-1 text-slate-500">
-                                    <X className="h-4 w-4" />
-                                  </Button>
-                                </Tippy>
-                              </div>
-                            </li>
-                          </ul>
-                        </Disclosure.Panel>
-                      </DisclosureTransition>
-                    </>
-                  )}
-                </Disclosure>
-              ))}
+                        <Tippy content="View Details" placement="left" className="!text-xs">
+                          <Button
+                            type="button"
+                            className="text-slate-400 group-hover:text-slate-500"
+                            onClick={() => {
+                              handleLink(row.original.id)
+                              handleViewDetails(row.original)
+                            }}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </Tippy>
+
+                        {/* This will handle view details */}
+                        <ViewDetailsModal
+                          {...{
+                            isOpen: row.original.id === id,
+                            row: row.original
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
             </>
           )}
         </>
@@ -193,7 +158,7 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
   )
 }
 
-const DiscloseMessage = ({
+const Message = ({
   message,
   type = 'default'
 }: {

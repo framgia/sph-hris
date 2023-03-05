@@ -115,25 +115,18 @@ const Notifications: NextPage = (): JSX.Element => {
     })
   }
 
-  useEffect(() => {
-    setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
-    }, 500)
-  }, [router.query.id])
-
   return (
     <Layout metaTitle="Notifications">
       <section className="default-scrollbar relative h-full min-h-full overflow-auto text-xs text-slate-800">
-        <div className="sticky top-0 z-20 block bg-slate-100 md:hidden">
-          <div className="flex items-center space-x-2 border-b border-slate-200 px-4 py-2">
+        <div className="sticky top-0 z-20 mx-auto block w-full max-w-4xl border-b border-slate-200 bg-slate-100 md:hidden">
+          <div className="flex items-center space-x-2 px-4 py-2">
             <h1 className="text-base font-semibold text-slate-700">Notifications</h1>
           </div>
         </div>
         <header
           className={classNames(
-            'sticky top-[41px] left-0 z-20 flex items-center justify-between md:top-0',
-            'border-b border-slate-200 bg-slate-100 px-4 py-2'
+            'sticky top-[41px] left-0 z-20 flex items-center justify-between md:top-1',
+            'mx-auto w-full max-w-4xl bg-slate-100 px-4 py-2'
           )}
         >
           <GlobalSearchFilter

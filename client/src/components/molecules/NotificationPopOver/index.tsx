@@ -1,7 +1,8 @@
+import moment from 'moment'
 import Link from 'next/link'
 import React, { FC } from 'react'
 import classNames from 'classnames'
-import { Bell } from 'react-feather'
+import { Bell, Mail } from 'react-feather'
 import { Popover } from '@headlessui/react'
 
 import Text from '~/components/atoms/Text'
@@ -16,18 +17,16 @@ type Props = {
   checkNotification: (open: boolean) => void
 }
 
-const NotificationPopover: FC<Props> = ({
-  className,
-  notificationsData,
-  checkNotification
-}): JSX.Element => {
+const NotificationPopover: FC<Props> = (props): JSX.Element => {
+  const { notificationsData, checkNotification } = props
   const panel = classNames(
     `${
       notificationsData?.length === 0 ? 'h-24' : ''
-    } absolute right-0 mt-2 w-72 origin-top-right divide-y divide-gray-200 overflow-hidden`,
-    'rounded-md border border-slate-200 bg-white shadow-xl shadow-slate-300 focus:outline-none'
+    } absolute right-0 mt-2 w-80 origin-top-right divide-y divide-gray-200 overflow-hidden`,
+    'rounded-lg border border-slate-200 shadow-xl shadow-slate-300 focus:outline-none bg-white'
   )
-  const main = 'default-scrollbar max-h-[25vh] min-h-[25vh] py-2'
+  const main =
+    'default-scrollbar max-h-[25vh] min-h-[25vh] divide-y divide-slate-200 bg-white scrollbar-thumb-slate-300'
   const { handleNotificationMutation } = useNotificationMutation()
   const notificationMutations = handleNotificationMutation()
 
@@ -39,12 +38,19 @@ const NotificationPopover: FC<Props> = ({
     <Popover className="relative z-30">
       {({ open }) => (
         <>
-          <Popover.Button className="flex cursor-pointer items-center rounded-full outline-none active:scale-95">
+          <Popover.Button
+            className={classNames(
+              'flex cursor-pointer items-center rounded-full p-1',
+              'outline-none hover:bg-slate-100 active:scale-95',
+              open ? 'bg-slate-100' : ''
+            )}
+            onClick={() => checkNotification(open)}
+          >
             <Bell
-              onClick={() => {
-                checkNotification(open)
-              }}
-              className="h-[22px] w-[22px] text-slate-400"
+              className={classNames(
+                'h-[22px] w-[22px] rounded-full',
+                open ? 'bg-slate-100' : ' text-slate-400'
+              )}
               fill={open ? 'currentColor' : 'transparent'}
             />
           </Popover.Button>
@@ -52,14 +58,17 @@ const NotificationPopover: FC<Props> = ({
             <Popover.Panel className={panel}>
               {({ close }) => (
                 <>
-                  <header className="bg-slate-50 px-3 py-2">
-                    <Text theme="sm" weight="bold" color="slate">
+                  <header className="flex items-center justify-between bg-white px-3 py-2">
+                    <Text theme="sm" weight="semibold" color="slate" className="!text-slate-600">
                       Notifications
                     </Text>
+                    <Mail className="h-4 w-4 stroke-1 text-slate-400" />
                   </header>
                   {notificationsData?.length === 0 && (
-                    <div className="h-[50vh]">
-                      <DiscloseMessage message="No Notification Available" />
+                    <div className="h-[50vh] py-2 text-center">
+                      <span className="text-xs tracking-wide text-slate-400">
+                        No notification yet
+                      </span>
                     </div>
                   )}
                   <main className={main}>
@@ -76,27 +85,46 @@ const NotificationPopover: FC<Props> = ({
                             handleLink(i.id, open)
                             close()
                           }}
-                          className={`${
-                            !i.isRead || i.readAt == null ? 'bg-slate-300' : ''
-                          } flex cursor-pointer items-start border-b border-slate-200 px-4 py-3 hover:bg-slate-50`}
+                          className={classNames(
+                            'flex w-full cursor-pointer border-l-2 py-2 pl-4 text-xs',
+                            !i.isRead || i.readAt == null
+                              ? '!border-l-amber-400 bg-amber-50 hover:bg-amber-100'
+                              : '!border-l-white bg-white hover:bg-slate-50'
+                          )}
                         >
                           <Avatar
                             src={`${i.userAvatarLink}`}
                             className="mt-1"
-                            size="base"
-                            rounded="full"
+                            size="md"
+                            rounded="lg"
                             alt="avatar"
                           />
-                          <p className="mx-2 text-xs">
-                            <span className="font-semibold">{i.name}</span> has requested your
-                            approval for <span className="font-semibold">{i.type} </span>
-                            <span className="font-semibold text-primary">({i.date})</span>
-                          </p>
+                          <div
+                            className={classNames(
+                              'mt-1 flex flex-col space-y-1 px-3 text-xs',
+                              !i.isRead || i.readAt == null ? 'text-slate-600' : 'text-slate-500/70'
+                            )}
+                          >
+                            <p>
+                              <span className="font-semibold">{i.name}</span> has requested your
+                              approval for <span className="font-semibold">{i.type} </span>
+                            </p>
+                            <small>
+                              {moment(new Date(i.dateFiled)).fromNow()} &bull;{' '}
+                              {moment(new Date(i.date)).format('MMM DD, YY')} -{' '}
+                              <span className="font-medium">{i.duration}Hrs</span>
+                            </small>
+                          </div>
                         </Link>
                       ))}
                   </main>
-                  <footer className="block bg-amber-500 py-2 text-center text-sm font-semibold text-white">
-                    <Link href="/notifications">See all notifications</Link>
+                  <footer className="block bg-white py-1.5 text-center">
+                    <Link
+                      href="/notifications"
+                      className="text-sm font-medium text-amber-500 hover:underline"
+                    >
+                      See more
+                    </Link>
                   </footer>
                 </>
               )}
@@ -109,23 +137,3 @@ const NotificationPopover: FC<Props> = ({
 }
 
 export default NotificationPopover
-
-const DiscloseMessage = ({
-  message,
-  type = 'default'
-}: {
-  message: string
-  type?: string
-}): JSX.Element => {
-  return (
-    <p
-      className={classNames(
-        'py-2 text-center text-sm font-medium',
-        type === 'default' && 'text-slate-500',
-        type === 'error' && 'bg-rose-50 text-rose-500'
-      )}
-    >
-      {message}
-    </p>
-  )
-}
