@@ -213,8 +213,6 @@ const AddNewOvertimeModal: FC<Props> = ({
         />
 
         <main className="grid grid-cols-2 gap-x-4 gap-y-6 py-6 px-8 text-xs text-slate-800">
-          {/* <pre>{JSON.stringify(overtime, null, 2)}</pre> */}
-
           {/* Projects */}
           {projectFields.map((field, index) => (
             <div

@@ -22,3 +22,5 @@ export const overtimeStatus = [
     value: 'Approved'
   }
 ]
+
+export const NO_OVERTIME = 0

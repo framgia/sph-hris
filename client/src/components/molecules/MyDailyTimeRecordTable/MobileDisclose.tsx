@@ -14,6 +14,7 @@ import useUserQuery from '~/hooks/useUserQuery'
 import Button from '~/components/atoms/Buttons/Button'
 import AddNewOvertimeModal from '../AddNewOvertimeModal'
 import { WorkStatus } from '~/utils/constants/work-status'
+import { NO_OVERTIME } from '~/utils/constants/overtimeStatus'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 import InterruptionTimeEntriesModal from '../InterruptionTimeEntriesModal'
@@ -59,11 +60,18 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
             ) : (
               <>
                 {table.getRowModel().rows.map((row) => {
-                  const minuteDifference = moment
-                    .duration(
-                      moment(row.original.timeOut?.timeHour, 'HH:mm').diff(moment('19:30', 'HH:mm'))
-                    )
-                    .asMinutes()
+                  const minuteDifference = Math.floor(
+                    moment
+                      .duration(
+                        moment(row.original.timeOut.createdAt).diff(
+                          `${moment(row.original.date).format('YYYY-MM-DD')} ${moment(
+                            '19:30',
+                            'HH:mm:ss'
+                          ).format('HH:mm:ss')}`
+                        )
+                      )
+                      .asMinutes()
+                  )
 
                   return (
                     <Disclosure key={row.id}>
@@ -221,7 +229,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                             <HiFire className="h-4 w-4 text-red-500" />
                                           </>
                                         ) : (
-                                          <span className="font-semibold">0</span>
+                                          <span className="font-semibold">{NO_OVERTIME}</span>
                                         )}
 
                                         {/* File New Overtime Modal */}

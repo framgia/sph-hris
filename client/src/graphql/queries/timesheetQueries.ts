@@ -42,11 +42,13 @@ export const GET_EMPLOYEE_TIMESHEET = gql`
         id
         timeHour
         remarks
+        createdAt
       }
       timeOut {
         id
         timeHour
         remarks
+        createdAt
       }
       startTime
       endTime

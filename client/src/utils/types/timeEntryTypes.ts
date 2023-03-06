@@ -5,11 +5,13 @@ export interface IEmployeeTimeEntry {
     id: number
     timeHour: string
     remarks: string
+    createdAt: string
   }
   timeOut: {
     id: number
     timeHour: string
     remarks: string
+    createdAt: string
   }
   startTime: string
   endTime: string

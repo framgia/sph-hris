@@ -12,6 +12,7 @@ import useUserQuery from '~/hooks/useUserQuery'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
 import AddNewOvertimeModal from '../AddNewOvertimeModal'
+import { NO_OVERTIME } from '~/utils/constants/overtimeStatus'
 import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 import InterruptionTimeEntriesModal from './../InterruptionTimeEntriesModal'
@@ -140,15 +141,22 @@ export const columns = [
 
       const handleToggle = (): void => setIsOpen(!isOpen)
 
-      const minuteDifference = moment
-        .duration(
-          moment(props.row.original.timeOut?.timeHour, 'HH:mm').diff(moment('19:30', 'HH:mm'))
-        )
-        .asMinutes()
+      const minuteDifference = Math.floor(
+        moment
+          .duration(
+            moment(props.row.original.timeOut.createdAt).diff(
+              `${moment(props.row.original.date).format('YYYY-MM-DD')} ${moment(
+                '19:30',
+                'HH:mm:ss'
+              ).format('HH:mm:ss')}`
+            )
+          )
+          .asMinutes()
+      )
 
       return (
         <div className="flex items-center space-x-2">
-          {/* If the user has an overtime */}
+          {/* If the user has no overtime filed */}
           {props.row.original.overtime === null ? (
             <Button type="button" className="flex items-center" onClick={handleToggle}>
               {minuteDifference > 0 ? (
@@ -157,7 +165,7 @@ export const columns = [
                   <HiFire className="h-4 w-4 text-red-500" />
                 </>
               ) : (
-                <span>0</span>
+                <span>{NO_OVERTIME}</span>
               )}
 
               {/* File New Overtime Modal */}
@@ -225,9 +233,6 @@ export const columns = [
                     </Button>
                   </Tippy>
                 )}
-
-              {/* Just a normal number */}
-              {/* <span>0</span> */}
             </>
           )}
         </div>
