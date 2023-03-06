@@ -68,6 +68,7 @@ public partial class HrisContext : DbContext
         );
 
         modelBuilder.Entity<Overtime>().HasOne(x => x.User).WithMany(e => e.Overtimes).OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<Overtime>().HasOne(x => x.TimeEntry).WithOne(e => e.Overtime).OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<Notification>().HasDiscriminator();
         modelBuilder.Entity<LeaveNotification>().HasData(

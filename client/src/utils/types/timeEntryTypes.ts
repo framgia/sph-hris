@@ -17,9 +17,16 @@ export interface IEmployeeTimeEntry {
   trackedHours: string
   late: number
   undertime: number
-  overtime: number
+  overtime: ITimeEntryOvertime
   status: string
 }
+
+export type ITimeEntryOvertime = {
+  requestedMinutes: number
+  approvedMinutes: number | null
+  isLeaderApproved: boolean | null
+  isManagerApproved: boolean | null
+} | null
 
 export interface ITimeEntry {
   id: number

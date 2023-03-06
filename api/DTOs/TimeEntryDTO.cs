@@ -21,7 +21,7 @@ namespace api.DTOs
             User = timeEntry.User;
             TimeIn = timeEntry.TimeIn != null ? new TimeDTO(timeEntry.TimeIn) : null;
             TimeOut = timeEntry.TimeOut != null ? new TimeDTO(timeEntry.TimeOut) : null;
-            Overtime = 0;   // for now, default to 0
+            Overtime = timeEntry.Overtime;   // Overtime Entity
             Undertime = 0;
             Late = 0;
 
@@ -106,7 +106,6 @@ namespace api.DTOs
 
         public int Late { get; set; }
         public int Undertime { get; set; }
-        public int Overtime { get; set; }
 
         public string Status { get; set; }
     }

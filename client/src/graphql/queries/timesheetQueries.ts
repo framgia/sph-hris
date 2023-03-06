@@ -54,7 +54,12 @@ export const GET_EMPLOYEE_TIMESHEET = gql`
       trackedHours
       late
       undertime
-      overtime
+      overtime {
+        requestedMinutes
+        approvedMinutes
+        isLeaderApproved
+        isManagerApproved
+      }
       status
     }
   }

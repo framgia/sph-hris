@@ -36,24 +36,35 @@ import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
 import { generateProjectsMultiSelect, generateUserSelect } from '~/utils/createLeaveHelpers'
+import useOvertime from '~/hooks/useOvertime'
 
 type Props = {
   isOpen: boolean
   closeModal: () => void
-  overtime: IEmployeeTimeEntry
+  timeEntry: IEmployeeTimeEntry
+  initialMinutes: number
 }
 
 const animatedComponents = makeAnimated()
 
-const AddNewOvertimeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
+const AddNewOvertimeModal: FC<Props> = ({
+  isOpen,
+  closeModal,
+  timeEntry,
+  initialMinutes
+}): JSX.Element => {
   const [leaders, setLeaders] = useState<UserType[]>([])
   const [managers, setManagers] = useState<UserType[]>([])
 
   const { handleProjectQuery } = useProject()
   const { data: projects, isSuccess: isProjectsSuccess } = handleProjectQuery()
 
-  const { handleAllUsersQuery } = useUserQuery()
+  const { handleAllUsersQuery, handleUserQuery } = useUserQuery()
+  const { data: user } = handleUserQuery()
   const { data: users, isSuccess: isUsersSuccess } = handleAllUsersQuery()
+
+  const { handleOvertimeMutation } = useOvertime()
+  const overtimeMutation = handleOvertimeMutation()
 
   useEffect(() => {
     if (isProjectsSuccess && projects.projects.length > 0) {
@@ -105,10 +116,37 @@ const AddNewOvertimeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => 
   // This will handle Submit and Save New Overtime
   const handleSave = async (data: NewOvertimeFormValues): Promise<void> => {
     return await new Promise((resolve) => {
-      setTimeout(() => {
-        alert(JSON.stringify(data, null, 2))
-        resolve()
-      }, 2000)
+      const others = data.projects.map(
+        (project) => project.project_name.__isNew__ === true && project.project_name.value
+      )
+
+      overtimeMutation.mutate(
+        {
+          userId: user?.userById.id as number,
+          timeEntryId: timeEntry.id,
+          managerId: parseInt(data.manager.value),
+          otherProject: others.filter((value) => value !== false).toString(),
+          requestedMinutes: data.requested_minutes,
+          remarks: data.remarks,
+          date: data.date_effective,
+          overtimeProjects: data.projects.map((project) => {
+            const otherProjectType = projects?.projects.find(
+              (project) => project.name.toLowerCase() === 'others'
+            ) as ProjectDetails
+
+            return {
+              projectId: (project.project_name.__isNew__ as boolean)
+                ? otherProjectType.id
+                : parseInt(project.project_name.value),
+              projectLeaderId: parseInt(project.project_leader.value)
+            }
+          })
+        },
+        {
+          onSuccess: () => closeModal()
+        }
+      )
+      resolve()
     })
   }
 
@@ -138,8 +176,8 @@ const AddNewOvertimeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => 
         }
       ],
       manager: emptyReactSelectOption,
-      date_effective: '',
-      requested_hours: 0,
+      date_effective: timeEntry.date,
+      requested_minutes: initialMinutes,
       remarks: ''
     })
   }
@@ -336,7 +374,7 @@ const AddNewOvertimeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => 
             <TextField title="Date Effective" Icon={Calendar} isRequired className="flex-1">
               <Input
                 type="date"
-                disabled={isSubmitting}
+                disabled={true}
                 placeholder=""
                 {...register('date_effective')}
                 className="py-2.5 pl-11 text-xs"
@@ -348,20 +386,23 @@ const AddNewOvertimeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => 
             )}
           </section>
 
-          {/* Requested hours */}
+          {/* Requested minutes */}
           <section className="col-span-2 md:col-span-1">
-            <TextField title="Requested hours" Icon={Clock} isRequired className="flex-1">
+            <TextField title="Requested Minutes" Icon={Clock} isRequired className="flex-1">
               <Input
                 type="text"
                 disabled={isSubmitting}
                 placeholder=""
-                {...register('requested_hours')}
+                {...register('requested_minutes')}
                 className="py-2.5 pl-11 text-xs"
-                iserror={errors.requested_hours !== null && errors?.requested_hours !== undefined}
+                iserror={
+                  errors.requested_minutes !== null && errors?.requested_minutes !== undefined
+                }
+                // value={100}
               />
             </TextField>
-            {errors?.requested_hours !== null && errors?.requested_hours !== undefined && (
-              <span className="error text-[10px]">{errors.requested_hours?.message}</span>
+            {errors?.requested_minutes !== null && errors?.requested_minutes !== undefined && (
+              <span className="error text-[10px]">{errors.requested_minutes?.message}</span>
             )}
           </section>
 

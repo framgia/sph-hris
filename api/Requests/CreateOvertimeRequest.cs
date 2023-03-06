@@ -4,6 +4,7 @@ namespace api.Requests
     {
         public int UserId { get; set; }
         public int ManagerId { get; set; }
+        public int TimeEntryId { get; set; }
         public string? OtherProject { get; set; }
         public int RequestedMinutes { get; set; }
         public string? Remarks { get; set; }

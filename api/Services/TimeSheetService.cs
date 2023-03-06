@@ -41,6 +41,7 @@ namespace api.Services
                     .Include(entry => entry.TimeIn)
                     .Include(entry => entry.TimeOut)
                     .Include(entry => entry.User)
+                    .Include(entry => entry.Overtime)
                     .Where(c => c.UserId == id)
                     .Select(x => ToTimeEntryDTO(x))
                     .ToListAsync();
@@ -162,7 +163,7 @@ namespace api.Services
 
                         userSummary.AddLate(timeEntry.Late);
                         userSummary.AddUndertime(timeEntry.Undertime);
-                        userSummary.AddOvertime(timeEntry.Overtime);
+                        // userSummary.AddOvertime(timeEntry.Overtime);
                     }
                 };
 
