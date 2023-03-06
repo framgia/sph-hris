@@ -139,3 +139,27 @@ export const FirstDayOnBoardingSchema = yup.object().shape({
     .string()
     .label('Monthly amortization for pag-ibig loan')
 })
+
+export const PersonalInformationSchema = yup.object().shape({
+  first_name: yup.string().required().label('First Name'),
+  middle_name: yup.string().label('Middle Name'),
+  last_name: yup.string().required().label('Last Name'),
+  position: yup.string().required().label('Position'),
+  sss_number: yup.string().label('SSS number (XX-XXXXXXX-X)'),
+  tin_number: yup.string().label('TIN Number (XXX-XXX-XXX-XXX)'),
+  philhealth_number: yup.string().label('PhilHealth Number (XX-XXXXXXXXX-X)'),
+  pagibig_number: yup.string().label('PAG-IBIG (HDMF) Number (XXXX-XXXX-XXXX)'),
+  birthday: yup.string().required().label('Birthday'),
+  educational_background: yup
+    .string()
+    .label('Educational Background (University / Major / Course)'),
+  contact_number: yup.number().required().label('Contact Number (XXXX-XXX-XXXX)'),
+  mobile_carrier: yup.boolean().required().label('Mobile Carrier'),
+  address: yup.string().required().label('Address w/ postal code (....., XXXX)'),
+  email: yup.string().required().label('E-mail address for google documents / calendar'),
+  chatwork_account: yup.string().required().label('Chatwork/Slack Account'),
+  name_incase_of_emergency: yup.string().label('Name'),
+  relationship_incase_of_emergency: yup.string().label('Relationship'),
+  address_incase_of_emergency: yup.string().label('Address w/ postal code (....., XXXX)'),
+  contact_incase_of_emergency: yup.number().label('Contact Number (+XX-XXX-XXX-XXXX)')
+})

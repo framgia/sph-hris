@@ -86,3 +86,25 @@ export type FirstDayOnBoardingFormValues = {
   monthly_amortization_for_sss_loan: string
   monthly_amortization_for_pag_ibig_loan: string
 }
+
+export type PersonalInformationFormValues = {
+  first_name: string
+  middle_name: string
+  last_name: string
+  position: string
+  sss_number: string
+  tin_number: string
+  philhealth_number: string
+  pagibig_number: string
+  birthday: string
+  educational_background: string
+  contact_number: number
+  mobile_carrier: boolean
+  address: string
+  email: string
+  chatwork_account: string
+  name_incase_of_emergency: string
+  relationship_incase_of_emergency: string
+  address_incase_of_emergency: string
+  contact_incase_of_emergency: number
+}
