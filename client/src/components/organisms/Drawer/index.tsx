@@ -1,12 +1,10 @@
 import React, { FC } from 'react'
+import { X } from 'react-feather'
 import classNames from 'classnames'
-import { ChevronRight, X } from 'react-feather'
 
 import Logo from '~/components/atoms/Logo'
-import Avatar from '~/components/atoms/Avatar'
 import NavList from '~/components/molecules/NavList'
 import { Menus } from '~/utils/constants/sidebarMenu'
-import UserMenuDropDown from '~/components/molecules/UserMenuDropdown'
 
 type Props = {
   isOpenDrawer: boolean
@@ -49,35 +47,6 @@ const Drawer: FC<Props> = (props): JSX.Element => {
         </nav>
         {/* Footer Options */}
         <section className="mt-auto text-slate-500">
-          <UserMenuDropDown
-            position="top"
-            className="flex w-full items-center border-t border-slate-200 outline-none"
-          >
-            <div className="flex items-start space-x-3 py-2.5 px-6">
-              <Avatar
-                src="https://avatars.githubusercontent.com/u/38458781?v=4"
-                alt="user-avatar"
-                rounded="full"
-              />
-              <div
-                className={classNames(
-                  'text-left text-xs duration-200',
-                  !isOpenDrawer ? 'hidden' : null
-                )}
-              >
-                <h3 className="font-semibold line-clamp-1">Joshua Galit</h3>
-                <small className="subpixel-antialiased line-clamp-1">
-                  Sun Asterisk Philippines
-                </small>
-              </div>
-            </div>
-            <ChevronRight
-              className={classNames(
-                'h-7 w-7 shrink-0 stroke-0.5 duration-200',
-                !isOpenDrawer ? 'hidden' : null
-              )}
-            />
-          </UserMenuDropDown>
           <button
             type="button"
             onClick={handleToggleDrawer}

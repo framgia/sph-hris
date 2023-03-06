@@ -1,7 +1,8 @@
+import moment from 'moment'
 import Link from 'next/link'
 import React, { FC } from 'react'
 import classNames from 'classnames'
-import { Bell } from 'react-feather'
+import { Bell, Mail } from 'react-feather'
 import { Popover } from '@headlessui/react'
 
 import Text from '~/components/atoms/Text'
@@ -13,83 +14,120 @@ import PopoverTransition from '~/components/templates/PopoverTransition'
 type Props = {
   className: string
   notificationsData: INotification[] | undefined
-  checkNotification: () => void
-  setReady: (state: boolean) => void
+  checkNotification: (open: boolean) => void
 }
 
-const NotificationPopover: FC<Props> = ({
-  className,
-  notificationsData,
-  checkNotification,
-  setReady
-}): JSX.Element => {
+const NotificationPopover: FC<Props> = (props): JSX.Element => {
+  const { notificationsData, checkNotification } = props
   const panel = classNames(
-    'absolute right-0 mt-2 w-72 origin-top-right divide-y divide-gray-200 overflow-hidden',
-    'rounded-md border border-slate-200 bg-white shadow-xl shadow-slate-300 focus:outline-none'
+    `${
+      notificationsData?.length === 0 ? 'h-24' : ''
+    } absolute right-0 mt-2 w-80 origin-top-right divide-y divide-gray-200 overflow-hidden`,
+    'rounded-lg border border-slate-200 shadow-xl shadow-slate-300 focus:outline-none bg-white'
   )
-  const main = 'default-scrollbar max-h-[25vh] min-h-[25vh] py-2'
+  const main =
+    'default-scrollbar max-h-[25vh] min-h-[25vh] divide-y divide-slate-200 bg-white scrollbar-thumb-slate-300'
   const { handleNotificationMutation } = useNotificationMutation()
   const notificationMutations = handleNotificationMutation()
 
-  const handleLink = (id: number): void => {
-    void notificationMutations.mutate({ id })
+  const handleLink = (id: number, open: boolean): void => {
+    void notificationMutations.mutate({ id }, { onSuccess: () => checkNotification(open) })
   }
+
   return (
     <Popover className="relative z-30">
       {({ open }) => (
         <>
-          {setReady(open)}
-          <Popover.Button className="flex cursor-pointer items-center rounded-full p-1 outline-none active:scale-95">
+          <Popover.Button
+            className={classNames(
+              'flex cursor-pointer items-center rounded-full p-1',
+              'outline-none hover:bg-slate-100 active:scale-95',
+              open ? 'bg-slate-100' : ''
+            )}
+            onClick={() => checkNotification(open)}
+          >
             <Bell
-              onClick={() => {
-                checkNotification()
-              }}
-              className="h-[22px] w-[22px] text-slate-400"
+              className={classNames(
+                'h-[22px] w-[22px] rounded-full',
+                open ? 'bg-slate-100' : ' text-slate-400'
+              )}
               fill={open ? 'currentColor' : 'transparent'}
             />
           </Popover.Button>
           <PopoverTransition>
             <Popover.Panel className={panel}>
-              <header className="bg-slate-50 px-3 py-2">
-                <Text theme="sm" weight="bold" className="font-inter !text-slate-600">
-                  Notifications
-                </Text>
-              </header>
-              <main className={main}>
-                {notificationsData
-                  ?.sort(
-                    (a: INotification, b: INotification) =>
-                      (a.isRead as unknown as number) - (b.isRead as unknown as number)
-                  )
-                  .map((i, index) => (
-                    <a
-                      key={index}
-                      href={'#'}
-                      target={'_blank'}
-                      onClick={() => handleLink(i.id)}
-                      className={`${
-                        !i.isRead || i.readAt == null ? 'bg-slate-300' : ''
-                      } flex cursor-pointer items-start border-b border-slate-200 px-4 py-3 hover:bg-slate-50`}
-                      rel="noreferrer"
+              {({ close }) => (
+                <>
+                  <header className="flex items-center justify-between bg-white px-3 py-2">
+                    <Text theme="sm" weight="semibold" color="slate" className="!text-slate-600">
+                      Notifications
+                    </Text>
+                    <Mail className="h-4 w-4 stroke-1 text-slate-400" />
+                  </header>
+                  {notificationsData?.length === 0 && (
+                    <div className="h-[50vh] py-2 text-center">
+                      <span className="text-xs tracking-wide text-slate-400">
+                        No notification yet
+                      </span>
+                    </div>
+                  )}
+                  <main className={main}>
+                    {notificationsData
+                      ?.sort(
+                        (a: INotification, b: INotification) =>
+                          (a.isRead as unknown as number) - (b.isRead as unknown as number)
+                      )
+                      .map((i) => (
+                        <Link
+                          key={i.id}
+                          href={`/notifications/?id=${i.id}`}
+                          onClick={() => {
+                            handleLink(i.id, open)
+                            close()
+                          }}
+                          className={classNames(
+                            'flex w-full cursor-pointer border-l-2 py-2 pl-4 text-xs',
+                            !i.isRead || i.readAt == null
+                              ? '!border-l-amber-400 bg-amber-50 hover:bg-amber-100'
+                              : '!border-l-white bg-white hover:bg-slate-50'
+                          )}
+                        >
+                          <Avatar
+                            src={`${i.userAvatarLink}`}
+                            className="mt-1"
+                            size="md"
+                            rounded="lg"
+                            alt="avatar"
+                          />
+                          <div
+                            className={classNames(
+                              'mt-1 flex flex-col space-y-1 px-3 text-xs',
+                              !i.isRead || i.readAt == null ? 'text-slate-600' : 'text-slate-500/70'
+                            )}
+                          >
+                            <p>
+                              <span className="font-semibold">{i.name}</span> has requested your
+                              approval for <span className="font-semibold">{i.type} </span>
+                            </p>
+                            <small>
+                              {moment(new Date(i.dateFiled)).fromNow()} &bull;{' '}
+                              {moment(new Date(i.date)).format('MMM DD, YY')} -{' '}
+                              <span className="font-medium">{i.duration}Hrs</span>
+                            </small>
+                          </div>
+                        </Link>
+                      ))}
+                  </main>
+                  <footer className="block bg-white py-1.5 text-center">
+                    <Link
+                      href="/notifications"
+                      className="text-sm font-medium text-amber-500 hover:underline"
                     >
-                      <Avatar
-                        src={`${i.userAvatarLink}`}
-                        className="mt-1"
-                        size="base"
-                        rounded="full"
-                        alt="avatar"
-                      />
-                      <p className="mx-2 text-xs text-gray-600">
-                        <span className="font-semibold">{i.name}</span> has requested your approval
-                        for <span className="font-semibold">{i.type} </span>
-                        <span className="font-semibold text-primary">({i.date})</span>
-                      </p>
-                    </a>
-                  ))}
-              </main>
-              <footer className="block bg-amber-500 py-2 text-center text-sm font-semibold text-white">
-                <Link href="/notifications">See all notifications</Link>
-              </footer>
+                      See more
+                    </Link>
+                  </footer>
+                </>
+              )}
             </Popover.Panel>
           </PopoverTransition>
         </>

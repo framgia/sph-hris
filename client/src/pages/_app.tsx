@@ -1,8 +1,8 @@
 import React from 'react'
 import type { AppProps } from 'next/app'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { SessionProvider } from 'next-auth/react'
 import { Toaster } from 'react-hot-toast'
+import { SessionProvider } from 'next-auth/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import '~/utils/styles/globals.css'
 
@@ -11,17 +11,7 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   return (
     <SessionProvider>
       <QueryClientProvider client={queryClient}>
-        <Toaster
-          position="top-right"
-          reverseOrder={false}
-          toastOptions={{
-            style: {
-              borderRadius: '10px',
-              background: '#2D3D63',
-              color: '#fff'
-            }
-          }}
-        />
+        <Toaster position="top-right" reverseOrder={false} />
         <Component {...pageProps} />
       </QueryClientProvider>
     </SessionProvider>

@@ -11,7 +11,7 @@ namespace api.Schema.Mutations
         {
             _notificationService = notificationService;
         }
-        public async Task<int> ReadNotification(NotificationRequest notification)
+        public async Task<string> ReadNotification(NotificationRequest notification)
         {
             return await _notificationService.ReadNotification(notification);
         }

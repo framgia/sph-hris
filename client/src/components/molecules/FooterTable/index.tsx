@@ -11,7 +11,12 @@ type Props = {
 
 const FooterTable: FC<Props> = ({ table }): JSX.Element => {
   return (
-    <footer className="sticky bottom-0 left-0 flex w-full items-center justify-between bg-slate-100 px-4 py-3">
+    <footer
+      className={classNames(
+        'sticky bottom-0 left-0 flex w-full bg-slate-100',
+        'items-center justify-between px-4 py-3'
+      )}
+    >
       <div className="flex flex-wrap items-center md:space-x-2">
         <div className="hidden md:block">
           <PageCount

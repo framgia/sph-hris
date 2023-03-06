@@ -58,22 +58,22 @@ const NotificationList: FC<Props> = (props): JSX.Element => {
   return (
     <>
       {/* Show on mobile size and beyond */}
-      <div>
+      <div className="mx-auto min-h-[80vh] w-full max-w-4xl">
         <NotificationItem
           {...{
             table,
             isLoading: false
           }}
         />
+        {/* Table Pagination & Filtering */}
+        {table.getPageCount() >= 1 && (
+          <FooterTable
+            {...{
+              table
+            }}
+          />
+        )}
       </div>
-      {/* Table Pagination & Filtering */}
-      {table.getPageCount() >= 1 && (
-        <FooterTable
-          {...{
-            table
-          }}
-        />
-      )}
     </>
   )
 }

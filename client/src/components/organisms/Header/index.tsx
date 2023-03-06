@@ -61,7 +61,12 @@ const Header: FC<Props> = (props): JSX.Element => {
     isLoading: notificationLoading,
     refetch
   } = getUserNotificationsQuery(data?.userById.id as number)
+  const [seconds, setSeconds] = useState(0)
   const [ready, setReady] = useState(false)
+  const [running, setRunning] = useState(false)
+  const [time, setTime] = useState<string | number>(() => {
+    return '0 UTC'
+  })
   updateIsRead(data?.userById.id as number, ready)
 
   useEffect(() => {
@@ -94,7 +99,6 @@ const Header: FC<Props> = (props): JSX.Element => {
     }
   }, [notificationsData])
 
-  const [seconds, setSeconds] = useState(0)
   useEffect(() => {
     setRunning(false)
     setTime(0)
@@ -117,10 +121,7 @@ const Header: FC<Props> = (props): JSX.Element => {
       }
     }
   }, [status, data])
-  const [time, setTime] = useState<string | number>(() => {
-    return '0 UTC'
-  })
-  const [running, setRunning] = useState(false)
+
   useMemo(() => {
     setTime(seconds)
   }, [seconds])
@@ -165,9 +166,10 @@ const Header: FC<Props> = (props): JSX.Element => {
     )
   }
 
-  const handleCheckNotifications = (): void => {
-    setNewNotificationCount(0)
+  const handleCheckNotifications = (state: boolean): void => {
+    setReady(state)
     void refetch()
+    setNewNotificationCount(0)
   }
 
   return (
@@ -214,7 +216,7 @@ const Header: FC<Props> = (props): JSX.Element => {
       </section>
 
       {/* User Actions */}
-      <section className="flex items-center space-x-10">
+      <section className="flex items-center space-x-5 md:space-x-10">
         <div className="flex items-center space-x-2">
           {/* Timer */}
           <Text
@@ -279,21 +281,21 @@ const Header: FC<Props> = (props): JSX.Element => {
         <div className="text-slate-500 sm:block">
           <div className="inline-flex items-center space-x-4">
             <div className="relative">
-              {newNotificationCount > 0 && (
+              {newNotificationCount > 0 ? (
                 <span
                   className={classNames(
-                    'shrink-0 rounded-full border border-red-600 bg-red-500 px-1 !text-xs font-semibold text-white',
-                    'absolute -right-1 -top-1 z-50 flex h-5 w-5 items-center justify-center'
+                    'shrink-0 rounded-full border border-rose-600 bg-rose-500 !text-[10px] font-semibold text-white',
+                    'absolute -right-1 -top-1 z-50 flex h-4 w-4 select-none items-center justify-center ring-4 ring-white',
+                    newNotificationCount > 9 ? 'px-2 py-0.5' : ' px-1.5'
                   )}
                 >
                   {newNotificationCount > 9 ? '9+' : newNotificationCount}
                 </span>
-              )}
+              ) : null}
               <NotificationPopover
                 className="h-5 w-5 text-slate-400"
                 notificationsData={notifications}
-                checkNotification={() => handleCheckNotifications()}
-                setReady={(state: boolean) => setReady(state)}
+                checkNotification={(state: boolean) => handleCheckNotifications(state)}
               />
             </div>
             {/* User Avatar */}
