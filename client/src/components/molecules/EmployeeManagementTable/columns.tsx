@@ -54,22 +54,25 @@ export const columns = [
     id: 'Status',
     header: () => <CellHeader label="Status" />,
     footer: (info) => info.column.id,
-    cell: (props) => (
-      <>
-        <div className="relative flex">
-          <span
-            className={classNames(
-              'py-0.25  ml-1 rounded-full border  px-1.5',
-              props.row.original.status === 'Active' &&
-                'border-green-200 bg-green-50 text-green-600',
-              props.row.original.status === 'Inactive' && 'border-rose-200 bg-rose-50 text-rose-600'
-            )}
-          >
-            {props.row.original.status}
-          </span>
-        </div>
-      </>
-    )
+    cell: (props) => {
+      const { original: employee } = props.row
+
+      return (
+        <>
+          <div className="relative flex">
+            <span
+              className={classNames(
+                'py-0.25  ml-1 rounded-full border  px-1.5',
+                employee.status === 'Active' && 'border-green-200 bg-green-50 text-green-600',
+                employee.status === 'Inactive' && 'border-rose-200 bg-rose-50 text-rose-600'
+              )}
+            >
+              {employee.status}
+            </span>
+          </div>
+        </>
+      )
+    }
   }),
   columnHelper.display({
     id: 'id',

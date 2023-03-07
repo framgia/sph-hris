@@ -20,8 +20,10 @@ export const columns = [
     header: () => <CellHeader label="Project" />,
     footer: (info) => info.column.id,
     cell: (props) => {
+      const { original: overtime } = props.row
+
       return (
-        <Listbox value={props.row.original.project[0].value}>
+        <Listbox value={overtime.project[0].value}>
           <div className="relative mt-1">
             <Listbox.Button
               className={classNames(
@@ -29,7 +31,7 @@ export const columns = [
                 'text-xs outline-none focus:scale-95'
               )}
             >
-              <span className="block truncate">{props.row.original.project[0].label}</span>
+              <span className="block truncate">{overtime.project[0].label}</span>
               <AiOutlineCaretDown className="h-3 w-3 text-gray-400" aria-hidden="true" />
             </Listbox.Button>
             <Transition
@@ -44,7 +46,7 @@ export const columns = [
                   'py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'
                 )}
               >
-                {props.row.original.project.map(({ label, value }, index) => (
+                {overtime.project.map(({ label, value }, index) => (
                   <Listbox.Option
                     key={index}
                     className={({ active }) =>

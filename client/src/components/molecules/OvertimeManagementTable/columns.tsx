@@ -27,19 +27,23 @@ export const hrColumns = [
   columnHelper.accessor('user.name', {
     header: () => <CellHeader label="Name" />,
     footer: (info) => info.column.id,
-    cell: (props) => (
-      <div className="flex items-center space-x-2">
-        <Avatar
-          src={`https://placeimg.com/640/480/abstract/${props.row.id}`}
-          size="base"
-          rounded="full"
-        />
-        <div className="flex flex-col items-start">
-          <h1 className="font-semibold">{props.row.original.user.name}</h1>
-          <small className="text-slate-500">{props.row.original.user.role.name}</small>
+    cell: (props) => {
+      const { original: overtimeManagement } = props.row
+
+      return (
+        <div className="flex items-center space-x-2">
+          <Avatar
+            src={`https://placeimg.com/640/480/abstract/${props.row.id}`}
+            size="base"
+            rounded="full"
+          />
+          <div className="flex flex-col items-start">
+            <h1 className="font-semibold">{overtimeManagement.user.name}</h1>
+            <small className="text-slate-500">{overtimeManagement.user.role.name}</small>
+          </div>
         </div>
-      </div>
-    )
+      )
+    }
   }),
   columnHelper.display({
     id: 'empty1',
@@ -50,8 +54,9 @@ export const hrColumns = [
     header: () => <CellHeader label="Project" />,
     footer: (info) => info.column.id,
     cell: (props) => {
+      const { original: overtimeManagement } = props.row
       return (
-        <Listbox value={props.row.original.projects[0]}>
+        <Listbox value={overtimeManagement.projects[0]}>
           <div className="relative mt-1">
             <Listbox.Button
               className={classNames(
@@ -60,7 +65,7 @@ export const hrColumns = [
               )}
             >
               <span className="block truncate">
-                {props.row.original.projects[0].project_name.label}
+                {overtimeManagement.projects[0].project_name.label}
               </span>
               <AiOutlineCaretDown className="h-3 w-3 text-gray-400" aria-hidden="true" />
             </Listbox.Button>
@@ -76,7 +81,7 @@ export const hrColumns = [
                   'py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'
                 )}
               >
-                {props.row.original.projects.map((project, index) => (
+                {overtimeManagement.projects.map((project, index) => (
                   <Listbox.Option
                     key={index}
                     className={({ active }) =>
@@ -147,6 +152,7 @@ export const hrColumns = [
     id: 'id',
     header: () => <span className="font-normal text-slate-500">Actions</span>,
     cell: (props) => {
+      const { original: overtimeManagement } = props.row
       const [isOpenRemarksModal, setIsOpenRemarksModal] = useState<boolean>(false)
       const [isOpenUpdateModal, setIsOpenUpdateModal] = useState<boolean>(false)
 
@@ -179,7 +185,7 @@ export const hrColumns = [
             {...{
               isOpen: isOpenRemarksModal,
               closeModal: () => handleShowRemarksToggle(),
-              row: props.row.original
+              row: overtimeManagement
             }}
           />
 
@@ -188,7 +194,7 @@ export const hrColumns = [
             {...{
               isOpen: isOpenUpdateModal,
               closeModal: () => handleUpdateToggle(),
-              row: props.row.original
+              row: overtimeManagement
             }}
           />
         </div>
@@ -203,26 +209,32 @@ export const managerColumns = [
   columnHelper.accessor('user.name', {
     header: () => <CellHeader label="Name" />,
     footer: (info) => info.column.id,
-    cell: (props) => (
-      <div className="flex items-center space-x-2">
-        <Avatar
-          src={`https://placeimg.com/640/480/abstract/${props.row.id}`}
-          size="base"
-          rounded="full"
-        />
-        <div className="flex flex-col items-start">
-          <h1 className="font-semibold">{props.row.original.user.name}</h1>
-          <small className="text-slate-500">{props.row.original.user.role.name}</small>
+    cell: (props) => {
+      const { original: overtimeManagement } = props.row
+
+      return (
+        <div className="flex items-center space-x-2">
+          <Avatar
+            src={`https://placeimg.com/640/480/abstract/${props.row.id}`}
+            size="base"
+            rounded="full"
+          />
+          <div className="flex flex-col items-start">
+            <h1 className="font-semibold">{overtimeManagement.user.name}</h1>
+            <small className="text-slate-500">{overtimeManagement.user.role.name}</small>
+          </div>
         </div>
-      </div>
-    )
+      )
+    }
   }),
   columnHelper.accessor('projects', {
     header: () => <CellHeader label="Project" />,
     footer: (info) => info.column.id,
     cell: (props) => {
+      const { original: overtimeManagement } = props.row
+
       return (
-        <Listbox value={props.row.original.projects[0]}>
+        <Listbox value={overtimeManagement.projects[0]}>
           <div className="relative mt-1">
             <Listbox.Button
               className={classNames(
@@ -231,7 +243,7 @@ export const managerColumns = [
               )}
             >
               <span className="block truncate">
-                {props.row.original.projects[0].project_name.label}
+                {overtimeManagement.projects[0].project_name.label}
               </span>
               <AiOutlineCaretDown className="h-3 w-3 text-gray-400" aria-hidden="true" />
             </Listbox.Button>
@@ -247,7 +259,7 @@ export const managerColumns = [
                   'py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'
                 )}
               >
-                {props.row.original.projects.map((project, index) => (
+                {overtimeManagement.projects.map((project, index) => (
                   <Listbox.Option
                     key={index}
                     className={({ active }) =>
@@ -326,6 +338,7 @@ export const managerColumns = [
     id: 'id',
     header: () => <span className="font-normal text-slate-500">Actions</span>,
     cell: (props) => {
+      const { original: overtimeManagement } = props.row
       const [isOpenRemarksModal, setIsOpenRemarksModal] = useState<boolean>(false)
       const [isOpenConfirmationModal, setIsOpenConfirmationModal] = useState<boolean>(false)
 
@@ -404,7 +417,7 @@ export const managerColumns = [
             {...{
               isOpen: isOpenConfirmationModal,
               closeModal: () => handleConfirmationToggle(),
-              row: props.row.original
+              row: overtimeManagement
             }}
           />
           {/* This will show the remarks modal */}
@@ -412,7 +425,7 @@ export const managerColumns = [
             {...{
               isOpen: isOpenRemarksModal,
               closeModal: () => handleShowRemarksToggle(),
-              row: props.row.original
+              row: overtimeManagement
             }}
           />
         </div>
