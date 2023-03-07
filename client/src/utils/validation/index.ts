@@ -145,16 +145,28 @@ export const PersonalInformationSchema = yup.object().shape({
   middle_name: yup.string().label('Middle Name'),
   last_name: yup.string().required().label('Last Name'),
   position: yup.string().required().label('Position'),
-  sss_number: yup.string().label('SSS number (XX-XXXXXXX-X)'),
-  tin_number: yup.string().label('TIN Number (XXX-XXX-XXX-XXX)'),
-  philhealth_number: yup.string().label('PhilHealth Number (XX-XXXXXXXXX-X)'),
-  pagibig_number: yup.string().label('PAG-IBIG (HDMF) Number (XXXX-XXXX-XXXX)'),
+  sss_number: yup
+    .string()
+    .matches(/^[0-9-]*$/)
+    .label('SSS number (XX-XXXXXXX-X)'),
+  tin_number: yup
+    .string()
+    .matches(/^[0-9-]*$/)
+    .label('TIN Number (XXX-XXX-XXX-XXX)'),
+  philhealth_number: yup
+    .string()
+    .matches(/^[0-9-]*$/)
+    .label('PhilHealth Number (XX-XXXXXXXXX-X)'),
+  pagibig_number: yup
+    .string()
+    .matches(/^[0-9-]*$/)
+    .label('PAG-IBIG (HDMF) Number (XXXX-XXXX-XXXX)'),
   birthday: yup.string().required().label('Birthday'),
   educational_background: yup
     .string()
     .label('Educational Background (University / Major / Course)'),
   contact_number: yup.number().required().label('Contact Number (XXXX-XXX-XXXX)'),
-  mobile_carrier: yup.boolean().required().label('Mobile Carrier'),
+  mobile_carrier: yup.string().required().label('Mobile Carrier'),
   address: yup.string().required().label('Address w/ postal code (....., XXXX)'),
   email: yup.string().required().label('E-mail address for google documents / calendar'),
   chatwork_account: yup.string().required().label('Chatwork/Slack Account'),

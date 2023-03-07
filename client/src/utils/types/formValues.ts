@@ -99,7 +99,7 @@ export type PersonalInformationFormValues = {
   birthday: string
   educational_background: string
   contact_number: number
-  mobile_carrier: boolean
+  mobile_carrier: string
   address: string
   email: string
   chatwork_account: string
