@@ -19,6 +19,7 @@ namespace api.Entities
         public User User { get; set; } = default!;
         public Time? TimeIn { get; set; }
         public Time? TimeOut { get; set; }
+        public Overtime? Overtime { get; set; } = default!;
         public ICollection<WorkInterruption> WorkInterruptions { get; set; } = default!;
     }
 }

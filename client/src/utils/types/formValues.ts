@@ -55,7 +55,7 @@ export type NewOvertimeFormValues = {
   }[]
   manager: ReactSelectOption
   date_effective: string
-  requested_hours: number
+  requested_minutes: number
   remarks: string
 }
 

@@ -74,7 +74,7 @@ export const MyOvertimeSchema = yup.object().shape({
   ),
   manager: SelectSchema.label('Manager'),
   date_effective: yup.string().required().label('Date Effective'),
-  requested_hours: yup.number().required().label('Requested hours'),
+  requested_minutes: yup.number().required().label('Requested minutes'),
   remarks: yup.string().required().label('Reason')
 })
 

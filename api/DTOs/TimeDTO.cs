@@ -11,6 +11,7 @@ namespace api.DTOs
                 Id = time.Id;
                 TimeHour = time.TimeHour.ToString(@"hh\:mm");
                 Remarks = time.Remarks;
+                CreatedAt = time.CreatedAt;
             }
             else
             {

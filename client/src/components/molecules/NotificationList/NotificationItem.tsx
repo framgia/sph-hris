@@ -99,7 +99,8 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
                         'transition duration-75 ease-in-out ',
                         isActive || row.original.id === id
                           ? 'border-l-4 border-l-amber-300 bg-white'
-                          : 'bg-transparent pl-4'
+                          : 'bg-transparent pl-4',
+                        row.original.id === id ? 'bg-amber-50' : ''
                       )}
                     >
                       <div className="flex items-center justify-between">

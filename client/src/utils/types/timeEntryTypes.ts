@@ -5,11 +5,13 @@ export interface IEmployeeTimeEntry {
     id: number
     timeHour: string
     remarks: string
+    createdAt: string
   }
   timeOut: {
     id: number
     timeHour: string
     remarks: string
+    createdAt: string
   }
   startTime: string
   endTime: string
@@ -17,9 +19,16 @@ export interface IEmployeeTimeEntry {
   trackedHours: string
   late: number
   undertime: number
-  overtime: number
+  overtime: ITimeEntryOvertime
   status: string
 }
+
+export type ITimeEntryOvertime = {
+  requestedMinutes: number
+  approvedMinutes: number | null
+  isLeaderApproved: boolean | null
+  isManagerApproved: boolean | null
+} | null
 
 export interface ITimeEntry {
   id: number

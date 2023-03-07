@@ -12,6 +12,7 @@ import useUserQuery from '~/hooks/useUserQuery'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
 import AddNewOvertimeModal from '../AddNewOvertimeModal'
+import { NO_OVERTIME } from '~/utils/constants/overtimeStatus'
 import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 import InterruptionTimeEntriesModal from './../InterruptionTimeEntriesModal'
@@ -29,88 +30,93 @@ export const columns = [
     id: 'Time In',
     header: () => <CellHeader label="Time In" />,
     footer: (info) => info.column.id,
-    cell: (props) => (
-      <>
-        {(props.row.original.timeIn?.remarks !== undefined &&
-          props.row.original.timeIn?.remarks !== '') ||
-        getSpecificTimeEntry(Number(props.row.original.timeIn?.id)).data?.timeById?.media[0]
-          ?.fileName !== undefined ? (
-          <Tippy
-            content={moment(props.row.original.date).format('MMM D, YYYY')}
-            placement="left"
-            className="!text-xs"
-          >
-            <Link
-              href={`my-daily-time-record/?time_in=${props.row.original.timeIn?.id}`}
-              className="relative flex cursor-pointer active:scale-95"
+    cell: (props) => {
+      const { original: timeEntry } = props.row
+
+      return (
+        <>
+          {(timeEntry.timeIn?.remarks !== undefined && timeEntry.timeIn?.remarks !== '') ||
+          getSpecificTimeEntry(Number(timeEntry.timeIn?.id)).data?.timeById?.media[0]?.fileName !==
+            undefined ? (
+            <Tippy
+              content={moment(timeEntry.date).format('MMM D, YYYY')}
+              placement="left"
+              className="!text-xs"
             >
+              <Link
+                href={`my-daily-time-record/?time_in=${timeEntry.timeIn?.id}`}
+                className="relative flex cursor-pointer active:scale-95"
+              >
+                {/* Actual Time In Data */}
+                <span>{timeEntry.timeIn?.timeHour ?? EMPTY}</span>
+                {/* Status */}
+                {timeEntry.startTime > timeEntry.timeIn?.timeHour ? (
+                  <span
+                    className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500')}
+                  />
+                ) : (
+                  <>
+                    {!Number.isNaN(timeEntry.timeIn?.id) && (
+                      <span
+                        className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500')}
+                      />
+                    )}
+                  </>
+                )}
+              </Link>
+            </Tippy>
+          ) : (
+            <div className="relative flex">
               {/* Actual Time In Data */}
-              <span>{props.row.original.timeIn?.timeHour ?? EMPTY}</span>
+              <span>{timeEntry.timeIn?.timeHour ?? EMPTY}</span>
               {/* Status */}
-              {props.row.original.startTime > props.row.original.timeIn?.timeHour ? (
-                <span
-                  className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500')}
-                />
-              ) : (
-                <>
-                  {!Number.isNaN(props.row.original.timeIn?.id) && (
+              {timeEntry.timeIn?.timeHour !== undefined && timeEntry.timeIn?.timeHour !== ''
+                ? !(timeEntry.startTime > timeEntry.timeIn?.timeHour) && (
                     <span
                       className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500')}
                     />
-                  )}
-                </>
-              )}
-            </Link>
-          </Tippy>
-        ) : (
-          <div className="relative flex">
-            {/* Actual Time In Data */}
-            <span>{props.row.original.timeIn?.timeHour ?? EMPTY}</span>
-            {/* Status */}
-            {props.row.original.timeIn?.timeHour !== undefined &&
-            props.row.original.timeIn?.timeHour !== ''
-              ? !(props.row.original.startTime > props.row.original.timeIn?.timeHour) && (
-                  <span
-                    className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500')}
-                  />
-                )
-              : ''}
-          </div>
-        )}
-      </>
-    )
+                  )
+                : ''}
+            </div>
+          )}
+        </>
+      )
+    }
   }),
   columnHelper.accessor('timeOut', {
     header: () => <CellHeader label="Time Out" />,
     footer: (info) => info.column.id,
-    cell: (props) => (
-      <>
-        {props.row.original.timeOut?.remarks !== undefined &&
-        props.row.original.timeOut?.remarks !== '' ? (
-          <Tippy
-            content={moment(props.row.original.date).format('MMM D, YYYY')}
-            placement="left"
-            className="!text-xs"
-          >
-            <Link
-              href={`my-daily-time-record/?time_out=${props.row.original.timeOut?.id}`}
-              className="relative flex cursor-pointer active:scale-95"
+    cell: (props) => {
+      const { original: timeEntry } = props.row
+
+      return (
+        <>
+          {timeEntry.timeOut?.remarks !== undefined && timeEntry.timeOut?.remarks !== '' ? (
+            <Tippy
+              content={moment(timeEntry.date).format('MMM D, YYYY')}
+              placement="left"
+              className="!text-xs"
             >
-              {/* Actual Time In Data */}
-              <span>{props.row.original.timeOut?.timeHour ?? EMPTY}</span>
-              {/* Status */}
-              {!Number.isNaN(props.row.original.timeOut?.id) && (
-                <span
-                  className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500')}
-                />
-              )}
-            </Link>
-          </Tippy>
-        ) : (
-          <span>{props.row.original.timeOut?.timeHour ?? EMPTY}</span>
-        )}
-      </>
-    )
+              <Link
+                href={`my-daily-time-record/?time_out=${timeEntry.timeOut?.id}`}
+                className="relative flex cursor-pointer active:scale-95"
+              >
+                {/* Actual Time In Data */}
+                <span>{timeEntry.timeOut?.timeHour ?? EMPTY}</span>
+                {/* Status */}
+                {!Number.isNaN(timeEntry.timeOut?.id) && (
+                  <span
+                    className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500')}
+                  />
+                )}
+              </Link>
+            </Tippy>
+          ) : (
+            <span>{timeEntry.timeOut?.timeHour ?? EMPTY}</span>
+          )}
+        </>
+      )
+    }
   }),
   columnHelper.accessor('startTime', {
     header: () => <CellHeader label="Start Time" />,
@@ -136,64 +142,99 @@ export const columns = [
     header: () => <CellHeader label="Overtime(min)" />,
     footer: (info) => info.column.id,
     cell: (props) => {
+      const { original: timeEntry } = props.row
+      const { overtime } = timeEntry
+
       const [isOpen, setIsOpen] = useState<boolean>(false)
 
       const handleToggle = (): void => setIsOpen(!isOpen)
 
+      const minuteDifference = Math.floor(
+        moment
+          .duration(
+            moment(timeEntry.timeOut.createdAt).diff(
+              `${moment(timeEntry.date).format('YYYY-MM-DD')} ${moment('19:30', 'HH:mm:ss').format(
+                'HH:mm:ss'
+              )}`
+            )
+          )
+          .asMinutes()
+      )
+
       return (
         <div className="flex items-center space-x-2">
-          {/* If the user has an overtime */}
-          <Button type="button" className="flex items-center" onClick={handleToggle}>
-            <span>60</span>
-            <HiFire className="h-4 w-4 text-red-500" />
+          {/* If the user has no overtime filed */}
+          {overtime === null ? (
+            <Button type="button" className="flex items-center" onClick={handleToggle}>
+              {minuteDifference > 0 ? (
+                <>
+                  <span>{minuteDifference}</span>
+                  <HiFire className="h-4 w-4 text-red-500" />
+                </>
+              ) : (
+                <span>{NO_OVERTIME}</span>
+              )}
 
-            {/* File New Overtime Modal */}
-            {isOpen ? (
-              <AddNewOvertimeModal
-                {...{
-                  isOpen,
-                  closeModal: handleToggle,
-                  overtime: props.row.original
-                }}
-              />
-            ) : null}
-          </Button>
-
-          {/* If Approved Request */}
-          <Tippy placement="left" content="Approved request" className="!text-xs">
-            <Button
-              type="button"
-              className="inline-flex items-center rounded border-y border-r border-slate-300 group-hover:bg-white"
-            >
-              <Check className="h-4 w-5 rounded-l bg-green-500 text-white" />
-              <span className="px-1 text-green-600">20</span>
+              {/* File New Overtime Modal */}
+              {isOpen ? (
+                <AddNewOvertimeModal
+                  {...{
+                    isOpen,
+                    closeModal: handleToggle,
+                    timeEntry,
+                    initialMinutes: minuteDifference
+                  }}
+                />
+              ) : null}
             </Button>
-          </Tippy>
+          ) : (
+            <>
+              {/* If Approved Request */}
+              {overtime.isLeaderApproved != null &&
+                overtime.isManagerApproved != null &&
+                overtime.isLeaderApproved &&
+                overtime.isManagerApproved && (
+                  <Tippy placement="left" content="Approved request" className="!text-xs">
+                    <Button
+                      type="button"
+                      className="inline-flex items-center rounded border-y border-r border-slate-300 group-hover:bg-white"
+                    >
+                      <Check className="h-4 w-5 rounded-l bg-green-500 text-white" />
+                      <span className="px-1 text-green-600">{overtime.approvedMinutes}</span>
+                    </Button>
+                  </Tippy>
+                )}
 
-          {/* If Pending Request */}
-          <Tippy placement="left" content="Pending request" className="!text-xs">
-            <Button
-              type="button"
-              className="inline-flex items-center rounded border-y border-r border-slate-300 group-hover:bg-white"
-            >
-              <RefreshCw className="h-4 w-5 rounded-l bg-amber-500 px-1 text-white" />
-              <span className="px-1 text-amber-600">16</span>
-            </Button>
-          </Tippy>
+              {/* If Pending Request */}
+              {(overtime.isLeaderApproved === null || overtime.isManagerApproved === null) && (
+                <Tippy placement="left" content="Pending request" className="!text-xs">
+                  <Button
+                    type="button"
+                    className="inline-flex items-center rounded border-y border-r border-slate-300 group-hover:bg-white"
+                  >
+                    <RefreshCw className="h-4 w-5 rounded-l bg-amber-500 px-1 text-white" />
+                    <span className="px-1 text-amber-600">{overtime.requestedMinutes}</span>
+                  </Button>
+                </Tippy>
+              )}
 
-          {/* If Pending Request */}
-          <Tippy placement="left" content="Disapproved request" className="!text-xs">
-            <Button
-              type="button"
-              className="inline-flex items-center rounded border-y border-r border-slate-300 group-hover:bg-white"
-            >
-              <ThumbsDown className="h-4 w-5 rounded-l bg-rose-500 px-1 text-white" />
-              <span className="px-1 text-rose-600">120</span>
-            </Button>
-          </Tippy>
-
-          {/* Just a normal number */}
-          <span>0</span>
+              {/* If Disapproved Request */}
+              {overtime.isLeaderApproved !== null &&
+                overtime.isManagerApproved !== null &&
+                !overtime.isLeaderApproved &&
+                !overtime.isManagerApproved && (
+                  <Tippy placement="left" content="Disapproved request" className="!text-xs">
+                    <Button
+                      type="button"
+                      className="inline-flex items-center rounded border-y border-r border-slate-300 group-hover:bg-white"
+                    >
+                      <ThumbsDown className="h-4 w-5 rounded-l bg-rose-500 px-1 text-white" />
+                      <span className="px-1 text-rose-600">{overtime.requestedMinutes}</span>
+                    </Button>
+                  </Tippy>
+                )}
+            </>
+          )}
         </div>
       )
     }
@@ -207,6 +248,7 @@ export const columns = [
     id: 'id',
     header: () => <span className="font-normal text-slate-500">Actions</span>,
     cell: (props) => {
+      const { original: timeEntry } = props.row
       const [isOpenTimeEntry, setIsOpenTimeEntry] = useState<boolean>(false)
       const { handleUserQuery } = useUserQuery()
       const { data: user } = handleUserQuery()
@@ -228,7 +270,7 @@ export const columns = [
                 <InterruptionTimeEntriesModal
                   {...{
                     isOpen: isOpenTimeEntry,
-                    timeEntryId: props.row.original.id,
+                    timeEntryId: timeEntry.id,
                     user: user?.userById.name as string,
                     closeModal: handleIsOpenTimeEntryToggle
                   }}

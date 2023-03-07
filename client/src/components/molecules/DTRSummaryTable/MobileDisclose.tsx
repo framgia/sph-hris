@@ -36,64 +36,72 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
             <>
               {table.getRowModel().rows.map((row) => (
                 <Disclosure key={row.id}>
-                  {({ open }) => (
-                    <>
-                      <Disclosure.Button
-                        className={classNames(
-                          'w-full border-b border-slate-200 py-2 px-4 hover:bg-white',
-                          open ? 'bg-white' : 'hover:shadow-md hover:shadow-slate-200'
-                        )}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
+                  {({ open }) => {
+                    const { original: timesheetSummary } = row
+
+                    return (
+                      <>
+                        <Disclosure.Button
+                          className={classNames(
+                            'w-full border-b border-slate-200 py-2 px-4 hover:bg-white',
+                            open ? 'bg-white' : 'hover:shadow-md hover:shadow-slate-200'
+                          )}
+                        >
+                          <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-2">
-                              <Avatar
-                                src={`https://placeimg.com/640/480/abstract/${row.id}`}
-                                size="base"
-                                rounded="full"
-                              />
-                              <div className="flex flex-col items-start">
-                                <h1 className="font-semibold">{row.original.user.name}</h1>
-                                <small className="text-slate-500">Web Developer</small>
+                              <div className="flex items-center space-x-2">
+                                <Avatar
+                                  src={`https://placeimg.com/640/480/abstract/${row.id}`}
+                                  size="base"
+                                  rounded="full"
+                                />
+                                <div className="flex flex-col items-start">
+                                  <h1 className="font-semibold">{timesheetSummary.user.name}</h1>
+                                  <small className="text-slate-500">Web Developer</small>
+                                </div>
                               </div>
                             </div>
+                            <ChevronRight
+                              className={classNames(
+                                'h-4 w-4 text-slate-600 duration-300',
+                                open ? 'rotate-90' : ''
+                              )}
+                            />
                           </div>
-                          <ChevronRight
+                        </Disclosure.Button>
+                        <DisclosureTransition>
+                          <Disclosure.Panel
                             className={classNames(
-                              'h-4 w-4 text-slate-600 duration-300',
-                              open ? 'rotate-90' : ''
+                              'text-slate-600',
+                              open ? 'bg-white shadow-md' : ''
                             )}
-                          />
-                        </div>
-                      </Disclosure.Button>
-                      <DisclosureTransition>
-                        <Disclosure.Panel
-                          className={classNames('text-slate-600', open ? 'bg-white shadow-md' : '')}
-                        >
-                          <ul className="flex flex-col divide-y divide-slate-200">
-                            <li className="px-4 py-2">
-                              Leave: <span className="font-semibold">{row.original.leave}</span>
-                            </li>
-                            <li className="px-4 py-2">
-                              Absences:{' '}
-                              <span className="font-semibold">{row.original.absences}</span>
-                            </li>
-                            <li className="px-4 py-2">
-                              Late: <span className="font-semibold">{row.original.late}</span>
-                            </li>
-                            <li className="px-4 py-2">
-                              Undertime:{' '}
-                              <span className="font-semibold">{row.original.undertime}</span>
-                            </li>
-                            <li className="px-4 py-2">
-                              Overtime:{' '}
-                              <span className="font-semibold">{row.original.overtime}</span>
-                            </li>
-                          </ul>
-                        </Disclosure.Panel>
-                      </DisclosureTransition>
-                    </>
-                  )}
+                          >
+                            <ul className="flex flex-col divide-y divide-slate-200">
+                              <li className="px-4 py-2">
+                                Leave:{' '}
+                                <span className="font-semibold">{timesheetSummary.leave}</span>
+                              </li>
+                              <li className="px-4 py-2">
+                                Absences:{' '}
+                                <span className="font-semibold">{timesheetSummary.absences}</span>
+                              </li>
+                              <li className="px-4 py-2">
+                                Late: <span className="font-semibold">{timesheetSummary.late}</span>
+                              </li>
+                              <li className="px-4 py-2">
+                                Undertime:{' '}
+                                <span className="font-semibold">{timesheetSummary.undertime}</span>
+                              </li>
+                              <li className="px-4 py-2">
+                                Overtime:{' '}
+                                <span className="font-semibold">{timesheetSummary.overtime}</span>
+                              </li>
+                            </ul>
+                          </Disclosure.Panel>
+                        </DisclosureTransition>
+                      </>
+                    )
+                  }}
                 </Disclosure>
               ))}
             </>

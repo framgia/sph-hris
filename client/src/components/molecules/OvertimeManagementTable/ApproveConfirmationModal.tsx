@@ -25,14 +25,14 @@ const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.E
     register,
     handleSubmit,
     formState: { errors, isSubmitting }
-  } = useForm<Required<Pick<NewOvertimeFormValues, 'requested_hours'>>>({
+  } = useForm<Required<Pick<NewOvertimeFormValues, 'requested_minutes'>>>({
     mode: 'onTouched',
     resolver: yupResolver(ApproveConfirmationSchema)
   })
 
   // This will handle Submit and Save New Overtime
   const handleSave = async (
-    data: Required<Pick<NewOvertimeFormValues, 'requested_hours'>>
+    data: Required<Pick<NewOvertimeFormValues, 'requested_minutes'>>
   ): Promise<void> => {
     return await new Promise((resolve) => {
       setTimeout(() => {
@@ -47,7 +47,7 @@ const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.E
   useEffect(() => {
     if (isOpen) {
       reset({
-        requested_hours: row.requestedHours
+        requested_minutes: row.requestedHours
       })
     }
   }, [isOpen])
@@ -79,13 +79,13 @@ const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.E
               type="text"
               disabled={isSubmitting}
               placeholder=""
-              {...register('requested_hours')}
+              {...register('requested_minutes')}
               className="py-2.5 pl-11 text-xs"
-              iserror={errors.requested_hours !== null && errors?.requested_hours !== undefined}
+              iserror={errors.requested_minutes !== null && errors?.requested_minutes !== undefined}
             />
           </TextField>
-          {errors?.requested_hours !== null && errors?.requested_hours !== undefined && (
-            <span className="error text-[10px]">{errors.requested_hours?.message}</span>
+          {errors?.requested_minutes !== null && errors?.requested_minutes !== undefined && (
+            <span className="error text-[10px]">{errors.requested_minutes?.message}</span>
           )}
         </section>
         <footer className="flex items-center space-x-4">

@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast'
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
 
 import { client } from '~/utils/shared/client'
@@ -35,7 +36,10 @@ export const getAllEmployeeTimesheet = (
     queryFn: async () =>
       await client.request(GET_ALL_EMPLOYEE_TIMESHEET(input, argument), variables),
     select: (data: { timeEntries: ITimeEntry[] }) => data,
-    enabled: ready
+    enabled: ready,
+    onError: () => {
+      toast.error('Something went wrong')
+    }
   })
   return result
 }
@@ -52,7 +56,10 @@ export const getEmployeeTimesheet = (
     queryKey: ['GET_EMPLOYEE_TIMESHEET', userId],
     queryFn: async () => await client.request(GET_EMPLOYEE_TIMESHEET, { id: userId }),
     select: (data: { timeEntriesByEmployeeId: IEmployeeTimeEntry[] }) => data,
-    enabled: !isNaN(userId)
+    enabled: !isNaN(userId),
+    onError: () => {
+      toast.error('Something went wrong')
+    }
   })
   return result
 }

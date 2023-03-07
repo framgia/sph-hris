@@ -59,204 +59,205 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
               <>
                 {table.getRowModel().rows.map((row) => (
                   <Disclosure key={row.id}>
-                    {({ open }) => (
-                      <>
-                        <Disclosure.Button
-                          className={classNames(
-                            'w-full border-b border-slate-200 py-2 px-4 hover:bg-white',
-                            open ? 'bg-white' : 'hover:shadow-md hover:shadow-slate-200',
-                            row.original.status === WorkStatus.VACATION_LEAVE.toLowerCase()
-                              ? 'bg-amber-50 hover:bg-amber-50'
-                              : '',
-                            row.original.status === WorkStatus.ABSENT.toLowerCase()
-                              ? 'bg-fuchsia-50 hover:bg-fuchsia-50'
-                              : ''
-                          )}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-2">
-                              <div className="flex items-center space-x-2">
-                                <Avatar
-                                  src={`https://placeimg.com/640/480/abstract/${row.id}`}
-                                  size="base"
-                                  rounded="full"
-                                />
-                                <div className="flex flex-col items-start">
-                                  <h1 className="font-semibold">{row.original.user.name}</h1>
-                                  <small className="text-slate-500">Web Developer</small>
-                                </div>
-                              </div>
-                              <Chip label={row.original.status} />
-                            </div>
-                            <ChevronRight
-                              className={classNames(
-                                'h-4 w-4 text-slate-600 duration-300',
-                                open ? 'rotate-90' : ''
-                              )}
-                            />
-                          </div>
-                        </Disclosure.Button>
-                        <DisclosureTransition>
-                          <Disclosure.Panel
+                    {({ open }) => {
+                      const { original: timeEntry } = row
+
+                      return (
+                        <>
+                          <Disclosure.Button
                             className={classNames(
-                              'text-slate-600',
-                              open ? 'bg-white shadow-md shadow-slate-200' : ''
+                              'w-full border-b border-slate-200 py-2 px-4 hover:bg-white',
+                              open ? 'bg-white' : 'hover:shadow-md hover:shadow-slate-200',
+                              timeEntry.status === WorkStatus.VACATION_LEAVE.toLowerCase()
+                                ? 'bg-amber-50 hover:bg-amber-50'
+                                : '',
+                              timeEntry.status === WorkStatus.ABSENT.toLowerCase()
+                                ? 'bg-fuchsia-50 hover:bg-fuchsia-50'
+                                : ''
                             )}
                           >
-                            <ul className="flex flex-col divide-y divide-slate-200">
-                              <li className="flex items-center space-x-1 px-4 py-2">
-                                <p>Time In:</p>
-                                <div className="relative flex">
-                                  {row.original.timeIn?.remarks !== undefined &&
-                                  row.original.timeIn?.remarks !== '' ? (
-                                    <>
-                                      <Link
-                                        href={`dtr-management/?time_in=${row.original.timeIn?.id}`}
-                                        className="relative flex cursor-pointer active:scale-95"
-                                      >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-2">
+                                  <Avatar
+                                    src={`https://placeimg.com/640/480/abstract/${row.id}`}
+                                    size="base"
+                                    rounded="full"
+                                  />
+                                  <div className="flex flex-col items-start">
+                                    <h1 className="font-semibold">{timeEntry.user.name}</h1>
+                                    <small className="text-slate-500">Web Developer</small>
+                                  </div>
+                                </div>
+                                <Chip label={timeEntry.status} />
+                              </div>
+                              <ChevronRight
+                                className={classNames(
+                                  'h-4 w-4 text-slate-600 duration-300',
+                                  open ? 'rotate-90' : ''
+                                )}
+                              />
+                            </div>
+                          </Disclosure.Button>
+                          <DisclosureTransition>
+                            <Disclosure.Panel
+                              className={classNames(
+                                'text-slate-600',
+                                open ? 'bg-white shadow-md shadow-slate-200' : ''
+                              )}
+                            >
+                              <ul className="flex flex-col divide-y divide-slate-200">
+                                <li className="flex items-center space-x-1 px-4 py-2">
+                                  <p>Time In:</p>
+                                  <div className="relative flex">
+                                    {timeEntry.timeIn?.remarks !== undefined &&
+                                    timeEntry.timeIn?.remarks !== '' ? (
+                                      <>
+                                        <Link
+                                          href={`dtr-management/?time_in=${timeEntry.timeIn?.id}`}
+                                          className="relative flex cursor-pointer active:scale-95"
+                                        >
+                                          {/* Actual Time In Data */}
+                                          <span className="font-semibold">
+                                            {timeEntry.timeIn?.timeHour ?? EMPTY}
+                                          </span>
+                                          {/* Status */}
+                                          {timeEntry.startTime > timeEntry.timeIn?.timeHour ? (
+                                            <span
+                                              className={classNames(
+                                                'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500'
+                                              )}
+                                            />
+                                          ) : (
+                                            <>
+                                              {!Number.isNaN(timeEntry.timeIn?.id) && (
+                                                <span
+                                                  className={classNames(
+                                                    'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500'
+                                                  )}
+                                                />
+                                              )}
+                                            </>
+                                          )}
+                                        </Link>
+                                      </>
+                                    ) : (
+                                      <>
                                         {/* Actual Time In Data */}
                                         <span className="font-semibold">
-                                          {row.original.timeIn?.timeHour ?? EMPTY}
+                                          {timeEntry.timeIn?.timeHour ?? EMPTY}
                                         </span>
                                         {/* Status */}
-                                        {row.original.startTime > row.original.timeIn?.timeHour ? (
-                                          <span
-                                            className={classNames(
-                                              'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500'
-                                            )}
-                                          />
-                                        ) : (
-                                          <>
-                                            {!Number.isNaN(row.original.timeIn?.id) && (
+                                        {timeEntry.timeIn?.timeHour !== undefined &&
+                                        timeEntry.timeIn?.timeHour !== ''
+                                          ? !(timeEntry.startTime > timeEntry.timeIn?.timeHour) && (
                                               <span
                                                 className={classNames(
                                                   'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500'
                                                 )}
                                               />
+                                            )
+                                          : ''}
+                                      </>
+                                    )}
+                                  </div>
+                                </li>
+                                <li className="flex items-center space-x-2 px-4 py-2">
+                                  <p>Time Out:</p>
+                                  <div className="relative flex">
+                                    {timeEntry.timeOut?.remarks !== undefined &&
+                                    timeEntry.timeOut?.remarks !== '' ? (
+                                      <Link
+                                        href={`dtr-management/?time_out=${timeEntry.timeOut?.id}`}
+                                        className="relative flex cursor-pointer active:scale-95"
+                                      >
+                                        {/* Actual Time Out Data */}
+                                        <span className="font-semibold">
+                                          {timeEntry.timeOut?.timeHour ?? EMPTY}
+                                        </span>
+                                        {/* Status */}
+                                        {!Number.isNaN(timeEntry.timeOut?.id) && (
+                                          <span
+                                            className={classNames(
+                                              'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500'
                                             )}
-                                          </>
+                                          />
                                         )}
                                       </Link>
-                                    </>
-                                  ) : (
-                                    <>
-                                      {/* Actual Time In Data */}
+                                    ) : (
                                       <span className="font-semibold">
-                                        {row.original.timeIn?.timeHour ?? EMPTY}
+                                        {timeEntry.timeOut?.timeHour ?? EMPTY}
                                       </span>
-                                      {/* Status */}
-                                      {row.original.timeIn?.timeHour !== undefined &&
-                                      row.original.timeIn?.timeHour !== ''
-                                        ? !(
-                                            row.original.startTime > row.original.timeIn?.timeHour
-                                          ) && (
-                                            <span
-                                              className={classNames(
-                                                'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500'
-                                              )}
-                                            />
+                                    )}
+                                  </div>
+                                </li>
+                                <li className="px-4 py-2">
+                                  Work Hours:{' '}
+                                  <span className="font-semibold">{timeEntry.workedHours}</span>
+                                </li>
+                                <li className="px-4 py-2">
+                                  Late(min): <span className="font-semibold">{timeEntry.late}</span>
+                                </li>
+                                <li className="px-4 py-2">
+                                  Undertime(min):{' '}
+                                  <span className="font-semibold">{timeEntry.undertime}</span>
+                                </li>
+                                <li className="px-4 py-2">
+                                  Overtime(min):{' '}
+                                  <span className="font-semibold">{timeEntry.overtime}</span>
+                                </li>
+                                <li className="flex items-center space-x-2 px-4 py-2">
+                                  <span>Actions:</span>
+                                  <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
+                                    <Tippy
+                                      placement="left"
+                                      content="Time Entries"
+                                      className="!text-xs"
+                                    >
+                                      <Button
+                                        onClick={() =>
+                                          handleIsOpenTimeEntryToggle(
+                                            timeEntry.id.toString(),
+                                            timeEntry.user.name
                                           )
-                                        : ''}
-                                    </>
-                                  )}
-                                </div>
-                              </li>
-                              <li className="flex items-center space-x-2 px-4 py-2">
-                                <p>Time Out:</p>
-                                <div className="relative flex">
-                                  {row.original.timeOut?.remarks !== undefined &&
-                                  row.original.timeOut?.remarks !== '' ? (
-                                    <Link
-                                      href={`dtr-management/?time_out=${row.original.timeOut?.id}`}
-                                      className="relative flex cursor-pointer active:scale-95"
-                                    >
-                                      {/* Actual Time Out Data */}
-                                      <span className="font-semibold">
-                                        {row.original.timeOut?.timeHour ?? EMPTY}
-                                      </span>
-                                      {/* Status */}
-                                      {!Number.isNaN(row.original.timeOut?.id) && (
-                                        <span
-                                          className={classNames(
-                                            'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500'
-                                          )}
-                                        />
-                                      )}
-                                    </Link>
-                                  ) : (
-                                    <span className="font-semibold">
-                                      {row.original.timeOut?.timeHour ?? EMPTY}
-                                    </span>
-                                  )}
-                                </div>
-                              </li>
-                              <li className="px-4 py-2">
-                                Work Hours:{' '}
-                                <span className="font-semibold">{row.original.workedHours}</span>
-                              </li>
-                              <li className="px-4 py-2">
-                                Late(min):{' '}
-                                <span className="font-semibold">{row.original.late}</span>
-                              </li>
-                              <li className="px-4 py-2">
-                                Undertime(min):{' '}
-                                <span className="font-semibold">{row.original.undertime}</span>
-                              </li>
-                              <li className="px-4 py-2">
-                                Overtime(min):{' '}
-                                <span className="font-semibold">{row.original.overtime}</span>
-                              </li>
-                              <li className="flex items-center space-x-2 px-4 py-2">
-                                <span>Actions:</span>
-                                <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
-                                  <Tippy
-                                    placement="left"
-                                    content="Time Entries"
-                                    className="!text-xs"
-                                  >
-                                    <Button
-                                      onClick={() =>
-                                        handleIsOpenTimeEntryToggle(
-                                          row.original.id.toString(),
-                                          row.original.user.name
-                                        )
-                                      }
-                                      rounded="none"
-                                      className="py-0.5 px-1 text-slate-500"
-                                    >
-                                      <Clock className="h-4 w-4" />
-                                    </Button>
-                                  </Tippy>
-                                  <Tippy placement="left" content="Edit" className="!text-xs">
-                                    <Button
-                                      onClick={handleIsOpenEditModalToggle}
-                                      rounded="none"
-                                      className="py-0.5 px-1 text-slate-500"
-                                    >
-                                      <Edit className="h-4 w-4" />
-                                      {isOpenEditModal ? (
-                                        <EditTimeEntriesModal
-                                          {...{
-                                            isOpen: isOpenEditModal,
-                                            user: row.original.user,
-                                            timeEntry: {
-                                              id: row.original.id,
-                                              timeIn: row.original.timeIn?.timeHour,
-                                              timeOut: row.original.timeOut?.timeHour
-                                            },
-                                            closeModal: handleIsOpenEditModalToggle
-                                          }}
-                                        />
-                                      ) : null}
-                                    </Button>
-                                  </Tippy>
-                                </div>
-                              </li>
-                            </ul>
-                          </Disclosure.Panel>
-                        </DisclosureTransition>
-                      </>
-                    )}
+                                        }
+                                        rounded="none"
+                                        className="py-0.5 px-1 text-slate-500"
+                                      >
+                                        <Clock className="h-4 w-4" />
+                                      </Button>
+                                    </Tippy>
+                                    <Tippy placement="left" content="Edit" className="!text-xs">
+                                      <Button
+                                        onClick={handleIsOpenEditModalToggle}
+                                        rounded="none"
+                                        className="py-0.5 px-1 text-slate-500"
+                                      >
+                                        <Edit className="h-4 w-4" />
+                                        {isOpenEditModal ? (
+                                          <EditTimeEntriesModal
+                                            {...{
+                                              isOpen: isOpenEditModal,
+                                              user: timeEntry.user,
+                                              timeEntry: {
+                                                id: timeEntry.id,
+                                                timeIn: timeEntry.timeIn?.timeHour,
+                                                timeOut: timeEntry.timeOut?.timeHour
+                                              },
+                                              closeModal: handleIsOpenEditModalToggle
+                                            }}
+                                          />
+                                        ) : null}
+                                      </Button>
+                                    </Tippy>
+                                  </div>
+                                </li>
+                              </ul>
+                            </Disclosure.Panel>
+                          </DisclosureTransition>
+                        </>
+                      )
+                    }}
                   </Disclosure>
                 ))}
 

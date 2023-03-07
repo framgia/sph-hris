@@ -43,88 +43,93 @@ export const columns = [
     id: 'Time In',
     header: () => <CellHeader label="Time In" />,
     footer: (info) => info.column.id,
-    cell: (props) => (
-      <>
-        {(props.row.original.timeIn?.remarks !== undefined &&
-          props.row.original.timeIn?.remarks !== '') ||
-        getSpecificTimeEntry(Number(props.row.original.timeIn?.id)).data?.timeById?.media[0]
-          ?.fileName !== undefined ? (
-          <Tippy
-            content={moment(props.row.original.date).format('MMM D, YYYY')}
-            placement="left"
-            className="!text-xs"
-          >
-            <Link
-              href={`dtr-management/?time_in=${props.row.original.timeIn?.id}`}
-              className="relative flex cursor-pointer active:scale-95"
+    cell: (props) => {
+      const { original: timeEntry } = props.row
+
+      return (
+        <>
+          {(timeEntry.timeIn?.remarks !== undefined && timeEntry.timeIn?.remarks !== '') ||
+          getSpecificTimeEntry(Number(timeEntry.timeIn?.id)).data?.timeById?.media[0]?.fileName !==
+            undefined ? (
+            <Tippy
+              content={moment(timeEntry.date).format('MMM D, YYYY')}
+              placement="left"
+              className="!text-xs"
             >
+              <Link
+                href={`dtr-management/?time_in=${timeEntry.timeIn?.id}`}
+                className="relative flex cursor-pointer active:scale-95"
+              >
+                {/* Actual Time In Data */}
+                <span>{timeEntry.timeIn?.timeHour ?? EMPTY}</span>
+                {/* Status */}
+                {timeEntry.startTime > timeEntry.timeIn?.timeHour ? (
+                  <span
+                    className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500')}
+                  />
+                ) : (
+                  <>
+                    {!Number.isNaN(timeEntry.timeIn?.id) && (
+                      <span
+                        className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500')}
+                      />
+                    )}
+                  </>
+                )}
+              </Link>
+            </Tippy>
+          ) : (
+            <div className="relative flex">
               {/* Actual Time In Data */}
-              <span>{props.row.original.timeIn?.timeHour ?? EMPTY}</span>
+              <span>{timeEntry.timeIn?.timeHour ?? EMPTY}</span>
               {/* Status */}
-              {props.row.original.startTime > props.row.original.timeIn?.timeHour ? (
-                <span
-                  className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500')}
-                />
-              ) : (
-                <>
-                  {!Number.isNaN(props.row.original.timeIn?.id) && (
+              {timeEntry.timeIn?.timeHour !== undefined && timeEntry.timeIn?.timeHour !== ''
+                ? !(timeEntry.startTime > timeEntry.timeIn?.timeHour) && (
                     <span
                       className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500')}
                     />
-                  )}
-                </>
-              )}
-            </Link>
-          </Tippy>
-        ) : (
-          <div className="relative flex">
-            {/* Actual Time In Data */}
-            <span>{props.row.original.timeIn?.timeHour ?? EMPTY}</span>
-            {/* Status */}
-            {props.row.original.timeIn?.timeHour !== undefined &&
-            props.row.original.timeIn?.timeHour !== ''
-              ? !(props.row.original.startTime > props.row.original.timeIn?.timeHour) && (
-                  <span
-                    className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500')}
-                  />
-                )
-              : ''}
-          </div>
-        )}
-      </>
-    )
+                  )
+                : ''}
+            </div>
+          )}
+        </>
+      )
+    }
   }),
   columnHelper.accessor('timeOut.timeHour', {
     header: () => <CellHeader label="Time Out" />,
     footer: (info) => info.column.id,
-    cell: (props) => (
-      <>
-        {props.row.original.timeOut?.remarks !== undefined &&
-        props.row.original.timeOut?.remarks !== '' ? (
-          <Tippy
-            content={moment(props.row.original.date).format('MMM D, YYYY')}
-            placement="left"
-            className="!text-xs"
-          >
-            <Link
-              href={`dtr-management/?time_out=${props.row.original.timeOut?.id}`}
-              className="relative flex cursor-pointer active:scale-95"
+    cell: (props) => {
+      const { original: timeEntry } = props.row
+
+      return (
+        <>
+          {timeEntry.timeOut?.remarks !== undefined && timeEntry.timeOut?.remarks !== '' ? (
+            <Tippy
+              content={moment(timeEntry.date).format('MMM D, YYYY')}
+              placement="left"
+              className="!text-xs"
             >
-              {/* Actual Time In Data */}
-              <span>{props.row.original.timeOut?.timeHour ?? EMPTY}</span>
-              {/* Status */}
-              {!Number.isNaN(props.row.original.timeOut?.id) && (
-                <span
-                  className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500')}
-                />
-              )}
-            </Link>
-          </Tippy>
-        ) : (
-          <span>{props.row.original.timeOut?.timeHour ?? EMPTY}</span>
-        )}
-      </>
-    )
+              <Link
+                href={`dtr-management/?time_out=${timeEntry.timeOut?.id}`}
+                className="relative flex cursor-pointer active:scale-95"
+              >
+                {/* Actual Time In Data */}
+                <span>{timeEntry.timeOut?.timeHour ?? EMPTY}</span>
+                {/* Status */}
+                {!Number.isNaN(timeEntry.timeOut?.id) && (
+                  <span
+                    className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500')}
+                  />
+                )}
+              </Link>
+            </Tippy>
+          ) : (
+            <span>{timeEntry.timeOut?.timeHour ?? EMPTY}</span>
+          )}
+        </>
+      )
+    }
   }),
   columnHelper.accessor('startTime', {
     header: () => <CellHeader label="Start Time" />,
@@ -159,6 +164,7 @@ export const columns = [
     id: 'id',
     header: () => <span className="font-normal text-slate-500">Actions</span>,
     cell: (props) => {
+      const { original: timeEntry } = props.row
       const [isOpenTimeEntry, setIsOpenTimeEntry] = useState<boolean>(false)
       const [isOpenEditModal, setIsOpenEditModal] = useState<boolean>(false)
 
@@ -183,8 +189,8 @@ export const columns = [
                 <InterruptionTimeEntriesModal
                   {...{
                     isOpen: isOpenTimeEntry,
-                    user: props.row.original.user.name,
-                    timeEntryId: props.row.original.id,
+                    user: timeEntry.user.name,
+                    timeEntryId: timeEntry.id,
                     closeModal: handleIsOpenTimeEntryToggle
                   }}
                 />
@@ -202,11 +208,11 @@ export const columns = [
                 <EditTimeEntriesModal
                   {...{
                     isOpen: isOpenEditModal,
-                    user: props.row.original.user,
+                    user: timeEntry.user,
                     timeEntry: {
-                      id: props.row.original.id,
-                      timeIn: props.row.original.timeIn?.timeHour,
-                      timeOut: props.row.original.timeOut?.timeHour
+                      id: timeEntry.id,
+                      timeIn: timeEntry.timeIn?.timeHour,
+                      timeOut: timeEntry.timeOut?.timeHour
                     },
                     closeModal: handleIsOpenEditModalToggle
                   }}

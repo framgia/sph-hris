@@ -35,6 +35,7 @@ export const columns = [
     id: 'action',
     header: () => <span className="font-medium">Actions</span>,
     cell: (props) => {
+      const { original: interruptionTimeEntry } = props.row
       const router = useRouter()
       const [isOpenRemark, setIsOpenRemark] = useState<boolean>(false)
       const [isUpdateRemark, setIsUpdateRemark] = useState<boolean>(false)
@@ -92,9 +93,9 @@ export const columns = [
       }
       const checkStatus =
         user?.userById.role.name !== Roles.HR_ADMIN && !router.pathname.includes('dtr-management')
-          ? moment(new Date(props.row.original.createdAt)).format('YYYY-MM-DD') !==
+          ? moment(new Date(interruptionTimeEntry.createdAt)).format('YYYY-MM-DD') !==
               moment(new Date()).format('YYYY-MM-DD') &&
-            moment(new Date(props.row.original.createdAt)).format('YYYY-MM-DD') !==
+            moment(new Date(interruptionTimeEntry.createdAt)).format('YYYY-MM-DD') !==
               moment(new Date()).add(-1, 'day').format('YYYY-MM-DD')
           : !(user?.userById.role.name === Roles.HR_ADMIN)
       return (
@@ -103,7 +104,7 @@ export const columns = [
             <Button
               rounded="none"
               className="py-0.5 px-1 text-slate-500"
-              onClick={() => handleOpenRemark(props.row.original.remarks)}
+              onClick={() => handleOpenRemark(interruptionTimeEntry.remarks)}
             >
               <Eye className="h-4 w-4" />
               {/* This will show the Remarks Modal */}
@@ -123,7 +124,7 @@ export const columns = [
               rounded="none"
               className="py-0.5 px-1 text-slate-500"
               disabled={checkStatus}
-              onClick={() => handleToggleUpdateRemark(props.row.original)}
+              onClick={() => handleToggleUpdateRemark(interruptionTimeEntry)}
             >
               <Edit className="h-4 w-4" />
               {isUpdateRemark ? (
@@ -131,7 +132,7 @@ export const columns = [
                   {...{
                     isOpen: isUpdateRemark,
                     closeModal: handleToggleUpdateRemark,
-                    remarks: props.row.original
+                    remarks: interruptionTimeEntry
                   }}
                 />
               ) : null}
@@ -139,7 +140,7 @@ export const columns = [
           </Tippy>
           <Tippy content="Delete" placement="right" className="!text-xs">
             <Button
-              onClick={() => handleConfirmDeleteRemark(props.row.original.id)}
+              onClick={() => handleConfirmDeleteRemark(interruptionTimeEntry.id)}
               disabled={checkStatus}
               rounded="none"
               className="py-0.5 px-1 text-slate-500"

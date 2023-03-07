@@ -47,6 +47,7 @@ namespace api.Services
                 var myOvertime = new Overtime
                 {
                     UserId = overtime.UserId,
+                    TimeEntryId = overtime.TimeEntryId,
                     ManagerId = overtime.ManagerId,
                     MultiProjects = overtimeProjectsList,
                     OtherProject = overtime.OtherProject,

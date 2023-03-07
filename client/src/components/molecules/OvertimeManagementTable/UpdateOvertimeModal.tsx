@@ -134,7 +134,7 @@ const UpdateOvertimeModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Elemen
       projects: row.projects,
       date_effective: row.dateFiled,
       manager: row.manager,
-      requested_hours: row.requestedHours,
+      requested_minutes: row.requestedHours,
       remarks: row.remarks
     })
   }
@@ -350,13 +350,15 @@ const UpdateOvertimeModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Elemen
                 type="text"
                 disabled={isSubmitting}
                 placeholder=""
-                {...register('requested_hours')}
+                {...register('requested_minutes')}
                 className="py-2.5 pl-11 text-xs"
-                iserror={errors.requested_hours !== null && errors?.requested_hours !== undefined}
+                iserror={
+                  errors.requested_minutes !== null && errors?.requested_minutes !== undefined
+                }
               />
             </TextField>
-            {errors?.requested_hours !== null && errors?.requested_hours !== undefined && (
-              <span className="error text-[10px]">{errors.requested_hours?.message}</span>
+            {errors?.requested_minutes !== null && errors?.requested_minutes !== undefined && (
+              <span className="error text-[10px]">{errors.requested_minutes?.message}</span>
             )}
           </section>
 
