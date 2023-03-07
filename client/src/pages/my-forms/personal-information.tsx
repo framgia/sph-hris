@@ -52,6 +52,10 @@ const PersonalInformation: NextPage = (): JSX.Element => {
   const lastNameErrors = !isEmpty(errors?.last_name)
   const positionErrors = !isEmpty(errors?.position)
   const birthdayErrors = !isEmpty(errors?.birthday)
+  const sssnumberErrors = !isEmpty(errors?.sss_number)
+  const tinnumberErrors = !isEmpty(errors?.tin_number)
+  const philhealthnumberErrors = !isEmpty(errors?.philhealth_number)
+  const pagibignumberErrors = !isEmpty(errors?.pagibig_number)
   const contactNumberErrors = !isEmpty(errors?.contact_number)
   const addressErrors = !isEmpty(errors?.address)
   const emailErrors = !isEmpty(errors?.email)
@@ -180,6 +184,12 @@ const PersonalInformation: NextPage = (): JSX.Element => {
                   className="text-sm"
                 />
               </div>
+              {sssnumberErrors ? (
+                <div className="flex items-center space-x-2 text-xs text-rose-500">
+                  <AlertCircle className="h-5 w-5 shrink-0" />
+                  <p>SSS number (XX-XXXXXXX-X) only accepts digits and -.</p>
+                </div>
+              ) : null}
             </section>
           </Card>
 
@@ -195,6 +205,12 @@ const PersonalInformation: NextPage = (): JSX.Element => {
                   className="text-sm"
                 />
               </div>
+              {tinnumberErrors ? (
+                <div className="flex items-center space-x-2 text-xs text-rose-500">
+                  <AlertCircle className="h-5 w-5 shrink-0" />
+                  <p>TIN Number (XXX-XXX-XXX-XXX) only accepts digits and -.</p>
+                </div>
+              ) : null}
             </section>
           </Card>
 
@@ -210,6 +226,12 @@ const PersonalInformation: NextPage = (): JSX.Element => {
                   className="text-sm"
                 />
               </div>
+              {philhealthnumberErrors ? (
+                <div className="flex items-center space-x-2 text-xs text-rose-500">
+                  <AlertCircle className="h-5 w-5 shrink-0" />
+                  <p>PhilHealth Number (XX-XXXXXXXXX-X) only accepts digits and -.</p>
+                </div>
+              ) : null}
             </section>
           </Card>
 
@@ -225,6 +247,12 @@ const PersonalInformation: NextPage = (): JSX.Element => {
                   className="text-sm"
                 />
               </div>
+              {pagibignumberErrors ? (
+                <div className="flex items-center space-x-2 text-xs text-rose-500">
+                  <AlertCircle className="h-5 w-5 shrink-0" />
+                  <p>PAG-IBIG (HDMF) Number (XXXX-XXXX-XXXX) only accepts digits and -.</p>
+                </div>
+              ) : null}
             </section>
           </Card>
 
@@ -314,8 +342,8 @@ const PersonalInformation: NextPage = (): JSX.Element => {
                           id="globe"
                           type="radio"
                           // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
-                          checked={field.value === true}
-                          onChange={() => field.onChange(true)}
+                          checked={field.value === 'globe'}
+                          onChange={() => field.onChange('globe')}
                           className="h-4 w-4 text-sky-500 focus:ring-sky-400"
                         />
                         <label htmlFor="globe" className="ml-2 text-slate-500">
@@ -329,8 +357,8 @@ const PersonalInformation: NextPage = (): JSX.Element => {
                           id="smart"
                           type="radio"
                           // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
-                          checked={field.value === false}
-                          onChange={() => field.onChange(false)}
+                          checked={field.value === 'smart'}
+                          onChange={() => field.onChange('smart')}
                           className="h-4 w-4 text-sky-500 focus:ring-sky-400"
                         />
                         <label htmlFor="smart" className="ml-2 text-slate-500">
@@ -344,8 +372,8 @@ const PersonalInformation: NextPage = (): JSX.Element => {
                           id="sun"
                           type="radio"
                           // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
-                          checked={field.value === false}
-                          onChange={() => field.onChange(false)}
+                          checked={field.value === 'sun'}
+                          onChange={() => field.onChange('sun')}
                           className="h-4 w-4 text-sky-500 focus:ring-sky-400"
                         />
                         <label htmlFor="sun" className="ml-2 text-slate-500">
@@ -359,8 +387,8 @@ const PersonalInformation: NextPage = (): JSX.Element => {
                           id="tm"
                           type="radio"
                           // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
-                          checked={field.value === false}
-                          onChange={() => field.onChange(false)}
+                          checked={field.value === 'tm'}
+                          onChange={() => field.onChange('tm')}
                           className="h-4 w-4 text-sky-500 focus:ring-sky-400"
                         />
                         <label htmlFor="tm" className="ml-2 text-slate-500">
@@ -374,8 +402,8 @@ const PersonalInformation: NextPage = (): JSX.Element => {
                           id="tnt"
                           type="radio"
                           // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
-                          checked={field.value === false}
-                          onChange={() => field.onChange(false)}
+                          checked={field.value === 'tnt'}
+                          onChange={() => field.onChange('tnt')}
                           className="h-4 w-4 text-sky-500 focus:ring-sky-400"
                         />
                         <label htmlFor="tnt" className="ml-2 text-slate-500">
@@ -389,8 +417,8 @@ const PersonalInformation: NextPage = (): JSX.Element => {
                           id="others"
                           type="radio"
                           // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
-                          checked={field.value === false}
-                          onChange={() => field.onChange(false)}
+                          checked={field.value === 'others'}
+                          onChange={() => field.onChange('others')}
                           className="h-4 w-4 text-sky-500 focus:ring-sky-400"
                         />
                         <label htmlFor="others" className="ml-2 text-slate-500">
