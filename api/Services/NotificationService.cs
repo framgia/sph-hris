@@ -32,8 +32,7 @@ namespace api.Services
                 var notifications = new List<LeaveNotification>();
                 var user = context.Users.Find(leave.UserId);
                 var undertimeLeave = context.LeaveTypes.Where(x => x.Name != null && x.Name.ToLower() == "undertime").First();
-                // var projectNames = context.MultiProjects.Where(x => x.RelatedId == leave.Id).Select(x => x.ProjectId == 17 ? leave.OtherProject : x.Project.Name);
-                var projectNames = context.MultiProjects.Where(x => x.LeaveId == leave.Id && x.Type == MultiProjectTypeEnum.LEAVE).Select(x => x.ProjectId == 17 ? leave.OtherProject : x.Project.Name);
+                var projectNames = context.MultiProjects.Where(x => x.LeaveId == leave.Id && x.Type == MultiProjectTypeEnum.LEAVE).Select(x => x.ProjectId == ProjectId.OTHER_PROJECT ? leave.OtherProject : x.Project.Name);
 
                 var dataToManager = JsonSerializer.Serialize(new
                 {
@@ -109,7 +108,7 @@ namespace api.Services
             {
                 var notifications = new List<OvertimeNotification>();
                 var user = context.Users.Find(overtime.UserId);
-                var projectNames = context.MultiProjects.Where(x => x.OvertimeId == overtime.Id && x.Type == MultiProjectTypeEnum.OVERTIME).Select(x => x.ProjectId == 17 ? overtime.OtherProject : x.Project.Name);
+                var projectNames = context.MultiProjects.Where(x => x.OvertimeId == overtime.Id && x.Type == MultiProjectTypeEnum.OVERTIME).Select(x => x.ProjectId == ProjectId.OTHER_PROJECT ? overtime.OtherProject : x.Project.Name);
 
                 var dataToManager = JsonSerializer.Serialize(new
                 {
@@ -186,6 +185,91 @@ namespace api.Services
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 return await context.Notifications.Where(notif => notif.RecipientId == id).OrderByDescending(notif => notif.CreatedAt).ToListAsync();
+            }
+        }
+
+        public async Task<LeaveNotification> createLeaveApproveDisapproveNotification(Leave leave, bool IsApproved)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var user = context.Users.Find(leave.UserId);
+                var undertimeLeave = await context.LeaveTypes.Where(x => x.Name != null && x.Name.ToLower() == "undertime").FirstOrDefaultAsync();
+                var projectNames = await context.MultiProjects.Where(x => x.LeaveId == leave.Id && x.Type == MultiProjectTypeEnum.LEAVE).Select(x => x.ProjectId == ProjectId.OTHER_PROJECT ? leave.OtherProject : x.Project.Name).ToListAsync();
+
+                var dataToUser = JsonSerializer.Serialize(new
+                {
+                    User = new
+                    {
+                        Id = user?.Id,
+                        Name = user?.Name,
+                        AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
+                    },
+                    Projects = projectNames,
+                    RequestedHours = _leaveService.LeaveDaysToHours(leave.Days),
+                    DateRequested = leave.LeaveDate,
+                    DateFiled = leave.CreatedAt,
+                    Type = IsApproved ? NotificationDataTypeEnum.APPROVE : NotificationDataTypeEnum.DISAPPROVE,
+                    Status = IsApproved ? RequestStatus.APPROVED : RequestStatus.DISAPPROVED,
+                    Remarks = leave.Reason
+                }
+                    );
+
+                // Notification to Requesting User
+                var notificationToUser = new LeaveNotification
+                {
+                    RecipientId = leave.UserId,
+                    LeaveId = leave.Id,
+                    Type = leave.LeaveTypeId == undertimeLeave?.Id ? NotificationTypeEnum.UNDERTIME_RESOLVED : NotificationTypeEnum.LEAVE_RESOLVED,
+                    Data = dataToUser
+                };
+
+                context.Notifications.Add(notificationToUser);
+                await context.SaveChangesAsync();
+
+                sendLeaveNotificationEvent(notificationToUser);
+                return notificationToUser;
+            }
+        }
+
+        public async Task<OvertimeNotification> createOvertimeApproveDisapproveNotification(Overtime overtime, bool IsApproved)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var user = context.Users.Find(overtime.UserId);
+                var projectNames = context.MultiProjects.Where(x => x.OvertimeId == overtime.Id && x.Type == MultiProjectTypeEnum.OVERTIME).Select(x => x.ProjectId == ProjectId.OTHER_PROJECT ? overtime.OtherProject : x.Project.Name);
+
+                var dataToUser = JsonSerializer.Serialize(new
+                {
+                    User = new
+                    {
+                        Id = user?.Id,
+                        Name = user?.Name,
+                        AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
+                    },
+                    Projects = projectNames,
+                    RequestedMinutes = overtime.RequestedMinutes,
+                    DateRequested = overtime.OvertimeDate,
+                    DateFiled = overtime.CreatedAt,
+                    Type = IsApproved ? NotificationDataTypeEnum.APPROVE : NotificationDataTypeEnum.DISAPPROVE,
+                    Status = IsApproved ? RequestStatus.APPROVED : RequestStatus.DISAPPROVED,
+                    Remarks = overtime.Remarks
+                }
+                );
+
+                // Notification to Requesting User
+                var notificationToUser = new OvertimeNotification
+                {
+                    RecipientId = overtime.UserId,
+                    OvertimeId = overtime.Id,
+                    Type = NotificationTypeEnum.OVERTIME_RESOLVED,
+                    Data = dataToUser
+                };
+
+                context.Notifications.Add(notificationToUser);
+                await context.SaveChangesAsync();
+
+                sendOvertimeNotificationEvent(notificationToUser);
+                return notificationToUser;
             }
         }
 

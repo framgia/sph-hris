@@ -1,6 +1,7 @@
 
 using System.Globalization;
 using api.Context;
+using api.Entities;
 using api.Enums;
 using api.Requests;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +44,39 @@ namespace api.Utils
             }
         }
 
+        public async Task<bool> checkManagerUser(int id)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var user = await context.Users.FindAsync(id);
+                var role = await context.Roles.Where(x => x.Name == RoleEnum.MANAGER).FirstAsync();
+                if (user == null) return false;
+                if (user.RoleId == role.Id) return true;
+                return false;
+            }
+        }
+
+        public async Task<bool> checkProjectLeaderUser(int id)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var user = await context.Projects.Where(x => x.ProjectLeaderId == id).FirstOrDefaultAsync();
+
+                return user != null;
+            }
+        }
+
+        public async Task<bool> checkApprovingProjectLeader(int projectLeaderId, int leaveId, string type)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                MultiProject? multiProject = null;
+                if (type == MultiProjectTypeEnum.LEAVE) multiProject = await context.MultiProjects.Where(x => x.Type == type && x.LeaveId == leaveId && x.ProjectLeaderId == projectLeaderId).FirstOrDefaultAsync();
+                if (type == MultiProjectTypeEnum.OVERTIME) multiProject = await context.MultiProjects.Where(x => x.Type == type && x.OvertimeId == leaveId && x.ProjectLeaderId == projectLeaderId).FirstOrDefaultAsync();
+                return multiProject != null;
+            }
+        }
+
         public bool checkProjectExist(int id)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
@@ -50,6 +84,15 @@ namespace api.Utils
                 return context.Projects.Find(id) != null;
             }
         }
+
+        public async Task<bool> checkOvertimeExist(int id)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.Overtimes.FindAsync(id) != null;
+            }
+        }
+
 
         public bool checkLeaveType(int id)
         {
@@ -79,6 +122,24 @@ namespace api.Utils
             return !(leaveProjects == null || leaveProjects.Count == 0);
         }
 
+        public async Task<bool> checkNotificationExist(int id, string type)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var notification = await context.Notifications.FindAsync(id);
+                return notification?.Type == type;
+            }
+        }
+
+        public async Task<bool> checkOvertimeNotificationExist(int id)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var notification = await context.Notifications.FindAsync(id);
+                return notification?.Type == NotificationTypeEnum.OVERTIME;
+            }
+        }
+
         public List<IError> checkLeaveRequestInput(CreateLeaveRequest leave)
         {
             var errors = new List<IError>();
@@ -87,7 +148,7 @@ namespace api.Utils
             if (!checkUserExist(leave.UserId))
                 errors.Add(buildError(nameof(leave.UserId), InputValidationMessageEnum.INVALID_USER));
 
-            if (!checkUserExist(leave.ManagerId))
+            if (!checkManagerUser(leave.ManagerId).Result)
                 errors.Add(buildError(nameof(leave.ManagerId), InputValidationMessageEnum.INVALID_MANAGER));
 
             if (!checkLeaveType(leave.LeaveTypeId))
@@ -131,7 +192,7 @@ namespace api.Utils
             if (!checkUserExist(overtime.UserId))
                 errors.Add(buildError(nameof(overtime.UserId), InputValidationMessageEnum.INVALID_USER));
 
-            if (!checkUserExist(overtime.UserId))
+            if (!checkManagerUser(overtime.UserId).Result)
                 errors.Add(buildError(nameof(overtime.ManagerId), InputValidationMessageEnum.INVALID_MANAGER));
 
             if (!checkDateFormat(overtime.Date))
@@ -149,6 +210,83 @@ namespace api.Utils
 
                 index++;
             });
+
+            return errors;
+        }
+
+        public List<IError> checkApproveLeaveRequestInput(ApproveLeaveUndertimeRequest request)
+        {
+            var errors = new List<IError>();
+
+            if (!checkUserExist(request.UserId))
+                errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.INVALID_USER));
+
+            if (!(checkManagerUser(request.UserId).Result || checkProjectLeaderUser(request.UserId).Result)) errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_MANAGER_PROJECT_LEADER));
+
+            if (!checkNotificationExist(request.NotificationId, NotificationTypeEnum.LEAVE).Result)
+                errors.Add(buildError(nameof(request.NotificationId), InputValidationMessageEnum.INVALID_NOTIFICATION));
+
+            return errors;
+        }
+
+        public List<IError> checkApproveUndertimeRequestInput(ApproveLeaveUndertimeRequest request)
+        {
+            var errors = new List<IError>();
+
+            if (!checkUserExist(request.UserId))
+                errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.INVALID_USER));
+
+
+            if (!(checkManagerUser(request.UserId).Result || checkProjectLeaderUser(request.UserId).Result)) errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_MANAGER_PROJECT_LEADER));
+
+            if (!checkNotificationExist(request.NotificationId, NotificationTypeEnum.UNDERTIME).Result)
+                errors.Add(buildError(nameof(request.NotificationId), InputValidationMessageEnum.INVALID_NOTIFICATION));
+
+            return errors;
+        }
+
+        public List<IError> checkApproveOvertimeRequestInput(ApproveOvertimeRequest request)
+        {
+            var errors = new List<IError>();
+
+            if (!checkUserExist(request.UserId))
+                errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.INVALID_USER));
+
+            if (!(checkManagerUser(request.UserId).Result || checkProjectLeaderUser(request.UserId).Result)) errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_MANAGER_PROJECT_LEADER));
+
+            return errors;
+        }
+
+        public List<IError> checkLeaderApproveOvertimeRequestInput(ApproveOvertimeRequest request)
+        {
+            var errors = new List<IError>();
+
+            if (!checkUserExist(request.UserId))
+                errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.INVALID_USER));
+
+            if (!(checkManagerUser(request.UserId).Result || checkProjectLeaderUser(request.UserId).Result)) errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_MANAGER_PROJECT_LEADER));
+
+            if (request.NotificationId == null || !checkNotificationExist((int)request.NotificationId, NotificationTypeEnum.OVERTIME).Result)
+                errors.Add(buildError(nameof(request.NotificationId), InputValidationMessageEnum.INVALID_NOTIFICATION));
+
+            return errors;
+        }
+
+        public List<IError> checkManagerApproveOvertimeRequestInput(ApproveOvertimeRequest request)
+        {
+            var errors = new List<IError>();
+
+            if (!checkUserExist(request.UserId))
+                errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.INVALID_USER));
+
+
+            if (!(checkManagerUser(request.UserId).Result || checkProjectLeaderUser(request.UserId).Result)) errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_MANAGER_PROJECT_LEADER));
+
+            if (request.OvertimeId == null || !checkOvertimeExist((int)request.OvertimeId).Result)
+                errors.Add(buildError(nameof(request.OvertimeId), InputValidationMessageEnum.INVALID_OVERTIME));
+
+            if (request.IsApproved && request.ApprovedMinutes == null)
+                errors.Add(buildError(nameof(request.ApprovedMinutes), InputValidationMessageEnum.MISSING_APPROVED_MINUTES));
 
             return errors;
         }

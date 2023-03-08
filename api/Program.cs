@@ -41,7 +41,8 @@ builder.Services.AddGraphQLServer()
     .AddType<TimeEntryMutation>()
     .AddType<LeaveMutation>()
     .AddType<NotificationMutation>()
-    .AddType<OvertimeMutation>();
+    .AddType<OvertimeMutation>()
+    .AddType<ApprovalMutation>();
 
 builder.Services.AddGraphQLServer().AddProjections().AddFiltering().AddSorting();
 builder.Services.AddGraphQLServer().AddInMemorySubscriptions()
@@ -65,6 +66,7 @@ builder.Services.AddScoped<ProjectService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<OvertimeService>();
+builder.Services.AddScoped<ApprovalService>();
 
 
 var app = builder.Build();
