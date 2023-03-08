@@ -1,11 +1,11 @@
 import React, { FC } from 'react'
 import { Eye } from 'react-feather'
 
+import { IMyOvertime } from '~/utils/types/overtimeTypes'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
-import { IMyOvertime } from '~/utils/interfaces'
 
 type Props = {
   isOpen: boolean

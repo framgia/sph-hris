@@ -12,8 +12,8 @@ import React, { Dispatch, FC, SetStateAction, useState } from 'react'
 import DesktopTable from './DesktopTable'
 import FooterTable from './../FooterTable'
 import MobileDisclose from './MobileDisclose'
-import { IMyOvertime } from '~/utils/interfaces'
 import { fuzzyFilter } from '~/utils/fuzzyFilter'
+import { IMyOvertime } from '~/utils/types/overtimeTypes'
 
 type Props = {
   query: {
@@ -29,14 +29,14 @@ type Props = {
 
 const MyOvertimeTable: FC<Props> = (props): JSX.Element => {
   const {
-    query: { data: myDailyTimeData, error },
+    query: { data, error },
     table: { columns, globalFilter, setGlobalFilter }
   } = props
 
   const [sorting, setSorting] = useState<SortingState>([])
 
   const table = useReactTable({
-    data: myDailyTimeData,
+    data,
     columns,
     // Options
     state: {

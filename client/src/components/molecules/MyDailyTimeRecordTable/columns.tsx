@@ -152,7 +152,7 @@ export const columns = [
       const minuteDifference = Math.floor(
         moment
           .duration(
-            moment(timeEntry.timeOut.createdAt).diff(
+            moment(timeEntry.timeOut?.createdAt).diff(
               `${moment(timeEntry.date).format('YYYY-MM-DD')} ${moment('19:30', 'HH:mm:ss').format(
                 'HH:mm:ss'
               )}`
