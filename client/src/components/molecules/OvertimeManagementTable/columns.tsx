@@ -29,14 +29,9 @@ export const hrColumns = [
     footer: (info) => info.column.id,
     cell: (props) => {
       const { original: overtimeManagement } = props.row
-
       return (
         <div className="flex items-center space-x-2">
-          <Avatar
-            src={`https://placeimg.com/640/480/abstract/${props.row.id}`}
-            size="base"
-            rounded="full"
-          />
+          <Avatar src={`${overtimeManagement.user.link}`} size="base" rounded="full" />
           <div className="flex flex-col items-start">
             <h1 className="font-semibold">{overtimeManagement.user.name}</h1>
             <small className="text-slate-500">{overtimeManagement.user.role.name}</small>
@@ -95,10 +90,7 @@ export const hrColumns = [
                     {({ selected }) => (
                       <>
                         <span
-                          className={classNames(
-                            'block truncate',
-                            selected ? 'font-medium' : 'font-normal'
-                          )}
+                          className={classNames('block', selected ? 'font-medium' : 'font-normal')}
                         >
                           {project.project_name.label}
                         </span>
@@ -120,20 +112,30 @@ export const hrColumns = [
       <span>{moment(new Date(props.row.original.date)).format('MMMM DD, YYYY')}</span>
     )
   }),
-  columnHelper.accessor('overtimeIn', {
-    header: () => <CellHeader label="Overtime in" />,
-    footer: (info) => info.column.id
-  }),
-  columnHelper.accessor('overtimeOut', {
-    header: () => <CellHeader label="Overtime Out" />,
-    footer: (info) => info.column.id
-  }),
+  // columnHelper.accessor('overtimeIn', {
+  //   header: () => <CellHeader label="Overtime in" />,
+  //   footer: (info) => info.column.id
+  // }),
+  // columnHelper.accessor('overtimeOut', {
+  //   header: () => <CellHeader label="Overtime Out" />,
+  //   footer: (info) => info.column.id
+  // }),
   columnHelper.accessor('requestedHours', {
-    header: () => <CellHeader label="Approved Hours" />,
+    header: () => <CellHeader label="Approved Minutes" />,
+    footer: (info) => info.column.id
+  }),
+  columnHelper.display({
+    id: 'empty2',
+    header: () => '',
     footer: (info) => info.column.id
   }),
   columnHelper.accessor('supervisor', {
     header: () => <CellHeader label="Supervisor" />,
+    footer: (info) => info.column.id
+  }),
+  columnHelper.display({
+    id: 'empty3',
+    header: () => '',
     footer: (info) => info.column.id
   }),
   columnHelper.accessor('dateFiled', {
@@ -214,11 +216,7 @@ export const managerColumns = [
 
       return (
         <div className="flex items-center space-x-2">
-          <Avatar
-            src={`https://placeimg.com/640/480/abstract/${props.row.id}`}
-            size="base"
-            rounded="full"
-          />
+          <Avatar src={`${overtimeManagement.user.link}`} size="base" rounded="full" />
           <div className="flex flex-col items-start">
             <h1 className="font-semibold">{overtimeManagement.user.name}</h1>
             <small className="text-slate-500">{overtimeManagement.user.role.name}</small>
@@ -309,7 +307,7 @@ export const managerColumns = [
     footer: (info) => info.column.id
   }),
   columnHelper.accessor('requestedHours', {
-    header: () => <CellHeader label="Approved Hours" />,
+    header: () => <CellHeader label="Approved Minutes" />,
     footer: (info) => info.column.id
   }),
   columnHelper.display({
@@ -341,7 +339,9 @@ export const managerColumns = [
       const { original: overtimeManagement } = props.row
       const [isOpenRemarksModal, setIsOpenRemarksModal] = useState<boolean>(false)
       const [isOpenConfirmationModal, setIsOpenConfirmationModal] = useState<boolean>(false)
+      const [isOpenUpdateModal, setIsOpenUpdateModal] = useState<boolean>(false)
 
+      const handleUpdateToggle = (): void => setIsOpenUpdateModal(!isOpenUpdateModal)
       const handleShowRemarksToggle = (): void => setIsOpenRemarksModal(!isOpenRemarksModal)
       const handleConfirmationToggle = (): void =>
         setIsOpenConfirmationModal(!isOpenConfirmationModal)
@@ -358,7 +358,7 @@ export const managerColumns = [
               <Card className="w-full max-w-xs px-8 py-6" shadow-size="xl" rounded="lg">
                 <h1 className="text-center text-xl font-bold">Confirmation</h1>
                 <p className="mt-2 text-sm font-medium">
-                  Are you sure you want to disapprove the requuest?
+                  Are you sure you want to disapprove the request?
                 </p>
                 <div className="mt-6 flex items-center justify-center space-x-2 text-white">
                   <ButtonAction
@@ -384,24 +384,43 @@ export const managerColumns = [
 
       return (
         <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
-          <Tippy placement="left" content="Approve" className="!text-xs">
-            <Button
-              rounded="none"
-              onClick={handleConfirmationToggle}
-              className="py-0.5 px-1 text-slate-500"
-            >
-              <Check className="h-4 w-4 stroke-[3px]" />
-            </Button>
-          </Tippy>
-          <Tippy placement="left" content="Disapprove" className="!text-xs">
-            <Button
-              rounded="none"
-              onClick={handleDeleteConfirmationToggle}
-              className="py-0.5 px-1 text-slate-500"
-            >
-              <X className="h-4 w-4 stroke-[3px]" />
-            </Button>
-          </Tippy>
+          {props.row.original.status === 'pending' && (
+            <>
+              <Tippy placement="left" content="Approve" className="!text-xs">
+                <Button
+                  rounded="none"
+                  onClick={handleConfirmationToggle}
+                  className="py-0.5 px-1 text-slate-500"
+                >
+                  <Check className="h-4 w-4 stroke-[3px]" />
+                </Button>
+              </Tippy>
+              <Tippy placement="left" content="Disapprove" className="!text-xs">
+                <Button
+                  rounded="none"
+                  onClick={handleDeleteConfirmationToggle}
+                  className="py-0.5 px-1 text-slate-500"
+                >
+                  <X className="h-4 w-4 stroke-[3px]" />
+                </Button>
+              </Tippy>
+            </>
+          )}
+
+          {props.row.original.status === 'approved' && (
+            <>
+              <Tippy placement="left" content="Edit" className="!text-xs">
+                <Button
+                  onClick={handleUpdateToggle}
+                  rounded="none"
+                  className="py-0.5 px-1 text-slate-500"
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+              </Tippy>
+            </>
+          )}
+
           <Tippy placement="left" content="View Remarks" className="!text-xs">
             <Button
               rounded="none"
@@ -425,6 +444,14 @@ export const managerColumns = [
             {...{
               isOpen: isOpenRemarksModal,
               closeModal: () => handleShowRemarksToggle(),
+              row: overtimeManagement
+            }}
+          />
+          {/* This will show the Update Overtime Modal */}
+          <UpdateOvertimeModal
+            {...{
+              isOpen: isOpenUpdateModal,
+              closeModal: () => handleUpdateToggle(),
               row: overtimeManagement
             }}
           />

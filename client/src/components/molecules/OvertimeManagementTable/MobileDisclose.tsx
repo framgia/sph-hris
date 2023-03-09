@@ -72,7 +72,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                             <div className="flex items-center space-x-2">
                               <div className="flex items-center space-x-2">
                                 <Avatar
-                                  src={`https://placeimg.com/640/480/abstract/${row.id}`}
+                                  src={`${row.original.user.link}`}
                                   size="base"
                                   rounded="full"
                                 />
@@ -122,20 +122,20 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                               </li>
                               {isHrRole ? (
                                 <>
-                                  <li className="px-4 py-2.5">
+                                  {/* <li className="px-4 py-2.5">
                                     Overtime In:{' '}
                                     <span className="font-semibold">{row.original.overtimeIn}</span>
-                                  </li>
-                                  <li className="px-4 py-2.5">
+                                  </li> */}
+                                  {/* <li className="px-4 py-2.5">
                                     Overtime Out:{' '}
                                     <span className="font-semibold">
                                       {row.original.overtimeOut}
                                     </span>
-                                  </li>
+                                  </li> */}
                                 </>
                               ) : null}
                               <li className="px-4 py-2.5">
-                                Approved hours:{' '}
+                                Approved minutes:{' '}
                                 <span className="font-semibold">{row.original.requestedHours}</span>
                               </li>
                               {isHrRole ? (

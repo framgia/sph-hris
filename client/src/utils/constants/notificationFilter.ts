@@ -2,7 +2,7 @@ export const STATUS_OPTIONS = {
   ALL: 'All',
   PENDING: 'Pending',
   APPROVED: 'Approved',
-  DISAPPROVED: 'Dissaproved'
+  DISAPPROVED: 'Disapproved'
 }
 
 export const TYPE_OPTIONS = {
