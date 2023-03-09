@@ -192,7 +192,7 @@ namespace api.Utils
             if (!checkUserExist(overtime.UserId))
                 errors.Add(buildError(nameof(overtime.UserId), InputValidationMessageEnum.INVALID_USER));
 
-            if (!checkManagerUser(overtime.UserId).Result)
+            if (!checkManagerUser(overtime.ManagerId).Result)
                 errors.Add(buildError(nameof(overtime.ManagerId), InputValidationMessageEnum.INVALID_MANAGER));
 
             if (!checkDateFormat(overtime.Date))

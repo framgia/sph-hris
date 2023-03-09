@@ -1,6 +1,5 @@
 using api.Context;
 using api.Entities;
-using api.Enums;
 using api.Requests;
 using api.Services;
 using HotChocolate.Subscriptions;
@@ -32,11 +31,9 @@ namespace api.Schema.Mutations
 
                     return newOvertime;
                 }
-                catch
+                catch (GraphQLException error)
                 {
-                    throw new GraphQLException(ErrorBuilder.New()
-                    .SetMessage(ErrorMessageEnum.FAILED_OVERTIME_REQUEST)
-                    .Build());
+                    throw error;
                 }
             }
         }
