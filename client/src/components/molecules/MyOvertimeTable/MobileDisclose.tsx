@@ -7,12 +7,16 @@ import { Disclosure } from '@headlessui/react'
 import { ChevronRight, Eye } from 'react-feather'
 
 import Chip from './Chip'
-import useProject from '~/hooks/useProject'
 import ShowRemarksModal from './ShowRemarksModal'
 import Button from '~/components/atoms/Buttons/Button'
 import { IMyOvertime } from '~/utils/types/overtimeTypes'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import DisclosureTransition from '~/components/templates/DisclosureTransition'
+import {
+  decimalFormatter,
+  getApprovalStatus,
+  getMultiProjectDetails
+} from '~/utils/myOvertimeHelpers'
 
 type Props = {
   table: Table<IMyOvertime>
@@ -43,49 +47,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
             ) : (
               <>
                 {table.getRowModel().rows.map((row) => {
-                  const { handleProjectQuery } = useProject()
-                  const { data: projects } = handleProjectQuery()
-
-                  const projectLeaders = row.original.multiProjects.map((mp) => {
-                    const projectdata = projects?.projects.find(
-                      (project) => project.id === mp.projectId
-                    )
-                    return projectdata
-                  })
-
-                  const multiProjectNames = row.original.multiProjects.map((mp) => {
-                    const projectdata = projects?.projects.find(
-                      (project) => project.id === mp.projectId
-                    )
-                    return projectdata
-                  })
-
-                  type ApprovalStatus = 'pending' | 'approved' | 'disapproved'
-
-                  const getApprovalStatus = (
-                    isLeaderApprove: boolean | null,
-                    isManagerApproved: boolean | null
-                  ): ApprovalStatus => {
-                    switch (true) {
-                      case isLeaderApprove === null || isManagerApproved === null:
-                        return 'pending'
-                      case isLeaderApprove === true && isManagerApproved === true:
-                        return 'approved'
-                      default:
-                        return 'disapproved'
-                    }
-                  }
-
-                  const decimalFormatter = new Intl.NumberFormat('en-US', {
-                    minimumFractionDigits: 3,
-                    maximumFractionDigits: 3
-                  })
-
-                  const formattedNumber = decimalFormatter.format(
-                    row.original.requestedMinutes / 60
-                  )
-                  const parsedNumber = parseFloat(formattedNumber)
-
+                  const { projectLeaders, multiProjectNames } = getMultiProjectDetails(row)
                   return (
                     <Disclosure key={row.id}>
                       {({ open }) => (
@@ -149,7 +111,9 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                 </li>
                                 <li className="px-4 py-2.5">
                                   Requested hours:{' '}
-                                  <span className="font-semibold">{parsedNumber}</span>
+                                  <span className="font-semibold">
+                                    {decimalFormatter(row.original.requestedMinutes)}
+                                  </span>
                                 </li>
                                 <li className="px-4 py-2.5">
                                   Supervisor:{' '}

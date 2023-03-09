@@ -8,11 +8,15 @@ import { Listbox, Transition } from '@headlessui/react'
 import { createColumnHelper } from '@tanstack/react-table'
 
 import Chip from './Chip'
-import useProject from '~/hooks/useProject'
 import ShowRemarksModal from './ShowRemarksModal'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
 import { IMyOvertime } from '~/utils/types/overtimeTypes'
+import {
+  decimalFormatter,
+  getApprovalStatus,
+  getMultiProjectDetails
+} from '~/utils/myOvertimeHelpers'
 
 const columnHelper = createColumnHelper<IMyOvertime>()
 
@@ -21,14 +25,7 @@ export const columns = [
     header: () => <CellHeader label="Project" />,
     footer: (info) => info.column.id,
     cell: ({ row }) => {
-      const { handleProjectQuery } = useProject()
-      const { data: projects } = handleProjectQuery()
-
-      const multiProjectNames = row.original.multiProjects.map((mp) => {
-        const projectdata = projects?.projects.find((project) => project.id === mp.projectId)
-        return projectdata
-      })
-
+      const { multiProjectNames } = getMultiProjectDetails(row)
       return (
         <Listbox>
           <div className="relative mt-1">
@@ -86,29 +83,10 @@ export const columns = [
       <span>{moment(new Date(original.overtimeDate)).format('MMMM DD, YYYY')}</span>
     )
   }),
-  // TODO: No Need to remove this for other reference purposes
-  // columnHelper.accessor('overtimeIn', {
-  //   header: () => <CellHeader label="Overtime in" />,
-  //   footer: (info) => info.column.id
-  // }),
-  // columnHelper.accessor('overtimeOut', {
-  //   header: () => <CellHeader label="Overtime Out" />,
-  //   footer: (info) => info.column.id
-  // }),
   columnHelper.accessor('requestedMinutes', {
     header: () => <CellHeader label="Requested Hours" />,
     footer: (info) => info.column.id,
-    cell: ({ row: { original } }) => {
-      const decimalFormatter = new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 3,
-        maximumFractionDigits: 3
-      })
-
-      const formattedNumber = decimalFormatter.format(original.requestedMinutes / 60)
-      const parsedNumber = parseFloat(formattedNumber)
-
-      return <span>{parsedNumber}</span>
-    }
+    cell: ({ row: { original } }) => decimalFormatter(original.requestedMinutes)
   }),
   columnHelper.accessor('approvedMinutes', {
     header: () => <CellHeader label="Approved Minutes" />,
@@ -125,14 +103,7 @@ export const columns = [
     header: () => <CellHeader label="Supervisor" />,
     footer: (info) => info.column.id,
     cell: ({ row }) => {
-      const { handleProjectQuery } = useProject()
-      const { data: projects } = handleProjectQuery()
-
-      const projectLeaders = row.original.multiProjects.map((mp) => {
-        const projectdata = projects?.projects.find((project) => project.id === mp.projectId)
-        return projectdata
-      })
-
+      const { projectLeaders } = getMultiProjectDetails(row)
       return (
         <Listbox>
           <div className="relative mt-1">
@@ -193,27 +164,9 @@ export const columns = [
   columnHelper.accessor('isManagerApproved', {
     header: () => <CellHeader label="Status" />,
     footer: (info) => info.column.id,
-    cell: ({ row: { original } }) => {
-      type ApprovalStatus = 'pending' | 'approved' | 'disapproved'
-
-      const getApprovalStatus = (
-        isLeaderApprove: boolean | null,
-        isManagerApproved: boolean | null
-      ): ApprovalStatus => {
-        switch (true) {
-          case isLeaderApprove === null || isManagerApproved === null:
-            return 'pending'
-          case isLeaderApprove === true && isManagerApproved === true:
-            return 'approved'
-          default:
-            return 'disapproved'
-        }
-      }
-
-      return (
-        <Chip label={getApprovalStatus(original.isLeaderApproved, original.isManagerApproved)} />
-      )
-    }
+    cell: ({ row: { original } }) => (
+      <Chip label={getApprovalStatus(original.isLeaderApproved, original.isManagerApproved)} />
+    )
   }),
   columnHelper.display({
     id: 'empty2',
