@@ -80,13 +80,14 @@ const OvertimeManagementTable: FC<Props> = (props): JSX.Element => {
         />
       </div>
       {/* Table Pagination & Filtering */}
-      {table.getPageCount() >= 1 && (
-        <FooterTable
-          {...{
-            table
-          }}
-        />
-      )}
+      {table.getPageCount() >= 1 ||
+        (table.getPageCount() !== undefined && (
+          <FooterTable
+            {...{
+              table
+            }}
+          />
+        ))}
     </>
   )
 }

@@ -1,4 +1,5 @@
 using api.Context;
+using api.DTOs;
 using api.Entities;
 using api.Enums;
 using api.Requests;
@@ -11,14 +12,16 @@ namespace api.Services
     public class OvertimeService
     {
         private readonly IDbContextFactory<HrisContext> _contextFactory = default!;
+        private readonly HttpContextService _httpService;
         private readonly ITopicEventSender _eventSender;
         private readonly CustomInputValidation _customInputValidation;
 
-        public OvertimeService(IDbContextFactory<HrisContext> contextFactory, ITopicEventSender eventSender)
+        public OvertimeService(IDbContextFactory<HrisContext> contextFactory, ITopicEventSender eventSender, IHttpContextAccessor accessor)
         {
             _contextFactory = contextFactory;
             _eventSender = eventSender;
             _customInputValidation = new CustomInputValidation(_contextFactory);
+            _httpService = new HttpContextService(accessor);
         }
 
         public async Task<Overtime> Create(CreateOvertimeRequest overtime)
@@ -77,6 +80,30 @@ namespace api.Services
                         .ThenInclude(t => t.ProjectLeader)
                     .Where(w => w.UserId == UserId)
                     .ToListAsync();
+            }
+        }
+        public async Task<List<OvertimeDTO>> Index()
+        {
+            var domain = _httpService.getDomainURL();
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.Overtimes
+                .Include(x => x.MultiProjects)
+                    .ThenInclude(x => x.Project)
+                .Include(x => x.MultiProjects)
+                    .ThenInclude(x => x.ProjectLeader)
+                .Include(x => x.User)
+                    .ThenInclude(x => x.Role)
+                .Include(x => x.User)
+                    .ThenInclude(x => x.ProfileImage)
+                .Include(x => x.Manager)
+                    .ThenInclude(x => x.Role)
+                .Include(x => x.TimeEntry)
+                    .ThenInclude(x => x.TimeIn)
+                .Include(x => x.TimeEntry)
+                    .ThenInclude(x => x.TimeOut)
+                .Select(x => new OvertimeDTO(x, domain))
+                .ToListAsync();
             }
         }
     }

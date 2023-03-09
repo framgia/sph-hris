@@ -83,6 +83,7 @@ export interface IOvertimeManagement {
   user: {
     id: number
     name: string
+    link: string
     role: {
       id: number
       name: string

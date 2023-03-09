@@ -1362,7 +1362,28 @@ namespace api.Seeders
                 ProjectId = 1,
                 ProjectLeaderId = 1,
                 Type = MultiProjectTypeEnum.LEAVE
-            }
+            },
+            new MultiProject {
+                Id = 2,
+                ProjectId = 1,
+                OvertimeId = 2,
+                ProjectLeaderId = 1,
+                Type = MultiProjectTypeEnum.OVERTIME
+            },
+            new MultiProject {
+                Id = 3,
+                ProjectId = 1,
+                OvertimeId = 3,
+                ProjectLeaderId = 1,
+                Type = MultiProjectTypeEnum.OVERTIME
+            },
+            new MultiProject {
+                Id = 4,
+                ProjectId = 1,
+                OvertimeId = 1,
+                ProjectLeaderId = 1,
+                Type = MultiProjectTypeEnum.OVERTIME
+            },
         };
 
         public static List<LeaveNotification> notifications_leave = new List<LeaveNotification>(){
@@ -1373,6 +1394,54 @@ namespace api.Seeders
                 Data = "Some JSON Data",
                 LeaveId = 1
             }
+        };
+
+        public static List<Overtime> overtimes = new List<Overtime>(){
+            new Overtime {
+                Id = 1,
+                UserId = 33,
+                ManagerId = 33,
+                TimeEntryId = 1,
+                OtherProject = "Other project",
+                Remarks= "1 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odit, id maiores perspiciatis animi assumenda, non laudantium qui doloribus soluta accusamus eaque et voluptate. Porro, explicabo rem fugit vel nisi eligendi.",
+                OvertimeDate = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                RequestedMinutes = 125,
+                ApprovedMinutes = 125,
+                IsLeaderApproved = true,
+                IsManagerApproved = true,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Overtime {
+                Id = 2,
+                UserId = 53,
+                ManagerId = 33,
+                TimeEntryId = 2,
+                OtherProject = "Other project",
+                Remarks= "1 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odit, id maiores perspiciatis animi assumenda, non laudantium qui doloribus soluta accusamus eaque et voluptate. Porro, explicabo rem fugit vel nisi eligendi.",
+                OvertimeDate = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                RequestedMinutes = 125,
+                ApprovedMinutes = 125,
+                IsLeaderApproved = true,
+                IsManagerApproved = false,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new Overtime {
+                Id = 3,
+                UserId = 64,
+                ManagerId = 33,
+                TimeEntryId = 3,
+                OtherProject = "Other project",
+                Remarks= "1 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odit, id maiores perspiciatis animi assumenda, non laudantium qui doloribus soluta accusamus eaque et voluptate. Porro, explicabo rem fugit vel nisi eligendi.",
+                OvertimeDate = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                RequestedMinutes = 125,
+                ApprovedMinutes = 125,
+                IsLeaderApproved = null,
+                IsManagerApproved = null,
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
         };
     }
 }

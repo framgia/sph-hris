@@ -26,3 +26,54 @@ export interface IMyOvertime {
   remarks: string
   createdAt: string
 }
+export interface IAllOvertime {
+  id: number
+  projects: Array<{
+    id: number
+    project: {
+      id: number
+      name: string
+    }
+    projectLeader: {
+      id: number
+      name: string
+    }
+  }>
+  otherProject: string
+  user: {
+    id: number
+    name: string
+    link: string
+    roleId: number
+    roleName: string
+  }
+  supervisor: string
+  dateFiled: string
+  overtimeDate: string
+  requestedMinutes: number
+  approvedMinutes: number
+  isLeaderApproved: boolean
+  isManagerApproved: boolean
+  remarks: string
+  createdAt: string
+}
+
+export interface IUser {
+  id: number
+  name: string
+  link: string
+  roleId: number
+  roleName: string
+}
+
+export interface IMultiProjects {
+  id: number
+  project: {
+    id: number
+    name: string
+  }
+  projectLeader: {
+    id: number
+    name: string
+  }
+}
