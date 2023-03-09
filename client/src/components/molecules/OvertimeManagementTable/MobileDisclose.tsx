@@ -120,20 +120,6 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                   {moment(new Date(row.original.date)).format('MMMM DD, YYYY')}
                                 </span>
                               </li>
-                              {isHrRole ? (
-                                <>
-                                  {/* <li className="px-4 py-2.5">
-                                    Overtime In:{' '}
-                                    <span className="font-semibold">{row.original.overtimeIn}</span>
-                                  </li> */}
-                                  {/* <li className="px-4 py-2.5">
-                                    Overtime Out:{' '}
-                                    <span className="font-semibold">
-                                      {row.original.overtimeOut}
-                                    </span>
-                                  </li> */}
-                                </>
-                              ) : null}
                               <li className="px-4 py-2.5">
                                 Approved minutes:{' '}
                                 <span className="font-semibold">{row.original.requestedHours}</span>
