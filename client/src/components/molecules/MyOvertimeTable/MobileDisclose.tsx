@@ -8,18 +8,14 @@ import { ChevronRight, Eye } from 'react-feather'
 
 import Chip from './Chip'
 import ShowRemarksModal from './ShowRemarksModal'
+import { IMyOvertimeTable } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/Button'
-import { IMyOvertime } from '~/utils/types/overtimeTypes'
+import { decimalFormatter } from '~/utils/myOvertimeHelpers'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import DisclosureTransition from '~/components/templates/DisclosureTransition'
-import {
-  decimalFormatter,
-  getApprovalStatus,
-  getProjectWithNameDisplay
-} from '~/utils/myOvertimeHelpers'
 
 type Props = {
-  table: Table<IMyOvertime>
+  table: Table<IMyOvertimeTable>
   isLoading: boolean
   error: unknown
 }
@@ -59,16 +55,9 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-2">
                               <span className="font-semibold text-slate-700">
-                                {moment(new Date(row.original.overtimeDate)).format(
-                                  'MMMM DD, YYYY'
-                                )}
+                                {moment(new Date(row.original.date)).format('MMMM DD, YYYY')}
                               </span>
-                              <Chip
-                                label={getApprovalStatus(
-                                  row.original.isLeaderApproved,
-                                  row.original.isManagerApproved
-                                )}
-                              />
+                              <Chip label={row.original.status} />
                             </div>
                             <ChevronRight
                               className={classNames(
@@ -87,30 +76,60 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                           >
                             <ul className="flex flex-col divide-y divide-slate-200">
                               <li className="flex flex-col space-y-2 px-4 py-2.5">
-                                <span>Projects with Leader:</span>
+                                <span>Projects:</span>
                                 <div className="flex flex-wrap items-center space-x-2">
-                                  {row?.original?.multiProjects.map((option, index) => (
-                                    <span
-                                      key={index}
-                                      className="rounded border border-slate-300 bg-slate-50 px-1.5 font-medium"
-                                    >
-                                      {getProjectWithNameDisplay(option, row.original)}
-                                    </span>
-                                  ))}
+                                  {row?.original?.projects.map((option, index) => {
+                                    const projectName = option.project_name.label
+                                    const otherProjects =
+                                      option.project_name.label !== 'Others' &&
+                                      option.project_name.label.split(',')
+
+                                    return (
+                                      <div key={index}>
+                                        <>
+                                          {typeof otherProjects === 'object' &&
+                                          projectName !== '' ? (
+                                            <>
+                                              {otherProjects.map((val, index) => (
+                                                <span
+                                                  key={index}
+                                                  className="rounded border border-slate-300 bg-slate-50 px-1.5 font-medium"
+                                                >
+                                                  {val}
+                                                </span>
+                                              ))}
+                                            </>
+                                          ) : null}
+                                        </>
+                                      </div>
+                                    )
+                                  })}
                                 </div>
                               </li>
                               <li className="px-4 py-2.5">
-                                Date Filed:{' '}
+                                Date:{' '}
                                 <span className="font-semibold">
-                                  {moment(new Date(row.original.overtimeDate)).format(
-                                    'MMMM DD, YYYY'
-                                  )}
+                                  {moment(new Date(row.original.date)).format('MMMM DD, YYYY')}
                                 </span>
                               </li>
                               <li className="px-4 py-2.5">
                                 Requested hours:{' '}
                                 <span className="font-semibold">
-                                  {decimalFormatter(row.original.requestedMinutes)}
+                                  {decimalFormatter(row?.original?.requestedHours)}
+                                </span>
+                              </li>
+                              <li className="px-4 py-2.5">
+                                Supervisor:{' '}
+                                <span className="font-semibold">{row.original.supervisor}</span>
+                              </li>
+                              <li className="px-4 py-2.5">
+                                Approved Minutes:{' '}
+                                <span className="font-semibold">
+                                  {row.original.approvedMinutes ?? (
+                                    <span className="italic text-slate-400">
+                                      (pending approval)
+                                    </span>
+                                  )}
                                 </span>
                               </li>
                               <li className="flex flex-col space-y-2 px-4 py-3">

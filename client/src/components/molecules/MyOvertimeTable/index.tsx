@@ -13,15 +13,15 @@ import DesktopTable from './DesktopTable'
 import FooterTable from './../FooterTable'
 import MobileDisclose from './MobileDisclose'
 import { fuzzyFilter } from '~/utils/fuzzyFilter'
-import { IMyOvertime } from '~/utils/types/overtimeTypes'
+import { IMyOvertimeTable } from '~/utils/interfaces'
 
 type Props = {
   query: {
-    data: IMyOvertime[]
+    data: IMyOvertimeTable[]
     error: unknown
   }
   table: {
-    columns: Array<ColumnDef<IMyOvertime, any>>
+    columns: Array<ColumnDef<IMyOvertimeTable, any>>
     globalFilter: string
     setGlobalFilter: Dispatch<SetStateAction<string>>
   }
@@ -70,7 +70,7 @@ const MyOvertimeTable: FC<Props> = (props): JSX.Element => {
         />
       </div>
       {/* Show on medium size and beyond */}
-      <div className="mx-auto hidden w-full max-w-fit md:block">
+      <div className="mx-auto mb-8 hidden w-full max-w-fit md:block">
         <DesktopTable
           {...{
             table,

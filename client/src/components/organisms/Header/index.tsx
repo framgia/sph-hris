@@ -283,15 +283,26 @@ const Header: FC<Props> = (props): JSX.Element => {
           <div className="inline-flex items-center space-x-4">
             <div className="relative">
               {newNotificationCount > 0 ? (
-                <span
-                  className={classNames(
-                    'shrink-0 rounded-full border border-rose-600 bg-rose-500 !text-[10px] font-semibold text-white',
-                    'absolute -right-1 -top-1 z-50 flex h-4 w-4 select-none items-center justify-center ring-4 ring-white',
-                    newNotificationCount > 9 ? 'px-2 py-0.5' : ' px-1.5'
-                  )}
-                >
-                  {newNotificationCount > 9 ? '9+' : newNotificationCount}
-                </span>
+                <>
+                  <span
+                    className={classNames(
+                      'shrink-0 animate-ping rounded-full border border-rose-600 bg-rose-500 !text-[10px] font-semibold text-white',
+                      'absolute -right-1 -top-1 z-50 flex h-4 w-4 select-none items-center justify-center ring-4 ring-white',
+                      newNotificationCount > 9 ? 'px-2 py-0.5' : ' px-1.5'
+                    )}
+                  >
+                    {newNotificationCount > 9 ? '9+' : newNotificationCount}
+                  </span>
+                  <span
+                    className={classNames(
+                      'shrink-0 rounded-full border border-rose-600 bg-rose-500 !text-[10px] font-semibold text-white',
+                      'absolute -right-1 -top-1 z-50 flex h-4 w-4 select-none items-center justify-center ring-4 ring-white',
+                      newNotificationCount > 9 ? 'px-2 py-0.5' : ' px-1.5'
+                    )}
+                  >
+                    {newNotificationCount > 9 ? '9+' : newNotificationCount}
+                  </span>
+                </>
               ) : null}
               <NotificationPopover
                 className="h-5 w-5 text-slate-400"

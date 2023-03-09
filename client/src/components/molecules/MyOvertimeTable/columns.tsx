@@ -1,4 +1,3 @@
-import moment from 'moment'
 import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import { Eye } from 'react-feather'
@@ -9,21 +8,16 @@ import { createColumnHelper } from '@tanstack/react-table'
 
 import Chip from './Chip'
 import ShowRemarksModal from './ShowRemarksModal'
+import { IMyOvertimeTable } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
-import { IMyOvertime } from '~/utils/types/overtimeTypes'
-import {
-  decimalFormatter,
-  getApprovalStatus,
-  getProjectWithNameDisplay,
-  getInitialProjectNameAndLeader
-} from '~/utils/myOvertimeHelpers'
+import { decimalFormatter } from '~/utils/myOvertimeHelpers'
 
-const columnHelper = createColumnHelper<IMyOvertime>()
+const columnHelper = createColumnHelper<IMyOvertimeTable>()
 
 export const columns = [
-  columnHelper.accessor('multiProjects', {
-    header: () => <CellHeader label="Project with Leader" />,
+  columnHelper.accessor('projects', {
+    header: () => <CellHeader label="Projects" />,
     footer: (info) => info.column.id,
     cell: ({ row: { original } }) => (
       <Listbox>
@@ -34,7 +28,7 @@ export const columns = [
               'text-xs outline-none focus:scale-95'
             )}
           >
-            <span className="block truncate">{getInitialProjectNameAndLeader(original)}</span>
+            <span className="block truncate">{original.projects[0].project_name?.label}</span>
             <AiOutlineCaretDown className="h-3 w-3 text-gray-400" aria-hidden="true" />
           </Listbox.Button>
           <Transition
@@ -49,22 +43,41 @@ export const columns = [
                 'py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'
               )}
             >
-              {original?.multiProjects.map((option, index) => {
+              {original.projects.map((option, index) => {
+                const projectName = option.project_name.label
+                const otherProjects =
+                  option.project_name.label !== 'Others' && option.project_name.label.split(',')
+
                 return (
-                  <Listbox.Option
-                    key={index}
-                    className={({ active }) =>
-                      classNames(
-                        'relative cursor-default select-none py-1.5 pl-5 pr-4',
-                        active ? 'bg-amber-100 text-amber-900' : 'text-slate-800'
-                      )
-                    }
-                    value={option?.id}
-                  >
-                    <span className="block truncate">
-                      {getProjectWithNameDisplay(option, original)}
-                    </span>
-                  </Listbox.Option>
+                  <div key={index}>
+                    {typeof otherProjects === 'object' && projectName !== '' ? (
+                      <>
+                        {otherProjects.map((val, index) => (
+                          <Listbox.Option
+                            key={index}
+                            className={({ active }) =>
+                              classNames(
+                                'relative cursor-default select-none py-2 pl-5 pr-4',
+                                active ? 'bg-amber-100 text-amber-900' : 'text-slate-800'
+                              )
+                            }
+                            value={option.project_name.value}
+                          >
+                            {({ selected }) => (
+                              <span
+                                className={classNames(
+                                  'block',
+                                  selected ? 'font-medium' : 'font-normal'
+                                )}
+                              >
+                                {val}
+                              </span>
+                            )}
+                          </Listbox.Option>
+                        ))}
+                      </>
+                    ) : null}
+                  </div>
                 )
               })}
             </Listbox.Options>
@@ -78,22 +91,18 @@ export const columns = [
     header: () => '',
     footer: (info) => info.column.id
   }),
-  columnHelper.accessor('overtimeDate', {
+  columnHelper.accessor('date', {
     header: () => <CellHeader label="Date" />,
-    footer: (info) => info.column.id,
-    cell: ({ row: { original } }) => (
-      <span>{moment(new Date(original.overtimeDate)).format('MMMM DD, YYYY')}</span>
-    )
-  }),
-  columnHelper.display({
-    id: 'empty2',
-    header: () => '',
     footer: (info) => info.column.id
   }),
-  columnHelper.accessor('requestedMinutes', {
+  columnHelper.accessor('requestedHours', {
     header: () => <CellHeader label="Requested Hours" />,
     footer: (info) => info.column.id,
-    cell: ({ row: { original } }) => decimalFormatter(original.requestedMinutes)
+    cell: ({ row: { original } }) => decimalFormatter(original.requestedHours)
+  }),
+  columnHelper.accessor('supervisor', {
+    header: () => <CellHeader label="Supervisor" />,
+    footer: (info) => info.column.id
   }),
   columnHelper.accessor('approvedMinutes', {
     header: () => <CellHeader label="Approved Minutes" />,
@@ -107,31 +116,26 @@ export const columns = [
     )
   }),
   columnHelper.display({
+    id: 'empty2',
+    header: () => '',
+    footer: (info) => info.column.id
+  }),
+  columnHelper.accessor('dateFiled', {
+    header: () => <CellHeader label="Date Filed" />,
+    footer: (info) => info.column.id
+  }),
+  columnHelper.accessor('status', {
+    header: () => <CellHeader label="Status" />,
+    footer: (info) => info.column.id,
+    cell: ({ row: { original } }) => <Chip label={original?.status} />
+  }),
+  columnHelper.display({
     id: 'empty3',
     header: () => '',
     footer: (info) => info.column.id
   }),
-  columnHelper.accessor('createdAt', {
-    header: () => <CellHeader label="Date Filed" />,
-    footer: (info) => info.column.id,
-    cell: ({ row: { original } }) => (
-      <span>{moment(new Date(original.createdAt)).format('MMMM DD, YYYY')}</span>
-    )
-  }),
-  columnHelper.accessor('isManagerApproved', {
-    header: () => <CellHeader label="Status" />,
-    footer: (info) => info.column.id,
-    cell: ({ row: { original } }) => (
-      <Chip label={getApprovalStatus(original.isLeaderApproved, original.isManagerApproved)} />
-    )
-  }),
   columnHelper.display({
-    id: 'empty4',
-    header: () => '',
-    footer: (info) => info.column.id
-  }),
-  columnHelper.display({
-    id: 'id',
+    id: 'actions',
     header: () => <span className="font-normal text-slate-500">Actions</span>,
     cell: (props) => {
       const [isOpen, setIsOpen] = useState<boolean>(false)

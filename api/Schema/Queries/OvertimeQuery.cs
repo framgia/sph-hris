@@ -1,4 +1,3 @@
-using api.Entities;
 using api.Services;
 
 namespace api.Schema.Queries
@@ -11,7 +10,7 @@ namespace api.Schema.Queries
         {
             _overtimeService = overtimeService;
         }
-        public async Task<List<Overtime>> GetOvertime([Service] OvertimeService _overtimeService, int UserId)
+        public async Task<List<DTOs.MyOvertimeDTO>> GetOvertime(int UserId)
         {
             return await _overtimeService.GetOvertime(UserId);
         }
