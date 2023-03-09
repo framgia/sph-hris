@@ -14,5 +14,6 @@
     <PackageReference Include="HotChocolate.Data.EntityFramework" Version="13.0.2" />
     <PackageReference Include="LiteX.Storage.Local" Version="9.0.0" />
     <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 </Project>
