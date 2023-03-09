@@ -63,7 +63,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                   const minuteDifference = Math.floor(
                     moment
                       .duration(
-                        moment(row.original.timeOut.createdAt).diff(
+                        moment(row.original.timeOut?.createdAt).diff(
                           `${moment(row.original.date).format('YYYY-MM-DD')} ${moment(
                             '19:30',
                             'HH:mm:ss'

@@ -67,5 +67,17 @@ namespace api.Services
             if (overtime.IsLeaderApproved == false && overtime.IsManagerApproved == false) return RequestStatus.DISAPPROVED;
             return RequestStatus.PENDING;
         }
+
+        public async Task<List<Overtime>> GetOvertime(int UserId)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.Overtimes
+                    .Include(i => i.MultiProjects)
+                        .ThenInclude(t => t.ProjectLeader)
+                    .Where(w => w.UserId == UserId)
+                    .ToListAsync();
+            }
+        }
     }
 }

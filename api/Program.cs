@@ -29,7 +29,8 @@ builder.Services.AddGraphQLServer()
     .AddType<InterruptionQuery>()
     .AddType<LeaveQuery>()
     .AddType<ProjectQuery>()
-    .AddType<NotificationQuery>();
+    .AddType<NotificationQuery>()
+    .AddType<OvertimeQuery>();
 
 builder.Services.AddGraphQLServer()
     .AddMutationType(q => q.Name("Mutation"))
