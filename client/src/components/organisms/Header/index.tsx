@@ -18,6 +18,7 @@ import ClockInIcon from '~/utils/icons/ClockInIcon'
 import ClockOutIcon from '~/utils/icons/ClockOutIcon'
 import { Menus } from '~/utils/constants/sidebarMenu'
 import Button from '~/components/atoms/Buttons/Button'
+import { getDuration } from '~/utils/notificationHelpers'
 import LegendTooltip from '~/components/molecules/LegendTooltip'
 import { NotificationData } from '~/utils/types/notificationTypes'
 import UserMenuDropDown from '~/components/molecules/UserMenuDropdown'
@@ -85,7 +86,7 @@ const Header: FC<Props> = (props): JSX.Element => {
           specificType: parsedData.Type,
           date: moment(parsedData.DateRequested).format('MMMM D, YYYY'),
           remarks: parsedData.Remarks,
-          duration: parsedData.RequestedHours,
+          duration: getDuration(parsedData, notif.type),
           dateFiled: moment(parsedData.DateFiled).format('MMMM D, YYYY'),
           status: parsedData.Status,
           readAt: notif.readAt,

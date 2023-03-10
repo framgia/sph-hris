@@ -165,28 +165,28 @@ export const columns = [
         <div className="flex items-center space-x-2">
           {/* If the user has no overtime filed */}
           {overtime === null ? (
-            <Button type="button" className="flex items-center" onClick={handleToggle}>
-              {minuteDifference > 0 ? (
+            minuteDifference > 0 ? (
+              <Button type="button" className="flex items-center" onClick={handleToggle}>
                 <>
                   <span>{minuteDifference}</span>
                   <HiFire className="h-4 w-4 text-red-500" />
                 </>
-              ) : (
-                <span>{NO_OVERTIME}</span>
-              )}
 
-              {/* File New Overtime Modal */}
-              {isOpen ? (
-                <AddNewOvertimeModal
-                  {...{
-                    isOpen,
-                    closeModal: handleToggle,
-                    timeEntry,
-                    initialMinutes: minuteDifference
-                  }}
-                />
-              ) : null}
-            </Button>
+                {/* File New Overtime Modal */}
+                {isOpen ? (
+                  <AddNewOvertimeModal
+                    {...{
+                      isOpen,
+                      closeModal: handleToggle,
+                      timeEntry,
+                      initialMinutes: minuteDifference
+                    }}
+                  />
+                ) : null}
+              </Button>
+            ) : (
+              <span>{NO_OVERTIME}</span>
+            )
           ) : (
             <>
               {/* If Approved Request */}

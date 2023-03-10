@@ -9,13 +9,35 @@ import {
 
 import { client } from '~/utils/shared/client'
 import { GET_ALL_OVERTIME } from '~/graphql/queries/overtimeQuery'
-import { CREATE_OVERTIME_MUTATION } from '~/graphql/mutations/overtimeMutation'
-import { IOvertimeRequestInput, IAllOvertime } from '~/utils/types/overtimeTypes'
+import {
+  CREATE_OVERTIME_MUTATION,
+  APROVE_DISAPPROVE_OVERTIME_MUTATION
+} from '~/graphql/mutations/overtimeMutation'
+import {
+  ILeaderApproveOvertimeRequestInput,
+  IManagerApproveOvertimeRequestInput,
+  IOvertimeRequestInput,
+  IAllOvertime
+} from '~/utils/types/overtimeTypes'
 
 type handleOvertimeMutationType = UseMutationResult<any, unknown, IOvertimeRequestInput, unknown>
+type handleManagerApproveOvertimeMutationType = UseMutationResult<
+  any,
+  unknown,
+  IManagerApproveOvertimeRequestInput,
+  unknown
+>
+type handleLeaderApproveOvertimeMutationType = UseMutationResult<
+  any,
+  unknown,
+  ILeaderApproveOvertimeRequestInput,
+  unknown
+>
 
 type returnType = {
   handleOvertimeMutation: () => handleOvertimeMutationType
+  handleManagerApproveOvertimeMutation: () => handleManagerApproveOvertimeMutationType
+  handleLeaderApproveOvertimeMutation: () => handleLeaderApproveOvertimeMutationType
 }
 
 const useOvertime = (): returnType => {
@@ -39,8 +61,40 @@ const useOvertime = (): returnType => {
       }
     })
 
+  const handleManagerApproveOvertimeMutation = (): handleManagerApproveOvertimeMutationType =>
+    useMutation({
+      mutationFn: async (data: IManagerApproveOvertimeRequestInput) => {
+        return await client.request(APROVE_DISAPPROVE_OVERTIME_MUTATION, {
+          overtimeApproval: data
+        })
+      },
+      onSuccess: async () => {
+        toast.success('Success!')
+      },
+      onError: async () => {
+        toast.error('Something went wrong')
+      }
+    })
+
+  const handleLeaderApproveOvertimeMutation = (): handleLeaderApproveOvertimeMutationType =>
+    useMutation({
+      mutationFn: async (data: ILeaderApproveOvertimeRequestInput) => {
+        return await client.request(APROVE_DISAPPROVE_OVERTIME_MUTATION, {
+          overtimeApproval: data
+        })
+      },
+      onSuccess: async () => {
+        toast.success('Success!')
+      },
+      onError: async () => {
+        toast.error('Something went wrong')
+      }
+    })
+
   return {
-    handleOvertimeMutation
+    handleOvertimeMutation,
+    handleManagerApproveOvertimeMutation,
+    handleLeaderApproveOvertimeMutation
   }
 }
 

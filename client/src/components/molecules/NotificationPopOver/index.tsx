@@ -10,6 +10,8 @@ import Avatar from '~/components/atoms/Avatar'
 import { INotification } from '~/utils/interfaces'
 import useNotificationMutation from '~/hooks/useNotificationMutation'
 import PopoverTransition from '~/components/templates/PopoverTransition'
+import { switchMessage } from '~/utils/notificationHelpers'
+import { NOTIFICATION_TYPE } from '~/utils/constants/notificationTypes'
 
 type Props = {
   className: string
@@ -106,13 +108,19 @@ const NotificationPopover: FC<Props> = (props): JSX.Element => {
                             )}
                           >
                             <p>
-                              <span className="font-semibold">{i.name}</span> has requested your
-                              approval for <span className="font-semibold">{i.type} </span>
+                              <span className="font-semibold">{i.name}</span>{' '}
+                              {switchMessage(i.specificType)}{' '}
+                              <span className="font-semibold">{i.type.split('_')[0]} </span>
                             </p>
                             <small>
                               {moment(new Date(i.dateFiled)).fromNow()} &bull;{' '}
                               {moment(new Date(i.date)).format('MMM DD, YY')} -{' '}
-                              <span className="font-medium">{i.duration}Hrs</span>
+                              <span className="font-medium">
+                                {i.duration}{' '}
+                                {i.type.split('_')[0].toLowerCase() === NOTIFICATION_TYPE.OVERTIME
+                                  ? 'Mins'
+                                  : 'Hrs'}
+                              </span>
                             </small>
                           </div>
                         </Link>

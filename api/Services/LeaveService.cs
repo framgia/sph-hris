@@ -113,7 +113,6 @@ namespace api.Services
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 var project = await context.Projects.FindAsync(1);
-                Console.WriteLine("----------------->" + project);
 
                 return
                 await context.Leaves

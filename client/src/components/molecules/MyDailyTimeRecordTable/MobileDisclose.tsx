@@ -216,34 +216,34 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                   <div className="flex items-center space-x-2">
                                     {/* If the user has an overtime */}
                                     {row.original.overtime === null ? (
-                                      <Button
-                                        type="button"
-                                        className="flex items-center"
-                                        onClick={handleIsOpenNewOvertime}
-                                      >
-                                        {minuteDifference > 0 ? (
+                                      minuteDifference > 0 ? (
+                                        <Button
+                                          type="button"
+                                          className="flex items-center"
+                                          onClick={handleIsOpenNewOvertime}
+                                        >
                                           <>
                                             <span className="font-semibold">
                                               {minuteDifference}
                                             </span>
                                             <HiFire className="h-4 w-4 text-red-500" />
                                           </>
-                                        ) : (
-                                          <span className="font-semibold">{NO_OVERTIME}</span>
-                                        )}
 
-                                        {/* File New Overtime Modal */}
-                                        {isOpenNewOvertime ? (
-                                          <AddNewOvertimeModal
-                                            {...{
-                                              isOpen: isOpenNewOvertime,
-                                              closeModal: handleIsOpenNewOvertime,
-                                              timeEntry: row.original,
-                                              initialMinutes: minuteDifference
-                                            }}
-                                          />
-                                        ) : null}
-                                      </Button>
+                                          {/* File New Overtime Modal */}
+                                          {isOpenNewOvertime ? (
+                                            <AddNewOvertimeModal
+                                              {...{
+                                                isOpen: isOpenNewOvertime,
+                                                closeModal: handleIsOpenNewOvertime,
+                                                timeEntry: row.original,
+                                                initialMinutes: minuteDifference
+                                              }}
+                                            />
+                                          ) : null}
+                                        </Button>
+                                      ) : (
+                                        <span className="font-semibold">{NO_OVERTIME}</span>
+                                      )
                                     ) : (
                                       <>
                                         {/* If Approved Request */}

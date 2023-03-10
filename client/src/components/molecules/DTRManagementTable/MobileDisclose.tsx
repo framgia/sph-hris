@@ -204,7 +204,11 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                 </li>
                                 <li className="px-4 py-2">
                                   Overtime(min):{' '}
-                                  <span className="font-semibold">{timeEntry.overtime}</span>
+                                  <span className="font-semibold">
+                                    {timeEntry.overtime != null
+                                      ? timeEntry.overtime.approvedMinutes ?? 0
+                                      : 0}
+                                  </span>
                                 </li>
                                 <li className="flex items-center space-x-2 px-4 py-2">
                                   <span>Actions:</span>

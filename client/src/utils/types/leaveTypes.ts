@@ -112,3 +112,9 @@ export type LeaveType = {
   id: number
   name: string
 }
+
+export interface IApproveLeaveUndertimeRequestInput {
+  userId: number
+  notificationId: number
+  isApproved: boolean
+}

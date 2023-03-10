@@ -8,6 +8,7 @@ import useUserQuery from '~/hooks/useUserQuery'
 import FilterIcon from '~/utils/icons/FilterIcon'
 import Layout from '~/components/templates/Layout'
 import { INotification } from '~/utils/interfaces'
+import { getDuration } from '~/utils/notificationHelpers'
 import useNotification from '~/hooks/useNotificationQuery'
 import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
 import { NotificationData } from '~/utils/types/notificationTypes'
@@ -60,7 +61,7 @@ const Notifications: NextPage = (): JSX.Element => {
           specificType: parsedData.Type,
           date: moment(parsedData.DateRequested).format('MMMM D, YYYY'),
           remarks: parsedData.Remarks,
-          duration: parsedData.RequestedHours,
+          duration: getDuration(parsedData, notif.type),
           dateFiled: parsedData.DateFiled,
           status: parsedData.Status,
           isRead: notif.isRead,

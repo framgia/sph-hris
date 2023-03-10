@@ -151,8 +151,13 @@ export const columns = [
     header: () => <CellHeader label="Undertime(min)" />,
     footer: (info) => info.column.id
   }),
-  columnHelper.accessor('overtime', {
+  columnHelper.display({
+    id: 'id',
     header: () => <CellHeader label="Overtime(min)" />,
+    cell: (props) => {
+      const { original: timeEntry } = props.row
+      return <span>{timeEntry.overtime != null ? timeEntry.overtime.approvedMinutes ?? 0 : 0}</span>
+    },
     footer: (info) => info.column.id
   }),
   columnHelper.accessor('status', {

@@ -13,19 +13,35 @@ import {
   GET_YEARLY_ALL_LEAVES_QUERY,
   GET_LEAVE_TYPES_QUERY
 } from '~/graphql/queries/leaveQuery'
-import { LeaveRequest, Leaves, YearlyLeaves, LeaveTypes } from '~/utils/types/leaveTypes'
-import { CREATE_LEAVE_MUTATION } from '~/graphql/mutations/leaveMutation'
+import {
+  LeaveRequest,
+  Leaves,
+  YearlyLeaves,
+  LeaveTypes,
+  IApproveLeaveUndertimeRequestInput
+} from '~/utils/types/leaveTypes'
+import {
+  CREATE_LEAVE_MUTATION,
+  APROVE_DISAPPROVE_LEAVE_UNDERTIME_MUTATION
+} from '~/graphql/mutations/leaveMutation'
 
 type getLeaveQueryType = UseQueryResult<Leaves, unknown>
 type getYearlyLeaveQueryType = UseQueryResult<YearlyLeaves, unknown>
 type getLeaveTypeQueryType = UseQueryResult<LeaveTypes, unknown>
 type handleLeaveMutationType = UseMutationResult<any, unknown, LeaveRequest, unknown>
+type handleApproveLeaveUndertimeMutationType = UseMutationResult<
+  any,
+  unknown,
+  IApproveLeaveUndertimeRequestInput,
+  unknown
+>
 
 type returnType = {
   getLeaveQuery: (userId: number, year: number) => getLeaveQueryType
   handleLeaveMutation: (userId: number, year: number) => handleLeaveMutationType
   handleLeaveTypeQuery: () => getLeaveTypeQueryType
   getYearlyAllLeaveQuery: (year: number, ready: boolean) => getYearlyLeaveQueryType
+  handleApproveLeaveUndertimeMutation: () => handleApproveLeaveUndertimeMutationType
 }
 
 const useLeave = (): returnType => {
@@ -69,11 +85,27 @@ const useLeave = (): returnType => {
       }
     })
 
+  const handleApproveLeaveUndertimeMutation = (): handleApproveLeaveUndertimeMutationType =>
+    useMutation({
+      mutationFn: async (data: IApproveLeaveUndertimeRequestInput) => {
+        return await client.request(APROVE_DISAPPROVE_LEAVE_UNDERTIME_MUTATION, {
+          approval: data
+        })
+      },
+      onSuccess: async () => {
+        toast.success('Success!')
+      },
+      onError: async () => {
+        toast.error('Something went wrong')
+      }
+    })
+
   return {
     getLeaveQuery,
     getYearlyAllLeaveQuery,
     handleLeaveMutation,
-    handleLeaveTypeQuery
+    handleLeaveTypeQuery,
+    handleApproveLeaveUndertimeMutation
   }
 }
 

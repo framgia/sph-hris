@@ -22,7 +22,9 @@ export type NotificationData = {
   DateRequested: string
   Projects: string[]
   Remarks: string
-  RequestedHours: number
+  RequestedHours: number | null
+  RequestedMinutes: number | null
+  ApprovedMinutes: number | null
   Status: string
   Type: string
 }
