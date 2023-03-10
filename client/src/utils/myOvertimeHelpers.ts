@@ -1,7 +1,4 @@
-import { Row } from '@tanstack/react-table'
-import useProject from '~/hooks/useProject'
-import { IMyOvertime } from './types/overtimeTypes'
-import { ProjectDetails } from './types/projectTypes'
+import { IMultiProject, IMyOvertime } from './types/overtimeTypes'
 
 export const decimalFormatter = (value: number): number => {
   const decimalFormatter = new Intl.NumberFormat('en-US', {
@@ -13,31 +10,6 @@ export const decimalFormatter = (value: number): number => {
   const parsedNumber = parseFloat(formattedNumber)
 
   return parsedNumber
-}
-
-type ReturnTypeMultiProjects = {
-  multiProjectNames: Array<ProjectDetails | undefined>
-  projectLeaders: Array<ProjectDetails | undefined>
-}
-
-export const getMultiProjectDetails = (row: Row<IMyOvertime>): ReturnTypeMultiProjects => {
-  const { handleProjectQuery } = useProject()
-  const { data: projects } = handleProjectQuery()
-
-  const multiProjectNames = row.original.multiProjects.map((mp) => {
-    const projectdata = projects?.projects.find((project) => project.id === mp.projectId)
-    return projectdata
-  })
-
-  const projectLeaders = row.original.multiProjects.map((mp) => {
-    const projectdata = projects?.projects.find((project) => project.id === mp.projectId)
-    return projectdata
-  })
-
-  return {
-    multiProjectNames,
-    projectLeaders
-  }
 }
 
 type ApprovalStatus = 'pending' | 'approved' | 'disapproved'
@@ -54,4 +26,23 @@ export const getApprovalStatus = (
     default:
       return 'disapproved'
   }
+}
+
+export const getInitialProjectNameAndLeader = (original: IMyOvertime): string => {
+  const projectName = original.multiProjects[0].project?.name ?? ''
+  const projectLeader = original.multiProjects[0].projectLeader?.name ?? ''
+
+  return projectName === 'Others' || original.otherProject !== ''
+    ? `${original.otherProject ?? ''} - ${projectLeader}`
+    : `${projectName} - ${projectLeader}`
+}
+
+export const getProjectWithNameDisplay = (option: IMultiProject, original: IMyOvertime): string => {
+  const projectName = option.project?.name ?? ''
+  const projectLeader = option.projectLeader?.name ?? ''
+  const otherProject = original.otherProject ?? ''
+
+  return projectName === 'Others' || otherProject !== ''
+    ? `${otherProject} - ${projectLeader}`
+    : `${projectName} - ${projectLeader}`
 }

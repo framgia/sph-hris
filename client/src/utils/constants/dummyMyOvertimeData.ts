@@ -6,13 +6,12 @@ export const dummyMyOvertimeData: IMyOvertime[] = [
     multiProjects: [
       {
         id: 1,
-        projectId: 1,
-        projectLeaderId: 2
-      },
-      {
-        id: 2,
-        projectId: 2,
-        projectLeaderId: 3
+        project: {
+          name: 'Joshua'
+        },
+        projectLeader: {
+          name: 'adf'
+        }
       }
     ],
     overtimeDate: '2023-02-01 02:34:26.0000000',

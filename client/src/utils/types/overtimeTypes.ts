@@ -17,7 +17,8 @@ export interface IOvertimeProjects {
 
 export interface IMyOvertime {
   id: number
-  multiProjects: IOvertimeProjects[]
+  multiProjects: IMultiProject[]
+  otherProject?: string
   overtimeDate: string
   requestedMinutes: number
   approvedMinutes: number
@@ -26,6 +27,7 @@ export interface IMyOvertime {
   remarks: string
   createdAt: string
 }
+
 export interface IAllOvertime {
   id: number
   projects: Array<{
@@ -74,6 +76,15 @@ export interface IMultiProjects {
   }
   projectLeader: {
     id: number
+  }
+}
+
+export interface IMultiProject {
+  id: number
+  project: {
+    name: string
+  }
+  projectLeader: {
     name: string
   }
 }

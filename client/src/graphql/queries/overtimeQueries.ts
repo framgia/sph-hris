@@ -6,9 +6,14 @@ export const GET_ALL_OVERTIME_QUERY = gql`
       id
       multiProjects {
         id
-        projectId
-        projectLeaderId
+        project {
+          name
+        }
+        projectLeader {
+          name
+        }
       }
+      otherProject
       overtimeDate
       requestedMinutes
       approvedMinutes
