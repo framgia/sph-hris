@@ -249,6 +249,7 @@ namespace api.Services
                     Projects = projectNames,
                     RequestedMinutes = overtime.RequestedMinutes,
                     DateRequested = overtime.OvertimeDate,
+                    ApprovedMinutes = overtime.ApprovedMinutes,
                     DateFiled = overtime.CreatedAt,
                     Type = IsApproved ? NotificationDataTypeEnum.APPROVE : NotificationDataTypeEnum.DISAPPROVE,
                     Status = IsApproved ? RequestStatus.APPROVED : RequestStatus.DISAPPROVED,

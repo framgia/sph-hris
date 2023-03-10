@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import useUserQuery from '~/hooks/useUserQuery'
+import { getDuration } from '~/utils/getDuration'
 import FilterIcon from '~/utils/icons/FilterIcon'
 import Layout from '~/components/templates/Layout'
 import { INotification } from '~/utils/interfaces'
@@ -60,7 +61,7 @@ const Notifications: NextPage = (): JSX.Element => {
           specificType: parsedData.Type,
           date: moment(parsedData.DateRequested).format('MMMM D, YYYY'),
           remarks: parsedData.Remarks,
-          duration: parsedData.RequestedHours,
+          duration: getDuration(parsedData, notif.type),
           dateFiled: parsedData.DateFiled,
           status: parsedData.Status,
           isRead: notif.isRead,

@@ -24,6 +24,7 @@ import UserMenuDropDown from '~/components/molecules/UserMenuDropdown'
 import NotificationPopover from '~/components/molecules/NotificationPopOver'
 import useNotification, { updateIsRead } from '~/hooks/useNotificationQuery'
 import { getLeaveNotificationSubQuery } from '~/graphql/subscriptions/leaveSubscription'
+import { getDuration } from '~/utils/getDuration'
 
 const Tooltip = dynamic(async () => await import('rc-tooltip'), { ssr: false })
 
@@ -85,7 +86,7 @@ const Header: FC<Props> = (props): JSX.Element => {
           specificType: parsedData.Type,
           date: moment(parsedData.DateRequested).format('MMMM D, YYYY'),
           remarks: parsedData.Remarks,
-          duration: parsedData.RequestedHours,
+          duration: getDuration(parsedData, notif.type),
           dateFiled: moment(parsedData.DateFiled).format('MMMM D, YYYY'),
           status: parsedData.Status,
           readAt: notif.readAt,

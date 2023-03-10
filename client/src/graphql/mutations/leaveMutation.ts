@@ -6,3 +6,8 @@ export const CREATE_LEAVE_MUTATION = gql`
     }
   }
 `
+export const APROVE_DISAPPROVE_LEAVE_UNDERTIME_MUTATION = gql`
+  mutation ($approval: ApproveLeaveUndertimeRequestInput!) {
+    approveDisapproveLeave(approvingData: $approval)
+  }
+`

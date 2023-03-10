@@ -3,24 +3,68 @@ import React, { FC } from 'react'
 import { Check, X } from 'react-feather'
 import { useRouter } from 'next/router'
 
+import useLeave from '~/hooks/useLeave'
 import { INotification } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import ModalTemplate from '~/components/templates/ModalTemplate'
+import { STATUS_OPTIONS } from '~/utils/constants/notificationFilter'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
+import { User } from '~/utils/types/userTypes'
+import { Roles } from '~/utils/constants/roles'
+import { NOTIFICATION_TYPE } from '~/utils/constants/notificationTypes'
+import useOvertime from '~/hooks/useOvertime'
 
 type Props = {
   isOpen: boolean
   row: INotification
+  user: User
 }
 
-const ViewDetailsModal: FC<Props> = ({ isOpen, row }): JSX.Element => {
+const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
   const router = useRouter()
+
+  const { handleApproveLeaveUndertimeMutation } = useLeave()
+  const approveDisapproveLeaveUndertimeMutation = handleApproveLeaveUndertimeMutation()
+
+  const { handleLeaderApproveOvertimeMutation } = useOvertime()
+  const approveDisapproveOvertimeMutation = handleLeaderApproveOvertimeMutation()
 
   const handleClose = (): void => {
     void router.replace({
       pathname: '/notifications'
     })
+  }
+
+  const handleApproveDisapprove = (isApproved: boolean): void => {
+    if (
+      row.type.toLowerCase() === NOTIFICATION_TYPE.LEAVE ||
+      row.type.toLowerCase() === NOTIFICATION_TYPE.UNDERTIME
+    ) {
+      approveDisapproveLeaveUndertimeMutation.mutate(
+        {
+          userId: user.id,
+          notificationId: parseInt(router.query.id as string),
+          isApproved
+        },
+        {
+          onSuccess: () => handleClose()
+        }
+      )
+    }
+
+    if (row.type.toLowerCase() === NOTIFICATION_TYPE.OVERTIME) {
+      approveDisapproveOvertimeMutation.mutate(
+        {
+          userId: user.id,
+          notificationId: parseInt(router.query.id as string),
+          isApproved
+        },
+        {
+          onSuccess: () => handleClose()
+        }
+      )
+    }
   }
 
   return (
@@ -33,7 +77,7 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row }): JSX.Element => {
     >
       <ModalHeader
         {...{
-          title: `${row.name}'s ${row.type} request`,
+          title: `${row.name}'s ${row.type.split('_')[0]} request`,
           closeModal: handleClose,
           hasAvatar: true,
           avatar: row.userAvatarLink
@@ -70,22 +114,43 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row }): JSX.Element => {
           </li>
         </ul>
       </main>
-      <ModalFooter>
-        <Button
-          variant="success"
-          className="flex items-center space-x-1 py-0.5 px-4 text-slate-500"
-        >
-          <Check className="h-4 w-4" />
-          <span>Approve</span>
-        </Button>
-        <Button
-          variant="danger-outline"
-          className="flex items-center space-x-1 py-0.5 px-2 text-slate-500"
-        >
-          <X className="h-4 w-4" />
-          <span>Disapprove</span>
-        </Button>
-      </ModalFooter>
+      {row.status === STATUS_OPTIONS.PENDING && (
+        <ModalFooter>
+          {user.role.name === Roles.MANAGER &&
+          row.type.toLowerCase() === NOTIFICATION_TYPE.OVERTIME ? (
+            <Button
+              variant="success"
+              className="flex items-center space-x-1 py-0.5 px-4 text-slate-500"
+              onClick={() => {
+                void router.push({
+                  pathname: '/overtime-management'
+                })
+              }}
+            >
+              <span>View In Overtime Management</span>
+            </Button>
+          ) : (
+            <>
+              <Button
+                variant="success"
+                className="flex items-center space-x-1 py-0.5 px-4 text-slate-500"
+                onClick={() => handleApproveDisapprove(true)}
+              >
+                <Check className="h-4 w-4" />
+                <span>Approve</span>
+              </Button>
+              <Button
+                variant="danger-outline"
+                className="flex items-center space-x-1 py-0.5 px-2 text-slate-500"
+                onClick={() => handleApproveDisapprove(false)}
+              >
+                <X className="h-4 w-4" />
+                <span>Disapprove</span>
+              </Button>
+            </>
+          )}
+        </ModalFooter>
+      )}
     </ModalTemplate>
   )
 }

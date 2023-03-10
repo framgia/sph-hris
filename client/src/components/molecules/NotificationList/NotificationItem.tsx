@@ -12,9 +12,10 @@ import ViewDetailsModal from './ViewDetailsModal'
 import { INotification } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/Button'
 import useNotification from '~/hooks/useNotificationQuery'
-import { SpecificType } from '~/utils/constants/notificationTypes'
+import { NOTIFICATION_TYPE, SpecificType } from '~/utils/constants/notificationTypes'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import useNotificationMutation from '~/hooks/useNotificationMutation'
+import { User } from '~/utils/types/userTypes'
 
 type Props = {
   table: Table<INotification>
@@ -115,13 +116,19 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
                             <p className="flex flex-wrap items-center space-x-2">
                               <span className="font-semibold">{row.original.name}</span>
                               <span>{switchMessage(row.original.specificType)}</span>
-                              <span className="font-semibold">{row.original.type}</span>
+                              <span className="font-semibold">
+                                {row.original.type.split('_')[0]}
+                              </span>
                             </p>
                             <p>
                               {moment(row.original.dateFiled).fromNow()} &bull; {row.original.date}{' '}
                               -{' '}
                               <span className={`font-medium ${isActive ? 'text-amber-500' : ''}`}>
-                                {row.original.duration}Hrs
+                                {row.original.duration}{' '}
+                                {row.original.type.split('_')[0].toLowerCase() ===
+                                NOTIFICATION_TYPE.OVERTIME
+                                  ? 'Mins'
+                                  : 'Hrs'}
                               </span>
                             </p>
                           </div>
@@ -143,7 +150,8 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
                         <ViewDetailsModal
                           {...{
                             isOpen: row.original.id === id,
-                            row: row.original
+                            row: row.original,
+                            user: data?.userById as User
                           }}
                         />
                       </div>

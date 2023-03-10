@@ -53,7 +53,7 @@ export interface ITimeEntry {
   trackedHours: string
   late: number
   undertime: number
-  overtime: number
+  overtime: ITimeEntryOvertime
   status: string
 }
 

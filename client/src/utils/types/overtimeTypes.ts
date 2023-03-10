@@ -77,3 +77,16 @@ export interface IMultiProjects {
     name: string
   }
 }
+
+export interface IManagerApproveOvertimeRequestInput {
+  userId: number
+  overtimeId: number
+  isApproved: boolean
+  approvedMinutes: number | null
+}
+
+export interface ILeaderApproveOvertimeRequestInput {
+  userId: number
+  notificationId: number
+  isApproved: boolean
+}
