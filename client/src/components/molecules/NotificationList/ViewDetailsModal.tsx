@@ -24,8 +24,9 @@ type Props = {
 const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
   const router = useRouter()
 
-  const { handleApproveLeaveUndertimeMutation } = useLeave()
-  const approveDisapproveLeaveUndertimeMutation = handleApproveLeaveUndertimeMutation()
+  const { handleApproveLeaveMutation, handleApproveUndertimeMutation } = useLeave()
+  const approveDisapproveLeaveMutation = handleApproveLeaveMutation()
+  const approveDisapproveUndertimeMutation = handleApproveUndertimeMutation()
 
   const { handleLeaderApproveOvertimeMutation } = useOvertime()
   const approveDisapproveOvertimeMutation = handleLeaderApproveOvertimeMutation()
@@ -37,11 +38,21 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
   }
 
   const handleApproveDisapprove = (isApproved: boolean): void => {
-    if (
-      row.type.toLowerCase() === NOTIFICATION_TYPE.LEAVE ||
-      row.type.toLowerCase() === NOTIFICATION_TYPE.UNDERTIME
-    ) {
-      approveDisapproveLeaveUndertimeMutation.mutate(
+    if (row.type.toLowerCase() === NOTIFICATION_TYPE.LEAVE) {
+      approveDisapproveLeaveMutation.mutate(
+        {
+          userId: user.id,
+          notificationId: parseInt(router.query.id as string),
+          isApproved
+        },
+        {
+          onSuccess: () => handleClose()
+        }
+      )
+    }
+
+    if (row.type.toLowerCase() === NOTIFICATION_TYPE.UNDERTIME) {
+      approveDisapproveUndertimeMutation.mutate(
         {
           userId: user.id,
           notificationId: parseInt(router.query.id as string),
