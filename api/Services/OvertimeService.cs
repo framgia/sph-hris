@@ -78,6 +78,8 @@ namespace api.Services
                 return await context.Overtimes
                     .Include(i => i.MultiProjects)
                         .ThenInclude(t => t.ProjectLeader)
+                    .Include(i => i.MultiProjects)
+                        .ThenInclude(t => t.Project)
                     .Where(w => w.UserId == UserId)
                     .ToListAsync();
             }
