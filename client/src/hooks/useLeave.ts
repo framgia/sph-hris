@@ -22,7 +22,8 @@ import {
 } from '~/utils/types/leaveTypes'
 import {
   CREATE_LEAVE_MUTATION,
-  APROVE_DISAPPROVE_LEAVE_UNDERTIME_MUTATION
+  APROVE_DISAPPROVE_LEAVE_MUTATION,
+  APROVE_DISAPPROVE_UNDERTIME_MUTATION
 } from '~/graphql/mutations/leaveMutation'
 
 type getLeaveQueryType = UseQueryResult<Leaves, unknown>
@@ -41,7 +42,8 @@ type returnType = {
   handleLeaveMutation: (userId: number, year: number) => handleLeaveMutationType
   handleLeaveTypeQuery: () => getLeaveTypeQueryType
   getYearlyAllLeaveQuery: (year: number, ready: boolean) => getYearlyLeaveQueryType
-  handleApproveLeaveUndertimeMutation: () => handleApproveLeaveUndertimeMutationType
+  handleApproveLeaveMutation: () => handleApproveLeaveUndertimeMutationType
+  handleApproveUndertimeMutation: () => handleApproveLeaveUndertimeMutationType
 }
 
 const useLeave = (): returnType => {
@@ -85,10 +87,25 @@ const useLeave = (): returnType => {
       }
     })
 
-  const handleApproveLeaveUndertimeMutation = (): handleApproveLeaveUndertimeMutationType =>
+  const handleApproveLeaveMutation = (): handleApproveLeaveUndertimeMutationType =>
     useMutation({
       mutationFn: async (data: IApproveLeaveUndertimeRequestInput) => {
-        return await client.request(APROVE_DISAPPROVE_LEAVE_UNDERTIME_MUTATION, {
+        return await client.request(APROVE_DISAPPROVE_LEAVE_MUTATION, {
+          approval: data
+        })
+      },
+      onSuccess: async () => {
+        toast.success('Success!')
+      },
+      onError: async () => {
+        toast.error('Something went wrong')
+      }
+    })
+
+  const handleApproveUndertimeMutation = (): handleApproveLeaveUndertimeMutationType =>
+    useMutation({
+      mutationFn: async (data: IApproveLeaveUndertimeRequestInput) => {
+        return await client.request(APROVE_DISAPPROVE_UNDERTIME_MUTATION, {
           approval: data
         })
       },
@@ -105,7 +122,8 @@ const useLeave = (): returnType => {
     getYearlyAllLeaveQuery,
     handleLeaveMutation,
     handleLeaveTypeQuery,
-    handleApproveLeaveUndertimeMutation
+    handleApproveLeaveMutation,
+    handleApproveUndertimeMutation
   }
 }
 
