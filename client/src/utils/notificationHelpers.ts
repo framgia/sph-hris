@@ -1,5 +1,18 @@
-import { NOTIFICATION_TYPE, SpecificType } from './constants/notificationTypes'
 import { NotificationData } from './types/notificationTypes'
+import { NOTIFICATION_TYPE, SpecificType } from './constants/notificationTypes'
+
+export const switchMessage = (type: string): string => {
+  switch (type) {
+    case SpecificType.REQUEST:
+      return 'has requested for your approval for'
+    case SpecificType.APPROVAL:
+      return 'has approved your request for'
+    case SpecificType.DISAPPROVAL:
+      return 'has disapproved your request for'
+    default:
+      return ''
+  }
+}
 
 export const getDuration = (data: NotificationData, type: string): number => {
   if (

@@ -18,13 +18,13 @@ import ClockInIcon from '~/utils/icons/ClockInIcon'
 import ClockOutIcon from '~/utils/icons/ClockOutIcon'
 import { Menus } from '~/utils/constants/sidebarMenu'
 import Button from '~/components/atoms/Buttons/Button'
+import { getDuration } from '~/utils/notificationHelpers'
 import LegendTooltip from '~/components/molecules/LegendTooltip'
 import { NotificationData } from '~/utils/types/notificationTypes'
 import UserMenuDropDown from '~/components/molecules/UserMenuDropdown'
 import NotificationPopover from '~/components/molecules/NotificationPopOver'
 import useNotification, { updateIsRead } from '~/hooks/useNotificationQuery'
 import { getLeaveNotificationSubQuery } from '~/graphql/subscriptions/leaveSubscription'
-import { getDuration } from '~/utils/getDuration'
 
 const Tooltip = dynamic(async () => await import('rc-tooltip'), { ssr: false })
 

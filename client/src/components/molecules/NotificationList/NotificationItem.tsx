@@ -12,7 +12,8 @@ import ViewDetailsModal from './ViewDetailsModal'
 import { INotification } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/Button'
 import useNotification from '~/hooks/useNotificationQuery'
-import { NOTIFICATION_TYPE, SpecificType } from '~/utils/constants/notificationTypes'
+import { switchMessage } from '~/utils/notificationHelpers'
+import { NOTIFICATION_TYPE } from '~/utils/constants/notificationTypes'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import useNotificationMutation from '~/hooks/useNotificationMutation'
 import { User } from '~/utils/types/userTypes'
@@ -33,19 +34,6 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
   const { data } = handleUserQuery()
   const { getUserNotificationsQuery } = useNotification()
   const { refetch } = getUserNotificationsQuery(data?.userById.id as number)
-
-  const switchMessage = (type: string): string => {
-    switch (type) {
-      case SpecificType.REQUEST:
-        return 'has requested for your approval for'
-      case SpecificType.APPROVAL:
-        return 'has approved your request for'
-      case SpecificType.DISAPPROVAL:
-        return 'has disapproved your request for'
-      default:
-        return ''
-    }
-  }
 
   useEffect(() => {
     if (router.query.id !== undefined) {
