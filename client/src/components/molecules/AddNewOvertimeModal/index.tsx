@@ -143,10 +143,12 @@ const AddNewOvertimeModal: FC<Props> = ({
           })
         },
         {
-          onSuccess: () => closeModal()
+          onSuccess: () => {
+            closeModal()
+            resolve()
+          }
         }
       )
-      resolve()
     })
   }
 

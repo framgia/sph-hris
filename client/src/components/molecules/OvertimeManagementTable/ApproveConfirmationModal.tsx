@@ -12,6 +12,8 @@ import { ApproveConfirmationSchema } from '~/utils/validation'
 import { IOvertimeManagementManager } from '~/utils/interfaces'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import { NewOvertimeFormValues } from '~/utils/types/formValues'
+import useOvertime from '~/hooks/useOvertime'
+import useUserQuery from '~/hooks/useUserQuery'
 
 type Props = {
   isOpen: boolean
@@ -30,16 +32,30 @@ const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.E
     resolver: yupResolver(ApproveConfirmationSchema)
   })
 
+  const { handleUserQuery } = useUserQuery()
+  const { data: user, isLoading: userLoading } = handleUserQuery()
+
+  const { handleManagerApproveOvertimeMutation } = useOvertime()
+  const approveOvertimeMutation = handleManagerApproveOvertimeMutation()
+
   // This will handle Submit and Save New Overtime
   const handleSave = async (
     data: Required<Pick<NewOvertimeFormValues, 'requested_minutes'>>
   ): Promise<void> => {
     return await new Promise((resolve) => {
-      setTimeout(() => {
-        alert(JSON.stringify({ id: row.id, data }, null, 2))
-        closeModal()
-        resolve()
-      }, 2000)
+      approveOvertimeMutation.mutate(
+        {
+          userId: user?.userById.id as number,
+          overtimeId: row.id,
+          approvedMinutes: data.requested_minutes,
+          isApproved: true
+        },
+        {
+          onSuccess: () => closeModal()
+        }
+      )
+
+      resolve()
     })
   }
 
@@ -47,7 +63,7 @@ const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.E
   useEffect(() => {
     if (isOpen) {
       reset({
-        requested_minutes: row.requestedHours
+        requested_minutes: row.requestedMinutes
       })
     }
   }, [isOpen])
@@ -66,15 +82,15 @@ const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.E
         className="space-y-6 px-8 py-6 text-xs"
       >
         <Text theme="lg" weight="semibold" className="text-slate-7s00">
-          Do you approve the requested overtime hours for the Project of{' '}
+          Do you approve the requested overtime for the Project{' '}
           {row.projects.map((project, index) => (
             <span key={index}>{`${project.project_name.label}, `}</span>
           ))}
           of <span className="text-amber-800 underline">{row.user.name}?</span>
         </Text>
-        {/* Requested hours */}
+        {/* Requested minutes */}
         <section className="col-span-2 md:col-span-1">
-          <TextField title="Requested hours" Icon={Clock} isRequired className="flex-1">
+          <TextField title="Minutes to approve" Icon={Clock} isRequired className="flex-1">
             <Input
               type="text"
               disabled={isSubmitting}
@@ -92,7 +108,7 @@ const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.E
           <Button
             type="submit"
             variant="success"
-            disabled={isSubmitting}
+            disabled={isSubmitting || userLoading}
             className="relative flex w-full items-center justify-center space-x-2 px-5 py-2 text-sm"
           >
             {isSubmitting ? (

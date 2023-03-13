@@ -134,7 +134,7 @@ const UpdateOvertimeModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Elemen
       projects: row.projects,
       date_effective: row.dateFiled,
       manager: row.manager,
-      requested_minutes: row.requestedHours,
+      requested_minutes: row.requestedMinutes,
       remarks: row.remarks
     })
   }

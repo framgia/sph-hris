@@ -70,6 +70,8 @@ namespace api.Services
 
                     if (overtime != null && (overtime.IsLeaderApproved == null && overtime.IsManagerApproved == false))
                         await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, DISAPPROVED);
+                    else if (overtime != null && (overtime.IsLeaderApproved == true && overtime.IsManagerApproved == false))
+                        await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, DISAPPROVED);
 
                     await context.SaveChangesAsync();
                     return true;

@@ -16,6 +16,7 @@ namespace api.DTOs
             Remarks = overtimes.Remarks!;
             OvertimeDate = overtimes.OvertimeDate;
             ApprovedMinutes = overtimes.ApprovedMinutes;
+            RequestedMinutes = overtimes.RequestedMinutes;
             IsLeaderApproved = overtimes.IsLeaderApproved;
             IsManagerApproved = overtimes.IsManagerApproved!;
         }

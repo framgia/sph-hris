@@ -41,7 +41,8 @@ export const dummyOvertimeManagementData: IOvertimeManagement[] | IOvertimeManag
     date: '2023-02-01 02:34:26.0000000',
     overtimeIn: '18:30',
     overtimeOut: '20:30',
-    requestedHours: 5,
+    approvedMinutes: 5,
+    requestedMinutes: 5,
     supervisor: 'Karlo Lee',
     dateFiled: '2023-02-01 02:34:26.0000000',
     remarks:
