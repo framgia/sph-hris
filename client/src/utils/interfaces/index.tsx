@@ -95,6 +95,7 @@ export interface IOvertimeManagement {
   approvedMinutes: number
   supervisor: string
   dateFiled: string
+  managerid: number
   remarks: string
   status: string
 }
