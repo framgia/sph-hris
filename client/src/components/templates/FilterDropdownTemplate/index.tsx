@@ -33,6 +33,7 @@ const FilterDropdownTemplate: FC<Props> = (props): JSX.Element => {
       </Menu.Button>
       <MenuTransition>
         <Menu.Items
+          static
           className={classNames(
             'fixed right-4 top-[94px] flex w-80 flex-col outline-none md:top-[97px]',
             className

@@ -1,10 +1,9 @@
-import React, { FC } from 'react'
-import Select from '~/components/atoms/Select'
-import CreatableSelect from 'react-select/creatable'
+import { useRouter } from 'next/router'
+import { Menu } from '@headlessui/react'
+import React, { FC, useState } from 'react'
 
 import Text from '~/components/atoms/Text'
-import Button from '~/components/atoms/Buttons/ButtonAction'
-import { customStyles } from '~/utils/customReactSelectStyles'
+import Select from '~/components/atoms/Select'
 import { yearSelectOptions } from '~/utils/maps/filterOptions'
 import { overtimeStatus } from '~/utils/constants/overtimeStatus'
 import FilterDropdownTemplate from '~/components/templates/FilterDropdownTemplate'
@@ -12,6 +11,9 @@ import FilterDropdownTemplate from '~/components/templates/FilterDropdownTemplat
 type Props = {}
 
 const YearlyFilterDropdown: FC<Props> = (): JSX.Element => {
+  const router = useRouter()
+  const { year: routerYear } = router.query
+  const { status: routerStatus } = router.query
   const currentYear = new Date().getFullYear()
 
   const range = (start: number, stop: number, step: number): number[] =>
@@ -21,7 +23,18 @@ const YearlyFilterDropdown: FC<Props> = (): JSX.Element => {
 
   const yearOptions = yearSelectOptions(range(currentYear, 2015, -1))
 
-  const handleUpdateResult = (): void => {}
+  const [status, setStatus] = useState('')
+  const [year, setYear] = useState<string | undefined>('')
+
+  const handleUpdateResult = (status: string, year: string | undefined): void => {
+    void router.replace({
+      pathname: '/overtime-management',
+      query: {
+        status,
+        year
+      }
+    })
+  }
 
   return (
     <div>
@@ -32,9 +45,13 @@ const YearlyFilterDropdown: FC<Props> = (): JSX.Element => {
           </Text>
           <label htmlFor="filterYear" className="flex flex-col space-y-1">
             <span className="text-xs text-slate-500">Status</span>
-            <Select className="text-xs" defaultValue={overtimeStatus[0].value}>
+            <Select
+              className="text-xs"
+              defaultValue={routerStatus ?? status}
+              onChange={(e: { target: { value: string } }) => setStatus(e.target.value)}
+            >
               {overtimeStatus.map((item) => (
-                <option key={item.id} value={item.id}>
+                <option key={item.id} value={item.value}>
                   {item.value}
                 </option>
               ))}
@@ -42,24 +59,33 @@ const YearlyFilterDropdown: FC<Props> = (): JSX.Element => {
           </label>
           <label htmlFor="filterYear" className="flex flex-col space-y-1">
             <span className="text-xs text-slate-500">Year</span>
-            <CreatableSelect
+            <Select
               id="filterYear"
+              className="text-xs"
               name={YEAR_FIELD}
-              styles={customStyles}
-              options={yearOptions}
-            />
+              defaultValue={routerYear ?? year}
+              onChange={(e: { target: { value: string } }) => setYear(e.target.value)}
+            >
+              {[
+                ...yearOptions.slice(0, 0),
+                { label: 'Select...', value: '' },
+                ...yearOptions.slice(0)
+              ].map((item) => (
+                <option key={item.value} value={item.value}>
+                  {item.label}
+                </option>
+              ))}
+            </Select>
           </label>
         </main>
         <footer className="rounded-b-md bg-slate-100 px-5 py-3">
-          <Button
-            onClick={handleUpdateResult}
+          <Menu.Button
+            onClick={() => handleUpdateResult(status, year)}
             type="button"
-            variant="primary"
-            rounded="md"
-            className="w-full py-2"
+            className="w-full rounded-md bg-primary py-2 text-white"
           >
             Update Results
-          </Button>
+          </Menu.Button>
         </footer>
       </FilterDropdownTemplate>
     </div>

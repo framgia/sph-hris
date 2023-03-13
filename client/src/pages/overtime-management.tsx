@@ -1,5 +1,7 @@
+import moment from 'moment'
 import { NextPage } from 'next'
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import useUserQuery from '~/hooks/useUserQuery'
@@ -12,9 +14,12 @@ import { STATUS_OPTIONS } from '~/utils/constants/notificationFilter'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import OvertimeManagementTable from '~/components/molecules/OvertimeManagementTable'
 import { hrColumns, managerColumns } from '~/components/molecules/OvertimeManagementTable/columns'
-import YearlyFilterDropdown from '~/components/molecules/MyDailyTimeRecordTable/YearlyFilterDropdown'
+import YearlyFilterDropdown from '~/components/molecules/MyOvertimeTable/YearlyFilterDropdown'
 
 const OvertimeManagement: NextPage = (): JSX.Element => {
+  const router = useRouter()
+  const { status: requestStatus } = router.query as any
+  const { year } = router.query as any
   const { handleUserQuery } = useUserQuery()
   const { data: user } = handleUserQuery()
 
@@ -89,9 +94,47 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
         }
         return mapped
       })
-      setOvertimeData(mappedOvertime)
+      if (router.isReady) {
+        if (year !== '' || requestStatus !== '') {
+          const newOvertime: IOvertimeManagement[] | undefined = []
+          if (year === '' && requestStatus !== '') {
+            mappedOvertime.forEach((overtime): void => {
+              if (overtime.status === requestStatus?.toLowerCase()) {
+                void newOvertime.push(overtime)
+              }
+              void setOvertimeData(newOvertime)
+            })
+          }
+          if (year !== '' && requestStatus === '') {
+            mappedOvertime.forEach((overtime): void => {
+              if (moment(overtime.date).format('YYYY') === year) {
+                void newOvertime.push(overtime)
+              }
+              void setOvertimeData(newOvertime)
+            })
+          }
+          if (year !== '' && requestStatus !== '') {
+            mappedOvertime.forEach((overtime): void => {
+              if (overtime.status === requestStatus?.toLowerCase()) {
+                if (moment(overtime.date).format('YYYY') === year) {
+                  void newOvertime.push(overtime)
+                }
+              }
+              void setOvertimeData(newOvertime)
+            })
+          }
+        }
+        if (
+          year === undefined ||
+          requestStatus === undefined ||
+          (requestStatus === '' && year === '')
+        ) {
+          void setOvertimeData(mappedOvertime)
+          void router.replace('/overtime-management')
+        }
+      }
     }
-  }, [overtime])
+  }, [overtime, year, requestStatus, router.isReady])
 
   return (
     <Layout metaTitle="Overtime Management">

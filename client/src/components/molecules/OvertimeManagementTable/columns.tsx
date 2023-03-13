@@ -55,17 +55,23 @@ export const hrColumns = [
       return (
         <Listbox value={overtimeManagement.projects[0]}>
           <div className="relative mt-1">
-            <Listbox.Button
-              className={classNames(
-                'flex items-center space-x-2',
-                'text-xs outline-none focus:scale-95'
-              )}
-            >
+            {overtimeManagement.projects[1].project_name.value !== '' ? (
+              <Listbox.Button
+                className={classNames(
+                  'flex items-center space-x-2',
+                  'text-xs outline-none focus:scale-95'
+                )}
+              >
+                <span className="block truncate">
+                  {overtimeManagement.projects[0].project_name.label}
+                </span>
+                <AiOutlineCaretDown className="h-3 w-3 text-gray-400" aria-hidden="true" />
+              </Listbox.Button>
+            ) : (
               <span className="block truncate">
                 {overtimeManagement.projects[0].project_name.label}
               </span>
-              <AiOutlineCaretDown className="h-3 w-3 text-gray-400" aria-hidden="true" />
-            </Listbox.Button>
+            )}
             <Transition
               as={Fragment}
               leave="transition ease-in duration-100"
@@ -78,7 +84,7 @@ export const hrColumns = [
                   'py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'
                 )}
               >
-                {overtimeManagement.projects.map((project, index) => (
+                {overtimeManagement.projects.slice(1).map((project, index) => (
                   <Listbox.Option
                     key={index}
                     className={({ active }) =>
@@ -237,17 +243,23 @@ export const managerColumns = [
       return (
         <Listbox value={overtimeManagement.projects[0]}>
           <div className="relative mt-1">
-            <Listbox.Button
-              className={classNames(
-                'flex items-center space-x-2',
-                'text-xs outline-none focus:scale-95'
-              )}
-            >
+            {overtimeManagement.projects[1].project_name.value !== '' ? (
+              <Listbox.Button
+                className={classNames(
+                  'flex items-center space-x-2',
+                  'text-xs outline-none focus:scale-95'
+                )}
+              >
+                <span className="block truncate">
+                  {overtimeManagement.projects[0].project_name.label}
+                </span>
+                <AiOutlineCaretDown className="h-3 w-3 text-gray-400" aria-hidden="true" />
+              </Listbox.Button>
+            ) : (
               <span className="block truncate">
                 {overtimeManagement.projects[0].project_name.label}
               </span>
-              <AiOutlineCaretDown className="h-3 w-3 text-gray-400" aria-hidden="true" />
-            </Listbox.Button>
+            )}
             <Transition
               as={Fragment}
               leave="transition ease-in duration-100"
