@@ -71,7 +71,7 @@ const ButtonLink: FC<Props> = (props): JSX.Element => {
         >
           <ChevronRight
             className={classNames(
-              'h-4 w-4 shrink-0 stroke-1 group-hover:stroke-2',
+              'h-4 w-4 shrink-0 stroke-1 duration-200 group-hover:stroke-2',
               openIndexes.includes(index) ? 'rotate-90' : ''
             )}
           />

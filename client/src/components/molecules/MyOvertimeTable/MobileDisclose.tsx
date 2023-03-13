@@ -1,16 +1,18 @@
 import moment from 'moment'
 import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
+import { motion } from 'framer-motion'
 import React, { FC, useState } from 'react'
 import { Table } from '@tanstack/react-table'
 import { Disclosure } from '@headlessui/react'
-import { ChevronRight, Eye } from 'react-feather'
+import { Calendar, ChevronRight, Eye } from 'react-feather'
 
 import Chip from './Chip'
 import ShowRemarksModal from './ShowRemarksModal'
 import { IMyOvertimeTable } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/Button'
 import { decimalFormatter } from '~/utils/myOvertimeHelpers'
+import { variants } from '~/utils/constants/animationVariants'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import DisclosureTransition from '~/components/templates/DisclosureTransition'
 
@@ -45,7 +47,12 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                 {table.getRowModel().rows.map((row) => (
                   <Disclosure key={row.id}>
                     {({ open }) => (
-                      <>
+                      <motion.div
+                        variants={variants}
+                        initial="initial"
+                        animate="animate"
+                        exit="exit"
+                      >
                         <Disclosure.Button
                           className={classNames(
                             'w-full border-b border-slate-200 py-3 px-4 hover:bg-white',
@@ -53,8 +60,9 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                           )}
                         >
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-2">
-                              <span className="font-semibold text-slate-700">
+                            <div className="flex items-center space-x-2 text-slate-600">
+                              <Calendar className="h-4 w-4" />
+                              <span className="font-medium">
                                 {moment(new Date(row.original.date)).format('MMMM DD, YYYY')}
                               </span>
                               <Chip label={row.original.status} />
@@ -170,7 +178,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                             </ul>
                           </Disclosure.Panel>
                         </DisclosureTransition>
-                      </>
+                      </motion.div>
                     )}
                   </Disclosure>
                 ))}

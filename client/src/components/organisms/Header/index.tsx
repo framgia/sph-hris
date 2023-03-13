@@ -196,7 +196,7 @@ const Header: FC<Props> = (props): JSX.Element => {
         {/* Header Title */}
         <div className="hidden md:block">
           <div className="flex items-center space-x-2">
-            <h1 className="font-inter text-lg font-semibold text-slate-700">
+            <h1 className="font-inter text-lg font-semibold text-slate-700 line-clamp-1">
               <>
                 {router.pathname.includes('/notification') && 'Notifications'}
                 {Menus.map((item, index) => (

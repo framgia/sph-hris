@@ -1,12 +1,14 @@
 import moment from 'moment'
 import React, { FC } from 'react'
 import classNames from 'classnames'
+import { motion } from 'framer-motion'
 import { Table } from '@tanstack/react-table'
 import { Disclosure } from '@headlessui/react'
 import { Calendar, ChevronRight } from 'react-feather'
 
 import { getLeaveType } from '~/utils/getLeaveType'
 import { LeaveTable } from '~/utils/types/leaveTypes'
+import { variants } from '~/utils/constants/animationVariants'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import DisclosureTransition from '~/components/templates/DisclosureTransition'
 
@@ -37,7 +39,12 @@ const MobileDisclose: FC<Props> = ({ table, query: { isLoading, isError } }): JS
                 {table.getRowModel().rows.map((row) => (
                   <Disclosure key={row.id}>
                     {({ open }) => (
-                      <>
+                      <motion.div
+                        variants={variants}
+                        initial="initial"
+                        animate="animate"
+                        exit="exit"
+                      >
                         <Disclosure.Button
                           className={classNames(
                             'w-full border-b border-slate-200 py-3 px-4 hover:bg-white',
@@ -94,7 +101,7 @@ const MobileDisclose: FC<Props> = ({ table, query: { isLoading, isError } }): JS
                             </ul>
                           </Disclosure.Panel>
                         </DisclosureTransition>
-                      </>
+                      </motion.div>
                     )}
                   </Disclosure>
                 ))}

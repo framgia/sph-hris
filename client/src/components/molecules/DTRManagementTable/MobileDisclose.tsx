@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
+import { motion } from 'framer-motion'
 import React, { FC, useState } from 'react'
 import { Table } from '@tanstack/react-table'
 import { Disclosure } from '@headlessui/react'
@@ -12,6 +13,7 @@ import Button from '~/components/atoms/Buttons/Button'
 import EditTimeEntriesModal from '../EditTimeEntryModal'
 import { ITimeEntry } from '~/utils/types/timeEntryTypes'
 import { WorkStatus } from '~/utils/constants/work-status'
+import { variants } from '~/utils/constants/animationVariants'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import InterruptionTimeEntriesModal from '../InterruptionTimeEntriesModal'
 import DisclosureTransition from '~/components/templates/DisclosureTransition'
@@ -63,7 +65,12 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                       const { original: timeEntry } = row
 
                       return (
-                        <>
+                        <motion.div
+                          variants={variants}
+                          initial="initial"
+                          animate="animate"
+                          exit="exit"
+                        >
                           <Disclosure.Button
                             className={classNames(
                               'w-full border-b border-slate-200 py-2 px-4 hover:bg-white',
@@ -259,7 +266,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                               </ul>
                             </Disclosure.Panel>
                           </DisclosureTransition>
-                        </>
+                        </motion.div>
                       )
                     }}
                   </Disclosure>
