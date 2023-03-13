@@ -1,27 +1,75 @@
-import React, { FC } from 'react'
-import Select from '~/components/atoms/Select'
-import CreatableSelect from 'react-select/creatable'
+import isEmpty from 'lodash/isEmpty'
+import { useRouter } from 'next/router'
+import Select, { SingleValue } from 'react-select'
+import React, { FC, useEffect, useState } from 'react'
 
 import Text from '~/components/atoms/Text'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { customStyles } from '~/utils/customReactSelectStyles'
-import { yearSelectOptions } from '~/utils/maps/filterOptions'
-import { overtimeStatus } from '~/utils/constants/overtimeStatus'
+import { optionType, yearSelectOptions } from '~/utils/maps/filterOptions'
 import FilterDropdownTemplate from '~/components/templates/FilterDropdownTemplate'
 
 type Props = {}
 
+type StatusOption = {
+  label: string
+  value: string
+}
+
 const YearlyFilterDropdown: FC<Props> = (): JSX.Element => {
+  const router = useRouter()
   const currentYear = new Date().getFullYear()
 
   const range = (start: number, stop: number, step: number): number[] =>
     Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + i * step)
 
   const YEAR_FIELD = 'year'
+  const statusOptions: StatusOption[] = [
+    { label: 'All', value: '' },
+    { label: 'Pending', value: 'pending' },
+    { label: 'Disapproved', value: 'disapproved' },
+    { label: 'Approved', value: 'approved' }
+  ]
 
+  const [selectedStatus, setSelectedStatus] = useState<StatusOption>(statusOptions[0])
+
+  // filter states
+  const [year, setYear] = useState<number>(currentYear)
+
+  // Filter Options
   const yearOptions = yearSelectOptions(range(currentYear, 2015, -1))
 
-  const handleUpdateResult = (): void => {}
+  const handleUpdateResult = (): void => {
+    void router.replace({
+      pathname: router.pathname,
+      query: {
+        status: selectedStatus.value,
+        year
+      }
+    })
+  }
+
+  const handleDefaultValues = (field: string): optionType | null => {
+    let defaultValue: optionType | null = null
+
+    switch (field) {
+      case YEAR_FIELD:
+        defaultValue = yearOptions[0]
+        break
+    }
+
+    return defaultValue
+  }
+
+  const handleStatusChange = (selectedOption: SingleValue<StatusOption>): void => {
+    setSelectedStatus(selectedOption as StatusOption)
+  }
+
+  useEffect(() => {
+    if (router.isReady) {
+      setYear(isEmpty(router.query.year) ? currentYear : parseInt(router.query.year as string))
+    }
+  }, [router])
 
   return (
     <div>
@@ -32,20 +80,24 @@ const YearlyFilterDropdown: FC<Props> = (): JSX.Element => {
           </Text>
           <label htmlFor="filterYear" className="flex flex-col space-y-1">
             <span className="text-xs text-slate-500">Status</span>
-            <Select className="text-xs" defaultValue={overtimeStatus[0].value}>
-              {overtimeStatus.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.value}
-                </option>
-              ))}
-            </Select>
+            <Select
+              options={statusOptions}
+              value={selectedStatus}
+              onChange={handleStatusChange}
+              isClearable={false}
+              isSearchable={false}
+              placeholder="Select status"
+              styles={customStyles}
+            />
           </label>
           <label htmlFor="filterYear" className="flex flex-col space-y-1">
             <span className="text-xs text-slate-500">Year</span>
-            <CreatableSelect
+            <Select
               id="filterYear"
-              name={YEAR_FIELD}
               styles={customStyles}
+              defaultValue={handleDefaultValues(YEAR_FIELD)}
+              onChange={(e) => (e !== null ? setYear(e.value) : null)}
+              name={YEAR_FIELD}
               options={yearOptions}
             />
           </label>

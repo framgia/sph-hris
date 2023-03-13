@@ -1,5 +1,3 @@
-import { IMultiProject, IMyOvertime } from './types/overtimeTypes'
-
 export const decimalFormatter = (value: number): number => {
   const decimalFormatter = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 3,
@@ -19,30 +17,13 @@ export const getApprovalStatus = (
   isManagerApproved: boolean | null
 ): ApprovalStatus => {
   switch (true) {
-    case isLeaderApprove === null || isManagerApproved === null:
-      return 'pending'
     case isLeaderApprove === true && isManagerApproved === true:
       return 'approved'
+    case isLeaderApprove === false || isManagerApproved === false:
+      return 'disapproved'
+    case isLeaderApprove === null || isManagerApproved === null:
+      return 'pending'
     default:
       return 'disapproved'
   }
-}
-
-export const getInitialProjectNameAndLeader = (original: IMyOvertime): string => {
-  const projectName = original.multiProjects[0].project?.name ?? ''
-  const projectLeader = original.multiProjects[0].projectLeader?.name ?? ''
-
-  return projectName === 'Others' || original.otherProject !== ''
-    ? `${original.otherProject ?? ''} - ${projectLeader}`
-    : `${projectName} - ${projectLeader}`
-}
-
-export const getProjectWithNameDisplay = (option: IMultiProject, original: IMyOvertime): string => {
-  const projectName = option.project?.name ?? ''
-  const projectLeader = option.projectLeader?.name ?? ''
-  const otherProject = original.otherProject ?? ''
-
-  return projectName === 'Others' || otherProject !== ''
-    ? `${otherProject} - ${projectLeader}`
-    : `${projectName} - ${projectLeader}`
 }

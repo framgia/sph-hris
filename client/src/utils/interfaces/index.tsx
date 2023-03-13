@@ -37,22 +37,6 @@ export interface IListOfLeave {
   reason: string
 }
 
-export interface IMyOvertime {
-  id: number
-  // eslint-disable-next-line @typescript-eslint/array-type
-  project: {
-    value: string
-    label: string
-  }[]
-  date: string
-  overtimeIn: string
-  overtimeOut: string
-  requestedHours: number
-  supervisor: string
-  dateFiled: string
-  remarks: string
-  status: string
-}
 export interface INotification {
   id: number
   name: string
@@ -117,3 +101,54 @@ export interface IOvertimeManagement {
 export type IOvertimeManagementManager = Required<
   Omit<IOvertimeManagement, 'overtimeIn' | 'overtimeOut' | 'supervisor'>
 >
+
+export interface IMyOvertimeData {
+  id: number
+  projects: Array<{
+    id: number
+    project: {
+      id: number
+      name: string
+    }
+    projectLeader: {
+      id: number
+      name: string
+    }
+  }>
+  otherProject?: string
+  supervisor: string
+  dateFiled: string
+  overtimeDate: string
+  requestedMinutes: number | null
+  approvedMinutes: number | null
+  isLeaderApproved: boolean | null
+  isManagerApproved: boolean | null
+  remarks: string
+  createdAt: string
+}
+
+export interface IMyOvertimeTable {
+  id: number
+  // eslint-disable-next-line @typescript-eslint/array-type
+  projects: {
+    project_name: {
+      label: string
+      value: string
+    }
+    project_leader: {
+      label: string
+      value: string
+    }
+  }[]
+  manager?: {
+    label: string
+    value: string
+  }
+  date: string
+  requestedHours: number
+  approvedMinutes: number | null
+  supervisor: string
+  dateFiled: string
+  remarks: string
+  status: string
+}

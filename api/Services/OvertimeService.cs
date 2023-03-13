@@ -71,16 +71,19 @@ namespace api.Services
             return RequestStatus.PENDING;
         }
 
-        public async Task<List<Overtime>> GetOvertime(int UserId)
+        public async Task<List<MyOvertimeDTO>> GetOvertime(int UserId)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 return await context.Overtimes
-                    .Include(i => i.MultiProjects)
-                        .ThenInclude(t => t.ProjectLeader)
-                    .Include(i => i.MultiProjects)
-                        .ThenInclude(t => t.Project)
+                    .Include(x => x.MultiProjects)
+                        .ThenInclude(x => x.Project)
+                    .Include(x => x.MultiProjects)
+                        .ThenInclude(x => x.ProjectLeader)
+                    .Include(x => x.Manager)
+                        .ThenInclude(x => x.Role)
                     .Where(w => w.UserId == UserId)
+                    .Select(x => new MyOvertimeDTO(x))
                     .ToListAsync();
             }
         }

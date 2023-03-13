@@ -4,16 +4,20 @@ export const GET_ALL_OVERTIME_QUERY = gql`
   query ($userId: Int!) {
     overtime(userId: $userId) {
       id
-      multiProjects {
+      projects {
         id
         project {
+          id
           name
         }
         projectLeader {
+          id
           name
         }
       }
       otherProject
+      supervisor
+      dateFiled
       overtimeDate
       requestedMinutes
       approvedMinutes
