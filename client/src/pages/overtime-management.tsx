@@ -74,7 +74,8 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
             }
           },
           date: notif.overtimeDate,
-          requestedHours: notif.approvedMinutes,
+          requestedMinutes: notif.requestedMinutes,
+          approvedMinutes: notif.approvedMinutes,
           supervisor: project?.projectLeader.name,
           dateFiled: notif.dateFiled,
           remarks: notif.remarks,

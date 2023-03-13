@@ -91,7 +91,8 @@ export interface IOvertimeManagement {
   date: string
   overtimeIn: string
   overtimeOut: string
-  requestedHours: number
+  requestedMinutes: number
+  approvedMinutes: number
   supervisor: string
   dateFiled: string
   remarks: string

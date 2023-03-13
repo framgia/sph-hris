@@ -70,6 +70,9 @@ const useOvertime = (): returnType => {
       },
       onSuccess: async () => {
         toast.success('Success!')
+        await queryClient.invalidateQueries({
+          queryKey: ['GET_ALL_OVERTIME']
+        })
       },
       onError: async () => {
         toast.error('Something went wrong')

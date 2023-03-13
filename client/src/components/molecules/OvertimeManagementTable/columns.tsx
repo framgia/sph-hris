@@ -1,7 +1,6 @@
 import moment from 'moment'
 import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
-import toast from 'react-hot-toast'
 import React, { Fragment, useState } from 'react'
 import { confirmAlert } from 'react-confirm-alert'
 import { AiOutlineCaretDown } from 'react-icons/ai'
@@ -19,6 +18,9 @@ import UpdateOvertimeModal from './UpdateOvertimeModal'
 import ApproveConfirmationModal from './ApproveConfirmationModal'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
 import { IOvertimeManagement, IOvertimeManagementManager } from '~/utils/interfaces'
+import useUserQuery from '~/hooks/useUserQuery'
+import useOvertime from '~/hooks/useOvertime'
+import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 
 const columnHelper = createColumnHelper<IOvertimeManagement | IOvertimeManagementManager>()
 
@@ -112,6 +114,7 @@ export const hrColumns = [
       <span>{moment(new Date(props.row.original.date)).format('MMMM DD, YYYY')}</span>
     )
   }),
+  // TO DO: change implementation later
   // columnHelper.accessor('overtimeIn', {
   //   header: () => <CellHeader label="Overtime in" />,
   //   footer: (info) => info.column.id
@@ -120,7 +123,7 @@ export const hrColumns = [
   //   header: () => <CellHeader label="Overtime Out" />,
   //   footer: (info) => info.column.id
   // }),
-  columnHelper.accessor('requestedHours', {
+  columnHelper.accessor('approvedMinutes', {
     header: () => <CellHeader label="Approved Minutes" />,
     footer: (info) => info.column.id
   }),
@@ -306,7 +309,7 @@ export const managerColumns = [
     header: () => '',
     footer: (info) => info.column.id
   }),
-  columnHelper.accessor('requestedHours', {
+  columnHelper.accessor('approvedMinutes', {
     header: () => <CellHeader label="Approved Minutes" />,
     footer: (info) => info.column.id
   }),
@@ -340,18 +343,36 @@ export const managerColumns = [
       const [isOpenRemarksModal, setIsOpenRemarksModal] = useState<boolean>(false)
       const [isOpenConfirmationModal, setIsOpenConfirmationModal] = useState<boolean>(false)
       const [isOpenUpdateModal, setIsOpenUpdateModal] = useState<boolean>(false)
+      const [loading, setLoading] = useState<boolean>(false)
 
       const handleUpdateToggle = (): void => setIsOpenUpdateModal(!isOpenUpdateModal)
       const handleShowRemarksToggle = (): void => setIsOpenRemarksModal(!isOpenRemarksModal)
       const handleConfirmationToggle = (): void =>
         setIsOpenConfirmationModal(!isOpenConfirmationModal)
 
-      const handleDeleteMessage = (onClose: () => void): void => {
-        toast.success('Successfully Disapproved!')
-        onClose()
+      const { handleUserQuery } = useUserQuery()
+      const { data: user } = handleUserQuery()
+
+      const { handleManagerApproveOvertimeMutation } = useOvertime()
+      const approveOvertimeMutation = handleManagerApproveOvertimeMutation()
+
+      const handleDisapprove = (onClose: () => void): void => {
+        setLoading(true)
+        approveOvertimeMutation.mutate(
+          {
+            userId: user?.userById.id as number,
+            overtimeId: overtimeManagement.id,
+            approvedMinutes: 0,
+            isApproved: false
+          },
+          {
+            onSuccess: () => onClose(),
+            onSettled: () => setLoading(false)
+          }
+        )
       }
 
-      const handleDeleteConfirmationToggle = (): void => {
+      const handleDisapproveConfirmationToggle = (): void => {
         confirmAlert({
           customUI: ({ onClose }) => {
             return (
@@ -361,20 +382,29 @@ export const managerColumns = [
                   Are you sure you want to disapprove the request?
                 </p>
                 <div className="mt-6 flex items-center justify-center space-x-2 text-white">
-                  <ButtonAction
-                    variant="danger"
-                    onClick={() => handleDeleteMessage(onClose)}
-                    className="w-full py-1 px-4"
-                  >
-                    Yes
-                  </ButtonAction>
-                  <ButtonAction
-                    onClick={onClose}
-                    variant="secondary"
-                    className="w-full py-1 px-4 text-slate-500"
-                  >
-                    No
-                  </ButtonAction>
+                  {!loading ? (
+                    <>
+                      <ButtonAction
+                        variant="danger"
+                        onClick={() => handleDisapprove(onClose)}
+                        className="w-full py-1 px-4"
+                      >
+                        Yes
+                      </ButtonAction>
+                      <ButtonAction
+                        onClick={onClose}
+                        variant="secondary"
+                        className="w-full py-1 px-4 text-slate-500"
+                      >
+                        No
+                      </ButtonAction>
+                    </>
+                  ) : (
+                    <>
+                      <SpinnerIcon className="h-3 w-3 fill-white" />
+                      <span>Saving..</span>
+                    </>
+                  )}
                 </div>
               </Card>
             )
@@ -398,7 +428,7 @@ export const managerColumns = [
               <Tippy placement="left" content="Disapprove" className="!text-xs">
                 <Button
                   rounded="none"
-                  onClick={handleDeleteConfirmationToggle}
+                  onClick={handleDisapproveConfirmationToggle}
                   className="py-0.5 px-1 text-slate-500"
                 >
                   <X className="h-4 w-4 stroke-[3px]" />

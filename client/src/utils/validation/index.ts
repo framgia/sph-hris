@@ -87,7 +87,11 @@ export const NewEmployeeSchema = yup.object().shape({
 })
 
 export const ApproveConfirmationSchema = yup.object().shape({
-  requested_hours: yup.number().required().label('Requested hours')
+  requested_minutes: yup
+    .number()
+    .required('Minutes is required')
+    .label('Minutes')
+    .typeError('Minutes must be a number')
 })
 
 const fileSchema = yup
