@@ -56,58 +56,63 @@ export const hrColumns = [
         <Listbox value={overtimeManagement.projects[0]}>
           <div className="relative mt-1">
             {overtimeManagement.projects[1].project_name.value !== '' ? (
-              <Listbox.Button
-                className={classNames(
-                  'flex items-center space-x-2',
-                  'text-xs outline-none focus:scale-95'
-                )}
-              >
-                <span className="block truncate">
-                  {overtimeManagement.projects[0].project_name.label}
-                </span>
-                <AiOutlineCaretDown className="h-3 w-3 text-gray-400" aria-hidden="true" />
-              </Listbox.Button>
+              <>
+                <Listbox.Button
+                  className={classNames(
+                    'flex items-center space-x-2',
+                    'text-xs outline-none focus:scale-95'
+                  )}
+                >
+                  <span className="block truncate">
+                    {overtimeManagement.projects[0].project_name.label}
+                  </span>
+                  <AiOutlineCaretDown className="h-3 w-3 text-gray-400" aria-hidden="true" />
+                </Listbox.Button>
+                <Transition
+                  as={Fragment}
+                  leave="transition ease-in duration-100"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <Listbox.Options
+                    className={classNames(
+                      'absolute z-50 mt-1 max-h-40 w-full overflow-auto rounded-md bg-white',
+                      'py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'
+                    )}
+                  >
+                    {overtimeManagement.projects.slice(1).map((project, index) => (
+                      <Listbox.Option key={index} value={project.project_name.value}>
+                        {({ selected }) => (
+                          <>
+                            <span
+                              className={classNames(
+                                'block',
+                                selected ? 'font-medium' : 'font-normal'
+                              )}
+                            >
+                              {project.project_name.label.split(',').map((here, index) => (
+                                <p
+                                  key={index}
+                                  className={classNames(
+                                    'relative cursor-default select-none py-2 pl-5 pr-4 hover:bg-amber-100 hover:text-amber-900'
+                                  )}
+                                >
+                                  {here}
+                                </p>
+                              ))}
+                            </span>
+                          </>
+                        )}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </Transition>
+              </>
             ) : (
               <span className="block truncate">
                 {overtimeManagement.projects[0].project_name.label}
               </span>
             )}
-            <Transition
-              as={Fragment}
-              leave="transition ease-in duration-100"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <Listbox.Options
-                className={classNames(
-                  'absolute z-50 mt-1 max-h-40 w-full overflow-auto rounded-md bg-white',
-                  'py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'
-                )}
-              >
-                {overtimeManagement.projects.slice(1).map((project, index) => (
-                  <Listbox.Option
-                    key={index}
-                    className={({ active }) =>
-                      classNames(
-                        'relative cursor-default select-none py-2 pl-5 pr-4',
-                        active ? 'bg-amber-100 text-amber-900' : 'text-slate-800'
-                      )
-                    }
-                    value={project.project_name.value}
-                  >
-                    {({ selected }) => (
-                      <>
-                        <span
-                          className={classNames('block', selected ? 'font-medium' : 'font-normal')}
-                        >
-                          {project.project_name.label}
-                        </span>
-                      </>
-                    )}
-                  </Listbox.Option>
-                ))}
-              </Listbox.Options>
-            </Transition>
           </div>
         </Listbox>
       )
@@ -120,15 +125,6 @@ export const hrColumns = [
       <span>{moment(new Date(props.row.original.date)).format('MMMM DD, YYYY')}</span>
     )
   }),
-  // TO DO: change implementation later
-  // columnHelper.accessor('overtimeIn', {
-  //   header: () => <CellHeader label="Overtime in" />,
-  //   footer: (info) => info.column.id
-  // }),
-  // columnHelper.accessor('overtimeOut', {
-  //   header: () => <CellHeader label="Overtime Out" />,
-  //   footer: (info) => info.column.id
-  // }),
   columnHelper.accessor('approvedMinutes', {
     header: () => <CellHeader label="Approved Minutes" />,
     footer: (info) => info.column.id
@@ -239,66 +235,67 @@ export const managerColumns = [
     footer: (info) => info.column.id,
     cell: (props) => {
       const { original: overtimeManagement } = props.row
-
       return (
         <Listbox value={overtimeManagement.projects[0]}>
           <div className="relative mt-1">
             {overtimeManagement.projects[1].project_name.value !== '' ? (
-              <Listbox.Button
-                className={classNames(
-                  'flex items-center space-x-2',
-                  'text-xs outline-none focus:scale-95'
-                )}
-              >
-                <span className="block truncate">
-                  {overtimeManagement.projects[0].project_name.label}
-                </span>
-                <AiOutlineCaretDown className="h-3 w-3 text-gray-400" aria-hidden="true" />
-              </Listbox.Button>
+              <>
+                <Listbox.Button
+                  className={classNames(
+                    'flex items-center space-x-2',
+                    'text-xs outline-none focus:scale-95'
+                  )}
+                >
+                  <span className="block truncate">
+                    {overtimeManagement.projects[0].project_name.label}
+                  </span>
+                  <AiOutlineCaretDown className="h-3 w-3 text-gray-400" aria-hidden="true" />
+                </Listbox.Button>
+                <Transition
+                  as={Fragment}
+                  leave="transition ease-in duration-100"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <Listbox.Options
+                    className={classNames(
+                      'absolute z-50 mt-1 max-h-40 w-full overflow-auto rounded-md bg-white',
+                      'py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'
+                    )}
+                  >
+                    {overtimeManagement.projects.slice(1).map((project, index) => (
+                      <Listbox.Option key={index} value={project.project_name.value}>
+                        {({ selected }) => (
+                          <>
+                            <span
+                              className={classNames(
+                                'block',
+                                selected ? 'font-medium' : 'font-normal'
+                              )}
+                            >
+                              {project.project_name.label.split(',').map((here, index) => (
+                                <p
+                                  key={index}
+                                  className={classNames(
+                                    'relative cursor-default select-none py-2 pl-5 pr-4 hover:bg-amber-100 hover:text-amber-900'
+                                  )}
+                                >
+                                  {here}
+                                </p>
+                              ))}
+                            </span>
+                          </>
+                        )}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </Transition>
+              </>
             ) : (
               <span className="block truncate">
                 {overtimeManagement.projects[0].project_name.label}
               </span>
             )}
-            <Transition
-              as={Fragment}
-              leave="transition ease-in duration-100"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <Listbox.Options
-                className={classNames(
-                  'absolute z-50 mt-1 max-h-40 w-full overflow-auto rounded-md bg-white',
-                  'py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'
-                )}
-              >
-                {overtimeManagement.projects.map((project, index) => (
-                  <Listbox.Option
-                    key={index}
-                    className={({ active }) =>
-                      classNames(
-                        'relative cursor-default select-none py-2 pl-5 pr-4',
-                        active ? 'bg-amber-100 text-amber-900' : 'text-slate-800'
-                      )
-                    }
-                    value={project.project_name.value}
-                  >
-                    {({ selected }) => (
-                      <>
-                        <span
-                          className={classNames(
-                            'block truncate',
-                            selected ? 'font-medium' : 'font-normal'
-                          )}
-                        >
-                          {project.project_name.label}
-                        </span>
-                      </>
-                    )}
-                  </Listbox.Option>
-                ))}
-              </Listbox.Options>
-            </Transition>
           </div>
         </Listbox>
       )
