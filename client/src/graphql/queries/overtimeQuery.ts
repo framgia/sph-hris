@@ -25,6 +25,9 @@ export const GET_ALL_OVERTIME = gql`
       supervisor
       dateFiled
       overtimeDate
+      manager {
+        id
+      }
       requestedMinutes
       approvedMinutes
       isLeaderApproved
