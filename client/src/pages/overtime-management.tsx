@@ -22,7 +22,6 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
   const { year } = router.query as any
   const { handleUserQuery } = useUserQuery()
   const { data: user } = handleUserQuery()
-
   const [globalFilter, setGlobalFilter] = useState<string>('')
 
   const { data: overtime } = getAllovertime()
@@ -90,7 +89,8 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
           manager: {
             label: '',
             value: ''
-          }
+          },
+          managerid: notif.manager.id
         }
         return mapped
       })
@@ -136,6 +136,13 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
     }
   }, [overtime, year, requestStatus, router.isReady])
 
+  function managerData(overtimeData: IOvertimeManagement[]): IOvertimeManagement[] {
+    overtimeData = overtimeData.filter(
+      (data: IOvertimeManagement) => data.managerid === user?.userById.id
+    )
+    return overtimeData
+  }
+
   return (
     <Layout metaTitle="Overtime Management">
       <section
@@ -162,7 +169,10 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
           <OvertimeManagementTable
             {...{
               query: {
-                data: overtimeData,
+                data:
+                  user?.userById.role.name === Roles.HR_ADMIN
+                    ? overtimeData
+                    : managerData(overtimeData),
                 error: null
               },
               table: {

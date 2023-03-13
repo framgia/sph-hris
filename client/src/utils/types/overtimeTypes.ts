@@ -54,6 +54,9 @@ export interface IAllOvertime {
   overtimeDate: string
   requestedMinutes: number
   approvedMinutes: number
+  manager: {
+    id: number
+  }
   isLeaderApproved: boolean
   isManagerApproved: boolean
   remarks: string
