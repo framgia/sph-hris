@@ -98,6 +98,7 @@ export interface IOvertimeManagement {
   managerid: number
   remarks: string
   status: string
+  isManagerApproved: boolean
 }
 
 export type IOvertimeManagementManager = Required<
