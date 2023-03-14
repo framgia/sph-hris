@@ -90,16 +90,21 @@ export const hrColumns = [
                                 selected ? 'font-medium' : 'font-normal'
                               )}
                             >
-                              {project.project_name.label.split(',').map((here, index) => (
-                                <p
-                                  key={index}
-                                  className={classNames(
-                                    'relative cursor-default select-none py-2 pl-5 pr-4 hover:bg-amber-100 hover:text-amber-900'
-                                  )}
-                                >
-                                  {here}
-                                </p>
-                              ))}
+                              {project.project_name.label.split(',').map((here, index) => {
+                                if (here !== 'Others') {
+                                  return (
+                                    <p
+                                      key={index}
+                                      className={classNames(
+                                        'relative cursor-default select-none py-2 pl-5 pr-4 hover:bg-amber-100 hover:text-amber-900'
+                                      )}
+                                    >
+                                      {here}
+                                    </p>
+                                  )
+                                }
+                                return null
+                              })}
                             </span>
                           </>
                         )}
@@ -273,16 +278,21 @@ export const managerColumns = [
                                 selected ? 'font-medium' : 'font-normal'
                               )}
                             >
-                              {project.project_name.label.split(',').map((here, index) => (
-                                <p
-                                  key={index}
-                                  className={classNames(
-                                    'relative cursor-default select-none py-2 pl-5 pr-4 hover:bg-amber-100 hover:text-amber-900'
-                                  )}
-                                >
-                                  {here}
-                                </p>
-                              ))}
+                              {project.project_name.label.split(',').map((here, index) => {
+                                if (here !== 'Others') {
+                                  return (
+                                    <p
+                                      key={index}
+                                      className={classNames(
+                                        'relative cursor-default select-none py-2 pl-5 pr-4 hover:bg-amber-100 hover:text-amber-900'
+                                      )}
+                                    >
+                                      {here}
+                                    </p>
+                                  )
+                                }
+                                return null
+                              })}
                             </span>
                           </>
                         )}
@@ -450,7 +460,7 @@ export const managerColumns = [
             <>
               <Tippy placement="left" content="Edit" className="!text-xs">
                 <Button
-                  onClick={handleUpdateToggle}
+                  onClick={handleConfirmationToggle}
                   rounded="none"
                   className="py-0.5 px-1 text-slate-500"
                 >
