@@ -87,7 +87,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                               <div className="flex items-center space-x-2">
                                 <div className="flex items-center space-x-2">
                                   <Avatar
-                                    src={`https://placeimg.com/640/480/abstract/${row.id}`}
+                                    src={`${row.original.avatar}`}
                                     size="base"
                                     rounded="full"
                                   />

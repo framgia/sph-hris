@@ -33,6 +33,7 @@ export const GET_ALL_EMPLOYEE_TIMESHEET = (input: string, argument: string): str
           isManagerApproved
         }
         status
+        avatar
       }
     }
   `
@@ -121,6 +122,7 @@ export const GET_TIMESHEET_SUMMARY = (input: string, argument: string): string =
           id
           name
         }
+        avatar
         leave
         absences
         late

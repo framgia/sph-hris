@@ -35,6 +35,7 @@ export interface IListOfLeave {
   totalLeaves: number
   dateFiled: string
   reason: string
+  avatar: string
 }
 
 export interface INotification {

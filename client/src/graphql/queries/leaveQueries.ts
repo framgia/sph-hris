@@ -4,13 +4,12 @@ export const GET_ALL_REQUESTED_LEAVES = gql`
   query {
     allLeaves {
       id
-      user {
-        id
-        name
-        role {
-          name
-        }
-      }
+      userId
+      avatar
+      userName
+      userRole
+      leaveType
+      manager
       leaveProjects {
         project {
           name
@@ -19,13 +18,6 @@ export const GET_ALL_REQUESTED_LEAVES = gql`
           name
         }
       }
-      leaveType {
-        name
-      }
-      manager {
-        name
-      }
-      otherProject
       reason
       leaveDate
       isWithPay

@@ -12,8 +12,8 @@ import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
 import EditTimeEntriesModal from '../EditTimeEntryModal'
 import { ITimeEntry } from '~/utils/types/timeEntryTypes'
+import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
 import InterruptionTimeEntriesModal from './../InterruptionTimeEntriesModal'
-import { getSpecificTimeEntry, getUserProfileLink } from '~/hooks/useTimesheetQuery'
 
 const columnHelper = createColumnHelper<ITimeEntry>()
 const EMPTY = 'N/A'
@@ -24,14 +24,7 @@ export const columns = [
     footer: (info) => info.column.id,
     cell: (props) => (
       <div className="flex items-center space-x-2">
-        <Avatar
-          src={
-            getUserProfileLink(Number(props.row.original.user.id)).data?.specificUserProfileDetail
-              ?.avatarLink
-          }
-          size="base"
-          rounded="full"
-        />
+        <Avatar src={`${props.row.original.avatar}`} size="base" rounded="full" />
         <div className="flex flex-col items-start">
           <h1 className="font-semibold">{props.getValue()}</h1>
           <small className="text-slate-500">Web Developer</small>

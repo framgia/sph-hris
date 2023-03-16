@@ -12,13 +12,15 @@ namespace api.Services
     public class LeaveService
     {
         private readonly IDbContextFactory<HrisContext> _contextFactory = default!;
+        private readonly HttpContextService _httpService;
         private readonly ITopicEventSender _eventSender;
         private readonly CustomInputValidation _customInputValidation;
-        public LeaveService(IDbContextFactory<HrisContext> contextFactory, ITopicEventSender eventSender)
+        public LeaveService(IDbContextFactory<HrisContext> contextFactory, ITopicEventSender eventSender, IHttpContextAccessor accessor)
         {
             _contextFactory = contextFactory;
             _eventSender = eventSender;
             _customInputValidation = new CustomInputValidation(_contextFactory);
+            _httpService = new HttpContextService(accessor);
         }
         public async Task<List<LeaveType>> GetLeaveTypes()
         {
@@ -108,8 +110,9 @@ namespace api.Services
                 return leaves;
             }
         }
-        public async Task<List<Leave>> Index()
+        public async Task<List<LeaveDTO>> Index()
         {
+            var domain = _httpService.getDomainURL();
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 var project = await context.Projects.FindAsync(1);
@@ -117,12 +120,15 @@ namespace api.Services
                 return
                 await context.Leaves
                 .Include(x => x.User.Role)
+                .Include(x => x.User)
+                    .ThenInclude(x => x.ProfileImage)
                 .Include(x => x.LeaveType)
                 .Include(x => x.Manager)
                 .Include(x => x.LeaveProjects)
                     .ThenInclude(x => x.Project)
                 .Include(x => x.LeaveProjects)
                     .ThenInclude(x => x.ProjectLeader)
+                .Select(x => new LeaveDTO(x, domain))
                 .ToListAsync();
             }
         }

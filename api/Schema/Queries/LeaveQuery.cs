@@ -13,7 +13,7 @@ namespace api.Schema.Queries
             _leaveService = leaveService;
         }
 
-        public async Task<List<Leave>> GetAllLeaves()
+        public async Task<List<LeaveDTO>> GetAllLeaves()
         {
             return await _leaveService.Index();
         }

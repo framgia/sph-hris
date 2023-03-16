@@ -7,6 +7,7 @@ namespace api.DTOs
         public TimeEntriesSummaryDTO(TimeEntryDTO timeEntry)
         {
             User = timeEntry.User;
+            Avatar = timeEntry.Avatar;
             Leave = 0;
             Absences = 0;
             Late = 0;
@@ -16,6 +17,7 @@ namespace api.DTOs
 
         // override
         public User User { get; set; }
+        public string? Avatar { get; set; }
         public float Leave { get; set; }
         public int Absences { get; set; }
 

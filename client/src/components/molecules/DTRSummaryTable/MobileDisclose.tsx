@@ -57,11 +57,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-2">
                               <div className="flex items-center space-x-2">
-                                <Avatar
-                                  src={`https://placeimg.com/640/480/abstract/${row.id}`}
-                                  size="base"
-                                  rounded="full"
-                                />
+                                <Avatar src={`${row.original.avatar}`} size="base" rounded="full" />
                                 <div className="flex flex-col items-start">
                                   <h1 className="font-semibold">{timesheetSummary.user.name}</h1>
                                   <small className="text-slate-500">Web Developer</small>

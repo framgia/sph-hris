@@ -22,11 +22,7 @@ export const columns = [
     footer: (info) => info.column.id,
     cell: (props) => (
       <div className="flex items-center space-x-2">
-        <Avatar
-          src={`https://placeimg.com/640/480/abstract/${props.row.id}`}
-          size="base"
-          rounded="full"
-        />
+        <Avatar src={`${props.row.original.avatar}`} size="base" rounded="full" />
         <div className="flex flex-col items-start">
           <h1 className="font-semibold">{props.getValue()}</h1>
           <small className="text-slate-500">Web Developer</small>

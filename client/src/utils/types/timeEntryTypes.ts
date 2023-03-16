@@ -55,6 +55,7 @@ export interface ITimeEntry {
   undertime: number
   overtime: ITimeEntryOvertime
   status: string
+  avatar: string
 }
 
 export interface ITimeEntryById {
@@ -94,6 +95,7 @@ export interface ITimesheetSummary {
     id: number
     name: string
   }
+  avatar: string
   leave: number
   absences: number
   late: number
