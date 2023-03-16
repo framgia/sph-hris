@@ -23,16 +23,16 @@ const DesktopTable: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
       <thead className="border-b border-slate-200">
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <th key={header.id} colSpan={header.colSpan} className="px-1 py-3 text-left">
-                {header.isPlaceholder ? null : (
+            {headerGroup.headers.map(({ id, colSpan, isPlaceholder, column, getContext }) => (
+              <th key={id} colSpan={colSpan} className="px-1 py-3 text-left">
+                {isPlaceholder ? null : (
                   <div
                     {...{
-                      className: header.column.getCanSort() ? 'cursor-pointer select-none' : '',
-                      onClick: header.column.getToggleSortingHandler()
+                      className: column.getCanSort() ? 'cursor-pointer select-none' : '',
+                      onClick: column.getToggleSortingHandler()
                     }}
                   >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
+                    {flexRender(column.columnDef.header, getContext())}
                   </div>
                 )}
               </th>
@@ -66,9 +66,9 @@ const DesktopTable: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
                         'group hover:bg-white hover:shadow-md hover:shadow-slate-200'
                       )}
                     >
-                      {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="flex-wrap px-1 py-2 capitalize">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {row.getVisibleCells().map(({ id, column, getContext }) => (
+                        <td key={id} className="flex-wrap px-1 py-2 capitalize">
+                          {flexRender(column.columnDef.cell, getContext())}
                         </td>
                       ))}
                     </tr>

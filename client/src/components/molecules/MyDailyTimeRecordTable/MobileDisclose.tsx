@@ -233,7 +233,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                               {...{
                                                 isOpen: isOpenNewOvertime,
                                                 closeModal: handleIsOpenNewOvertime,
-                                                timeEntry: timeEntry,
+                                                timeEntry,
                                                 initialMinutes: minuteDifference
                                               }}
                                             />
