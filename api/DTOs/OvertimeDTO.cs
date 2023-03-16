@@ -9,7 +9,7 @@ namespace api.DTOs
             Id = overtimes.Id;
             Projects = overtimes.MultiProjects;
             OtherProject = overtimes.OtherProject!;
-            User = new(overtimes.User.Id, overtimes.User.Name!, overtimes.User!.Role.Id, overtimes.User.Role.Name!, $"{domain}/static/{overtimes.User.ProfileImage?.CollectionName}/{overtimes.User.ProfileImage?.FileName}");
+            User = new(overtimes.User.Id, overtimes.User.Name!, overtimes.User!.Role.Id, overtimes.User.Role.Name!, $"{domain}/media/{overtimes.User.ProfileImage?.CollectionName}/{overtimes.User.ProfileImage?.FileName}");
             Manager = overtimes.Manager;
             Supervisor = overtimes.Manager.Name!;
             DateFiled = overtimes.CreatedAt;

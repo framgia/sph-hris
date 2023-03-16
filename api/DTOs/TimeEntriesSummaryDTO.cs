@@ -16,7 +16,7 @@ namespace api.DTOs
 
         // override
         public User User { get; set; }
-        public int Leave { get; set; }
+        public float Leave { get; set; }
         public int Absences { get; set; }
 
         public int? Late { get; set; }
@@ -24,9 +24,9 @@ namespace api.DTOs
         public int? Overtime { get; set; }
 
         // methods
-        public void AddLeave()
+        public void AddLeave(float days)
         {
-            this.Leave++;
+            this.Leave = this.Leave + days;
         }
         public void AddAbsences()
         {

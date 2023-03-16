@@ -5,16 +5,26 @@ namespace api.Seeders
 {
     public static class DatabaseSeeder
     {
-        public static Media media = new Media
+        public static List<Media> media()
         {
-            Id = 1,
-            CollectionName = "avatar",
-            Name = "defaultAvatar",
-            FileName = "default.png",
-            MimeType = "image/png",
-            CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-            UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
-        };
+            var avatars = new List<Media>();
+            for (int i = 1; i < 80; i++)
+            {
+                var newAvatar = new Media
+                {
+                    Id = i,
+                    CollectionName = "avatar",
+                    Name = "defaultAvatar",
+                    FileName = "default.png",
+                    MimeType = "image/png",
+                    CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                    UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+                };
+                avatars.Add(newAvatar);
+            }
+
+            return avatars;
+        }
         public static EmployeeSchedule employeeSchedule = new EmployeeSchedule
         {
             Id = 1,
@@ -134,7 +144,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 1
                 },
                 new User
                 {
@@ -146,7 +156,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 2
                 },
                 new User
                 {
@@ -158,7 +168,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 3
                 },
                 new User
                 {
@@ -170,7 +180,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 4
                 },
                 new User
                 {
@@ -182,7 +192,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 5
                 },
                 new User
                 {
@@ -194,7 +204,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 6
                 },
                 new User
                 {
@@ -206,7 +216,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 7
                 },
                 new User
                 {
@@ -218,7 +228,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 8
                 },
                 new User
                 {
@@ -230,7 +240,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 9
                 },
                 new User
                 {
@@ -242,7 +252,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 10
                 },
                 new User
                 {
@@ -254,7 +264,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 11
                 },
                 new User
                 {
@@ -266,7 +276,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 12
                 },
                 new User
                 {
@@ -278,7 +288,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 13
                 },
                 new User
                 {
@@ -290,7 +300,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 14
                 },
                 new User
                 {
@@ -302,7 +312,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 15
                 },
                 new User
                 {
@@ -314,7 +324,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 16
                 },
                 new User
                 {
@@ -326,7 +336,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 17
                 },
                 new User
                 {
@@ -338,7 +348,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 18
                 },
                 new User
                 {
@@ -350,7 +360,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 19
                 },
                 new User
                 {
@@ -362,7 +372,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 20
                 },
                 new User
                 {
@@ -374,7 +384,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 21
                 },
                 new User
                 {
@@ -386,7 +396,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 22
                 },
                 new User
                 {
@@ -398,7 +408,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 23
                 },
                 new User
                 {
@@ -410,7 +420,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 24
                 },
                 new User
                 {
@@ -422,7 +432,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 25
                 },
                 new User
                 {
@@ -434,7 +444,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 26
                 },
                 new User
                 {
@@ -446,7 +456,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 27
                 },
                 new User
                 {
@@ -458,7 +468,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 28
                 },
                 new User
                 {
@@ -470,7 +480,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 29
                 },
                 new User
                 {
@@ -482,7 +492,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 30
                 },
                 new User
                 {
@@ -494,7 +504,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 31
                 },
                 new User
                 {
@@ -506,7 +516,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 32
                 },
                 new User
                 {
@@ -518,7 +528,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 33
                 },
                 new User
                 {
@@ -530,7 +540,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 34
                 },
                 new User
                 {
@@ -542,7 +552,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 35
                 },
                 new User
                 {
@@ -554,7 +564,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 36
                 },
                 new User
                 {
@@ -566,7 +576,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 37
                 },
                 new User
                 {
@@ -578,7 +588,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 38
                 },
                 new User
                 {
@@ -590,7 +600,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 39
                 },
                 new User
                 {
@@ -602,7 +612,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 40
                 },
                 new User
                 {
@@ -614,7 +624,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 41
                 },
                 new User
                 {
@@ -626,7 +636,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 42
                 },
                 new User
                 {
@@ -638,7 +648,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 43
                 },
                 new User
                 {
@@ -650,7 +660,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 44
                 },
                 new User
                 {
@@ -662,7 +672,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 45
                 },
                 new User
                 {
@@ -674,7 +684,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 46
                 },
                 new User
                 {
@@ -686,7 +696,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 47
                 },
                 new User
                 {
@@ -698,7 +708,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 48
                 },
                 new User
                 {
@@ -710,7 +720,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 49
                 },
                 new User
                 {
@@ -722,7 +732,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 50
                 },
                 new User
                 {
@@ -734,7 +744,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 51
                 },
                 new User
                 {
@@ -746,7 +756,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 52
                 },
                 new User
                 {
@@ -758,7 +768,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 53
                 },
                 new User
                 {
@@ -770,7 +780,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 54
                 },
                 new User
                 {
@@ -782,7 +792,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 55
                 },
                 new User
                 {
@@ -794,7 +804,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 56
                 },
                 new User
                 {
@@ -806,7 +816,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 57
                 },
                 new User
                 {
@@ -818,7 +828,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 58
                 },
                 new User
                 {
@@ -830,7 +840,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 59
                 },
                 new User
                 {
@@ -842,7 +852,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 60
                 },
                 new User
                 {
@@ -854,7 +864,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 61
                 },
                 new User
                 {
@@ -866,7 +876,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 62
                 },
                 new User
                 {
@@ -878,7 +888,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 63
                 },
                 new User
                 {
@@ -890,7 +900,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 64
                 },
                 new User
                 {
@@ -902,7 +912,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 65
                 },
                 new User
                 {
@@ -914,7 +924,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 66
                 },
                 new User
                 {
@@ -926,7 +936,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 67
                 },
                 new User
                 {
@@ -938,7 +948,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 68
                 },
                 new User
                 {
@@ -950,7 +960,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 69
                 },
                 new User
                 {
@@ -962,7 +972,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 70
                 },
                 new User
                 {
@@ -974,7 +984,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 71
                 },
                 new User
                 {
@@ -986,7 +996,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 72
                 },
                 new User
                 {
@@ -998,7 +1008,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 73
                 },
                 new User
                 {
@@ -1010,7 +1020,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 74
                 },
                 new User
                 {
@@ -1022,7 +1032,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 75
                 },
                 new User
                 {
@@ -1034,7 +1044,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 76
                 },
                 new User
                 {
@@ -1046,7 +1056,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 77
                 },
                 new User
                 {
@@ -1058,7 +1068,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 78
                 },
                 new User
                 {
@@ -1070,7 +1080,7 @@ namespace api.Seeders
                     IsOnline = false,
                     CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                     UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
-                    ProfileImageId = media.Id
+                    ProfileImageId = 79
                 },
 
             };
