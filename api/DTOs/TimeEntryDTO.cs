@@ -1,13 +1,12 @@
 using api.Entities;
+using api.Enums;
 
 namespace api.DTOs
 {
     public class TimeEntryDTO : TimeEntry
     {
         private static readonly int ONTIME = 0;
-        private static readonly string ABSENT = "absent";
-        private static readonly string ONDUTY = "present";
-        public TimeEntryDTO(TimeEntry timeEntry)
+        public TimeEntryDTO(TimeEntry timeEntry, Leave? leave)
         {
             Id = timeEntry.Id;
             UserId = timeEntry.UserId;
@@ -85,13 +84,17 @@ namespace api.DTOs
                 }
             }
 
-            if (timeEntry.TimeIn == null && timeEntry.TimeOut == null)
+            if (leave != null)
             {
-                Status = ABSENT;
+                Status = (leave.LeaveType.Name!).ToLower();
+            }
+            else if (timeEntry.TimeIn == null && timeEntry.TimeOut == null)
+            {
+                Status = WorkStatusEnum.ABSENT;
             }
             else
             {
-                Status = ONDUTY;
+                Status = WorkStatusEnum.ONDUTY;
             }
         }
 

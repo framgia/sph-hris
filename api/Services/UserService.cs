@@ -26,7 +26,7 @@ namespace api.Services
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 var avatar = context.Medias.FindAsync(avatarId).Result;
-                var avatarLink = $"{_httpService.getDomainURL()}/static/{avatar?.CollectionName}/{avatar?.FileName}";
+                var avatarLink = $"{_httpService.getDomainURL()}/media/{avatar?.CollectionName}/{avatar?.FileName}";
 
                 return avatarLink;
             }

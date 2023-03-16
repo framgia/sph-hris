@@ -13,13 +13,25 @@ const Chip: FC<Props> = ({ label }): JSX.Element => {
       ? 'border-green-300 bg-green-50 text-green-600'
       : null,
     label === WorkStatus.VACATION_LEAVE.toLowerCase()
-      ? 'border-amber-300 bg-amber-50 text-amber-600'
+      ? 'border-yellow-300 bg-yellow-50 text-yellow-600'
       : null,
     label === WorkStatus.SICK_LEAVE.toLowerCase()
       ? 'border-rose-300 bg-rose-50 text-rose-600'
       : null,
     label === WorkStatus.ABSENT.toLowerCase()
       ? 'border-fuchsia-300 bg-fuchsia-50 text-fuchsia-600'
+      : null,
+    label === WorkStatus.BEREAVEMENT_LEAVE.toLowerCase()
+      ? 'border-gray-300 bg-gray-100 text-gray-600'
+      : null,
+    label === WorkStatus.EMERGENCY_LEAVE.toLowerCase()
+      ? 'border-red-300 bg-red-50 text-red-600'
+      : null,
+    label === WorkStatus.MATERNITY_PATERNITY_LEAVE.toLowerCase()
+      ? 'border-violet-300 bg-violet-50 text-violet-600'
+      : null,
+    label === WorkStatus.UNDERTIME.toLowerCase()
+      ? 'border-amber-300 bg-amber-50 text-amber-600'
       : null
   )
   return <span className={styles}>{label}</span>

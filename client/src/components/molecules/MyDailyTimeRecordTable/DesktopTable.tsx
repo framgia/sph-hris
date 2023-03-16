@@ -65,10 +65,25 @@ const DesktopTable: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
                         className={classNames(
                           'group hover:bg-white hover:shadow-md  hover:shadow-slate-200',
                           row.original.status === WorkStatus.VACATION_LEAVE.toLowerCase()
-                            ? 'bg-amber-50 hover:bg-amber-50'
+                            ? 'bg-yellow-50 hover:bg-yellow-50'
                             : '',
                           row.original.status === WorkStatus.ABSENT.toLowerCase()
                             ? 'bg-fuchsia-50 hover:bg-fuchsia-50'
+                            : '',
+                          row.original.status === WorkStatus.SICK_LEAVE.toLowerCase()
+                            ? 'bg-rose-50 hover:bg-rose-50'
+                            : '',
+                          row.original.status === WorkStatus.BEREAVEMENT_LEAVE.toLowerCase()
+                            ? 'bg-gray-50 hover:bg-gray-50'
+                            : '',
+                          row.original.status === WorkStatus.EMERGENCY_LEAVE.toLowerCase()
+                            ? 'bg-red-50 hover:bg-red-50'
+                            : '',
+                          row.original.status === WorkStatus.MATERNITY_PATERNITY_LEAVE.toLowerCase()
+                            ? 'bg-violet-50 hover:bg-violet-50'
+                            : '',
+                          row.original.status === WorkStatus.UNDERTIME.toLowerCase()
+                            ? 'bg-amber-50 hover:bg-amber-50'
                             : ''
                         )}
                       >

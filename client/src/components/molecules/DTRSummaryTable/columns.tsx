@@ -34,8 +34,13 @@ export const columns = [
       </div>
     )
   }),
-  columnHelper.accessor('leave', {
-    header: () => <CellHeader label="Leave" />,
+  columnHelper.display({
+    id: 'id',
+    header: () => <CellHeader label="Leave(days)" />,
+    cell: (props) => {
+      const { original: summary } = props.row
+      return <span>{Number(summary.leave.toFixed(4))}</span>
+    },
     footer: (info) => info.column.id
   }),
   columnHelper.accessor('absences', {
@@ -47,11 +52,11 @@ export const columns = [
     footer: (info) => info.column.id
   }),
   columnHelper.accessor('undertime', {
-    header: () => <CellHeader label="Undertime" />,
+    header: () => <CellHeader label="Undertime(min)" />,
     footer: (info) => info.column.id
   }),
   columnHelper.accessor('overtime', {
-    header: () => <CellHeader label="Overtime" />,
+    header: () => <CellHeader label="Overtime(min)" />,
     footer: (info) => info.column.id
   })
 ]

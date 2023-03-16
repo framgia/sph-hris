@@ -17,7 +17,7 @@ namespace api.DTOs
             EmployeeSchedule = user.EmployeeSchedule;
             Role = user.Role;
             TimeEntry = checkLatestTimeEntry(user);
-            AvatarLink = $"{domain}/static/{user.ProfileImage?.CollectionName}/{user.ProfileImage?.FileName}";
+            AvatarLink = $"{domain}/media/{user.ProfileImage?.CollectionName}/{user.ProfileImage?.FileName}";
         }
         private TimeEntry? checkLatestTimeEntry(User user)
         {

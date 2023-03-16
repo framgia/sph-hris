@@ -60,7 +60,7 @@ public partial class HrisContext : DbContext
             DatabaseSeeder.projects
         );
         modelBuilder.Entity<Media>().HasData(
-            DatabaseSeeder.media
+            DatabaseSeeder.media()
         );
 
         modelBuilder.Entity<MultiProject>().HasData(

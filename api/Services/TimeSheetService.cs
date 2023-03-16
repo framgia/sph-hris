@@ -1,6 +1,7 @@
 using api.Context;
 using api.DTOs;
 using api.Entities;
+using api.Enums;
 using api.Requests;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,22 +29,29 @@ namespace api.Services
                 .FirstAsync();
         }
 
-        public static TimeEntryDTO ToTimeEntryDTO(TimeEntry timeEntry)
+        public static TimeEntryDTO ToTimeEntryDTO(TimeEntry timeEntry, List<Leave> leaves)
         {
-            return new TimeEntryDTO(timeEntry);
+            var leave = leaves.Where(x => DateOnly.FromDateTime(x.LeaveDate) == DateOnly.FromDateTime(timeEntry.Date) && x.UserId == timeEntry.UserId).FirstOrDefault();
+
+            return new TimeEntryDTO(timeEntry, leave);
         }
 
         public async Task<List<TimeEntryDTO>?> GetTimeEntriesByEmployeeId(int id)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
+                var leaves = await context.Leaves
+                    .Include(leave => leave.LeaveType)
+                    .OrderByDescending(leave => leave.LeaveDate)
+                    .ToListAsync();
+
                 return await context.TimeEntries
                     .Include(entry => entry.TimeIn)
                     .Include(entry => entry.TimeOut)
                     .Include(entry => entry.User)
                     .Include(entry => entry.Overtime)
                     .Where(c => c.UserId == id)
-                    .Select(x => ToTimeEntryDTO(x))
+                    .Select(x => ToTimeEntryDTO(x, leaves))
                     .ToListAsync();
             }
         }
@@ -52,9 +60,14 @@ namespace api.Services
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
+                var leaves = await context.Leaves
+                    .Include(leave => leave.LeaveType)
+                    .OrderByDescending(leave => leave.LeaveDate)
+                    .ToListAsync();
+
                 return await context.TimeEntries
                     .Include(entity => entity.TimeIn)
-                    .Select(x => ToTimeEntryDTO(x))
+                    .Select(x => ToTimeEntryDTO(x, leaves))
                     .FirstOrDefaultAsync(c => c.UserId == id);
             }
         }
@@ -88,6 +101,11 @@ namespace api.Services
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
+                var leaves = await context.Leaves
+                    .Include(leave => leave.LeaveType)
+                    .OrderByDescending(leave => leave.LeaveDate)
+                    .ToListAsync();
+
                 List<TimeEntryDTO> entries = await context.TimeEntries
                     .Include(entry => entry.TimeIn)
                     .Include(entry => entry.TimeOut)
@@ -95,7 +113,7 @@ namespace api.Services
                     .Include(entry => entry.Overtime)
                     .Include(entry => entry.WorkInterruptions)
                     .OrderByDescending(entry => entry.Date)
-                    .Select(entry => ToTimeEntryDTO(entry))
+                    .Select(entry => ToTimeEntryDTO(entry, leaves))
                     .ToListAsync();
 
                 if (date != null)
@@ -127,23 +145,37 @@ namespace api.Services
             {
                 List<TimeEntriesSummaryDTO> summaries = new List<TimeEntriesSummaryDTO>();
 
+                var leaves = await context.Leaves
+                    .Include(leave => leave.LeaveType)
+                    .OrderByDescending(leave => leave.LeaveDate)
+                    .ToListAsync();
+
                 var entries = await context.TimeEntries
                     .Include(entry => entry.TimeIn)
                     .Include(entry => entry.TimeOut)
                     .Include(entry => entry.User)
+                    .Include(entry => entry.Overtime)
                     .Include(entry => entry.WorkInterruptions)
                     .OrderByDescending(entry => entry.Date)
-                    .Select(entry => ToTimeEntryDTO(entry))
+                    .Select(entry => ToTimeEntryDTO(entry, leaves))
                     .ToListAsync();
 
                 if (startDate != null && endDate != null)
                 {
+
                     var filterDateRange = from entry in entries
                                           where DateOnly.Parse(startDate).CompareTo(entry.Date) <= 0
                                           where DateOnly.Parse(endDate).CompareTo(entry.Date) >= 0
                                           select entry;
 
+
+                    var filterLeaveDateRange = from leave in leaves
+                                               where DateOnly.Parse(startDate).CompareTo(DateOnly.FromDateTime(leave.LeaveDate)) <= 0
+                                               where DateOnly.Parse(endDate).CompareTo(DateOnly.FromDateTime(leave.LeaveDate)) >= 0
+                                               select leave;
+
                     entries = filterDateRange.ToList();
+                    leaves = filterLeaveDateRange.ToList();
                 }
 
                 var grouped = entries.OrderBy(entry => entry.UserId)
@@ -155,16 +187,22 @@ namespace api.Services
                     summaries.Add(userSummary);
                     foreach (var timeEntry in group)
                     {
-                        // No module for leave yet
+                        // Need more clarification
+                        var leave = leaves.Where(x => DateOnly.FromDateTime(x.LeaveDate) == timeEntry.Date && x.UserId == timeEntry.UserId && x.IsLeaderApproved != null && x.IsManagerApproved != null && x.IsLeaderApproved == true && x.IsManagerApproved == true).FirstOrDefault();
 
-                        if (timeEntry.Status.ToLower() == "absent")
+                        if (timeEntry.Status.ToLower() == WorkStatusEnum.ABSENT)
                         {
                             userSummary.AddAbsences();
                         }
 
+                        if (leave != null)
+                        {
+                            userSummary.AddLeave(leave.Days);
+                        }
+
                         userSummary.AddLate(timeEntry.Late);
                         userSummary.AddUndertime(timeEntry.Undertime);
-                        // userSummary.AddOvertime(timeEntry.Overtime);
+                        if (timeEntry.Overtime?.ApprovedMinutes != null) userSummary.AddOvertime((int)timeEntry.Overtime.ApprovedMinutes);
                     }
                 };
 
