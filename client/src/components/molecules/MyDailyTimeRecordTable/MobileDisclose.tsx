@@ -60,11 +60,13 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
             ) : (
               <>
                 {table.getRowModel().rows.map((row) => {
+                  const { original: timeEntry } = row
+
                   const minuteDifference = Math.floor(
                     moment
                       .duration(
-                        moment(row.original.timeOut?.createdAt).diff(
-                          `${moment(row.original.date).format('YYYY-MM-DD')} ${moment(
+                        moment(timeEntry.timeOut?.createdAt).diff(
+                          `${moment(timeEntry.date).format('YYYY-MM-DD')} ${moment(
                             '19:30',
                             'HH:mm:ss'
                           ).format('HH:mm:ss')}`
@@ -81,10 +83,10 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                             className={classNames(
                               'w-full border-b border-slate-200 py-3 px-4 hover:bg-white',
                               open ? 'bg-white' : 'hover:shadow-md hover:shadow-slate-200',
-                              row.original.status === WorkStatus.VACATION_LEAVE.toLowerCase()
+                              timeEntry.status === WorkStatus.VACATION_LEAVE.toLowerCase()
                                 ? 'bg-amber-50 hover:bg-amber-50'
                                 : '',
-                              row.original.status === WorkStatus.ABSENT.toLowerCase()
+                              timeEntry.status === WorkStatus.ABSENT.toLowerCase()
                                 ? 'bg-fuchsia-50 hover:bg-fuchsia-50'
                                 : ''
                             )}
@@ -92,9 +94,9 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                             <div className="flex items-center justify-between">
                               <div className="flex items-center space-x-2">
                                 <span className="font-medium">
-                                  {moment(new Date(row.original.date)).format('MMMM DD, YYYY')}
+                                  {moment(new Date(timeEntry.date)).format('MMMM DD, YYYY')}
                                 </span>
-                                <Chip label={row.original.status} />
+                                <Chip label={timeEntry.status} />
                               </div>
                               <ChevronRight
                                 className={classNames(
@@ -115,20 +117,19 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                 <li className="flex items-center space-x-1 px-4 py-2">
                                   <p>Time In:</p>
                                   <div className="relative flex">
-                                    {row.original.timeIn?.remarks !== undefined &&
-                                    row.original.timeIn?.remarks !== '' ? (
+                                    {timeEntry.timeIn?.remarks !== undefined &&
+                                    timeEntry.timeIn?.remarks !== '' ? (
                                       <>
                                         <Link
-                                          href={`my-daily-time-record/?time_in=${row.original.timeIn?.id}`}
+                                          href={`my-daily-time-record/?time_in=${timeEntry.timeIn?.id}`}
                                           className="relative flex cursor-pointer active:scale-95"
                                         >
                                           {/* Actual Time In Data */}
                                           <span className="font-semibold">
-                                            {row.original.timeIn?.timeHour ?? EMPTY}
+                                            {timeEntry.timeIn?.timeHour ?? EMPTY}
                                           </span>
                                           {/* Status */}
-                                          {row.original.startTime >
-                                          row.original.timeIn?.timeHour ? (
+                                          {timeEntry.startTime > timeEntry.timeIn?.timeHour ? (
                                             <span
                                               className={classNames(
                                                 'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500'
@@ -136,7 +137,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                             />
                                           ) : (
                                             <>
-                                              {!Number.isNaN(row.original.timeIn?.id) && (
+                                              {!Number.isNaN(timeEntry.timeIn?.id) && (
                                                 <span
                                                   className={classNames(
                                                     'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500'
@@ -151,14 +152,12 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                       <>
                                         {/* Actual Time In Data */}
                                         <span className="font-semibold">
-                                          {row.original.timeIn?.timeHour ?? EMPTY}
+                                          {timeEntry.timeIn?.timeHour ?? EMPTY}
                                         </span>
                                         {/* Status */}
-                                        {row.original.timeIn?.timeHour !== undefined &&
-                                        row.original.timeIn?.timeHour !== ''
-                                          ? !(
-                                              row.original.startTime > row.original.timeIn?.timeHour
-                                            ) && (
+                                        {timeEntry.timeIn?.timeHour !== undefined &&
+                                        timeEntry.timeIn?.timeHour !== ''
+                                          ? !(timeEntry.startTime > timeEntry.timeIn?.timeHour) && (
                                               <span
                                                 className={classNames(
                                                   'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500'
@@ -173,18 +172,18 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                 <li className="flex items-center space-x-2 px-4 py-2">
                                   <p>Time Out:</p>
                                   <div className="relative flex">
-                                    {row.original.timeOut?.remarks !== undefined &&
-                                    row.original.timeOut?.remarks !== '' ? (
+                                    {timeEntry.timeOut?.remarks !== undefined &&
+                                    timeEntry.timeOut?.remarks !== '' ? (
                                       <Link
-                                        href={`my-daily-time-record/?time_out=${row.original.timeOut?.id}`}
+                                        href={`my-daily-time-record/?time_out=${timeEntry.timeOut?.id}`}
                                         className="relative flex cursor-pointer active:scale-95"
                                       >
                                         {/* Actual Time Out Data */}
                                         <span className="font-semibold">
-                                          {row.original.timeOut?.timeHour ?? EMPTY}
+                                          {timeEntry.timeOut?.timeHour ?? EMPTY}
                                         </span>
                                         {/* Status */}
-                                        {!Number.isNaN(row.original.timeOut?.id) && (
+                                        {!Number.isNaN(timeEntry.timeOut?.id) && (
                                           <span
                                             className={classNames(
                                               'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500'
@@ -194,28 +193,27 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                       </Link>
                                     ) : (
                                       <span className="font-semibold">
-                                        {row.original.timeOut?.timeHour ?? EMPTY}
+                                        {timeEntry.timeOut?.timeHour ?? EMPTY}
                                       </span>
                                     )}
                                   </div>
                                 </li>
                                 <li className="px-4 py-2">
                                   Work Hours:{' '}
-                                  <span className="font-semibold">{row.original.workedHours}</span>
+                                  <span className="font-semibold">{timeEntry.workedHours}</span>
                                 </li>
                                 <li className="px-4 py-2">
-                                  Late(min):{' '}
-                                  <span className="font-semibold">{row.original.late}</span>
+                                  Late(min): <span className="font-semibold">{timeEntry.late}</span>
                                 </li>
                                 <li className="px-4 py-2">
                                   Undertime(min):{' '}
-                                  <span className="font-semibold">{row.original.undertime}</span>
+                                  <span className="font-semibold">{timeEntry.undertime}</span>
                                 </li>
                                 <li className="flex flex-wrap items-center space-x-2 px-4 py-2">
                                   <span>Overtime(min):</span>
                                   <div className="flex items-center space-x-2">
                                     {/* If the user has an overtime */}
-                                    {row.original.overtime === null ? (
+                                    {timeEntry.overtime === null ? (
                                       minuteDifference > 0 ? (
                                         <Button
                                           type="button"
@@ -235,7 +233,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                               {...{
                                                 isOpen: isOpenNewOvertime,
                                                 closeModal: handleIsOpenNewOvertime,
-                                                timeEntry: row.original,
+                                                timeEntry: timeEntry,
                                                 initialMinutes: minuteDifference
                                               }}
                                             />
@@ -247,10 +245,10 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                     ) : (
                                       <>
                                         {/* If Approved Request */}
-                                        {row.original.overtime.isLeaderApproved != null &&
-                                          row.original.overtime.isManagerApproved != null &&
-                                          row.original.overtime.isLeaderApproved &&
-                                          row.original.overtime.isManagerApproved && (
+                                        {timeEntry.overtime.isLeaderApproved != null &&
+                                          timeEntry.overtime.isManagerApproved != null &&
+                                          timeEntry.overtime.isLeaderApproved &&
+                                          timeEntry.overtime.isManagerApproved && (
                                             <Tippy
                                               placement="left"
                                               content="Approved request"
@@ -262,15 +260,15 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                               >
                                                 <Check className="h-4 w-5 rounded-l bg-green-500 text-white" />
                                                 <span className="px-1 text-green-600">
-                                                  {row.original.overtime.approvedMinutes}
+                                                  {timeEntry.overtime.approvedMinutes}
                                                 </span>
                                               </Button>
                                             </Tippy>
                                           )}
 
                                         {/* If Pending Request */}
-                                        {(row.original.overtime.isLeaderApproved === null ||
-                                          row.original.overtime.isManagerApproved === null) && (
+                                        {(timeEntry.overtime.isLeaderApproved === null ||
+                                          timeEntry.overtime.isManagerApproved === null) && (
                                           <Tippy
                                             placement="left"
                                             content="Pending request"
@@ -282,17 +280,19 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                             >
                                               <RefreshCw className="h-4 w-5 rounded-l bg-amber-500 px-1 text-white" />
                                               <span className="px-1 text-amber-600">
-                                                {row.original.overtime.requestedMinutes}
+                                                {timeEntry.overtime.requestedMinutes}
                                               </span>
                                             </Button>
                                           </Tippy>
                                         )}
 
                                         {/* If Disapproved Request */}
-                                        {row.original.overtime.isLeaderApproved !== null &&
-                                          row.original.overtime.isManagerApproved !== null &&
-                                          !row.original.overtime.isLeaderApproved &&
-                                          !row.original.overtime.isManagerApproved && (
+                                        {timeEntry.overtime.isLeaderApproved !== null &&
+                                          timeEntry.overtime.isManagerApproved !== null &&
+                                          ((!timeEntry.overtime.isLeaderApproved &&
+                                            !timeEntry.overtime.isManagerApproved) ||
+                                            (timeEntry.overtime.isLeaderApproved &&
+                                              !timeEntry.overtime.isManagerApproved)) && (
                                             <Tippy
                                               placement="left"
                                               content="Disapproved request"
@@ -304,7 +304,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                               >
                                                 <ThumbsDown className="h-4 w-5 rounded-l bg-rose-500 px-1 text-white" />
                                                 <span className="px-1 text-rose-600">
-                                                  {row.original.overtime.requestedMinutes}
+                                                  {timeEntry.overtime.requestedMinutes}
                                                 </span>
                                               </Button>
                                             </Tippy>
@@ -323,7 +323,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                     >
                                       <Button
                                         onClick={() =>
-                                          handleIsOpenTimeEntryToggle(row.original.id.toString())
+                                          handleIsOpenTimeEntryToggle(timeEntry.id.toString())
                                         }
                                         rounded="none"
                                         className="py-0.5 px-1 text-slate-500"
@@ -337,7 +337,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                       arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
                                     >
                                       <Button
-                                        onClick={() => alert(row.original.id)}
+                                        onClick={() => alert(timeEntry.id)}
                                         rounded="none"
                                         className="py-0.5 px-1 text-slate-500"
                                       >

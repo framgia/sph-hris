@@ -24,7 +24,7 @@ const DesktopTable: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
-              <th key={header.id} colSpan={header.colSpan} className="px-4 py-3 text-left">
+              <th key={header.id} colSpan={header.colSpan} className="px-1 py-3 text-left">
                 {header.isPlaceholder ? null : (
                   <div
                     {...{
@@ -67,7 +67,7 @@ const DesktopTable: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
                       )}
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="flex-wrap px-4 py-2 capitalize">
+                        <td key={cell.id} className="flex-wrap px-1 py-2 capitalize">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>
                       ))}
