@@ -24,16 +24,16 @@ const DesktopTable: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
       <thead className="border-b border-slate-200">
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <th key={header.id} colSpan={header.colSpan} className="px-4 py-3 text-left">
-                {header.isPlaceholder ? null : (
+            {headerGroup.headers.map(({ id, colSpan, isPlaceholder, column, getContext }) => (
+              <th key={id} colSpan={colSpan} className="px-4 py-3 text-left">
+                {isPlaceholder ? null : (
                   <div
                     {...{
-                      className: header.column.getCanSort() ? 'cursor-pointer select-none' : '',
-                      onClick: header.column.getToggleSortingHandler()
+                      className: column.getCanSort() ? 'cursor-pointer select-none' : '',
+                      onClick: column.getToggleSortingHandler()
                     }}
                   >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
+                    {flexRender(column.columnDef.header, getContext())}
                   </div>
                 )}
               </th>

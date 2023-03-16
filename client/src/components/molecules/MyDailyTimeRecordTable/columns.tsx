@@ -221,8 +221,8 @@ export const columns = [
               {/* If Disapproved Request */}
               {overtime.isLeaderApproved !== null &&
                 overtime.isManagerApproved !== null &&
-                !overtime.isLeaderApproved &&
-                !overtime.isManagerApproved && (
+                ((!overtime.isLeaderApproved && !overtime.isManagerApproved) ||
+                  (overtime.isLeaderApproved && !overtime.isManagerApproved)) && (
                   <Tippy placement="left" content="Disapproved request" className="!text-xs">
                     <Button
                       type="button"
