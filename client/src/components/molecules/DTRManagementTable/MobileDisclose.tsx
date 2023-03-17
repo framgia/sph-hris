@@ -63,6 +63,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                   <Disclosure key={row.id}>
                     {({ open }) => {
                       const { original: timeEntry } = row
+                      const { avatarLink, name } = row.original.user
 
                       return (
                         <motion.div
@@ -86,13 +87,9 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                             <div className="flex items-center justify-between">
                               <div className="flex items-center space-x-2">
                                 <div className="flex items-center space-x-2">
-                                  <Avatar
-                                    src={`${row.original.user.avatarLink}`}
-                                    size="base"
-                                    rounded="full"
-                                  />
+                                  <Avatar src={`${avatarLink}`} size="base" rounded="full" />
                                   <div className="flex flex-col items-start">
-                                    <h1 className="font-semibold">{timeEntry.user.name}</h1>
+                                    <h1 className="font-semibold">{name}</h1>
                                     <small className="text-slate-500">Web Developer</small>
                                   </div>
                                 </div>
@@ -227,10 +224,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                     >
                                       <Button
                                         onClick={() =>
-                                          handleIsOpenTimeEntryToggle(
-                                            timeEntry.id.toString(),
-                                            timeEntry.user.name
-                                          )
+                                          handleIsOpenTimeEntryToggle(timeEntry.id.toString(), name)
                                         }
                                         rounded="none"
                                         className="py-0.5 px-1 text-slate-500"

@@ -41,6 +41,8 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                   {({ open }) => {
                     const { original: timesheetSummary } = row
 
+                    const { avatarLink, name } = row.original.user
+
                     return (
                       <motion.div
                         variants={variants}
@@ -57,13 +59,9 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-2">
                               <div className="flex items-center space-x-2">
-                                <Avatar
-                                  src={`${row.original.user.avatarLink}`}
-                                  size="base"
-                                  rounded="full"
-                                />
+                                <Avatar src={`${avatarLink}`} size="base" rounded="full" />
                                 <div className="flex flex-col items-start">
-                                  <h1 className="font-semibold">{timesheetSummary.user.name}</h1>
+                                  <h1 className="font-semibold">{name}</h1>
                                   <small className="text-slate-500">Web Developer</small>
                                 </div>
                               </div>
