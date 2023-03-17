@@ -22,20 +22,20 @@ const ListOfLeave: NextPage = (): JSX.Element => {
     data?.allLeaves?.forEach((i) => {
       temp.push({
         id: i?.id,
-        name: i?.user?.name,
-        userId: i?.user?.id,
+        name: i?.userName,
+        userId: i?.userId,
         project: i?.leaveProjects[0]?.project?.name,
         leaveDate: moment(i?.leaveDate).format('MM/DD/YYYY'),
-        type: i?.leaveType?.name,
+        type: i?.leaveType,
         isWithPay: i?.isWithPay,
-        manager: i?.manager?.name,
+        manager: i?.manager,
         projectLeader: i?.leaveProjects[0]?.projectLeader?.name,
         totalUndertime:
-          i?.leaveType?.name === 'Undertime' ? parseFloat(i?.days.toFixed(3).toString()) : 0,
-        totalLeaves:
-          i?.leaveType?.name === 'Undertime' ? 0 : parseFloat(i?.days.toFixed(3).toString()),
+          i?.leaveType === 'Undertime' ? parseFloat(i?.days.toFixed(3).toString()) : 0,
+        totalLeaves: i?.leaveType === 'Undertime' ? 0 : parseFloat(i?.days.toFixed(3).toString()),
         dateFiled: moment(i?.createdAt).format('MM/DD/YYYY'),
-        reason: i?.reason
+        reason: i?.reason,
+        avatar: i?.avatar
       })
     })
     setMappedLeave(temp)

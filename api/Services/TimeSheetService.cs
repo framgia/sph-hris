@@ -29,15 +29,16 @@ namespace api.Services
                 .FirstAsync();
         }
 
-        public static TimeEntryDTO ToTimeEntryDTO(TimeEntry timeEntry, List<Leave> leaves)
+        public static TimeEntryDTO ToTimeEntryDTO(TimeEntry timeEntry, List<Leave> leaves, string domain)
         {
             var leave = leaves.Where(x => DateOnly.FromDateTime(x.LeaveDate) == DateOnly.FromDateTime(timeEntry.Date) && x.UserId == timeEntry.UserId).FirstOrDefault();
 
-            return new TimeEntryDTO(timeEntry, leave);
+            return new TimeEntryDTO(timeEntry, leave, domain);
         }
 
         public async Task<List<TimeEntryDTO>?> GetTimeEntriesByEmployeeId(int id)
         {
+            var domain = _httpService.getDomainURL();
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 var leaves = await context.Leaves
@@ -49,15 +50,17 @@ namespace api.Services
                     .Include(entry => entry.TimeIn)
                     .Include(entry => entry.TimeOut)
                     .Include(entry => entry.User)
+                        .ThenInclude(x => x.ProfileImage)
                     .Include(entry => entry.Overtime)
                     .Where(c => c.UserId == id)
-                    .Select(x => ToTimeEntryDTO(x, leaves))
+                    .Select(x => ToTimeEntryDTO(x, leaves, domain))
                     .ToListAsync();
             }
         }
 
         public async Task<TimeEntry?> GetById(int id)
         {
+            var domain = _httpService.getDomainURL();
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 var leaves = await context.Leaves
@@ -67,7 +70,7 @@ namespace api.Services
 
                 return await context.TimeEntries
                     .Include(entity => entity.TimeIn)
-                    .Select(x => ToTimeEntryDTO(x, leaves))
+                    .Select(x => ToTimeEntryDTO(x, leaves, domain))
                     .FirstOrDefaultAsync(c => c.UserId == id);
             }
         }
@@ -99,6 +102,7 @@ namespace api.Services
 
         public async Task<List<TimeEntryDTO>> GetAll(String? date = null, String? status = null)
         {
+            var domain = _httpService.getDomainURL();
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 var leaves = await context.Leaves
@@ -110,10 +114,11 @@ namespace api.Services
                     .Include(entry => entry.TimeIn)
                     .Include(entry => entry.TimeOut)
                     .Include(entry => entry.User)
+                        .ThenInclude(x => x.ProfileImage)
                     .Include(entry => entry.Overtime)
                     .Include(entry => entry.WorkInterruptions)
                     .OrderByDescending(entry => entry.Date)
-                    .Select(entry => ToTimeEntryDTO(entry, leaves))
+                    .Select(entry => ToTimeEntryDTO(entry, leaves, domain))
                     .ToListAsync();
 
                 if (date != null)
@@ -143,6 +148,7 @@ namespace api.Services
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
+                var domain = _httpService.getDomainURL();
                 List<TimeEntriesSummaryDTO> summaries = new List<TimeEntriesSummaryDTO>();
 
                 var leaves = await context.Leaves
@@ -154,10 +160,11 @@ namespace api.Services
                     .Include(entry => entry.TimeIn)
                     .Include(entry => entry.TimeOut)
                     .Include(entry => entry.User)
+                        .ThenInclude(x => x.ProfileImage)
                     .Include(entry => entry.Overtime)
                     .Include(entry => entry.WorkInterruptions)
                     .OrderByDescending(entry => entry.Date)
-                    .Select(entry => ToTimeEntryDTO(entry, leaves))
+                    .Select(entry => ToTimeEntryDTO(entry, leaves, domain))
                     .ToListAsync();
 
                 if (startDate != null && endDate != null)

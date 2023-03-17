@@ -6,7 +6,7 @@ namespace api.DTOs
     public class TimeEntryDTO : TimeEntry
     {
         private static readonly int ONTIME = 0;
-        public TimeEntryDTO(TimeEntry timeEntry, Leave? leave)
+        public TimeEntryDTO(TimeEntry timeEntry, Leave? leave, string domain)
         {
             Id = timeEntry.Id;
             UserId = timeEntry.UserId;
@@ -17,7 +17,7 @@ namespace api.DTOs
             Date = DateOnly.FromDateTime(timeEntry.Date);
             WorkedHours = timeEntry.WorkedHours?.Remove(timeEntry.WorkedHours.LastIndexOf(':'));
             TrackedHours = timeEntry.TrackedHours.ToString(@"hh\:mm");
-            User = timeEntry.User;
+            User = new UserDTO(timeEntry.User, domain);
             TimeIn = timeEntry.TimeIn != null ? new TimeDTO(timeEntry.TimeIn) : null;
             TimeOut = timeEntry.TimeOut != null ? new TimeDTO(timeEntry.TimeOut) : null;
             Overtime = timeEntry.Overtime;   // Overtime Entity
@@ -99,6 +99,7 @@ namespace api.DTOs
         }
 
         // override
+        public new UserDTO User { get; set; }
         public new string? StartTime { get; set; }
         public new string? EndTime { get; set; }
         public new string? WorkedHours { get; set; }

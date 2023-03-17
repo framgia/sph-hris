@@ -46,120 +46,126 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
               </div>
             ) : (
               <>
-                {table.getRowModel().rows.map((row) => (
-                  <Disclosure key={row.id}>
-                    {({ open }) => (
-                      <motion.div
-                        variants={variants}
-                        initial="initial"
-                        animate="animate"
-                        exit="exit"
-                      >
-                        <Disclosure.Button
-                          className={classNames(
-                            'w-full border-b border-slate-200 py-2 px-4 hover:bg-white',
-                            open ? 'bg-white' : 'hover:shadow-md hover:shadow-slate-200'
-                          )}
+                {table.getRowModel().rows.map((row) => {
+                  const {
+                    avatar,
+                    name,
+                    project,
+                    leaveDate,
+                    type,
+                    isWithPay,
+                    manager,
+                    projectLeader,
+                    totalUndertime,
+                    totalLeaves,
+                    dateFiled,
+                    id
+                  } = row.original
+                  return (
+                    <Disclosure key={row.id}>
+                      {({ open }) => (
+                        <motion.div
+                          variants={variants}
+                          initial="initial"
+                          animate="animate"
+                          exit="exit"
                         >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-2">
-                              <Avatar
-                                src={`https://placeimg.com/640/480/abstract/${row.id}`}
-                                size="base"
-                                rounded="full"
-                              />
-                              <div className="flex flex-col items-start">
-                                <h1 className="font-semibold">{row.original.name}</h1>
-                                <small className="text-slate-500">Web Developer</small>
-                              </div>
-                            </div>
-                            <ChevronRight
-                              className={classNames(
-                                'h-4 w-4 text-slate-600 duration-300',
-                                open ? 'rotate-90' : ''
-                              )}
-                            />
-                          </div>
-                        </Disclosure.Button>
-                        <DisclosureTransition>
-                          <Disclosure.Panel
+                          <Disclosure.Button
                             className={classNames(
-                              'text-slate-600',
-                              open ? 'bg-white shadow-md shadow-slate-200' : ''
+                              'w-full border-b border-slate-200 py-2 px-4 hover:bg-white',
+                              open ? 'bg-white' : 'hover:shadow-md hover:shadow-slate-200'
                             )}
                           >
-                            <ul className="flex flex-col divide-y divide-slate-200">
-                              <li className="px-4 py-2">
-                                Project:{' '}
-                                <span className="font-semibold">{row.original.project}</span>
-                              </li>
-                              <li className="px-4 py-2">
-                                Leave Date:{' '}
-                                <span className="font-semibold">{row.original.leaveDate}</span>
-                              </li>
-                              <li className="px-4 py-2">
-                                Type: <span className="font-semibold">{row.original.type}</span>
-                              </li>
-                              <li className="px-4 py-2">
-                                With Pay:{' '}
-                                <span className="font-semibold">
-                                  {row.original.isWithPay ? 'Yes' : 'No'}
-                                </span>
-                              </li>
-                              <li className="px-4 py-2">
-                                Manager:{' '}
-                                <span className="font-semibold">{row.original.manager}</span>
-                              </li>
-                              <li className="px-4 py-2">
-                                Project Leader:{' '}
-                                <span className="font-semibold">{row.original.projectLeader}</span>
-                              </li>
-                              <li className="px-4 py-2">
-                                Total Undertime (Mins) :{' '}
-                                <span className="font-semibold">{row.original.totalUndertime}</span>
-                              </li>
-                              <li className="px-4 py-2">
-                                Total leaves (Days) :{' '}
-                                <span className="font-semibold">{row.original.totalLeaves}</span>
-                              </li>
-                              <li className="px-4 py-2">
-                                Date Filed:{' '}
-                                <span className="font-semibold">{row.original.dateFiled}</span>
-                              </li>
-                              <li className="flex items-center space-x-2 px-4 py-2">
-                                <span>Actions:</span>
-                                <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
-                                  <Tippy
-                                    placement="left"
-                                    content="View Reason"
-                                    className="!text-xs"
-                                  >
-                                    <Button
-                                      onClick={() => handleListOfLeaveToggle(row.original)}
-                                      rounded="none"
-                                      className="py-0.5 px-1 text-slate-500"
-                                    >
-                                      <Eye className="h-4 w-4" />
-                                    </Button>
-                                  </Tippy>
-                                  <Tippy placement="left" content="Edit" className="!text-xs">
-                                    <Button
-                                      onClick={() => alert(row.original.id)}
-                                      rounded="none"
-                                      className="py-0.5 px-1 text-slate-500"
-                                    >
-                                      <Edit className="h-4 w-4" />
-                                    </Button>
-                                  </Tippy>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-2">
+                                <Avatar src={`${avatar}`} size="base" rounded="full" />
+                                <div className="flex flex-col items-start">
+                                  <h1 className="font-semibold">{name}</h1>
+                                  <small className="text-slate-500">Web Developer</small>
                                 </div>
-                              </li>
-                            </ul>
-                          </Disclosure.Panel>
-                        </DisclosureTransition>
-                      </motion.div>
-                    )}
-                  </Disclosure>
-                ))}
+                              </div>
+                              <ChevronRight
+                                className={classNames(
+                                  'h-4 w-4 text-slate-600 duration-300',
+                                  open ? 'rotate-90' : ''
+                                )}
+                              />
+                            </div>
+                          </Disclosure.Button>
+                          <DisclosureTransition>
+                            <Disclosure.Panel
+                              className={classNames(
+                                'text-slate-600',
+                                open ? 'bg-white shadow-md shadow-slate-200' : ''
+                              )}
+                            >
+                              <ul className="flex flex-col divide-y divide-slate-200">
+                                <li className="px-4 py-2">
+                                  Project: <span className="font-semibold">{project}</span>
+                                </li>
+                                <li className="px-4 py-2">
+                                  Leave Date: <span className="font-semibold">{leaveDate}</span>
+                                </li>
+                                <li className="px-4 py-2">
+                                  Type: <span className="font-semibold">{type}</span>
+                                </li>
+                                <li className="px-4 py-2">
+                                  With Pay:{' '}
+                                  <span className="font-semibold">{isWithPay ? 'Yes' : 'No'}</span>
+                                </li>
+                                <li className="px-4 py-2">
+                                  Manager: <span className="font-semibold">{manager}</span>
+                                </li>
+                                <li className="px-4 py-2">
+                                  Project Leader:{' '}
+                                  <span className="font-semibold">{projectLeader}</span>
+                                </li>
+                                <li className="px-4 py-2">
+                                  Total Undertime (Mins) :{' '}
+                                  <span className="font-semibold">{totalUndertime}</span>
+                                </li>
+                                <li className="px-4 py-2">
+                                  Total leaves (Days) :{' '}
+                                  <span className="font-semibold">{totalLeaves}</span>
+                                </li>
+                                <li className="px-4 py-2">
+                                  Date Filed: <span className="font-semibold">{dateFiled}</span>
+                                </li>
+                                <li className="flex items-center space-x-2 px-4 py-2">
+                                  <span>Actions:</span>
+                                  <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
+                                    <Tippy
+                                      placement="left"
+                                      content="View Reason"
+                                      className="!text-xs"
+                                    >
+                                      <Button
+                                        onClick={() => handleListOfLeaveToggle(row.original)}
+                                        rounded="none"
+                                        className="py-0.5 px-1 text-slate-500"
+                                      >
+                                        <Eye className="h-4 w-4" />
+                                      </Button>
+                                    </Tippy>
+                                    <Tippy placement="left" content="Edit" className="!text-xs">
+                                      <Button
+                                        onClick={() => alert(id)}
+                                        rounded="none"
+                                        className="py-0.5 px-1 text-slate-500"
+                                      >
+                                        <Edit className="h-4 w-4" />
+                                      </Button>
+                                    </Tippy>
+                                  </div>
+                                </li>
+                              </ul>
+                            </Disclosure.Panel>
+                          </DisclosureTransition>
+                        </motion.div>
+                      )}
+                    </Disclosure>
+                  )
+                })}
 
                 {/* This will show the Remarks Modal */}
                 {isOpenListOfLeave ? (

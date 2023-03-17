@@ -1,5 +1,3 @@
-using api.Entities;
-
 namespace api.DTOs
 {
     public class TimeEntriesSummaryDTO
@@ -15,7 +13,7 @@ namespace api.DTOs
         }
 
         // override
-        public User User { get; set; }
+        public UserDTO User { get; set; }
         public float Leave { get; set; }
         public int Absences { get; set; }
 

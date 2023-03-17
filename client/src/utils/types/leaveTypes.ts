@@ -1,29 +1,19 @@
 export interface ILeave {
   id: number
-  leaveProjects: [
-    {
-      project: {
-        name: string
-      }
-      projectLeader: {
-        name: string
-      }
-    }
-  ]
-  user: {
-    id: number
-    name: string
-    role: {
+  userId: number
+  avatar: string
+  userName: string
+  userRole: string
+  leaveType: string
+  manager: string
+  leaveProjects: Array<{
+    project: {
       name: string
     }
-  }
-  leaveType: {
-    name: string
-  }
-  manager: {
-    name: string
-  }
-  otherProject: string
+    projectLeader: {
+      name: string
+    }
+  }>
   reason: string
   leaveDate: string
   isWithPay: boolean
