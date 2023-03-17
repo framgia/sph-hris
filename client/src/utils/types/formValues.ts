@@ -132,3 +132,38 @@ export type ScheduleFormData = {
   saturday: TimeEntry
   sunday: TimeEntry
 }
+
+export type ATMApplicationFormValues = {
+  last_name: string
+  first_name: string
+  middle_name: string
+  mother_maiden_name: string
+  marital_status: string
+  gender: string
+  permanent_address: string
+  city_municipality_province: string
+  zipcode: string
+  contact_number: string
+  birth_place: string
+  birthday: string
+  position: string
+  tin_number: string
+  sss_number: string
+}
+
+export type LaptopMonitoringFormValues = {
+  laptop_owner: string
+  laptop_brand: string
+  laptop_model: string
+  laptop_serial_number: string
+  laptop_company_tag: string
+  laptop_issue_date: string
+  laptop_condition: string
+  laptop_issues: string
+  laptop_issues_list: string
+  laptop_os: string
+  laptop_ram: string
+  laptop_processor: string
+  laptop_video_memory: string
+  other_note: string
+}

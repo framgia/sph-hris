@@ -260,3 +260,44 @@ export const ScheduleSchema = yup.object().shape({
     })
   })
 })
+
+export const ATMApplicationSchema = yup.object().shape({
+  last_name: yup.string().required().label('Last Name'),
+  first_name: yup.string().required().label('First Name'),
+  middle_name: yup.string().label('Middle Name'),
+  mother_maiden_name: yup.string().required().label(`Mother's Maiden Name`),
+  marital_status: yup.string().required().label('Marital Status'),
+  gender: yup.string().required().label('Gender'),
+  permanent_address: yup.string().required().label('Permanent Address'),
+  city_municipality_province: yup.string().required().label('City / Municipality / Province'),
+  zipcode: yup.string().required().label('Zip Code'),
+  contact_number: yup.string().required().label('Contact Number'),
+  birth_place: yup.string().required().label('Birth Place'),
+  birthday: yup.string().required().label('Birthday'),
+  position: yup.string().required().label('Position'),
+  tin_number: yup
+    .string()
+    .matches(/^[0-9-]*$/)
+    .label('TIN Number (XXX-XXX-XXX-XXX)'),
+  sss_number: yup
+    .string()
+    .matches(/^[0-9-]*$/)
+    .label('SSS number (XX-XXXXXXX-X)')
+})
+
+export const LaptopMonitoringSchema = yup.object().shape({
+  laptop_owner: yup.string().required().label('Laptop Owner'),
+  laptop_brand: yup.string().required().label('Laptop Brand'),
+  laptop_model: yup.string().required().label('Laptop Model'),
+  laptop_serial_number: yup.string().required().label('Laptop Serial Number'),
+  laptop_company_tag: yup.string().required().label('Laptop Company Tag'),
+  laptop_issue_date: yup.string().required().label('Laptop Issue Date'),
+  laptop_condition: yup.string().required().label('Laptop Condition'),
+  laptop_issues: yup.string().required().label('Laptop Issue'),
+  laptop_issues_list: yup.string().required().label('Laptop Issues'),
+  laptop_os: yup.string().required().label('Laptop OS'),
+  laptop_ram: yup.string().required().label('Laptop Ram'),
+  laptop_processor: yup.string().required().label('Laptop Processor'),
+  laptop_video_memory: yup.string().required().label('Laptop Video Memory'),
+  other_note: yup.string().label('Other Note'),
+})
