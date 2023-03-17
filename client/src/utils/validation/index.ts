@@ -260,3 +260,27 @@ export const ScheduleSchema = yup.object().shape({
     })
   })
 })
+
+export const ATMApplicationSchema = yup.object().shape({
+  last_name: yup.string().required().label('Last Name'),
+  first_name: yup.string().required().label('First Name'),
+  middle_name: yup.string().label('Middle Name'),
+  mother_maiden_name: yup.string().required().label(`Mother's Maiden Name`),
+  marital_status: yup.string().required().label('Marital Status'),
+  gender: yup.string().required().label('Gender'),
+  permanent_address: yup.string().required().label('Permanent Address'),
+  city_municipality_province: yup.string().required().label('City / Municipality / Province'),
+  zipcode: yup.string().required().label('Zip Code'),
+  contact_number: yup.string().required().label('Contact Number'),
+  birth_place: yup.string().required().label('Birth Place'),
+  birthday: yup.string().required().label('Birthday'),
+  position: yup.string().required().label('Position'),
+  tin_number: yup
+    .string()
+    .matches(/^[0-9-]*$/)
+    .label('TIN Number (XXX-XXX-XXX-XXX)'),
+  sss_number: yup
+    .string()
+    .matches(/^[0-9-]*$/)
+    .label('SSS number (XX-XXXXXXX-X)')
+})
