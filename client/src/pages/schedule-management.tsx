@@ -1,7 +1,7 @@
 import { NextPage } from 'next'
 import classNames from 'classnames'
-import { Info } from 'react-feather'
 import isEmpty from 'lodash/isEmpty'
+import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -14,9 +14,12 @@ import FadeInOut from '~/components/templates/FadeInOut'
 import { ScheduleFormData } from '~/utils/types/formValues'
 import DayButton from '~/components/atoms/Buttons/DayButton'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
+import { scheduleList } from '~/utils/constants/dummyScheduleData'
 import ScheduleManagementLayout from '~/components/templates/ScheduleManagementLayout'
 
 const ScheduleManagement: NextPage = (): JSX.Element => {
+  const router = useRouter()
+  const { id } = router.query
   const [errorMessage, setErrorMessage] = useState<string>('')
   const {
     reset,
@@ -55,6 +58,26 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
       }
     })
   }
+
+  // For Filtering based on route ID and itemID
+  useEffect(() => {
+    const filteredData = scheduleList?.filter((item) => item.id === Number(id))
+    setValue('scheduleName', filteredData[0]?.scheduleName)
+    setValue('mondaySelected', filteredData[0]?.mondaySelected)
+    setValue('monday', filteredData[0]?.monday)
+    setValue('tuesdaySelected', filteredData[0]?.tuesdaySelected)
+    setValue('tuesday', filteredData[0]?.tuesday)
+    setValue('wednesdaySelected', filteredData[0]?.wednesdaySelected)
+    setValue('wednesday', filteredData[0]?.wednesday)
+    setValue('thursdaySelected', filteredData[0]?.thursdaySelected)
+    setValue('thursday', filteredData[0]?.thursday)
+    setValue('fridaySelected', filteredData[0]?.fridaySelected)
+    setValue('friday', filteredData[0]?.friday)
+    setValue('saturdaySelected', filteredData[0]?.saturdaySelected)
+    setValue('saturday', filteredData[0]?.saturday)
+    setValue('sundaySelected', filteredData[0]?.sundaySelected)
+    setValue('sunday', filteredData[0]?.sunday)
+  }, [id])
 
   useEffect(() => {
     if (isButtonSelected) {
@@ -107,9 +130,8 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
   return (
     <ScheduleManagementLayout metaTitle="Schedule Management">
       <FadeInOut className="default-scrollbar overflow-auto p-6 text-slate-800">
-        <header className="flex items-center space-x-2">
-          <h1 className="font-medium uppercase">Schedule</h1>
-          <Info className="h-4 w-4 text-slate-600" />
+        <header>
+          <h1 className="font-medium uppercase">{watch('scheduleName') ?? 'New Schedule'}</h1>
         </header>
         <form
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -555,7 +577,7 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
               type="button"
               variant="secondary"
               onClick={handleReset}
-              disabled={isSubmitting}
+              disabled={isSubmitting || !isEmpty(id)}
               className="w-24 rounded-md py-2 text-xs"
             >
               Cancel

@@ -115,6 +115,7 @@ export type TimeEntry = {
 }
 
 export type ScheduleFormData = {
+  id?: number
   scheduleName: string
   mondaySelected: boolean
   tuesdaySelected: boolean

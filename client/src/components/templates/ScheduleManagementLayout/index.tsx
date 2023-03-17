@@ -8,8 +8,9 @@ import Layout from './../Layout'
 import CustomSearch from './CustomSearch'
 import Card from '~/components/atoms/Card'
 import Button from '~/components/atoms/Buttons/Button'
+import { ISchedule } from '~/utils/types/scheduleTypes'
+import { scheduleList } from '~/utils/constants/dummyScheduleData'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
-import { ISchedule, scheduleList } from '~/utils/constants/dummyScheduleData'
 
 type Props = {
   children: ReactNode
@@ -81,7 +82,7 @@ const ScheduleManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Eleme
                     ?.filter(
                       (row) =>
                         searchedVal?.length === 0 ||
-                        row?.name
+                        row?.scheduleName
                           .toString()
                           .toLowerCase()
                           .includes(searchedVal.toString().toLowerCase())
@@ -135,7 +136,7 @@ const ScheduleItem = (item: ISchedule): JSX.Element => {
       }}
     >
       <Calendar className="h-5 w-5 stroke-1" />
-      <span>{item.name}</span>
+      <span>{item.scheduleName}</span>
     </li>
   )
 }

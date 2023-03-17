@@ -82,7 +82,12 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                     overtime !== null && (
                       <Disclosure key={row.id}>
                         {({ open }) => (
-                          <>
+                          <motion.div
+                            variants={variants}
+                            initial="initial"
+                            animate="animate"
+                            exit="exit"
+                          >
                             <Disclosure.Button
                               className={classNames(
                                 'w-full border-b border-slate-200 py-3 px-4 hover:bg-white',
@@ -96,11 +101,12 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                               )}
                             >
                               <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-2 text-slate-600">
+                                  <Calendar className="h-4 w-4" />
                                   <span className="font-medium">
-                                    {moment(new Date(timeEntry.date)).format('MMMM DD, YYYY')}
+                                    {moment(new Date(row.original.date)).format('MMMM DD, YYYY')}
                                   </span>
-                                  <Chip label={timeEntry.status} />
+                                  <Chip label={row.original.status} />
                                 </div>
                                 <ChevronRight
                                   className={classNames(
@@ -360,7 +366,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                 </ul>
                               </Disclosure.Panel>
                             </DisclosureTransition>
-                          </>
+                          </motion.div>
                         )}
                       </Disclosure>
                     )
