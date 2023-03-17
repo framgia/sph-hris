@@ -36,6 +36,7 @@ export interface ITimeEntry {
   user: {
     id: number
     name: string
+    avatarLink: string
   }
   timeIn: {
     id: number
@@ -55,7 +56,6 @@ export interface ITimeEntry {
   undertime: number
   overtime: ITimeEntryOvertime
   status: string
-  avatar: string
 }
 
 export interface ITimeEntryById {
@@ -94,6 +94,7 @@ export interface ITimesheetSummary {
   user: {
     id: number
     name: string
+    avatarLink: string
   }
   avatar: string
   leave: number

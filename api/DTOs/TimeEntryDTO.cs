@@ -17,8 +17,7 @@ namespace api.DTOs
             Date = DateOnly.FromDateTime(timeEntry.Date);
             WorkedHours = timeEntry.WorkedHours?.Remove(timeEntry.WorkedHours.LastIndexOf(':'));
             TrackedHours = timeEntry.TrackedHours.ToString(@"hh\:mm");
-            User = timeEntry.User;
-            Avatar = $"{domain}/media/{timeEntry.User.ProfileImage!.CollectionName}/{timeEntry.User.ProfileImage!.FileName}";
+            User = new UserDTO(timeEntry.User, domain);
             TimeIn = timeEntry.TimeIn != null ? new TimeDTO(timeEntry.TimeIn) : null;
             TimeOut = timeEntry.TimeOut != null ? new TimeDTO(timeEntry.TimeOut) : null;
             Overtime = timeEntry.Overtime;   // Overtime Entity
@@ -100,8 +99,8 @@ namespace api.DTOs
         }
 
         // override
+        public new UserDTO User { get; set; }
         public new string? StartTime { get; set; }
-        public string? Avatar { get; set; }
         public new string? EndTime { get; set; }
         public new string? WorkedHours { get; set; }
         public new string? TrackedHours { get; set; }

@@ -9,6 +9,7 @@ export const GET_ALL_EMPLOYEE_TIMESHEET = (input: string, argument: string): str
         user {
           id
           name
+          avatarLink
         }
         timeIn {
           id
@@ -33,7 +34,6 @@ export const GET_ALL_EMPLOYEE_TIMESHEET = (input: string, argument: string): str
           isManagerApproved
         }
         status
-        avatar
       }
     }
   `
@@ -121,8 +121,8 @@ export const GET_TIMESHEET_SUMMARY = (input: string, argument: string): string =
         user{
           id
           name
+          avatarLink
         }
-        avatar
         leave
         absences
         late
