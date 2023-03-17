@@ -3,20 +3,22 @@ import Link from 'next/link'
 import Tooltip from 'rc-tooltip'
 import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
+import { motion } from 'framer-motion'
 import { HiFire } from 'react-icons/hi'
 import React, { FC, useState } from 'react'
 import { Table } from '@tanstack/react-table'
 import { Disclosure } from '@headlessui/react'
-import { Check, ChevronRight, Clock, Edit, RefreshCw, ThumbsDown } from 'react-feather'
+import { Calendar, Check, ChevronRight, Clock, Edit, RefreshCw, ThumbsDown } from 'react-feather'
 
 import Chip from '~/components/atoms/Chip'
 import useUserQuery from '~/hooks/useUserQuery'
 import Button from '~/components/atoms/Buttons/Button'
 import AddNewOvertimeModal from '../AddNewOvertimeModal'
 import { WorkStatus } from '~/utils/constants/work-status'
+import { variants } from '~/utils/constants/animationVariants'
 import { NO_OVERTIME } from '~/utils/constants/overtimeStatus'
-import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
+import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import InterruptionTimeEntriesModal from '../InterruptionTimeEntriesModal'
 import DisclosureTransition from '~/components/templates/DisclosureTransition'
 
@@ -80,7 +82,12 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                     overtime !== null && (
                       <Disclosure key={row.id}>
                         {({ open }) => (
-                          <>
+                          <motion.div
+                            variants={variants}
+                            initial="initial"
+                            animate="animate"
+                            exit="exit"
+                          >
                             <Disclosure.Button
                               className={classNames(
                                 'w-full border-b border-slate-200 py-3 px-4 hover:bg-white',
@@ -94,11 +101,12 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                               )}
                             >
                               <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-2 text-slate-600">
+                                  <Calendar className="h-4 w-4" />
                                   <span className="font-medium">
-                                    {moment(new Date(timeEntry.date)).format('MMMM DD, YYYY')}
+                                    {moment(new Date(row.original.date)).format('MMMM DD, YYYY')}
                                   </span>
-                                  <Chip label={timeEntry.status} />
+                                  <Chip label={row.original.status} />
                                 </div>
                                 <ChevronRight
                                   className={classNames(
@@ -358,7 +366,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                 </ul>
                               </Disclosure.Panel>
                             </DisclosureTransition>
-                          </>
+                          </motion.div>
                         )}
                       </Disclosure>
                     )

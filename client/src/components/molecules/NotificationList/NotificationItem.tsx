@@ -2,6 +2,7 @@ import moment from 'moment'
 import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import { Eye } from 'react-feather'
+import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
 import React, { FC, useEffect } from 'react'
 import { Table } from '@tanstack/react-table'
@@ -49,16 +50,24 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
     void router.push(`/notifications/?id=${row.id}`)
   }
 
-  const handleLink = (id: number): void => {
+  const handleLink = (row: INotification): void => {
     void notificationMutations.mutate(
-      { id },
+      { id: row.id },
       {
         // eslint-disable-next-line @typescript-eslint/promise-function-async
         onSuccess: () => {
-          void refetch()
+          if (!row.isRead || row.readAt == null) {
+            void refetch()
+          }
         }
       }
     )
+  }
+
+  const variants = {
+    initial: { opacity: 0, y: -5 },
+    animate: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+    exit: { opacity: 0, y: 5, transition: { duration: 0.2 } }
   }
 
   return (
@@ -80,7 +89,14 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
               {table.getRowModel().rows.map((row) => {
                 const isActive = !row.original.isRead || row.original.readAt == null
                 return (
-                  <div key={row.original.id} className="my-2 px-4">
+                  <motion.div
+                    key={row.original.id}
+                    className="my-2 px-4"
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    variants={variants}
+                  >
                     <div
                       className={classNames(
                         'group rounded-md border border-slate-200',
@@ -126,7 +142,7 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
                             type="button"
                             className="text-slate-400 group-hover:text-slate-500"
                             onClick={() => {
-                              handleLink(row.original.id)
+                              handleLink(row.original)
                               handleViewDetails(row.original)
                             }}
                           >
@@ -144,7 +160,7 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
                         />
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 )
               })}
             </>

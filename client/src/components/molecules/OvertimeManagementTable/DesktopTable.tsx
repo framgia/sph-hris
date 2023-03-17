@@ -2,7 +2,9 @@ import React, { FC } from 'react'
 import classNames from 'classnames'
 import { flexRender, Table } from '@tanstack/react-table'
 
+import Tr from '~/components/atoms/Tr'
 import TableSkeleton from './../SkeletonTable'
+import AnimatedTable from '~/components/atoms/Table'
 import { IOvertimeManagement, IOvertimeManagementManager } from '~/utils/interfaces'
 
 type Props = {
@@ -13,13 +15,7 @@ type Props = {
 
 const DesktopTable: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
   return (
-    <table
-      {...{
-        style: {
-          width: table.getCenterTotalSize()
-        }
-      }}
-    >
+    <AnimatedTable {...{ table }}>
       <thead className="border-b border-slate-200">
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
@@ -59,7 +55,7 @@ const DesktopTable: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
                 ) : (
                   <>
                     {table.getRowModel().rows.map((row) => (
-                      <tr
+                      <Tr
                         key={row.id}
                         className={classNames(
                           'group hover:bg-white hover:shadow-md hover:shadow-slate-200'
@@ -70,7 +66,7 @@ const DesktopTable: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </td>
                         ))}
-                      </tr>
+                      </Tr>
                     ))}
                   </>
                 )}
@@ -81,7 +77,7 @@ const DesktopTable: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
           )}
         </>
       </tbody>
-    </table>
+    </AnimatedTable>
   )
 }
 

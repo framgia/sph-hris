@@ -2,18 +2,19 @@ import { NextPage } from 'next'
 import dynamic from 'next/dynamic'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
+import { PulseLoader } from 'react-spinners'
 import React, { useEffect, useState } from 'react'
 
 import Card from '~/components/atoms/Card'
 import {
+  Series,
   getHeatmapData,
-  initialChartOptions,
   initialSeriesData,
-  Series
+  initialChartOptions
 } from '~/utils/generateData'
 import useLeave from '~/hooks/useLeave'
 import useUserQuery from '~/hooks/useUserQuery'
-import BarsLoadingIcon from '~/utils/icons/BarsLoadingIcon'
+import FadeInOut from '~/components/templates/FadeInOut'
 import { Breakdown, LeaveTable } from '~/utils/types/leaveTypes'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import BreakdownOfLeaveCard from '~/components/molecules/BreakdownOfLeavesCard'
@@ -113,47 +114,49 @@ const LeaveSummary: NextPage = (): JSX.Element => {
 
   return (
     <LeaveManagementLayout metaTitle="Leave Summary">
-      {!isLeavesLoading ? (
-        <main className="default-scrollbar h-full flex-col space-y-4 overflow-y-auto px-4">
-          <MaxWidthContainer>
-            <Card className="default-scrollbar mt-4 overflow-x-auto overflow-y-hidden">
-              <div className="w-full min-w-[647px] px-5 pt-4 md:max-w-full">
-                <ReactApexChart
-                  options={initialChartOptions}
-                  series={series}
-                  type="heatmap"
-                  width={'100%'}
-                  height={450}
+      <FadeInOut className="default-scrollbar h-full overflow-y-auto px-4">
+        {!isLeavesLoading ? (
+          <main className="flex flex-col space-y-4">
+            <MaxWidthContainer>
+              <Card className="default-scrollbar mt-4 overflow-x-auto overflow-y-hidden">
+                <div className="w-full min-w-[647px] px-5 pt-4 md:max-w-full">
+                  <ReactApexChart
+                    options={initialChartOptions}
+                    series={series}
+                    type="heatmap"
+                    width={'100%'}
+                    height={450}
+                  />
+                </div>
+              </Card>
+            </MaxWidthContainer>
+            <MaxWidthContainer>
+              <article
+                className={classNames(
+                  'flex flex-col space-y-4 pb-24 text-xs',
+                  'lg:flex-row lg:space-y-0 lg:space-x-4'
+                )}
+              >
+                {/* Pass the needed props of these components */}
+                <BreakdownOfLeaveCard data={leaves?.leaves.breakdown as Breakdown} />
+                <LeaveManagementResultTable
+                  {...{
+                    query: {
+                      data: leaves?.leaves.table as LeaveTable[],
+                      isLoading: isLeavesLoading,
+                      isError: isLeavesError
+                    }
+                  }}
                 />
-              </div>
-            </Card>
-          </MaxWidthContainer>
-          <MaxWidthContainer>
-            <article
-              className={classNames(
-                'flex flex-col space-y-4 pb-24 text-xs',
-                'lg:flex-row lg:space-y-0 lg:space-x-4'
-              )}
-            >
-              {/* Pass the needed props of these components */}
-              <BreakdownOfLeaveCard data={leaves?.leaves.breakdown as Breakdown} />
-              <LeaveManagementResultTable
-                {...{
-                  query: {
-                    data: leaves?.leaves.table as LeaveTable[],
-                    isLoading: isLeavesLoading,
-                    isError: isLeavesError
-                  }
-                }}
-              />
-            </article>
-          </MaxWidthContainer>
-        </main>
-      ) : (
-        <div className="flex min-h-[50vh] items-center justify-center">
-          <BarsLoadingIcon className="h-7 w-7 fill-current text-amber-500" />
-        </div>
-      )}
+              </article>
+            </MaxWidthContainer>
+          </main>
+        ) : (
+          <div className="flex min-h-[50vh] items-center justify-center">
+            <PulseLoader color="#ffb40b" size={10} />
+          </div>
+        )}
+      </FadeInOut>
     </LeaveManagementLayout>
   )
 }

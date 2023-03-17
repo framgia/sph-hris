@@ -152,7 +152,7 @@ export const columns = [
     footer: (info) => info.column.id
   }),
   columnHelper.display({
-    id: 'id',
+    id: 'approvedMinutes',
     header: () => <CellHeader label="Overtime(min)" />,
     cell: (props) => {
       const { original: timeEntry } = props.row
