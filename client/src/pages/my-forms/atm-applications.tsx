@@ -17,7 +17,7 @@ import MyFormsLayout from '~/components/templates/MyFormsLayout'
 import { ATMApplicationFormValues } from '~/utils/types/formValues'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 
-const PersonalInformation: NextPage = (): JSX.Element => {
+const ATMApplication: NextPage = (): JSX.Element => {
   const {
     watch,
     control,
@@ -30,13 +30,13 @@ const PersonalInformation: NextPage = (): JSX.Element => {
     resolver: yupResolver(ATMApplicationSchema)
   })
 
-  useFormPersist('peronalInformationFormValues', {
+  useFormPersist('atmApplicationFormValues', {
     watch,
     setValue
   })
 
   // This will handle saving the form data
-  const handleSavePersonalInformation: SubmitHandler<ATMApplicationFormValues> = async (
+  const handleSaveATMApplication: SubmitHandler<ATMApplicationFormValues> = async (
     data
   ): Promise<void> => {
     return await new Promise((resolve) => {
@@ -67,7 +67,7 @@ const PersonalInformation: NextPage = (): JSX.Element => {
       <FadeInOut className="default-scrollbar h-full overflow-y-auto">
         <form
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          onSubmit={handleSubmit(handleSavePersonalInformation)}
+          onSubmit={handleSubmit(handleSaveATMApplication)}
         >
           <MaxWidthContainer
             maxWidth="max-w-[710px]"
@@ -439,7 +439,7 @@ const PersonalInformation: NextPage = (): JSX.Element => {
             </Card>
 
             {/* Birth Place* */}
-            <Card rounded="lg" shadow-size="md" disabled={isSubmitting} iserror={addressErrors}>
+            <Card rounded="lg" shadow-size="md" disabled={isSubmitting} iserror={birthplaceErrors}>
               <section className="space-y-4 py-4 px-5 md:py-5 md:px-7">
                 <h2 className="text-sm md:text-base">
                   Birth Place <span className="text-rose-500">*</span>
@@ -575,4 +575,4 @@ const PersonalInformation: NextPage = (): JSX.Element => {
   )
 }
 
-export default PersonalInformation
+export default ATMApplication
