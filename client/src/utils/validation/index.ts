@@ -284,3 +284,20 @@ export const ATMApplicationSchema = yup.object().shape({
     .matches(/^[0-9-]*$/)
     .label('SSS number (XX-XXXXXXX-X)')
 })
+
+export const LaptopMonitoringSchema = yup.object().shape({
+  laptop_owner: yup.string().required().label('Laptop Owner'),
+  laptop_brand: yup.string().required().label('Laptop Brand'),
+  laptop_model: yup.string().required().label('Laptop Model'),
+  laptop_serial_number: yup.string().required().label('Laptop Serial Number'),
+  laptop_company_tag: yup.string().required().label('Laptop Company Tag'),
+  laptop_issue_date: yup.string().required().label('Laptop Issue Date'),
+  laptop_condition: yup.string().required().label('Laptop Condition'),
+  laptop_issues: yup.string().required().label('Laptop Issue'),
+  laptop_issues_list: yup.string().required().label('Laptop Issues'),
+  laptop_os: yup.string().required().label('Laptop OS'),
+  laptop_ram: yup.string().required().label('Laptop Ram'),
+  laptop_processor: yup.string().required().label('Laptop Processor'),
+  laptop_video_memory: yup.string().required().label('Laptop Video Memory'),
+  other_note: yup.string().label('Other Note')
+})

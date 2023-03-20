@@ -150,3 +150,20 @@ export type ATMApplicationFormValues = {
   tin_number: string
   sss_number: string
 }
+
+export type LaptopMonitoringFormValues = {
+  laptop_owner: string
+  laptop_brand: string
+  laptop_model: string
+  laptop_serial_number: string
+  laptop_company_tag: string
+  laptop_issue_date: string
+  laptop_condition: string
+  laptop_issues: string
+  laptop_issues_list: string
+  laptop_os: string
+  laptop_ram: string
+  laptop_processor: string
+  laptop_video_memory: string
+  other_note: string
+}
