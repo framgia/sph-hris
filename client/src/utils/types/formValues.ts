@@ -142,7 +142,7 @@ export type ATMApplicationFormValues = {
   gender: string
   permanent_address: string
   city_municipality_province: string
-  zipcode: string
+  zipcode: number
   contact_number: string
   birth_place: string
   birthday: string

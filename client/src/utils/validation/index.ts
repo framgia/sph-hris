@@ -270,8 +270,16 @@ export const ATMApplicationSchema = yup.object().shape({
   gender: yup.string().required().label('Gender'),
   permanent_address: yup.string().required().label('Permanent Address'),
   city_municipality_province: yup.string().required().label('City / Municipality / Province'),
-  zipcode: yup.string().required().label('Zip Code'),
-  contact_number: yup.string().required().label('Contact Number'),
+  zipcode: yup
+    .string()
+    .matches(/^[0-9]{4}$/, 'Zip code must be 4 digits')
+    .required()
+    .label('Zip Code'),
+  contact_number: yup
+    .string()
+    .matches(/^[0-9]{12}$/, 'Contact Number must be 12 digits')
+    .required()
+    .label('Contact Number'),
   birth_place: yup.string().required().label('Birth Place'),
   birthday: yup.string().required().label('Birthday'),
   position: yup.string().required().label('Position'),
