@@ -10,13 +10,13 @@ import { Controller, useForm, SubmitHandler } from 'react-hook-form'
 import Card from '~/components/atoms/Card'
 import Input from '~/components/atoms/Input'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
+import FadeInOut from '~/components/templates/FadeInOut'
+import TextField from '~/components/molecules/TextField'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { PersonalInformationSchema } from '~/utils/validation'
 import MyFormsLayout from '~/components/templates/MyFormsLayout'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import { PersonalInformationFormValues } from '~/utils/types/formValues'
-import TextField from '~/components/molecules/TextField'
-import FadeInOut from '~/components/templates/FadeInOut'
 
 const PersonalInformation: NextPage = (): JSX.Element => {
   const {

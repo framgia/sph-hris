@@ -136,7 +136,7 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
         <form
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           onSubmit={handleSubmit(handleSaveSchedule)}
-          className="mx-auto w-full min-w-[440px] max-w-full text-sm sm:max-w-xl"
+          className="mx-auto w-full max-w-full text-sm sm:max-w-xl"
         >
           <main className="mt-8 flex flex-col space-y-5 text-[13px]">
             {errorMessage !== '' ? <Alert type="info" message={errorMessage} /> : null}
@@ -173,7 +173,7 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
                 className="flex flex-1 flex-col space-y-2 overflow-x-auto sm:flex-row sm:items-center sm:space-x-2 sm:space-y-0"
               >
                 <span className="shrink-0">Days of the week</span>
-                <div className="flex items-center space-x-2 overflow-hidden rounded-lg">
+                <div className="flex flex-wrap items-center gap-2 rounded-lg">
                   <DayButton
                     {...{
                       day: 'M',
@@ -572,7 +572,7 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
             </section>
           </main>
           <hr className="border-1 my-6 border-slate-200" />
-          <footer className="flex justify-end space-x-2 py-2">
+          <footer className="flex justify-center space-x-2 py-2 sm:justify-end">
             <ButtonAction
               type="button"
               variant="secondary"

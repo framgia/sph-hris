@@ -23,7 +23,7 @@ const DayButton: React.FC<Props> = ({ day, selected, onClick, title, disabled })
         className={classNames(
           'h-12 w-12 shrink-0 select-none',
           'rounded-full border focus:outline-none',
-          selected ? 'border-amber-500 bg-amber-50 text-amber-500' : 'border-slate-300'
+          selected ? 'border-amber-500 bg-[#FFF2E9] text-amber-500' : 'border-slate-300'
         )}
       >
         {day}
