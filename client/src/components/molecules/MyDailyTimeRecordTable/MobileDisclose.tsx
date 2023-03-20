@@ -65,311 +65,305 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                   const { original: timeEntry } = row
                   const { overtime } = timeEntry
 
-                  const minuteDifference = Math.floor(
-                    moment
-                      .duration(
-                        moment(timeEntry.timeOut?.createdAt).diff(
-                          `${moment(timeEntry.date).format('YYYY-MM-DD')} ${moment(
-                            '19:30',
-                            'HH:mm:ss'
-                          ).format('HH:mm:ss')}`
+                  const minuteDifference =
+                    timeEntry.timeOut !== null
+                      ? Math.floor(
+                          moment
+                            .duration(
+                              moment(timeEntry.timeOut?.createdAt).diff(
+                                `${moment(timeEntry.date).format('YYYY-MM-DD')} ${moment(
+                                  '19:30',
+                                  'HH:mm:ss'
+                                ).format('HH:mm:ss')}`
+                              )
+                            )
+                            .asMinutes()
                         )
-                      )
-                      .asMinutes()
-                  )
+                      : NO_OVERTIME
 
                   return (
-                    overtime !== null && (
-                      <Disclosure key={row.id}>
-                        {({ open }) => (
-                          <motion.div
-                            variants={variants}
-                            initial="initial"
-                            animate="animate"
-                            exit="exit"
+                    <Disclosure key={row.id}>
+                      {({ open }) => (
+                        <motion.div
+                          variants={variants}
+                          initial="initial"
+                          animate="animate"
+                          exit="exit"
+                        >
+                          <Disclosure.Button
+                            className={classNames(
+                              'w-full border-b border-slate-200 py-3 px-4 hover:bg-white',
+                              open ? 'bg-white' : 'hover:shadow-md hover:shadow-slate-200',
+                              timeEntry.status === WorkStatus.VACATION_LEAVE.toLowerCase()
+                                ? 'bg-amber-50 hover:bg-amber-50'
+                                : '',
+                              timeEntry.status === WorkStatus.ABSENT.toLowerCase()
+                                ? 'bg-fuchsia-50 hover:bg-fuchsia-50'
+                                : ''
+                            )}
                           >
-                            <Disclosure.Button
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-2 text-slate-600">
+                                <Calendar className="h-4 w-4" />
+                                <span className="font-medium">
+                                  {moment(new Date(row.original.date)).format('MMMM DD, YYYY')}
+                                </span>
+                                <Chip label={row.original.status} />
+                              </div>
+                              <ChevronRight
+                                className={classNames(
+                                  'h-4 w-4 text-slate-600 duration-300',
+                                  open ? 'rotate-90' : ''
+                                )}
+                              />
+                            </div>
+                          </Disclosure.Button>
+                          <DisclosureTransition>
+                            <Disclosure.Panel
                               className={classNames(
-                                'w-full border-b border-slate-200 py-3 px-4 hover:bg-white',
-                                open ? 'bg-white' : 'hover:shadow-md hover:shadow-slate-200',
-                                timeEntry.status === WorkStatus.VACATION_LEAVE.toLowerCase()
-                                  ? 'bg-amber-50 hover:bg-amber-50'
-                                  : '',
-                                timeEntry.status === WorkStatus.ABSENT.toLowerCase()
-                                  ? 'bg-fuchsia-50 hover:bg-fuchsia-50'
-                                  : ''
+                                'text-slate-600',
+                                open ? 'bg-white shadow-md' : ''
                               )}
                             >
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-2 text-slate-600">
-                                  <Calendar className="h-4 w-4" />
-                                  <span className="font-medium">
-                                    {moment(new Date(row.original.date)).format('MMMM DD, YYYY')}
-                                  </span>
-                                  <Chip label={row.original.status} />
-                                </div>
-                                <ChevronRight
-                                  className={classNames(
-                                    'h-4 w-4 text-slate-600 duration-300',
-                                    open ? 'rotate-90' : ''
-                                  )}
-                                />
-                              </div>
-                            </Disclosure.Button>
-                            <DisclosureTransition>
-                              <Disclosure.Panel
-                                className={classNames(
-                                  'text-slate-600',
-                                  open ? 'bg-white shadow-md' : ''
-                                )}
-                              >
-                                <ul className="flex flex-col divide-y divide-slate-200">
-                                  <li className="flex items-center space-x-1 px-4 py-2">
-                                    <p>Time In:</p>
-                                    <div className="relative flex">
-                                      {timeEntry.timeIn?.remarks !== undefined &&
-                                      timeEntry.timeIn?.remarks !== '' ? (
-                                        <>
-                                          <Link
-                                            href={`my-daily-time-record/?time_in=${timeEntry.timeIn?.id}`}
-                                            className="relative flex cursor-pointer active:scale-95"
-                                          >
-                                            {/* Actual Time In Data */}
-                                            <span className="font-semibold">
-                                              {timeEntry.timeIn?.timeHour ?? EMPTY}
-                                            </span>
-                                            {/* Status */}
-                                            {timeEntry.startTime > timeEntry.timeIn?.timeHour ? (
-                                              <span
-                                                className={classNames(
-                                                  'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500'
-                                                )}
-                                              />
-                                            ) : (
-                                              <>
-                                                {!Number.isNaN(timeEntry.timeIn?.id) && (
-                                                  <span
-                                                    className={classNames(
-                                                      'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500'
-                                                    )}
-                                                  />
-                                                )}
-                                              </>
-                                            )}
-                                          </Link>
-                                        </>
-                                      ) : (
-                                        <>
+                              <ul className="flex flex-col divide-y divide-slate-200">
+                                <li className="flex items-center space-x-1 px-4 py-2">
+                                  <p>Time In:</p>
+                                  <div className="relative flex">
+                                    {timeEntry.timeIn?.remarks !== undefined &&
+                                    timeEntry.timeIn?.remarks !== '' ? (
+                                      <>
+                                        <Link
+                                          href={`my-daily-time-record/?time_in=${timeEntry.timeIn?.id}`}
+                                          className="relative flex cursor-pointer active:scale-95"
+                                        >
                                           {/* Actual Time In Data */}
                                           <span className="font-semibold">
                                             {timeEntry.timeIn?.timeHour ?? EMPTY}
                                           </span>
                                           {/* Status */}
-                                          {timeEntry.timeIn?.timeHour !== undefined &&
-                                          timeEntry.timeIn?.timeHour !== ''
-                                            ? !(
-                                                timeEntry.startTime > timeEntry.timeIn?.timeHour
-                                              ) && (
-                                                <span
-                                                  className={classNames(
-                                                    'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500'
-                                                  )}
-                                                />
-                                              )
-                                            : ''}
-                                        </>
-                                      )}
-                                    </div>
-                                  </li>
-                                  <li className="flex items-center space-x-2 px-4 py-2">
-                                    <p>Time Out:</p>
-                                    <div className="relative flex">
-                                      {timeEntry.timeOut?.remarks !== undefined &&
-                                      timeEntry.timeOut?.remarks !== '' ? (
-                                        <Link
-                                          href={`my-daily-time-record/?time_out=${timeEntry.timeOut?.id}`}
-                                          className="relative flex cursor-pointer active:scale-95"
-                                        >
-                                          {/* Actual Time Out Data */}
-                                          <span className="font-semibold">
-                                            {timeEntry.timeOut?.timeHour ?? EMPTY}
-                                          </span>
-                                          {/* Status */}
-                                          {!Number.isNaN(timeEntry.timeOut?.id) && (
+                                          {timeEntry.startTime > timeEntry.timeIn?.timeHour ? (
                                             <span
                                               className={classNames(
                                                 'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500'
                                               )}
                                             />
+                                          ) : (
+                                            <>
+                                              {!Number.isNaN(timeEntry.timeIn?.id) && (
+                                                <span
+                                                  className={classNames(
+                                                    'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500'
+                                                  )}
+                                                />
+                                              )}
+                                            </>
                                           )}
                                         </Link>
-                                      ) : (
+                                      </>
+                                    ) : (
+                                      <>
+                                        {/* Actual Time In Data */}
+                                        <span className="font-semibold">
+                                          {timeEntry.timeIn?.timeHour ?? EMPTY}
+                                        </span>
+                                        {/* Status */}
+                                        {timeEntry.timeIn?.timeHour !== undefined &&
+                                        timeEntry.timeIn?.timeHour !== ''
+                                          ? !(timeEntry.startTime > timeEntry.timeIn?.timeHour) && (
+                                              <span
+                                                className={classNames(
+                                                  'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500'
+                                                )}
+                                              />
+                                            )
+                                          : ''}
+                                      </>
+                                    )}
+                                  </div>
+                                </li>
+                                <li className="flex items-center space-x-2 px-4 py-2">
+                                  <p>Time Out:</p>
+                                  <div className="relative flex">
+                                    {timeEntry.timeOut?.remarks !== undefined &&
+                                    timeEntry.timeOut?.remarks !== '' ? (
+                                      <Link
+                                        href={`my-daily-time-record/?time_out=${timeEntry.timeOut?.id}`}
+                                        className="relative flex cursor-pointer active:scale-95"
+                                      >
+                                        {/* Actual Time Out Data */}
                                         <span className="font-semibold">
                                           {timeEntry.timeOut?.timeHour ?? EMPTY}
                                         </span>
-                                      )}
-                                    </div>
-                                  </li>
-                                  <li className="px-4 py-2">
-                                    Work Hours:{' '}
-                                    <span className="font-semibold">{timeEntry.workedHours}</span>
-                                  </li>
-                                  <li className="px-4 py-2">
-                                    Late(min):{' '}
-                                    <span className="font-semibold">{timeEntry.late}</span>
-                                  </li>
-                                  <li className="px-4 py-2">
-                                    Undertime(min):{' '}
-                                    <span className="font-semibold">{timeEntry.undertime}</span>
-                                  </li>
-                                  <li className="flex flex-wrap items-center space-x-2 px-4 py-2">
-                                    <span>Overtime(min):</span>
-                                    <div className="flex items-center space-x-2">
-                                      {/* If the user has an overtime */}
-                                      {overtime === null ? (
-                                        minuteDifference > 0 ? (
-                                          <Button
-                                            type="button"
-                                            className="flex items-center"
-                                            onClick={handleIsOpenNewOvertime}
-                                          >
-                                            <>
-                                              <span className="font-semibold">
-                                                {minuteDifference}
-                                              </span>
-                                              <HiFire className="h-4 w-4 text-red-500" />
-                                            </>
-
-                                            {/* File New Overtime Modal */}
-                                            {isOpenNewOvertime ? (
-                                              <AddNewOvertimeModal
-                                                {...{
-                                                  isOpen: isOpenNewOvertime,
-                                                  closeModal: handleIsOpenNewOvertime,
-                                                  timeEntry,
-                                                  initialMinutes: minuteDifference
-                                                }}
-                                              />
-                                            ) : null}
-                                          </Button>
-                                        ) : (
-                                          <span className="font-semibold">{NO_OVERTIME}</span>
-                                        )
-                                      ) : (
-                                        <>
-                                          {/* If Approved Request */}
-                                          {overtime.isLeaderApproved != null &&
-                                            overtime.isManagerApproved != null &&
-                                            overtime.isLeaderApproved &&
-                                            overtime.isManagerApproved && (
-                                              <Tippy
-                                                placement="left"
-                                                content="Approved request"
-                                                className="!text-xs"
-                                              >
-                                                <Button
-                                                  type="button"
-                                                  className="inline-flex items-center rounded border-y border-r border-slate-300 group-hover:bg-white"
-                                                >
-                                                  <Check className="h-4 w-5 rounded-l bg-green-500 text-white" />
-                                                  <span className="px-1 text-green-600">
-                                                    {overtime.approvedMinutes}
-                                                  </span>
-                                                </Button>
-                                              </Tippy>
+                                        {/* Status */}
+                                        {!Number.isNaN(timeEntry.timeOut?.id) && (
+                                          <span
+                                            className={classNames(
+                                              'ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500'
                                             )}
+                                          />
+                                        )}
+                                      </Link>
+                                    ) : (
+                                      <span className="font-semibold">
+                                        {timeEntry.timeOut?.timeHour ?? EMPTY}
+                                      </span>
+                                    )}
+                                  </div>
+                                </li>
+                                <li className="px-4 py-2">
+                                  Work Hours:{' '}
+                                  <span className="font-semibold">{timeEntry.workedHours}</span>
+                                </li>
+                                <li className="px-4 py-2">
+                                  Late(min): <span className="font-semibold">{timeEntry.late}</span>
+                                </li>
+                                <li className="px-4 py-2">
+                                  Undertime(min):{' '}
+                                  <span className="font-semibold">{timeEntry.undertime}</span>
+                                </li>
+                                <li className="flex flex-wrap items-center space-x-2 px-4 py-2">
+                                  <span>Overtime(min):</span>
+                                  <div className="flex items-center space-x-2">
+                                    {/* If the user has an overtime */}
+                                    {overtime === null ? (
+                                      minuteDifference > 0 ? (
+                                        <Button
+                                          type="button"
+                                          className="flex items-center"
+                                          onClick={handleIsOpenNewOvertime}
+                                        >
+                                          <>
+                                            <span className="font-semibold">
+                                              {minuteDifference}
+                                            </span>
+                                            <HiFire className="h-4 w-4 text-red-500" />
+                                          </>
 
-                                          {/* If Pending Request */}
-                                          {(overtime.isLeaderApproved === null ||
-                                            overtime.isManagerApproved === null) && (
+                                          {/* File New Overtime Modal */}
+                                          {isOpenNewOvertime ? (
+                                            <AddNewOvertimeModal
+                                              {...{
+                                                isOpen: isOpenNewOvertime,
+                                                closeModal: handleIsOpenNewOvertime,
+                                                timeEntry,
+                                                initialMinutes: minuteDifference
+                                              }}
+                                            />
+                                          ) : null}
+                                        </Button>
+                                      ) : (
+                                        <span className="font-semibold">{NO_OVERTIME}</span>
+                                      )
+                                    ) : (
+                                      <>
+                                        {/* If Approved Request */}
+                                        {overtime.isLeaderApproved != null &&
+                                          overtime.isManagerApproved != null &&
+                                          overtime.isLeaderApproved &&
+                                          overtime.isManagerApproved && (
                                             <Tippy
                                               placement="left"
-                                              content="Pending request"
+                                              content="Approved request"
                                               className="!text-xs"
                                             >
                                               <Button
                                                 type="button"
                                                 className="inline-flex items-center rounded border-y border-r border-slate-300 group-hover:bg-white"
                                               >
-                                                <RefreshCw className="h-4 w-5 rounded-l bg-amber-500 px-1 text-white" />
-                                                <span className="px-1 text-amber-600">
-                                                  {overtime.requestedMinutes}
+                                                <Check className="h-4 w-5 rounded-l bg-green-500 text-white" />
+                                                <span className="px-1 text-green-600">
+                                                  {overtime.approvedMinutes}
                                                 </span>
                                               </Button>
                                             </Tippy>
                                           )}
 
-                                          {/* If Disapproved Request */}
-                                          {overtime.isLeaderApproved !== null &&
-                                            overtime.isManagerApproved !== null &&
-                                            ((!overtime.isLeaderApproved &&
-                                              !overtime.isManagerApproved) ||
-                                              (overtime.isLeaderApproved &&
-                                                !overtime.isManagerApproved)) && (
-                                              <Tippy
-                                                placement="left"
-                                                content="Disapproved request"
-                                                className="!text-xs"
+                                        {/* If Pending Request */}
+                                        {(overtime.isLeaderApproved === null ||
+                                          overtime.isManagerApproved === null) && (
+                                          <Tippy
+                                            placement="left"
+                                            content="Pending request"
+                                            className="!text-xs"
+                                          >
+                                            <Button
+                                              type="button"
+                                              className="inline-flex items-center rounded border-y border-r border-slate-300 group-hover:bg-white"
+                                            >
+                                              <RefreshCw className="h-4 w-5 rounded-l bg-amber-500 px-1 text-white" />
+                                              <span className="px-1 text-amber-600">
+                                                {overtime.requestedMinutes}
+                                              </span>
+                                            </Button>
+                                          </Tippy>
+                                        )}
+
+                                        {/* If Disapproved Request */}
+                                        {overtime.isLeaderApproved !== null &&
+                                          overtime.isManagerApproved !== null &&
+                                          ((!overtime.isLeaderApproved &&
+                                            !overtime.isManagerApproved) ||
+                                            (overtime.isLeaderApproved &&
+                                              !overtime.isManagerApproved)) && (
+                                            <Tippy
+                                              placement="left"
+                                              content="Disapproved request"
+                                              className="!text-xs"
+                                            >
+                                              <Button
+                                                type="button"
+                                                className="inline-flex items-center rounded border-y border-r border-slate-300 group-hover:bg-white"
                                               >
-                                                <Button
-                                                  type="button"
-                                                  className="inline-flex items-center rounded border-y border-r border-slate-300 group-hover:bg-white"
-                                                >
-                                                  <ThumbsDown className="h-4 w-5 rounded-l bg-rose-500 px-1 text-white" />
-                                                  <span className="px-1 text-rose-600">
-                                                    {overtime.requestedMinutes}
-                                                  </span>
-                                                </Button>
-                                              </Tippy>
-                                            )}
-                                        </>
-                                      )}
-                                    </div>
-                                  </li>
-                                  <li className="flex items-center space-x-2 px-4 py-2">
-                                    <span>Actions:</span>
-                                    <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
-                                      <Tooltip
-                                        placement="left"
-                                        overlay="Time Entries"
-                                        arrowContent={
-                                          <div className="rc-tooltip-arrow-inner"></div>
+                                                <ThumbsDown className="h-4 w-5 rounded-l bg-rose-500 px-1 text-white" />
+                                                <span className="px-1 text-rose-600">
+                                                  {overtime.requestedMinutes}
+                                                </span>
+                                              </Button>
+                                            </Tippy>
+                                          )}
+                                      </>
+                                    )}
+                                  </div>
+                                </li>
+                                <li className="flex items-center space-x-2 px-4 py-2">
+                                  <span>Actions:</span>
+                                  <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
+                                    <Tooltip
+                                      placement="left"
+                                      overlay="Time Entries"
+                                      arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+                                    >
+                                      <Button
+                                        onClick={() =>
+                                          handleIsOpenTimeEntryToggle(timeEntry.id.toString())
                                         }
+                                        rounded="none"
+                                        className="py-0.5 px-1 text-slate-500"
                                       >
-                                        <Button
-                                          onClick={() =>
-                                            handleIsOpenTimeEntryToggle(timeEntry.id.toString())
-                                          }
-                                          rounded="none"
-                                          className="py-0.5 px-1 text-slate-500"
-                                        >
-                                          <Clock className="h-4 w-4" />
-                                        </Button>
-                                      </Tooltip>
-                                      <Tooltip
-                                        placement="left"
-                                        overlay="Edit"
-                                        arrowContent={
-                                          <div className="rc-tooltip-arrow-inner"></div>
-                                        }
+                                        <Clock className="h-4 w-4" />
+                                      </Button>
+                                    </Tooltip>
+                                    <Tooltip
+                                      placement="left"
+                                      overlay="Edit"
+                                      arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+                                    >
+                                      <Button
+                                        onClick={() => alert(timeEntry.id)}
+                                        rounded="none"
+                                        className="py-0.5 px-1 text-slate-500"
                                       >
-                                        <Button
-                                          onClick={() => alert(timeEntry.id)}
-                                          rounded="none"
-                                          className="py-0.5 px-1 text-slate-500"
-                                        >
-                                          <Edit className="h-4 w-4" />
-                                        </Button>
-                                      </Tooltip>
-                                    </div>
-                                  </li>
-                                </ul>
-                              </Disclosure.Panel>
-                            </DisclosureTransition>
-                          </motion.div>
-                        )}
-                      </Disclosure>
-                    )
+                                        <Edit className="h-4 w-4" />
+                                      </Button>
+                                    </Tooltip>
+                                  </div>
+                                </li>
+                              </ul>
+                            </Disclosure.Panel>
+                          </DisclosureTransition>
+                        </motion.div>
+                      )}
+                    </Disclosure>
                   )
                 })}
 

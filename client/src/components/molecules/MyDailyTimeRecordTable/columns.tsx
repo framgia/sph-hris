@@ -149,17 +149,21 @@ export const columns = [
 
       const handleToggle = (): void => setIsOpen(!isOpen)
 
-      const minuteDifference = Math.floor(
-        moment
-          .duration(
-            moment(timeEntry.timeOut?.createdAt).diff(
-              `${moment(timeEntry.date).format('YYYY-MM-DD')} ${moment('19:30', 'HH:mm:ss').format(
-                'HH:mm:ss'
-              )}`
+      const minuteDifference =
+        timeEntry.timeOut !== null
+          ? Math.floor(
+              moment
+                .duration(
+                  moment(timeEntry.timeOut?.createdAt).diff(
+                    `${moment(timeEntry.date).format('YYYY-MM-DD')} ${moment(
+                      '19:30',
+                      'HH:mm:ss'
+                    ).format('HH:mm:ss')}`
+                  )
+                )
+                .asMinutes()
             )
-          )
-          .asMinutes()
-      )
+          : NO_OVERTIME
 
       return (
         <div className="flex items-center space-x-2">
