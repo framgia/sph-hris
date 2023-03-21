@@ -66,6 +66,15 @@ namespace api.Utils
             }
         }
 
+        public bool checkNonESLUser(int id)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var user = context.Users.Find(id);
+                return user != null && user.PositionId != PositionEnum.ESL_TEACHER;
+            }
+        }
+
         public async Task<bool> checkApprovingProjectLeader(int projectLeaderId, int leaveId, string type)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
@@ -93,6 +102,13 @@ namespace api.Utils
             }
         }
 
+        public bool checkTimeEntryExist(int id)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                return context.TimeEntries.Find(id) != null;
+            }
+        }
 
         public bool checkLeaveType(int id)
         {
@@ -117,9 +133,9 @@ namespace api.Utils
             return !(leaveDates == null || leaveDates.Count == 0);
         }
 
-        public bool checkLeaveProjects(List<MultiProjectRequest> leaveProjects)
+        public bool checkMultiProjects(List<MultiProjectRequest> multiProjects)
         {
-            return !(leaveProjects == null || leaveProjects.Count == 0);
+            return !(multiProjects == null || multiProjects.Count == 0);
         }
 
         public async Task<bool> checkNotificationExist(int id, string type)
@@ -157,8 +173,8 @@ namespace api.Utils
             if (!checkLeaveDates(leave.LeaveDates))
                 errors.Add(buildError(nameof(leave.LeaveDates), InputValidationMessageEnum.MISSING_LEAVE_DATES));
 
-            if (!checkLeaveProjects(leave.LeaveProjects))
-                errors.Add(buildError(nameof(leave.LeaveProjects), InputValidationMessageEnum.MISSING_LEAVE_PROJECTS));
+            if (!checkMultiProjects(leave.LeaveProjects))
+                errors.Add(buildError(nameof(leave.LeaveProjects), InputValidationMessageEnum.MISSING_PROJECTS));
 
             index = 0;
             leave.LeaveProjects?.ForEach(project =>
@@ -287,6 +303,41 @@ namespace api.Utils
 
             if (request.IsApproved && request.ApprovedMinutes == null)
                 errors.Add(buildError(nameof(request.ApprovedMinutes), InputValidationMessageEnum.MISSING_APPROVED_MINUTES));
+
+            return errors;
+        }
+
+        public List<IError> checkChangeShiftRequestInput(CreateChangeShiftRequest request)
+        {
+            var errors = new List<IError>();
+            int index = 0;
+
+            if (!checkUserExist(request.UserId))
+                errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.INVALID_USER));
+
+            if (!checkNonESLUser(request.UserId))
+                errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.INVALID_NON_ESL_USER));
+
+            if (!checkTimeEntryExist(request.TimeEntryId))
+                errors.Add(buildError(nameof(request.TimeEntryId), InputValidationMessageEnum.INVALID_TIME_ENTRY));
+
+            if (!checkManagerUser(request.ManagerId).Result)
+                errors.Add(buildError(nameof(request.ManagerId), InputValidationMessageEnum.INVALID_MANAGER));
+
+            if (!checkMultiProjects(request.Projects))
+                errors.Add(buildError(nameof(request.Projects), InputValidationMessageEnum.MISSING_PROJECTS));
+
+            index = 0;
+            request.Projects?.ForEach(project =>
+            {
+                if (!checkProjectExist(project.ProjectId))
+                    errors.Add(buildError(nameof(project.ProjectId), InputValidationMessageEnum.INVALID_PROJECT, index));
+
+                if (!checkUserExist(project.ProjectLeaderId))
+                    errors.Add(buildError(nameof(project.ProjectLeaderId), InputValidationMessageEnum.INVALID_PROJECT_LEADER, index));
+
+                index++;
+            });
 
             return errors;
         }
