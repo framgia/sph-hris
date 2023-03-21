@@ -98,7 +98,8 @@ export const columns = [
   columnHelper.accessor('requestedHours', {
     header: () => <CellHeader label="Requested Hours" />,
     footer: (info) => info.column.id,
-    cell: ({ row: { original } }) => decimalFormatter(original.requestedHours)
+    cell: ({ row: { original } }) =>
+      original.status === 'disapproved' ? 0 : decimalFormatter(original.requestedHours)
   }),
   columnHelper.accessor('supervisor', {
     header: () => <CellHeader label="Supervisor" />,
