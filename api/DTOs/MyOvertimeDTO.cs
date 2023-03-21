@@ -14,6 +14,7 @@ namespace api.DTOs
             DateFiled = overtimes.CreatedAt;
             Remarks = overtimes.Remarks!;
             OvertimeDate = overtimes.OvertimeDate;
+            RequestedMinutes = overtimes.RequestedMinutes;
             ApprovedMinutes = overtimes.ApprovedMinutes;
             IsLeaderApproved = overtimes.IsLeaderApproved;
             IsManagerApproved = overtimes.IsManagerApproved!;
@@ -25,6 +26,7 @@ namespace api.DTOs
         public DateTime? DateFiled { get; set; }
         new public string Remarks { get; set; }
         new public DateTime? OvertimeDate { get; set; }
+        new public int? RequestedMinutes { get; set; }
         new public int? ApprovedMinutes { get; set; }
         new public bool? IsLeaderApproved { get; set; }
         new public bool? IsManagerApproved { get; set; }

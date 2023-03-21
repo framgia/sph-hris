@@ -12,6 +12,7 @@ import { IMyOvertimeTable } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
 import { decimalFormatter } from '~/utils/myOvertimeHelpers'
+import { STATUS_OPTIONS } from '~/utils/constants/notificationFilter'
 
 const columnHelper = createColumnHelper<IMyOvertimeTable>()
 
@@ -107,13 +108,19 @@ export const columns = [
   columnHelper.accessor('approvedMinutes', {
     header: () => <CellHeader label="Approved Minutes" />,
     footer: (info) => info.column.id,
-    cell: ({ row: { original } }) => (
-      <div>
-        {original.approvedMinutes ?? (
-          <span className="italic text-slate-400">(pending approval)</span>
-        )}
-      </div>
-    )
+    cell: ({ row: { original } }) => {
+      const { DISAPPROVED } = STATUS_OPTIONS
+
+      return (
+        <div>
+          {original.status === DISAPPROVED.toLowerCase()
+            ? 0
+            : original.approvedMinutes ?? (
+                <span className="italic text-slate-400">(pending approval)</span>
+              )}
+        </div>
+      )
+    }
   }),
   columnHelper.display({
     id: 'empty2',
