@@ -167,3 +167,9 @@ export type LaptopMonitoringFormValues = {
   laptop_video_memory: string
   other_note: string
 }
+
+export type NewOffsetFormValues = {
+  offsetTime: TimeEntry
+  teamLeader: ReactSelectOption
+  description: string
+}

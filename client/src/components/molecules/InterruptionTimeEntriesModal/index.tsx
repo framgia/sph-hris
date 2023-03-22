@@ -74,7 +74,7 @@ const InterruptionTimeEntriesModal: FC<Props> = ({
       {/* Custom Modal Header */}
       <ModalHeader
         {...{
-          title: `${user}'s Interruption Time Entries`,
+          title: `${user}'s Work Interruption`,
           Icon: Clock,
           closeModal
         }}
