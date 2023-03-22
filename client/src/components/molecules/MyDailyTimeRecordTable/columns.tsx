@@ -5,7 +5,7 @@ import classNames from 'classnames'
 import { HiFire } from 'react-icons/hi'
 import React, { useState } from 'react'
 import { createColumnHelper } from '@tanstack/react-table'
-import { Check, Clock, Edit, RefreshCw, ThumbsDown } from 'react-feather'
+import { Check, MoreVertical, RefreshCw, ThumbsDown } from 'react-feather'
 
 import Chip from '~/components/atoms/Chip'
 import useUserQuery from '~/hooks/useUserQuery'
@@ -16,6 +16,9 @@ import { NO_OVERTIME } from '~/utils/constants/overtimeStatus'
 import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 import InterruptionTimeEntriesModal from './../InterruptionTimeEntriesModal'
+import { Menu } from '@headlessui/react'
+import MenuTransition from '~/components/templates/MenuTransition'
+import AddNewOffsetModal from './AddNewOffsetModal'
 
 const columnHelper = createColumnHelper<IEmployeeTimeEntry>()
 const EMPTY = 'N/A'
@@ -201,7 +204,7 @@ export const columns = [
                   <Tippy placement="left" content="Approved request" className="!text-xs">
                     <Button
                       type="button"
-                      className="inline-flex items-center rounded border-y border-r border-slate-300 group-hover:bg-white"
+                      className="inline-flex items-center rounded border-y border-r border-slate-300 bg-white"
                     >
                       <Check className="h-4 w-5 rounded-l bg-green-500 text-white" />
                       <span className="px-1 text-green-600">{overtime.approvedMinutes}</span>
@@ -254,6 +257,8 @@ export const columns = [
     cell: (props) => {
       const { original: timeEntry } = props.row
       const [isOpenTimeEntry, setIsOpenTimeEntry] = useState<boolean>(false)
+      const [isOpenNewOffset, setIsOpenNewOffset] = useState<boolean>(false)
+
       const { handleUserQuery } = useUserQuery()
       const { data: user } = handleUserQuery()
 
@@ -261,36 +266,69 @@ export const columns = [
         setIsOpenTimeEntry(!isOpenTimeEntry)
       }
 
+      const handleIsOpenNewOffsetToggle = (): void => setIsOpenNewOffset(!isOpenNewOffset)
+
+      const menu = 'relative w-full'
+      const menuItems = classNames(
+        'absolute flex w-48 flex-col z-50 divide-y divide-slate-200 overflow-hidden rounded-md top-7 right-0',
+        'bg-white py-0.5 shadow-xl shadow-slate-200 ring-1 ring-black ring-opacity-5 focus:outline-none'
+      )
+      const menuItemButton = 'px-3 py-2 text-xs hover:text-slate-700 text-slate-500'
+
       return (
-        <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
-          <Tippy placement="left" content="Time Entries" className="!text-xs">
-            <Button
-              rounded="none"
-              className="py-0.5 px-1 text-slate-500"
-              onClick={() => handleIsOpenTimeEntryToggle(props.row.id)}
-            >
-              <Clock className="h-4 w-4" />
-              {isOpenTimeEntry ? (
-                <InterruptionTimeEntriesModal
-                  {...{
-                    isOpen: isOpenTimeEntry,
-                    timeEntryId: timeEntry.id,
-                    user: user?.userById.name as string,
-                    closeModal: handleIsOpenTimeEntryToggle
-                  }}
-                />
-              ) : null}
-            </Button>
-          </Tippy>
-          <Tippy placement="left" content="Edit" className="!text-xs">
-            <Button
-              onClick={() => alert(props.row.id)}
-              rounded="none"
-              className="py-0.5 px-1 text-slate-500"
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-          </Tippy>
+        <div className="inline-flex divide-x divide-slate-300 rounded border border-transparent group-hover:border-slate-300">
+          <Menu as="div" className={menu}>
+            <Tippy placement="left" content="Vertical Ellipsis" className="!text-xs">
+              <Menu.Button className="p-0.5 text-slate-500 outline-none">
+                <MoreVertical className="h-4" />
+
+                {/* This is for Work Interruption Modal */}
+                {isOpenTimeEntry ? (
+                  <InterruptionTimeEntriesModal
+                    {...{
+                      isOpen: isOpenTimeEntry,
+                      timeEntryId: timeEntry.id,
+                      user: user?.userById.name as string,
+                      closeModal: handleIsOpenTimeEntryToggle
+                    }}
+                  />
+                ) : null}
+
+                {/* This is for ESL Work Interruption */}
+                {isOpenNewOffset ? (
+                  <AddNewOffsetModal
+                    {...{
+                      isOpen: isOpenNewOffset,
+                      closeModal: handleIsOpenNewOffsetToggle,
+                      row: props.row.original
+                    }}
+                  />
+                ) : null}
+              </Menu.Button>
+            </Tippy>
+            <MenuTransition>
+              <Menu.Items className={menuItems}>
+                <Menu.Item>
+                  <button
+                    className={menuItemButton}
+                    onClick={() => handleIsOpenTimeEntryToggle(props.row.id)}
+                  >
+                    <span>Work Interruption</span>
+                  </button>
+                </Menu.Item>
+                <Menu.Item>
+                  <button className={menuItemButton} onClick={handleIsOpenNewOffsetToggle}>
+                    <span>Work Interruption for ESL</span>
+                  </button>
+                </Menu.Item>
+                <Menu.Item>
+                  <button className={menuItemButton}>
+                    <span>Change Shift</span>
+                  </button>
+                </Menu.Item>
+              </Menu.Items>
+            </MenuTransition>
+          </Menu>
         </div>
       )
     },

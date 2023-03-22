@@ -1,6 +1,5 @@
 import moment from 'moment'
 import Link from 'next/link'
-import Tooltip from 'rc-tooltip'
 import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import { motion } from 'framer-motion'
@@ -12,6 +11,7 @@ import { Calendar, Check, ChevronRight, Clock, Edit, RefreshCw, ThumbsDown } fro
 
 import Chip from '~/components/atoms/Chip'
 import useUserQuery from '~/hooks/useUserQuery'
+import AddNewOffsetModal from './AddNewOffsetModal'
 import Button from '~/components/atoms/Buttons/Button'
 import AddNewOvertimeModal from '../AddNewOvertimeModal'
 import { WorkStatus } from '~/utils/constants/work-status'
@@ -30,6 +30,7 @@ type Props = {
 
 const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
   const [isOpenTimeEntry, setIsOpenTimeEntry] = useState<boolean>(false)
+  const [isOpenNewOffset, setIsOpenNewOffset] = useState<boolean>(false)
   const [isOpenNewOvertime, setIsOpenNewOvertime] = useState<boolean>(false)
   const [timeEntryId, setTimeEntryId] = useState<number>(-1)
   const { handleUserQuery } = useUserQuery()
@@ -41,6 +42,8 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
   }
 
   const handleIsOpenNewOvertime = (): void => setIsOpenNewOvertime(!isOpenNewOvertime)
+
+  const handleIsOpenNewOffsetToggle = (): void => setIsOpenNewOffset(!isOpenNewOffset)
 
   const EMPTY = 'N/A'
 
@@ -328,10 +331,10 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                 <li className="flex items-center space-x-2 px-4 py-2">
                                   <span>Actions:</span>
                                   <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
-                                    <Tooltip
+                                    <Tippy
                                       placement="left"
-                                      overlay="Time Entries"
-                                      arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+                                      content="Work Interruption"
+                                      className="!text-xs"
                                     >
                                       <Button
                                         onClick={() =>
@@ -342,20 +345,40 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                       >
                                         <Clock className="h-4 w-4" />
                                       </Button>
-                                    </Tooltip>
-                                    <Tooltip
+                                    </Tippy>
+                                    <Tippy
                                       placement="left"
-                                      overlay="Edit"
-                                      arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+                                      content="Work Interruption for ESL"
+                                      className="!text-xs"
                                     >
                                       <Button
-                                        onClick={() => alert(timeEntry.id)}
                                         rounded="none"
+                                        onClick={handleIsOpenNewOffsetToggle}
                                         className="py-0.5 px-1 text-slate-500"
                                       >
+                                        <Clock className="h-4 w-4" />
+
+                                        {/* This is for ESL Work Interruption */}
+                                        {isOpenNewOffset ? (
+                                          <AddNewOffsetModal
+                                            {...{
+                                              isOpen: isOpenNewOffset,
+                                              closeModal: handleIsOpenNewOffsetToggle,
+                                              row: row.original
+                                            }}
+                                          />
+                                        ) : null}
+                                      </Button>
+                                    </Tippy>
+                                    <Tippy
+                                      placement="left"
+                                      content="Change Shift"
+                                      className="!text-xs"
+                                    >
+                                      <Button rounded="none" className="py-0.5 px-1 text-slate-500">
                                         <Edit className="h-4 w-4" />
                                       </Button>
-                                    </Tooltip>
+                                    </Tippy>
                                   </div>
                                 </li>
                               </ul>

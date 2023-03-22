@@ -309,3 +309,12 @@ export const LaptopMonitoringSchema = yup.object().shape({
   laptop_video_memory: yup.string().required().label('Laptop Video Memory'),
   other_note: yup.string().label('Other Note')
 })
+
+export const NewOffsetSchema = yup.object().shape({
+  offsetTime: yup.object().shape({
+    timeIn: yup.string().required().label('Time in'),
+    timeOut: yup.string().required().label('Time out')
+  }),
+  teamLeader: SelectSchema,
+  description: yup.string().required().label('Description')
+})
