@@ -348,7 +348,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                     </Tippy>
                                     <Tippy
                                       placement="left"
-                                      content="Work Interruption for ESL"
+                                      content="ESL Offset Schedule"
                                       className="!text-xs"
                                     >
                                       <Button

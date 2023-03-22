@@ -318,7 +318,7 @@ export const columns = [
                 </Menu.Item>
                 <Menu.Item>
                   <button className={menuItemButton} onClick={handleIsOpenNewOffsetToggle}>
-                    <span>Work Interruption for ESL</span>
+                    <span>ESL Offset Schedule</span>
                   </button>
                 </Menu.Item>
                 <Menu.Item>
