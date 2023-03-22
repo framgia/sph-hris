@@ -173,3 +173,16 @@ export type NewOffsetFormValues = {
   teamLeader: ReactSelectOption
   description: string
 }
+
+export type changeShiftRequestFormValues = {
+  // eslint-disable-next-line @typescript-eslint/array-type
+  projects: {
+    project_name: ReactSelectOption
+    project_leader: ReactSelectOption
+    __isNew__?: boolean
+  }[]
+  manager: ReactSelectOption
+  requested_time_in: string
+  requested_time_out: string
+  remarks: string
+}

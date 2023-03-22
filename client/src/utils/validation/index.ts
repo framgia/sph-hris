@@ -318,3 +318,16 @@ export const NewOffsetSchema = yup.object().shape({
   teamLeader: SelectSchema,
   description: yup.string().required().label('Description')
 })
+
+export const changeShiftRequestSchema = yup.object().shape({
+  projects: yup.array().of(
+    yup.object().shape({
+      project_name: SelectSchema,
+      project_leader: SelectSchema
+    })
+  ),
+  manager: SelectSchema.label('Manager'),
+  requested_time_in: yup.string().required().label('Time In'),
+  requested_time_out: yup.string().required().label('Time Out'),
+  remarks: yup.string().required().label('Reason')
+})
