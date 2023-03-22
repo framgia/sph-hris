@@ -20,6 +20,7 @@ namespace api.Entities
         public Time? TimeIn { get; set; }
         public Time? TimeOut { get; set; }
         public Overtime? Overtime { get; set; } = default!;
+        public ChangeShiftRequest? ChangeShiftRequest { get; set; } = default!;
         public ICollection<WorkInterruption> WorkInterruptions { get; set; } = default!;
     }
 }

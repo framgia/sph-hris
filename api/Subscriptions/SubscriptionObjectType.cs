@@ -27,6 +27,12 @@ namespace api.Subscriptions
             return eventReceiver.SubscribeAsync<OvertimeNotification>(topic);
         }
 
+        public ValueTask<ISourceStream<ChangeShiftNotification>> ChangeShiftEventReceiver(int id, [Service] ITopicEventReceiver eventReceiver)
+        {
+            var topic = $"{id}_{nameof(SubscriptionObjectType.ChangeShiftCreated)}";
+            return eventReceiver.SubscribeAsync<ChangeShiftNotification>(topic);
+        }
+
         // Resolver
         [Subscribe(With = nameof(SubscriptionObjectType.LeaveEventReceiver))]
         public LeaveNotification LeaveCreated([EventMessage] LeaveNotification notification)
@@ -36,6 +42,12 @@ namespace api.Subscriptions
 
         [Subscribe(With = nameof(SubscriptionObjectType.OvertimeEventReceiver))]
         public OvertimeNotification OvertimeCreated([EventMessage] OvertimeNotification notification)
+        {
+            return notification;
+        }
+
+        [Subscribe(With = nameof(SubscriptionObjectType.ChangeShiftEventReceiver))]
+        public ChangeShiftNotification ChangeShiftCreated([EventMessage] ChangeShiftNotification notification)
         {
             return notification;
         }

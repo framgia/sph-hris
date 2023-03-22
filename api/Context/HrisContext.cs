@@ -28,7 +28,10 @@ public partial class HrisContext : DbContext
     public DbSet<Notification> Notifications { get; set; } = default!;
     public DbSet<LeaveNotification> LeaveNotifications { get; set; } = default!;
     public DbSet<OvertimeNotification> OvertimeNotifications { get; set; } = default!;
+    public DbSet<ChangeShiftNotification> ChangeShiftNotifications { get; set; } = default!;
     public DbSet<Overtime> Overtimes { get; set; } = default!;
+    public DbSet<ChangeShiftRequest> ChangeShiftRequests { get; set; } = default!;
+    public DbSet<Position> Positions { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -37,6 +40,9 @@ public partial class HrisContext : DbContext
         );
         modelBuilder.Entity<WorkingDayTime>().HasData(
             DatabaseSeeder.workingDayTime
+        );
+        modelBuilder.Entity<Position>().HasData(
+            DatabaseSeeder.positions
         );
         modelBuilder.Entity<User>().HasData(
             DatabaseSeeder.users()
@@ -71,8 +77,13 @@ public partial class HrisContext : DbContext
             DatabaseSeeder.overtimes
         );
 
+
         modelBuilder.Entity<Overtime>().HasOne(x => x.User).WithMany(e => e.Overtimes).OnDelete(DeleteBehavior.NoAction);
         modelBuilder.Entity<Overtime>().HasOne(x => x.TimeEntry).WithOne(e => e.Overtime).OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<ChangeShiftRequest>().HasOne(x => x.TimeEntry).WithOne(e => e.ChangeShiftRequest).OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<ChangeShiftRequest>().HasOne(x => x.Manager).WithMany().OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<ChangeShiftRequest>().HasOne(x => x.User).WithMany().OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<Notification>().HasDiscriminator();
         modelBuilder.Entity<LeaveNotification>().HasData(

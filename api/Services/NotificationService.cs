@@ -2,6 +2,7 @@ using System.Text.Json;
 using api.Context;
 using api.Entities;
 using api.Enums;
+using api.NotificationDataClasses;
 using api.Requests;
 using api.Subscriptions;
 using HotChocolate.Subscriptions;
@@ -15,13 +16,15 @@ namespace api.Services
         private readonly ITopicEventSender _eventSender;
         private readonly LeaveService _leaveService;
         private readonly OvertimeService _overtimeService;
+        private readonly ChangeShiftService _changeShiftService;
         private readonly UserService _userService;
-        public NotificationService(IDbContextFactory<HrisContext> contextFactory, LeaveService leaveService, OvertimeService overtimeService, UserService userService, [Service] ITopicEventSender eventSender)
+        public NotificationService(IDbContextFactory<HrisContext> contextFactory, LeaveService leaveService, OvertimeService overtimeService, UserService userService, ChangeShiftService changeShiftService, [Service] ITopicEventSender eventSender)
         {
             _contextFactory = contextFactory;
             _eventSender = eventSender;
             _leaveService = leaveService;
             _overtimeService = overtimeService;
+            _changeShiftService = changeShiftService;
             _userService = userService;
         }
 
@@ -34,18 +37,18 @@ namespace api.Services
                 var undertimeLeave = context.LeaveTypes.Where(x => x.Name != null && x.Name.ToLower() == "undertime").First();
                 var projectNames = context.MultiProjects.Where(x => x.LeaveId == leave.Id && x.Type == MultiProjectTypeEnum.LEAVE).Select(x => x.ProjectId == ProjectId.OTHER_PROJECT ? leave.OtherProject : x.Project.Name);
 
-                var dataToManager = JsonSerializer.Serialize(new
+                var dataToManager = JsonSerializer.Serialize(new LeaveManagerData
                 {
-                    User = new
+                    User = new NotificationUser
                     {
-                        Id = user?.Id,
-                        Name = user?.Name,
+                        Id = (int)user?.Id!,
+                        Name = user?.Name!,
                         AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
                     },
                     Projects = projectNames,
                     RequestedHours = _leaveService.LeaveDaysToHours(leave.Days),
                     DateRequested = leave.LeaveDate,
-                    DateFiled = leave.CreatedAt,
+                    DateFiled = (DateTime)leave.CreatedAt!,
                     Type = NotificationDataTypeEnum.REQUEST,
                     Status = _leaveService.GetLeaveRequestStatus(leave),
                     Remarks = leave.Reason
@@ -65,18 +68,18 @@ namespace api.Services
                 leave.LeaveProjects.ToList().ForEach(leaveProject =>
                 {
                     var project = context.Projects.FindAsync(leaveProject.ProjectId);
-                    var dataToProjectLeader = JsonSerializer.Serialize(new
+                    var dataToProjectLeader = JsonSerializer.Serialize(new LeaveLeaderData
                     {
-                        User = new
+                        User = new NotificationUser
                         {
-                            Id = user?.Id,
-                            Name = user?.Name,
+                            Id = (int)user?.Id!,
+                            Name = user?.Name!,
                             AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
                         },
                         Projects = new List<string> { project.Result!.Name == "Others" ? leave.OtherProject! : project.Result.Name! },
                         RequestedHours = _leaveService.LeaveDaysToHours(leave.Days),
                         DateRequested = leave.LeaveDate,
-                        DateFiled = leave.CreatedAt,
+                        DateFiled = (DateTime)leave.CreatedAt,
                         Type = NotificationDataTypeEnum.REQUEST,
                         Status = _leaveService.GetLeaveRequestStatus(leave),
                         Remarks = leave.Reason
@@ -110,18 +113,18 @@ namespace api.Services
                 var user = context.Users.Find(overtime.UserId);
                 var projectNames = context.MultiProjects.Where(x => x.OvertimeId == overtime.Id && x.Type == MultiProjectTypeEnum.OVERTIME).Select(x => x.ProjectId == ProjectId.OTHER_PROJECT ? overtime.OtherProject : x.Project.Name);
 
-                var dataToManager = JsonSerializer.Serialize(new
+                var dataToManager = JsonSerializer.Serialize(new OvertimeManagerData
                 {
-                    User = new
+                    User = new NotificationUser
                     {
-                        Id = user?.Id,
-                        Name = user?.Name,
+                        Id = (int)user?.Id!,
+                        Name = user?.Name!,
                         AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
                     },
                     Projects = projectNames,
                     RequestedMinutes = overtime.RequestedMinutes,
                     DateRequested = overtime.OvertimeDate,
-                    DateFiled = overtime.CreatedAt,
+                    DateFiled = (DateTime)overtime.CreatedAt!,
                     Type = NotificationDataTypeEnum.REQUEST,
                     Status = _overtimeService.GetOvertimeRequestStatus(overtime),
                     Remarks = overtime.Remarks
@@ -142,18 +145,18 @@ namespace api.Services
                 overtime.MultiProjects.ToList().ForEach(overtimeProject =>
                 {
                     var project = context.Projects.FindAsync(overtimeProject.ProjectId);
-                    var dataToProjectLeader = JsonSerializer.Serialize(new
+                    var dataToProjectLeader = JsonSerializer.Serialize(new OvertimeLeaderData
                     {
-                        User = new
+                        User = new NotificationUser
                         {
-                            Id = user?.Id,
-                            Name = user?.Name,
+                            Id = (int)user?.Id!,
+                            Name = user?.Name!,
                             AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
                         },
                         Projects = new List<string> { project.Result!.Name == "Others" ? overtime.OtherProject! : project.Result.Name! },
                         RequestedMinutes = overtime.RequestedMinutes,
                         DateRequested = overtime.OvertimeDate,
-                        DateFiled = overtime.CreatedAt,
+                        DateFiled = (DateTime)overtime.CreatedAt,
                         Type = NotificationDataTypeEnum.REQUEST,
                         Status = _overtimeService.GetOvertimeRequestStatus(overtime),
                         Remarks = overtime.Remarks
@@ -173,6 +176,55 @@ namespace api.Services
                 notifications.ForEach(notif =>
                 {
                     context.OvertimeNotifications.Add(notif);
+                });
+
+                await context.SaveChangesAsync();
+                return notifications;
+            }
+        }
+
+        public async Task<List<ChangeShiftNotification>> createChangeShiftRequestNotification(ChangeShiftRequest request)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var notifications = new List<ChangeShiftNotification>();
+                var user = context.Users.Find(request.UserId);
+
+                // Notification per project
+                request.MultiProjects.ToList().ForEach(requestProject =>
+                {
+                    var project = context.Projects.FindAsync(requestProject.ProjectId);
+                    var dataToProjectLeader = JsonSerializer.Serialize(new ChangeShiftLeaderData
+                    {
+                        User = new NotificationUser
+                        {
+                            Id = (int)user?.Id!,
+                            Name = user?.Name!,
+                            AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
+                        },
+                        Projects = new List<string> { project.Result!.Name == "Others" ? request.OtherProject! : project.Result.Name! },
+                        RequestedTimeIn = request.TimeIn,
+                        RequestedTimeOut = request.TimeOut,
+                        DateFiled = (DateTime)request.CreatedAt!,
+                        Type = NotificationDataTypeEnum.REQUEST,
+                        Description = request.Description,
+                        Status = _changeShiftService.GetRequestStatus(request),
+                    }
+                    );
+
+                    var notificationToProjectLeader = new ChangeShiftNotification
+                    {
+                        RecipientId = requestProject.ProjectLeaderId,
+                        ChangeShiftRequestId = request.Id,
+                        Type = NotificationTypeEnum.CHANGE_SHIFT,
+                        Data = dataToProjectLeader
+                    };
+                    notifications.Add(notificationToProjectLeader);
+                });
+
+                notifications.ForEach(notif =>
+                {
+                    context.ChangeShiftNotifications.Add(notif);
                 });
 
                 await context.SaveChangesAsync();
@@ -292,6 +344,19 @@ namespace api.Services
             try
             {
                 string topic = $"{notif.RecipientId}_{nameof(SubscriptionObjectType.OvertimeCreated)}";
+                await _eventSender.SendAsync(topic, notif);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async void sendChangeShiftNotificationEvent(ChangeShiftNotification notif)
+        {
+            try
+            {
+                string topic = $"{notif.RecipientId}_{nameof(SubscriptionObjectType.ChangeShiftCreated)}";
                 await _eventSender.SendAsync(topic, notif);
             }
             catch (Exception)
