@@ -4,21 +4,22 @@ import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import { HiFire } from 'react-icons/hi'
 import React, { useState } from 'react'
+import { Menu } from '@headlessui/react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Check, MoreVertical, RefreshCw, ThumbsDown } from 'react-feather'
 
 import Chip from '~/components/atoms/Chip'
 import useUserQuery from '~/hooks/useUserQuery'
+import AddNewOffsetModal from './AddNewOffsetModal'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
 import AddNewOvertimeModal from '../AddNewOvertimeModal'
 import { NO_OVERTIME } from '~/utils/constants/overtimeStatus'
+import ChangeShiftRequestModal from './ChangeShiftRequestModal'
 import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
-import InterruptionTimeEntriesModal from './../InterruptionTimeEntriesModal'
-import { Menu } from '@headlessui/react'
 import MenuTransition from '~/components/templates/MenuTransition'
-import AddNewOffsetModal from './AddNewOffsetModal'
+import InterruptionTimeEntriesModal from './../InterruptionTimeEntriesModal'
 
 const columnHelper = createColumnHelper<IEmployeeTimeEntry>()
 const EMPTY = 'N/A'
@@ -258,6 +259,7 @@ export const columns = [
       const { original: timeEntry } = props.row
       const [isOpenTimeEntry, setIsOpenTimeEntry] = useState<boolean>(false)
       const [isOpenNewOffset, setIsOpenNewOffset] = useState<boolean>(false)
+      const [isOpenChangeShiftRequest, setIsOpenChangeShiftRequest] = useState<boolean>(false)
 
       const { handleUserQuery } = useUserQuery()
       const { data: user } = handleUserQuery()
@@ -267,6 +269,8 @@ export const columns = [
       }
 
       const handleIsOpenNewOffsetToggle = (): void => setIsOpenNewOffset(!isOpenNewOffset)
+      const handleIsOpenChangeShiftRequestToggle = (): void =>
+        setIsOpenChangeShiftRequest(!isOpenChangeShiftRequest)
 
       const menu = 'relative w-full'
       const menuItems = classNames(
@@ -304,6 +308,17 @@ export const columns = [
                     }}
                   />
                 ) : null}
+
+                {/* This is for ESL Work Interruption */}
+                {isOpenChangeShiftRequest ? (
+                  <ChangeShiftRequestModal
+                    {...{
+                      isOpen: isOpenChangeShiftRequest,
+                      closeModal: handleIsOpenChangeShiftRequestToggle,
+                      row: props.row.original
+                    }}
+                  />
+                ) : null}
               </Menu.Button>
             </Tippy>
             <MenuTransition>
@@ -322,8 +337,8 @@ export const columns = [
                   </button>
                 </Menu.Item>
                 <Menu.Item>
-                  <button className={menuItemButton}>
-                    <span>Change Shift</span>
+                  <button className={menuItemButton} onClick={handleIsOpenChangeShiftRequestToggle}>
+                    <span>Change Shift Request</span>
                   </button>
                 </Menu.Item>
               </Menu.Items>
