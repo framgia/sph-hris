@@ -11,16 +11,17 @@ import { Check, MoreVertical, RefreshCw, ThumbsDown } from 'react-feather'
 import Chip from '~/components/atoms/Chip'
 import useUserQuery from '~/hooks/useUserQuery'
 import AddNewOffsetModal from './AddNewOffsetModal'
+import FiledOffsetModal from './../FiledOffsetModal'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
 import AddNewOvertimeModal from '../AddNewOvertimeModal'
 import { NO_OVERTIME } from '~/utils/constants/overtimeStatus'
 import ChangeShiftRequestModal from './ChangeShiftRequestModal'
 import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
+import { USER_POSITIONS } from '~/utils/constants/userPositions'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 import MenuTransition from '~/components/templates/MenuTransition'
 import InterruptionTimeEntriesModal from './../InterruptionTimeEntriesModal'
-import { USER_POSITIONS } from '~/utils/constants/userPositions'
 
 const columnHelper = createColumnHelper<IEmployeeTimeEntry>()
 const EMPTY = 'N/A'
@@ -261,6 +262,7 @@ export const columns = [
       const [isOpenTimeEntry, setIsOpenTimeEntry] = useState<boolean>(false)
       const [isOpenNewOffset, setIsOpenNewOffset] = useState<boolean>(false)
       const [isOpenChangeShiftRequest, setIsOpenChangeShiftRequest] = useState<boolean>(false)
+      const [isOpenFiledOffset, setIsOpenFiledOffset] = useState<boolean>(false)
 
       const { handleUserQuery } = useUserQuery()
       const { data: user } = handleUserQuery()
@@ -272,17 +274,18 @@ export const columns = [
       const handleIsOpenNewOffsetToggle = (): void => setIsOpenNewOffset(!isOpenNewOffset)
       const handleIsOpenChangeShiftRequestToggle = (): void =>
         setIsOpenChangeShiftRequest(!isOpenChangeShiftRequest)
+      const handleIsOpenFiledOffsetToggle = (): void => setIsOpenFiledOffset(!isOpenFiledOffset)
 
-      const menu = 'relative w-full'
-      const menuItems = classNames(
-        'absolute flex w-48 flex-col z-50 divide-y divide-slate-200 overflow-hidden rounded-md top-7 right-0',
-        'bg-white py-0.5 shadow-xl shadow-slate-200 ring-1 ring-black ring-opacity-5 focus:outline-none'
-      )
-      const menuItemButton = 'px-3 py-2 text-xs hover:text-slate-700 text-slate-500'
+      const menuItemButton = 'px-3 py-2 text-left text-xs hover:text-slate-700 text-slate-500'
 
       return (
-        <div className="inline-flex divide-x divide-slate-300 rounded border border-transparent group-hover:border-slate-300">
-          <Menu as="div" className={menu}>
+        <div
+          className={classNames(
+            'inline-flex divide-x divide-slate-300 rounded border',
+            'border-transparent group-hover:border-slate-300'
+          )}
+        >
+          <Menu as="div" className="relative w-full">
             {/* This is for Work Interruption Modal */}
             {isOpenTimeEntry ? (
               <InterruptionTimeEntriesModal
@@ -316,13 +319,34 @@ export const columns = [
                 }}
               />
             ) : null}
+
+            {/* This is for Filed Offset Modal */}
+            {isOpenFiledOffset ? (
+              <FiledOffsetModal
+                {...{
+                  isOpen: isOpenFiledOffset,
+                  closeModal: handleIsOpenFiledOffsetToggle,
+                  row: props.row.original,
+                  isMyDTRPage: true,
+                  query: {
+                    isLoading: false,
+                    isError: false
+                  }
+                }}
+              />
+            ) : null}
             <Tippy placement="left" content="Vertical Ellipsis" className="!text-xs">
               <Menu.Button className="p-0.5 text-slate-500 outline-none">
                 <MoreVertical className="h-4" />
               </Menu.Button>
             </Tippy>
             <MenuTransition>
-              <Menu.Items className={menuItems}>
+              <Menu.Items
+                className={classNames(
+                  'absolute top-7 right-0 z-50 flex w-44 flex-col divide-y divide-slate-200 overflow-hidden rounded-md',
+                  'bg-white py-0.5 shadow-xl shadow-slate-200 ring-1 ring-black ring-opacity-5 focus:outline-none'
+                )}
+              >
                 <Menu.Item>
                   <button
                     className={menuItemButton}
@@ -332,11 +356,18 @@ export const columns = [
                   </button>
                 </Menu.Item>
                 {user?.userById.position.id === USER_POSITIONS.ESL_TEACHER && (
-                  <Menu.Item>
-                    <button className={menuItemButton} onClick={handleIsOpenNewOffsetToggle}>
-                      <span>ESL Offset Schedule</span>
-                    </button>
-                  </Menu.Item>
+                  <>
+                    <Menu.Item>
+                      <button className={menuItemButton} onClick={handleIsOpenNewOffsetToggle}>
+                        <span>ESL Offset Schedule</span>
+                      </button>
+                    </Menu.Item>
+                    <Menu.Item>
+                      <button className={menuItemButton} onClick={handleIsOpenFiledOffsetToggle}>
+                        <span>Filed Offset</span>
+                      </button>
+                    </Menu.Item>
+                  </>
                 )}
                 {user?.userById.position.id !== USER_POSITIONS.ESL_TEACHER && (
                   <Menu.Item>

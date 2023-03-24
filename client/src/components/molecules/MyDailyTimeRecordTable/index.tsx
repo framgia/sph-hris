@@ -7,12 +7,15 @@ import {
   getFilteredRowModel,
   getPaginationRowModel
 } from '@tanstack/react-table'
+import classNames from 'classnames'
 import React, { Dispatch, FC, SetStateAction, useState } from 'react'
 
 import DesktopTable from './DesktopTable'
 import FooterTable from './../FooterTable'
 import MobileDisclose from './MobileDisclose'
+import useUserQuery from '~/hooks/useUserQuery'
 import { fuzzyFilter } from '~/utils/fuzzyFilter'
+import { USER_POSITIONS } from '~/utils/constants/userPositions'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 
 type Props = {
@@ -34,6 +37,8 @@ const MyDTRTable: FC<Props> = (props): JSX.Element => {
   } = props
 
   const [sorting, setSorting] = useState<SortingState>([])
+  const { handleUserQuery } = useUserQuery()
+  const { data: user } = handleUserQuery()
 
   const table = useReactTable({
     data: myDailyTimeData,
@@ -70,7 +75,12 @@ const MyDTRTable: FC<Props> = (props): JSX.Element => {
         />
       </div>
       {/* Show on medium size and beyond */}
-      <div className="mx-auto mb-3 hidden w-full max-w-fit md:block">
+      <div
+        className={classNames(
+          'mx-auto hidden w-full max-w-fit md:block',
+          user?.userById.position.id === USER_POSITIONS.ESL_TEACHER ? ' mb-12' : 'mb-3'
+        )}
+      >
         <DesktopTable
           {...{
             table,

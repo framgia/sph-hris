@@ -4,16 +4,17 @@ import classNames from 'classnames'
 import { motion } from 'framer-motion'
 import React, { FC, useState } from 'react'
 import { Table } from '@tanstack/react-table'
-import { Disclosure } from '@headlessui/react'
-import { ChevronRight, Clock, Edit } from 'react-feather'
+import { Disclosure, Menu } from '@headlessui/react'
+import { ChevronRight, MoreVertical } from 'react-feather'
 
 import Chip from '~/components/atoms/Chip'
 import Avatar from '~/components/atoms/Avatar'
-import Button from '~/components/atoms/Buttons/Button'
+import FiledOffsetModal from '../FiledOffsetModal'
 import EditTimeEntriesModal from '../EditTimeEntryModal'
 import { ITimeEntry } from '~/utils/types/timeEntryTypes'
 import { WorkStatus } from '~/utils/constants/work-status'
 import { variants } from '~/utils/constants/animationVariants'
+import MenuTransition from '~/components/templates/MenuTransition'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import InterruptionTimeEntriesModal from '../InterruptionTimeEntriesModal'
 import DisclosureTransition from '~/components/templates/DisclosureTransition'
@@ -36,10 +37,14 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
     setUser(name as string)
   }
 
+  const [isOpenFiledOffset, setIsOpenFiledOffset] = useState<boolean>(false)
   const handleIsOpenEditModalToggle = (): void => {
     setIsOpenEditModal(!isOpenEditModal)
   }
 
+  const handleIsOpenFiledOffsetToggle = (): void => setIsOpenFiledOffset(!isOpenFiledOffset)
+
+  const menuItemButton = 'px-3 py-2 text-left text-xs hover:text-slate-700 text-slate-500'
   const EMPTY = 'N/A'
 
   return (
@@ -214,47 +219,100 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                       : 0}
                                   </span>
                                 </li>
-                                <li className="flex items-center space-x-2 px-4 py-2">
+                                <li className="group flex items-center space-x-2 px-4 py-2">
                                   <span>Actions:</span>
-                                  <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
-                                    <Tippy
-                                      placement="left"
-                                      content="Time Entries"
-                                      className="!text-xs"
-                                    >
-                                      <Button
-                                        onClick={() =>
-                                          handleIsOpenTimeEntryToggle(timeEntry.id.toString(), name)
-                                        }
-                                        rounded="none"
-                                        className="py-0.5 px-1 text-slate-500"
+                                  <div
+                                    className={classNames(
+                                      'inline-flex divide-x divide-slate-300 rounded border',
+                                      'border-transparent group-hover:border-slate-300'
+                                    )}
+                                  >
+                                    <Menu as="div" className="relative w-full">
+                                      {/* This is for Work Interruption Modal */}
+                                      {isOpenTimeEntry ? (
+                                        <InterruptionTimeEntriesModal
+                                          {...{
+                                            isOpen: isOpenTimeEntry,
+                                            user: timeEntry.user.name,
+                                            timeEntryId: timeEntry.id,
+                                            closeModal: handleIsOpenTimeEntryToggle
+                                          }}
+                                        />
+                                      ) : null}
+
+                                      {/* This is for Edit Time Entries modal */}
+                                      {isOpenEditModal ? (
+                                        <EditTimeEntriesModal
+                                          {...{
+                                            isOpen: isOpenEditModal,
+                                            user: timeEntry.user,
+                                            timeEntry: {
+                                              id: timeEntry.id,
+                                              timeIn: timeEntry.timeIn?.timeHour,
+                                              timeOut: timeEntry.timeOut?.timeHour
+                                            },
+                                            closeModal: handleIsOpenEditModalToggle
+                                          }}
+                                        />
+                                      ) : null}
+
+                                      {/* This is for Filed Offset Modal */}
+                                      {isOpenFiledOffset ? (
+                                        <FiledOffsetModal
+                                          {...{
+                                            isOpen: isOpenFiledOffset,
+                                            closeModal: handleIsOpenFiledOffsetToggle,
+                                            row: row.original,
+                                            query: {
+                                              isLoading: false,
+                                              isError: false
+                                            }
+                                          }}
+                                        />
+                                      ) : null}
+                                      <Tippy
+                                        placement="left"
+                                        content="Vertical Ellipsis"
+                                        className="!text-xs"
                                       >
-                                        <Clock className="h-4 w-4" />
-                                      </Button>
-                                    </Tippy>
-                                    <Tippy placement="left" content="Edit" className="!text-xs">
-                                      <Button
-                                        onClick={handleIsOpenEditModalToggle}
-                                        rounded="none"
-                                        className="py-0.5 px-1 text-slate-500"
-                                      >
-                                        <Edit className="h-4 w-4" />
-                                        {isOpenEditModal ? (
-                                          <EditTimeEntriesModal
-                                            {...{
-                                              isOpen: isOpenEditModal,
-                                              user: timeEntry.user,
-                                              timeEntry: {
-                                                id: timeEntry.id,
-                                                timeIn: timeEntry.timeIn?.timeHour,
-                                                timeOut: timeEntry.timeOut?.timeHour
-                                              },
-                                              closeModal: handleIsOpenEditModalToggle
-                                            }}
-                                          />
-                                        ) : null}
-                                      </Button>
-                                    </Tippy>
+                                        <Menu.Button className="p-0.5 text-slate-500 outline-none">
+                                          <MoreVertical className="h-4" />
+                                        </Menu.Button>
+                                      </Tippy>
+                                      <MenuTransition>
+                                        <Menu.Items
+                                          className={classNames(
+                                            'absolute bottom-7 z-50 flex w-44 flex-col divide-y divide-slate-200 overflow-hidden rounded-md',
+                                            'bg-white py-0.5 shadow-xl shadow-slate-200 ring-1 ring-black ring-opacity-5 focus:outline-none'
+                                          )}
+                                        >
+                                          <Menu.Item>
+                                            <button
+                                              className={menuItemButton}
+                                              onClick={() => handleIsOpenTimeEntryToggle(row.id)}
+                                            >
+                                              <span>Work Interruption</span>
+                                            </button>
+                                          </Menu.Item>
+                                          <Menu.Item>
+                                            <button
+                                              className={menuItemButton}
+                                              onClick={handleIsOpenEditModalToggle}
+                                            >
+                                              <span>Edit DTR</span>
+                                            </button>
+                                          </Menu.Item>
+                                          <Menu.Item>
+                                            <button
+                                              className={menuItemButton}
+                                              onClick={handleIsOpenFiledOffsetToggle}
+                                            >
+                                              <span>Filed Offset</span>
+                                            </button>
+                                          </Menu.Item>
+                                        </Menu.Items>
+                                      </MenuTransition>
+                                    </Menu>
                                   </div>
                                 </li>
                               </ul>

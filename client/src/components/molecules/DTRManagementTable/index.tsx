@@ -71,7 +71,7 @@ const DTRTable: FC<Props> = (props): JSX.Element => {
         />
       </div>
       {/* Show on medium size and beyond */}
-      <div className="mx-auto hidden w-full max-w-fit md:block">
+      <div className="mx-auto mb-12 hidden w-full max-w-fit md:block">
         <DesktopTable
           {...{
             table,
