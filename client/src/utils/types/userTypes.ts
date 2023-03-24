@@ -2,11 +2,17 @@ export type User = {
   id: number
   name: string
   role: Role
+  position: Position
   timeEntry: TimeEntry
   employeeSchedule: EmployeeSchedule
   avatarLink: string
 }
 export type Role = {
+  id: number
+  name: string
+}
+
+export type Position = {
   id: number
   name: string
 }

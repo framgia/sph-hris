@@ -21,6 +21,8 @@ import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import InterruptionTimeEntriesModal from '../InterruptionTimeEntriesModal'
 import DisclosureTransition from '~/components/templates/DisclosureTransition'
+import ChangeShiftRequestModal from './ChangeShiftRequestModal'
+import { USER_POSITIONS } from '~/utils/constants/userPositions'
 
 type Props = {
   table: Table<IEmployeeTimeEntry>
@@ -32,6 +34,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
   const [isOpenTimeEntry, setIsOpenTimeEntry] = useState<boolean>(false)
   const [isOpenNewOffset, setIsOpenNewOffset] = useState<boolean>(false)
   const [isOpenNewOvertime, setIsOpenNewOvertime] = useState<boolean>(false)
+  const [isOpenChangeShiftRequest, setIsOpenChangeShiftRequest] = useState<boolean>(false)
   const [timeEntryId, setTimeEntryId] = useState<number>(-1)
   const { handleUserQuery } = useUserQuery()
   const { data: user } = handleUserQuery()
@@ -44,6 +47,9 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
   const handleIsOpenNewOvertime = (): void => setIsOpenNewOvertime(!isOpenNewOvertime)
 
   const handleIsOpenNewOffsetToggle = (): void => setIsOpenNewOffset(!isOpenNewOffset)
+
+  const handleIsOpenChangeShiftRequestToggle = (): void =>
+    setIsOpenChangeShiftRequest(!isOpenChangeShiftRequest)
 
   const EMPTY = 'N/A'
 
@@ -346,39 +352,57 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                         <Clock className="h-4 w-4" />
                                       </Button>
                                     </Tippy>
-                                    <Tippy
-                                      placement="left"
-                                      content="ESL Offset Schedule"
-                                      className="!text-xs"
-                                    >
-                                      <Button
-                                        rounded="none"
-                                        onClick={handleIsOpenNewOffsetToggle}
-                                        className="py-0.5 px-1 text-slate-500"
+                                    {user?.userById.position.id === USER_POSITIONS.ESL_TEACHER && (
+                                      <Tippy
+                                        placement="left"
+                                        content="ESL Offset Schedule"
+                                        className="!text-xs"
                                       >
-                                        <Clock className="h-4 w-4" />
+                                        <Button
+                                          rounded="none"
+                                          onClick={handleIsOpenNewOffsetToggle}
+                                          className="py-0.5 px-1 text-slate-500"
+                                        >
+                                          <Clock className="h-4 w-4" />
 
-                                        {/* This is for ESL Work Interruption */}
-                                        {isOpenNewOffset ? (
-                                          <AddNewOffsetModal
-                                            {...{
-                                              isOpen: isOpenNewOffset,
-                                              closeModal: handleIsOpenNewOffsetToggle,
-                                              row: row.original
-                                            }}
-                                          />
-                                        ) : null}
-                                      </Button>
-                                    </Tippy>
-                                    <Tippy
-                                      placement="left"
-                                      content="Change Shift"
-                                      className="!text-xs"
-                                    >
-                                      <Button rounded="none" className="py-0.5 px-1 text-slate-500">
-                                        <Edit className="h-4 w-4" />
-                                      </Button>
-                                    </Tippy>
+                                          {isOpenNewOffset ? (
+                                            <AddNewOffsetModal
+                                              {...{
+                                                isOpen: isOpenNewOffset,
+                                                closeModal: handleIsOpenNewOffsetToggle,
+                                                row: row.original
+                                              }}
+                                            />
+                                          ) : null}
+                                        </Button>
+                                      </Tippy>
+                                    )}
+                                    {user?.userById.position.id !== USER_POSITIONS.ESL_TEACHER && (
+                                      <Tippy
+                                        placement="left"
+                                        content="Change Shift"
+                                        className="!text-xs"
+                                      >
+                                        <Button
+                                          rounded="none"
+                                          onClick={handleIsOpenChangeShiftRequestToggle}
+                                          className="py-0.5 px-1 text-slate-500"
+                                        >
+                                          <Edit className="h-4 w-4" />
+
+                                          {/* This is for Non ESL Teachers */}
+                                          {isOpenChangeShiftRequest ? (
+                                            <ChangeShiftRequestModal
+                                              {...{
+                                                isOpen: isOpenChangeShiftRequest,
+                                                closeModal: handleIsOpenChangeShiftRequestToggle,
+                                                timeEntry: row.original
+                                              }}
+                                            />
+                                          ) : null}
+                                        </Button>
+                                      </Tippy>
+                                    )}
                                   </div>
                                 </li>
                               </ul>

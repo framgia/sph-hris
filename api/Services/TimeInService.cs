@@ -28,6 +28,7 @@ namespace api.Services
                 var personal_token = await context.Personal_Access_Tokens.Where(x => x.Token == token).FirstAsync();
                 return await context.Users
                     .Include(i => i.Role)
+                    .Include(i => i.Position)
                     .Include(i => i.EmployeeSchedule)
                         .ThenInclude(i => i.WorkingDayTimes.Where(p => p.Day == schedule))
                     .Include(i => i.TimeEntries.OrderByDescending(o => o.CreatedAt))

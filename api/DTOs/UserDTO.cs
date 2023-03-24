@@ -16,6 +16,7 @@ namespace api.DTOs
             IsOnline = user.IsOnline;
             EmployeeSchedule = user.EmployeeSchedule;
             Role = user.Role;
+            Position = user.Position;
             TimeEntry = checkLatestTimeEntry(user);
             AvatarLink = $"{domain}/media/{user.ProfileImage?.CollectionName}/{user.ProfileImage?.FileName}";
         }

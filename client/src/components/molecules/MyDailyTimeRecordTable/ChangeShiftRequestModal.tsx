@@ -14,13 +14,16 @@ import useProject from '~/hooks/useProject'
 import Input from '~/components/atoms/Input'
 import { Roles } from '~/utils/constants/roles'
 import useUserQuery from '~/hooks/useUserQuery'
+import useChangeShift from '~/hooks/useChangeShift'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import { User as UserType } from '~/utils/types/userTypes'
+import { PROJECT_NAMES } from '~/utils/constants/projects'
 import { ProjectDetails } from '~/utils/types/projectTypes'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { changeShiftRequestSchema } from '~/utils/validation'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import ModalTemplate from '~/components/templates/ModalTemplate'
+import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 import { changeShiftRequestFormValues } from '~/utils/types/formValues'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
@@ -28,20 +31,25 @@ import { generateProjectsMultiSelect, generateUserSelect } from '~/utils/createL
 
 type Props = {
   isOpen: boolean
+  timeEntry: IEmployeeTimeEntry
   closeModal: () => void
 }
 
 const animatedComponents = makeAnimated()
 
-const ChangeShiftRequestModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
+const ChangeShiftRequestModal: FC<Props> = ({ isOpen, timeEntry, closeModal }): JSX.Element => {
   const [leaders, setLeaders] = useState<UserType[]>([])
   const [managers, setManagers] = useState<UserType[]>([])
 
   const { handleProjectQuery } = useProject()
   const { data: projects, isSuccess: isProjectsSuccess } = handleProjectQuery()
 
-  const { handleAllUsersQuery } = useUserQuery()
+  const { handleAllUsersQuery, handleUserQuery } = useUserQuery()
+  const { data: user } = handleUserQuery()
   const { data: users, isSuccess: isUsersSuccess } = handleAllUsersQuery()
+
+  const { handleChangeShiftRequestMutation } = useChangeShift()
+  const changeShiftRequestMutation = handleChangeShiftRequestMutation()
 
   useEffect(() => {
     if (isProjectsSuccess && projects.projects.length > 0) {
@@ -93,10 +101,42 @@ const ChangeShiftRequestModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element
   // This will handle Submit and Save New Overtime
   const handleSave = async (data: changeShiftRequestFormValues): Promise<void> => {
     return await new Promise((resolve) => {
-      setTimeout(() => {
-        alert(JSON.stringify(data, null, 2))
-        resolve()
-      }, 2000)
+      const others = data.projects.map(
+        (project) => project.project_name.__isNew__ === true && project.project_name.value
+      )
+
+      changeShiftRequestMutation.mutate(
+        {
+          userId: user?.userById.id as number,
+          timeEntryId: timeEntry.id,
+          managerId: parseInt(data.manager.value),
+          timeIn: data.requested_time_in,
+          timeOut: data.requested_time_out,
+          description: data.remarks,
+          otherProject: others.filter((value) => value !== false).toString(),
+
+          projects: data.projects.map((project) => {
+            const otherProjectType = projects?.projects.find(
+              (project) => project.name.toLowerCase() === PROJECT_NAMES.OTHERS
+            ) as ProjectDetails
+
+            return {
+              projectId: (project.project_name.__isNew__ as boolean)
+                ? otherProjectType.id
+                : parseInt(project.project_name.value),
+              projectLeaderId: parseInt(project.project_leader.value)
+            }
+          })
+        },
+        {
+          onSuccess: () => {
+            closeModal()
+          },
+          onSettled: () => {
+            resolve()
+          }
+        }
+      )
     })
   }
 
