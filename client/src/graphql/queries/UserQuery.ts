@@ -5,6 +5,10 @@ export const GET_USER_QUERY = gql`
       id
       name
       avatarLink
+      position {
+        id
+        name
+      }
       timeEntry {
         id
         date

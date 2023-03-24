@@ -18,6 +18,7 @@ namespace api.DTOs
             Role = user.Role;
             TimeEntry = checkLatestTimeEntry(user);
             AvatarLink = $"{domain}/media/{user.ProfileImage?.CollectionName}/{user.ProfileImage?.FileName}";
+            Position = user.Position;
         }
         private TimeEntry? checkLatestTimeEntry(User user)
         {
