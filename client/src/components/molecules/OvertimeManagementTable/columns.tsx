@@ -352,6 +352,7 @@ export const managerColumns = [
       const [isOpenConfirmationModal, setIsOpenConfirmationModal] = useState<boolean>(false)
       const [isOpenUpdateModal, setIsOpenUpdateModal] = useState<boolean>(false)
       const [loading, setLoading] = useState<boolean>(false)
+      const { isManagerApproved } = props.row.original
 
       const handleUpdateToggle = (): void => setIsOpenUpdateModal(!isOpenUpdateModal)
       const handleShowRemarksToggle = (): void => setIsOpenRemarksModal(!isOpenRemarksModal)
@@ -423,11 +424,7 @@ export const managerColumns = [
       }
 
       const isManager = (): boolean => {
-        if (positionId === Position.MANAGER) {
-          return true
-        } else {
-          return false
-        }
+        return positionId === Position.MANAGER
       }
 
       return (
@@ -454,7 +451,7 @@ export const managerColumns = [
               </Tippy>
             </>
           ) : (
-            props.row.original.isManagerApproved == null && (
+            isManagerApproved == null && (
               <>
                 <Tippy placement="left" content="Approve" className="!text-xs">
                   <Button
@@ -478,7 +475,7 @@ export const managerColumns = [
             )
           )}
 
-          {!isManager() && props.row.original.isManagerApproved && (
+          {!isManager() && isManagerApproved && (
             <>
               <Tippy placement="left" content="Edit" className="!text-xs">
                 <Button
