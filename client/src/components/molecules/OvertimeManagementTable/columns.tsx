@@ -10,17 +10,18 @@ import { createColumnHelper } from '@tanstack/react-table'
 
 import Chip from './Chip'
 import Card from '~/components/atoms/Card'
+import useOvertime from '~/hooks/useOvertime'
 import Avatar from '~/components/atoms/Avatar'
+import useUserQuery from '~/hooks/useUserQuery'
 import ShowRemarksModal from './ShowRemarksModal'
+import SpinnerIcon from '~/utils/icons/SpinnerIcon'
+import { Position } from '~/utils/constants/position'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
 import UpdateOvertimeModal from './UpdateOvertimeModal'
 import ApproveConfirmationModal from './ApproveConfirmationModal'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
 import { IOvertimeManagement, IOvertimeManagementManager } from '~/utils/interfaces'
-import useUserQuery from '~/hooks/useUserQuery'
-import useOvertime from '~/hooks/useOvertime'
-import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 
 const columnHelper = createColumnHelper<IOvertimeManagement | IOvertimeManagementManager>()
 
@@ -351,6 +352,7 @@ export const managerColumns = [
       const [isOpenConfirmationModal, setIsOpenConfirmationModal] = useState<boolean>(false)
       const [isOpenUpdateModal, setIsOpenUpdateModal] = useState<boolean>(false)
       const [loading, setLoading] = useState<boolean>(false)
+      const { isManagerApproved } = props.row.original
 
       const handleUpdateToggle = (): void => setIsOpenUpdateModal(!isOpenUpdateModal)
       const handleShowRemarksToggle = (): void => setIsOpenRemarksModal(!isOpenRemarksModal)
@@ -359,6 +361,8 @@ export const managerColumns = [
 
       const { handleUserQuery } = useUserQuery()
       const { data: user } = handleUserQuery()
+
+      const positionId = user?.userById.position.id as number
 
       const { handleManagerApproveOvertimeMutation } = useOvertime()
       const approveOvertimeMutation = handleManagerApproveOvertimeMutation()
@@ -419,9 +423,13 @@ export const managerColumns = [
         })
       }
 
+      const isManager = (): boolean => {
+        return positionId === Position.MANAGER
+      }
+
       return (
         <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
-          {props.row.original.isManagerApproved == null && (
+          {isManager() ? (
             <>
               <Tippy placement="left" content="Approve" className="!text-xs">
                 <Button
@@ -442,9 +450,32 @@ export const managerColumns = [
                 </Button>
               </Tippy>
             </>
+          ) : (
+            isManagerApproved == null && (
+              <>
+                <Tippy placement="left" content="Approve" className="!text-xs">
+                  <Button
+                    rounded="none"
+                    onClick={handleConfirmationToggle}
+                    className="py-0.5 px-1 text-slate-500"
+                  >
+                    <Check className="h-4 w-4 stroke-[3px]" />
+                  </Button>
+                </Tippy>
+                <Tippy placement="left" content="Disapprove" className="!text-xs">
+                  <Button
+                    rounded="none"
+                    onClick={handleDisapproveConfirmationToggle}
+                    className="py-0.5 px-1 text-slate-500"
+                  >
+                    <X className="h-4 w-4 stroke-[3px]" />
+                  </Button>
+                </Tippy>
+              </>
+            )
           )}
 
-          {props.row.original.isManagerApproved && (
+          {!isManager() && isManagerApproved && (
             <>
               <Tippy placement="left" content="Edit" className="!text-xs">
                 <Button

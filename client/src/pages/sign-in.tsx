@@ -85,7 +85,9 @@ const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
                 )}
                 onClick={() => {
                   try {
-                    signIn('google', { callbackUrl: 'http://localhost:3000/sign-in' })
+                    signIn('google', {
+                      callbackUrl: `${process.env.NEXT_PUBLIC_CLIENT_URL as string}/sign-in`
+                    })
                       .then()
                       .catch((error) => error.message)
                   } catch (error) {}

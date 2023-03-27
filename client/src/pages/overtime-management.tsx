@@ -9,6 +9,7 @@ import useUserQuery from '~/hooks/useUserQuery'
 import { Roles } from '~/utils/constants/roles'
 import Layout from '~/components/templates/Layout'
 import { getAllovertime } from '~/hooks/useOvertime'
+import { Position } from '~/utils/constants/position'
 import { IOvertimeManagement } from '~/utils/interfaces'
 import { STATUS_OPTIONS } from '~/utils/constants/notificationFilter'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
@@ -172,6 +173,8 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
               query: {
                 data:
                   user?.userById.role.name === Roles.HR_ADMIN
+                    ? overtimeData
+                    : user?.userById.position.id === Position.MANAGER
                     ? overtimeData
                     : managerData(overtimeData),
                 error: null

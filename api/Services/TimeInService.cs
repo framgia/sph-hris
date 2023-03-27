@@ -36,6 +36,7 @@ namespace api.Services
                     .Include(i => i.TimeEntries.OrderByDescending(o => o.CreatedAt))
                         .ThenInclude(i => i.TimeOut)
                     .Include(i => i.ProfileImage)
+                    .Include(i => i.Position)
                     .Where(x => x.Id == personal_token.UserId)
                     .Select(x => new UserDTO(x, domain))
                     .FirstAsync();
