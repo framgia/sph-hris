@@ -6,18 +6,12 @@ export type User = {
   timeEntry: TimeEntry
   employeeSchedule: EmployeeSchedule
   avatarLink: string
-  position: Position
 }
 export type Position = {
   id: number
   name: string
 }
 export type Role = {
-  id: number
-  name: string
-}
-
-export type Position = {
   id: number
   name: string
 }
