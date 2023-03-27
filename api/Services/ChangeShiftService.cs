@@ -49,8 +49,8 @@ namespace api.Services
                     UserId = request.UserId,
                     ManagerId = request.ManagerId,
                     TimeEntryId = request.TimeEntryId,
-                    TimeIn = request.TimeIn,
-                    TimeOut = request.TimeOut,
+                    TimeIn = TimeSpan.ParseExact(request.TimeIn, "hh':'mm", null),
+                    TimeOut = TimeSpan.ParseExact(request.TimeOut, "hh':'mm", null),
                     OtherProject = request.OtherProject,
                     Description = request.Description,
                     MultiProjects = multiProjectsList

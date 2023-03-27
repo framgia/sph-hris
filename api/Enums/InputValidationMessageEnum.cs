@@ -19,5 +19,6 @@ namespace api.Enums
         public const string NOT_MANAGER_PROJECT_LEADER = "User is not Manager or Project Leader";
         public const string MISMATCH_PROJECT_LEADER = "Project Leader doesn't match";
         public const string MISMATCH_MANAGER = "Manager doesn't match";
+        public const string DUPLICATE_REQUEST = "There's already an existing request!";
     }
 }

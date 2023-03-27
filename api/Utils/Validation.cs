@@ -110,6 +110,13 @@ namespace api.Utils
             }
         }
 
+        public bool checkChangeShiftRequestExist(int timeEntryId)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                return context.ChangeShiftRequests.Where(x => x.TimeEntryId == timeEntryId).Count() > 0;
+            }
+        }
         public bool checkLeaveType(int id)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
@@ -311,6 +318,9 @@ namespace api.Utils
         {
             var errors = new List<IError>();
             int index = 0;
+
+            if (checkChangeShiftRequestExist(request.TimeEntryId))
+                errors.Add(buildError(nameof(request.TimeEntryId), InputValidationMessageEnum.DUPLICATE_REQUEST));
 
             if (!checkUserExist(request.UserId))
                 errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.INVALID_USER));

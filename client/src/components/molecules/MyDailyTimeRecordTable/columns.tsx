@@ -20,6 +20,7 @@ import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 import MenuTransition from '~/components/templates/MenuTransition'
 import InterruptionTimeEntriesModal from './../InterruptionTimeEntriesModal'
+import { USER_POSITIONS } from '~/utils/constants/userPositions'
 
 const columnHelper = createColumnHelper<IEmployeeTimeEntry>()
 const EMPTY = 'N/A'
@@ -315,7 +316,7 @@ export const columns = [
                     {...{
                       isOpen: isOpenChangeShiftRequest,
                       closeModal: handleIsOpenChangeShiftRequestToggle,
-                      row: props.row.original
+                      timeEntry: props.row.original
                     }}
                   />
                 ) : null}
@@ -331,16 +332,23 @@ export const columns = [
                     <span>Work Interruption</span>
                   </button>
                 </Menu.Item>
-                <Menu.Item>
-                  <button className={menuItemButton} onClick={handleIsOpenNewOffsetToggle}>
-                    <span>ESL Offset Schedule</span>
-                  </button>
-                </Menu.Item>
-                <Menu.Item>
-                  <button className={menuItemButton} onClick={handleIsOpenChangeShiftRequestToggle}>
-                    <span>Change Shift Request</span>
-                  </button>
-                </Menu.Item>
+                {user?.userById.position.id === USER_POSITIONS.ESL_TEACHER && (
+                  <Menu.Item>
+                    <button className={menuItemButton} onClick={handleIsOpenNewOffsetToggle}>
+                      <span>ESL Offset Schedule</span>
+                    </button>
+                  </Menu.Item>
+                )}
+                {user?.userById.position.id !== USER_POSITIONS.ESL_TEACHER && (
+                  <Menu.Item>
+                    <button
+                      className={menuItemButton}
+                      onClick={handleIsOpenChangeShiftRequestToggle}
+                    >
+                      <span>Change Shift Request</span>
+                    </button>
+                  </Menu.Item>
+                )}
               </Menu.Items>
             </MenuTransition>
           </Menu>

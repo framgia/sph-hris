@@ -25,6 +25,10 @@ export const GET_USER_QUERY = gql`
         id
         name
       }
+      position {
+        id
+        name
+      }
       employeeSchedule {
         id
         name
