@@ -283,43 +283,42 @@ export const columns = [
       return (
         <div className="inline-flex divide-x divide-slate-300 rounded border border-transparent group-hover:border-slate-300">
           <Menu as="div" className={menu}>
+            {/* This is for Work Interruption Modal */}
+            {isOpenTimeEntry ? (
+              <InterruptionTimeEntriesModal
+                {...{
+                  isOpen: isOpenTimeEntry,
+                  timeEntryId: timeEntry.id,
+                  user: user?.userById.name as string,
+                  closeModal: handleIsOpenTimeEntryToggle
+                }}
+              />
+            ) : null}
+
+            {/* This is for ESL Work Interruption */}
+            {isOpenNewOffset ? (
+              <AddNewOffsetModal
+                {...{
+                  isOpen: isOpenNewOffset,
+                  closeModal: handleIsOpenNewOffsetToggle,
+                  row: props.row.original
+                }}
+              />
+            ) : null}
+
+            {/* This is for ESL Work Interruption */}
+            {isOpenChangeShiftRequest ? (
+              <ChangeShiftRequestModal
+                {...{
+                  isOpen: isOpenChangeShiftRequest,
+                  closeModal: handleIsOpenChangeShiftRequestToggle,
+                  timeEntry: props.row.original
+                }}
+              />
+            ) : null}
             <Tippy placement="left" content="Vertical Ellipsis" className="!text-xs">
               <Menu.Button className="p-0.5 text-slate-500 outline-none">
                 <MoreVertical className="h-4" />
-
-                {/* This is for Work Interruption Modal */}
-                {isOpenTimeEntry ? (
-                  <InterruptionTimeEntriesModal
-                    {...{
-                      isOpen: isOpenTimeEntry,
-                      timeEntryId: timeEntry.id,
-                      user: user?.userById.name as string,
-                      closeModal: handleIsOpenTimeEntryToggle
-                    }}
-                  />
-                ) : null}
-
-                {/* This is for ESL Work Interruption */}
-                {isOpenNewOffset ? (
-                  <AddNewOffsetModal
-                    {...{
-                      isOpen: isOpenNewOffset,
-                      closeModal: handleIsOpenNewOffsetToggle,
-                      row: props.row.original
-                    }}
-                  />
-                ) : null}
-
-                {/* This is for ESL Work Interruption */}
-                {isOpenChangeShiftRequest ? (
-                  <ChangeShiftRequestModal
-                    {...{
-                      isOpen: isOpenChangeShiftRequest,
-                      closeModal: handleIsOpenChangeShiftRequestToggle,
-                      timeEntry: props.row.original
-                    }}
-                  />
-                ) : null}
               </Menu.Button>
             </Tippy>
             <MenuTransition>
