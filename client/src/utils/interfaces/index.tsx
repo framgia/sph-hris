@@ -165,4 +165,6 @@ export interface IFiledOffsetTable {
   projectLeader: string
   status: string
   remarks: string
+  createdAt: string
+  updateAt: string
 }

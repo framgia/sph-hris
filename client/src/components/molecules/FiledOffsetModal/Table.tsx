@@ -21,12 +21,7 @@ const FiledOffsetTable: FC<Props> = (props) => {
   } = props
 
   return (
-    <AnimatedTable
-      {...{
-        table
-      }}
-      className="w-full"
-    >
+    <AnimatedTable className="w-full">
       <thead className="border-b border-slate-200">
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>

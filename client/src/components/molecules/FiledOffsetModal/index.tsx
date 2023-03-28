@@ -12,6 +12,7 @@ import { fuzzyFilter } from '~/utils/fuzzyFilter'
 
 import { columns } from './columns'
 import FiledOffsetTable from './Table'
+import MobileDisclose from './MobileDisclose'
 import GlobalSearchFilter from '../GlobalSearchFilter'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import ModalTemplate from '~/components/templates/ModalTemplate'
@@ -67,7 +68,7 @@ const FiledOffsetModal: FC<Props> = (props): JSX.Element => {
         isOpen,
         closeModal
       }}
-      className="w-full max-w-[900px]"
+      className="w-full max-w-[720px]"
     >
       {/* Custom Modal Header */}
       <ModalHeader
@@ -95,15 +96,27 @@ const FiledOffsetModal: FC<Props> = (props): JSX.Element => {
       </div>
       {/* Actual Data Table for Interruption Time Entries */}
       <div className="default-scrollbar overflow-auto">
-        <FiledOffsetTable
-          {...{
-            table,
-            query: {
+        <div className="block md:hidden">
+          <MobileDisclose
+            {...{
+              table,
               isLoading,
-              isError
-            }
-          }}
-        />
+              error: null
+            }}
+          />
+        </div>
+        {/* Show on medium size and beyond */}
+        <div className="mx-auto hidden w-full max-w-fit md:block">
+          <FiledOffsetTable
+            {...{
+              table,
+              query: {
+                isLoading,
+                isError
+              }
+            }}
+          />
+        </div>
       </div>
       {/* Custom Modal Footer Style */}
       <ModalFooter>

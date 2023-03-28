@@ -389,6 +389,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                             isOpen: isOpenFiledOffset,
                                             closeModal: handleIsOpenFiledOffsetToggle,
                                             row: row.original,
+                                            isMyDTRPage: true,
                                             query: {
                                               isLoading: false,
                                               isError: false
