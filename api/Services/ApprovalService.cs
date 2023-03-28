@@ -1,6 +1,7 @@
 using api.Context;
 using api.Entities;
 using api.Enums;
+using api.NotificationDataClasses;
 using api.Requests;
 using api.Utils;
 using HotChocolate.Subscriptions;
@@ -42,7 +43,7 @@ namespace api.Services
                     if (errors.Count > 0) throw new GraphQLException(errors);
 
                     // approve/disapprove operation
-                    var headManager = await context.Users.Where(x => x.PositionId == 1).FirstOrDefaultAsync();
+                    var headManager = await context.Users.Where(x => x.PositionId == PositionEnum.MANAGER).FirstOrDefaultAsync();
                     var notification = await context.OvertimeNotifications.Where(x => x.OvertimeId == overtimeRequest.OvertimeId && x.RecipientId == overtimeRequest.UserId && x.Type == NotificationTypeEnum.OVERTIME).FirstOrDefaultAsync();
                     var overtime = await context.Overtimes.FindAsync(overtimeRequest.OvertimeId);
                     var notificationData = notification != null ? JsonConvert.DeserializeObject<dynamic>(notification.Data) : null;
@@ -192,6 +193,76 @@ namespace api.Services
 
                 return leave;
             }
+        }
+
+        public async Task<bool> ApproveDisapproveChangeShift(ApproveChangeShiftRequest request)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var errors = new List<IError>();
+                errors = _customInputValidation.checkApproveChangeShiftRequestInput(request);
+                if (errors.Count > 0) throw new GraphQLException(errors);
+
+                var notification = await context.ChangeShiftNotifications.FindAsync(request.NotificationId);
+                var changeShiftRequest = notification != null ? await context.ChangeShiftRequests.FindAsync(notification.ChangeShiftRequestId) : null;
+                var notificationData = notification != null ? JsonConvert.DeserializeObject<ChangeShiftData>(notification.Data) : null;
+                var changeShiftNotificationList = changeShiftRequest != null ? await context.ChangeShiftNotifications.Where(x => x.ChangeShiftRequestId == changeShiftRequest.Id && x.RecipientId != changeShiftRequest.ManagerId).ToListAsync() : null;
+
+                var isManager = _customInputValidation.checkManagerUser(request.UserId).Result;
+                var isProjectLeader = _customInputValidation.checkApprovingProjectLeader(request.UserId, changeShiftRequest!.Id, MultiProjectTypeEnum.CHANGE_SHIFT).Result;
+
+                if (isManager && changeShiftRequest.ManagerId != request.UserId) throw new GraphQLException(ErrorBuilder.New().SetMessage(InputValidationMessageEnum.MISMATCH_MANAGER).Build());
+                if (!isManager && !isProjectLeader) throw new GraphQLException(ErrorBuilder.New().SetMessage(InputValidationMessageEnum.MISMATCH_PROJECT_LEADER).Build());
+
+                // Update notification data
+                if (request.IsApproved && notificationData != null) notificationData.Status = RequestStatus.APPROVED;
+                if (!request.IsApproved && notificationData != null) notificationData.Status = RequestStatus.DISAPPROVED;
+
+                if (notification != null) notification.Data = JsonConvert.SerializeObject(notificationData);
+
+                if (isProjectLeader)
+                {
+                    var allApproved = true;
+                    changeShiftRequest.IsLeaderApproved = request.IsApproved;
+
+                    // check if all leaders approved before notifying manager
+                    changeShiftNotificationList?.ForEach(notif =>
+                    {
+                        var data = JsonConvert.DeserializeObject<ChangeShiftData>(notif.Data);
+                        if (data != null && (data.Status == RequestStatus.DISAPPROVED || data.Status == RequestStatus.PENDING)) allApproved = false;
+                    });
+
+                    if (request.IsApproved && allApproved && changeShiftRequest != null)
+                    {
+                        await _notificationService.createChangeShiftRequestNotification(changeShiftRequest, true);
+                    }
+
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+
+                // update TimeEntries
+                if (isManager && changeShiftRequest != null && changeShiftRequest.IsLeaderApproved != null && changeShiftRequest.IsLeaderApproved != false)
+                {
+                    changeShiftRequest.IsManagerApproved = request.IsApproved;
+
+                    var timeEntry = await context.TimeEntries.FindAsync(changeShiftRequest.TimeEntryId);
+                    if (timeEntry != null && changeShiftRequest.IsManagerApproved == true)
+                    {
+                        timeEntry.StartTime = changeShiftRequest.TimeIn;
+                        timeEntry.EndTime = changeShiftRequest.TimeOut;
+
+                    }
+                    await _notificationService.createChangeShiftApproveDisapproveNotification(changeShiftRequest, (bool)changeShiftRequest.IsManagerApproved);
+
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+                // Console.WriteLine("=============================================================>");
+                await context.SaveChangesAsync();
+            }
+
+            throw new GraphQLException(ErrorBuilder.New().SetMessage("Something went wrong!").Build());
         }
     }
 }

@@ -183,18 +183,17 @@ namespace api.Services
             }
         }
 
-        public async Task<List<ChangeShiftNotification>> createChangeShiftRequestNotification(ChangeShiftRequest request)
+        public async Task<List<ChangeShiftNotification>> createChangeShiftRequestNotification(ChangeShiftRequest request, bool isManager = false)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 var notifications = new List<ChangeShiftNotification>();
                 var user = context.Users.Find(request.UserId);
+                var projectNames = context.MultiProjects.Where(x => x.ChangeShiftRequestId == request.Id && x.Type == MultiProjectTypeEnum.CHANGE_SHIFT).Select(x => x.ProjectId == ProjectId.OTHER_PROJECT ? request.OtherProject : x.Project.Name);
 
-                // Notification per project
-                request.MultiProjects.ToList().ForEach(requestProject =>
+                if (isManager)
                 {
-                    var project = context.Projects.FindAsync(requestProject.ProjectId);
-                    var dataToProjectLeader = JsonSerializer.Serialize(new ChangeShiftLeaderData
+                    var dataToManager = JsonSerializer.Serialize(new ChangeShiftManagerData
                     {
                         User = new NotificationUser
                         {
@@ -202,7 +201,7 @@ namespace api.Services
                             Name = user?.Name!,
                             AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
                         },
-                        Projects = new List<string> { project.Result!.Name == "Others" ? request.OtherProject! : project.Result.Name! },
+                        Projects = projectNames,
                         RequestedTimeIn = request.TimeIn,
                         RequestedTimeOut = request.TimeOut,
                         DateFiled = (DateTime)request.CreatedAt!,
@@ -212,19 +211,55 @@ namespace api.Services
                     }
                     );
 
-                    var notificationToProjectLeader = new ChangeShiftNotification
+                    // Notification to Manager
+                    var notificationToManager = new ChangeShiftNotification
                     {
-                        RecipientId = requestProject.ProjectLeaderId,
+                        RecipientId = request.ManagerId,
                         ChangeShiftRequestId = request.Id,
                         Type = NotificationTypeEnum.CHANGE_SHIFT,
-                        Data = dataToProjectLeader
+                        Data = dataToManager
                     };
-                    notifications.Add(notificationToProjectLeader);
-                });
+                    notifications.Add(notificationToManager);
+                }
+                else
+                {
+                    // Notification per project
+                    request.MultiProjects.ToList().ForEach(requestProject =>
+                    {
+                        var project = context.Projects.FindAsync(requestProject.ProjectId);
+                        var dataToProjectLeader = JsonSerializer.Serialize(new ChangeShiftLeaderData
+                        {
+                            User = new NotificationUser
+                            {
+                                Id = (int)user?.Id!,
+                                Name = user?.Name!,
+                                AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
+                            },
+                            Projects = new List<string> { project.Result!.Name == "Others" ? request.OtherProject! : project.Result.Name! },
+                            RequestedTimeIn = request.TimeIn,
+                            RequestedTimeOut = request.TimeOut,
+                            DateFiled = (DateTime)request.CreatedAt!,
+                            Type = NotificationDataTypeEnum.REQUEST,
+                            Description = request.Description,
+                            Status = _changeShiftService.GetRequestStatus(request),
+                        }
+                        );
+
+                        var notificationToProjectLeader = new ChangeShiftNotification
+                        {
+                            RecipientId = requestProject.ProjectLeaderId,
+                            ChangeShiftRequestId = request.Id,
+                            Type = NotificationTypeEnum.CHANGE_SHIFT,
+                            Data = dataToProjectLeader
+                        };
+                        notifications.Add(notificationToProjectLeader);
+                    });
+                }
 
                 notifications.ForEach(notif =>
                 {
                     context.ChangeShiftNotifications.Add(notif);
+                    sendChangeShiftNotificationEvent(notif);
                 });
 
                 await context.SaveChangesAsync();
@@ -322,6 +357,48 @@ namespace api.Services
                 await context.SaveChangesAsync();
 
                 sendOvertimeNotificationEvent(notificationToUser);
+                return notificationToUser;
+            }
+        }
+
+        public async Task<ChangeShiftNotification> createChangeShiftApproveDisapproveNotification(ChangeShiftRequest changeShift, bool IsApproved)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var user = await context.Users.FindAsync(changeShift.UserId);
+                var projectNames = context.MultiProjects.Where(x => x.ChangeShiftRequestId == changeShift.Id && x.Type == MultiProjectTypeEnum.CHANGE_SHIFT).Select(x => x.ProjectId == ProjectId.OTHER_PROJECT ? changeShift.OtherProject : x.Project.Name);
+
+                var dataToUser = JsonSerializer.Serialize(new ChangeShiftManagerData
+                {
+                    User = new NotificationUser
+                    {
+                        Id = (int)user?.Id!,
+                        Name = user.Name!,
+                        AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
+                    },
+                    Projects = projectNames,
+
+                    RequestedTimeIn = changeShift.TimeIn,
+                    RequestedTimeOut = changeShift.TimeOut,
+                    DateFiled = (DateTime)changeShift.CreatedAt!,
+                    Type = IsApproved ? NotificationDataTypeEnum.APPROVE : NotificationDataTypeEnum.DISAPPROVE,
+                    Description = changeShift.Description,
+                    Status = IsApproved ? RequestStatus.APPROVED : RequestStatus.DISAPPROVED,
+                }
+                );
+
+                var notificationToUser = new ChangeShiftNotification
+                {
+                    RecipientId = changeShift.UserId,
+                    ChangeShiftRequestId = changeShift.Id,
+                    Type = NotificationTypeEnum.CHANGE_SHIFT_RESOLVED,
+                    Data = dataToUser
+                };
+
+                context.Notifications.Add(notificationToUser);
+                await context.SaveChangesAsync();
+
+                sendChangeShiftNotificationEvent(notificationToUser);
                 return notificationToUser;
             }
         }

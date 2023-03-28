@@ -75,13 +75,14 @@ namespace api.Utils
             }
         }
 
-        public async Task<bool> checkApprovingProjectLeader(int projectLeaderId, int leaveId, string type)
+        public async Task<bool> checkApprovingProjectLeader(int projectLeaderId, int id, string type)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 MultiProject? multiProject = null;
-                if (type == MultiProjectTypeEnum.LEAVE) multiProject = await context.MultiProjects.Where(x => x.Type == type && x.LeaveId == leaveId && x.ProjectLeaderId == projectLeaderId).FirstOrDefaultAsync();
-                if (type == MultiProjectTypeEnum.OVERTIME) multiProject = await context.MultiProjects.Where(x => x.Type == type && x.OvertimeId == leaveId && x.ProjectLeaderId == projectLeaderId).FirstOrDefaultAsync();
+                if (type == MultiProjectTypeEnum.LEAVE) multiProject = await context.MultiProjects.Where(x => x.Type == type && x.LeaveId == id && x.ProjectLeaderId == projectLeaderId).FirstOrDefaultAsync();
+                if (type == MultiProjectTypeEnum.OVERTIME) multiProject = await context.MultiProjects.Where(x => x.Type == type && x.OvertimeId == id && x.ProjectLeaderId == projectLeaderId).FirstOrDefaultAsync();
+                if (type == MultiProjectTypeEnum.CHANGE_SHIFT) multiProject = await context.MultiProjects.Where(x => x.Type == type && x.ChangeShiftRequestId == id && x.ProjectLeaderId == projectLeaderId).FirstOrDefaultAsync();
                 return multiProject != null;
             }
         }
@@ -310,6 +311,20 @@ namespace api.Utils
 
             if (request.IsApproved && request.ApprovedMinutes == null)
                 errors.Add(buildError(nameof(request.ApprovedMinutes), InputValidationMessageEnum.MISSING_APPROVED_MINUTES));
+
+            return errors;
+        }
+
+        public List<IError> checkApproveChangeShiftRequestInput(ApproveChangeShiftRequest request)
+        {
+            var errors = new List<IError>();
+
+            if (!checkUserExist(request.UserId))
+                errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.INVALID_USER));
+
+            if (!(checkManagerUser(request.UserId).Result || checkProjectLeaderUser(request.UserId).Result)) errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_MANAGER_PROJECT_LEADER));
+
+            if (!checkNotificationExist(request.NotificationId, NotificationTypeEnum.CHANGE_SHIFT).Result) errors.Add(buildError(nameof(request.NotificationId), InputValidationMessageEnum.INVALID_NOTIFICATION));
 
             return errors;
         }

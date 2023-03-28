@@ -65,7 +65,7 @@ namespace api.Services
         public string GetRequestStatus(ChangeShiftRequest request)
         {
             if (request.IsLeaderApproved == true && request.IsManagerApproved == true) return RequestStatus.APPROVED;
-            if (request.IsLeaderApproved == false && request.IsManagerApproved == false) return RequestStatus.DISAPPROVED;
+            if (request.IsLeaderApproved == false || request.IsManagerApproved == false) return RequestStatus.DISAPPROVED;
             return RequestStatus.PENDING;
         }
     }

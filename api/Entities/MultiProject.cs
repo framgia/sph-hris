@@ -13,6 +13,7 @@ namespace api.Entities
         public int? ProjectLeaderId { get; set; }
         public int? LeaveId { get; set; }
         public int? OvertimeId { get; set; }
+        public int? ChangeShiftRequestId { get; set; }
         public Project Project { get; set; } = default!;
         public User ProjectLeader { get; set; } = default!;
     }

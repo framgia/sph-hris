@@ -18,12 +18,7 @@ namespace api.Schema.Mutations
                 {
                     using var transaction = context.Database.BeginTransaction();
                     var changeShift = await _changeShiftService.Create(request);
-                    var notificationList = await _notificationService.createChangeShiftRequestNotification(changeShift);
-
-                    notificationList.ForEach(notif =>
-                    {
-                        _notificationService.sendChangeShiftNotificationEvent(notif);
-                    });
+                    await _notificationService.createChangeShiftRequestNotification(changeShift);
 
                     transaction.Commit();
                     return changeShift;

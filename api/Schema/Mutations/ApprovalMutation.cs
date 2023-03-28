@@ -70,5 +70,26 @@ namespace api.Schema.Mutations
                 }
             }
         }
+
+        public async Task<bool> ApproveDisapproveChangeShift(ApproveChangeShiftRequest approvingData, [Service] ApprovalService _approvalService, [Service] IDbContextFactory<HrisContext> contextFactory)
+        {
+            using (HrisContext context = contextFactory.CreateDbContext())
+            {
+                try
+                {
+                    using var transaction = context.Database.BeginTransaction();
+
+                    await _approvalService.ApproveDisapproveChangeShift(approvingData);
+
+                    transaction.Commit();
+
+                    return true;
+                }
+                catch (GraphQLException e)
+                {
+                    throw e;
+                }
+            }
+        }
     }
 }
