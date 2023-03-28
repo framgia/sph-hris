@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
 import classNames from 'classnames'
+
 import { WorkStatus } from '~/utils/constants/work-status'
 
 type Props = {

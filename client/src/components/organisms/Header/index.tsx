@@ -173,6 +173,8 @@ const Header: FC<Props> = (props): JSX.Element => {
     setNewNotificationCount(0)
   }
 
+  const NOTIFICATION_LIMIT = 9
+
   return (
     <header
       className={classNames(
@@ -194,135 +196,163 @@ const Header: FC<Props> = (props): JSX.Element => {
           </Button>
         </div>
         {/* Header Title */}
-        <div className="hidden md:block">
-          <div className="flex items-center space-x-2">
-            <h1 className="font-inter text-lg font-semibold text-slate-700 line-clamp-1">
-              <>
-                {router.pathname.includes('/notification') && 'Notifications'}
-                {Menus.map((item, index) => (
-                  <div key={index}>
-                    {router.pathname === item.href && item.name}
-                    {item?.submenu === true &&
-                      item?.submenuItems?.map((sub) =>
-                        router.pathname.includes(sub.href) ? sub.name : ''
-                      )}
-                  </div>
-                ))}
-              </>
-            </h1>
-            {router.pathname.includes('/dtr-management') && <LegendTooltip />}
-            {router.pathname.includes('/my-daily-time-record') && <LegendTooltip />}
+        {status !== 'loading' ? (
+          <div className="hidden md:block">
+            <div className="flex items-center space-x-2">
+              <h1 className="font-inter text-lg font-semibold text-slate-700 line-clamp-1">
+                <>
+                  {router.pathname.includes('/notification') && 'Notifications'}
+                  {Menus.map((item, index) => (
+                    <div key={index}>
+                      {router.pathname === item.href && item.name}
+                      {item?.submenu === true &&
+                        item?.submenuItems?.map((sub) =>
+                          router.pathname.includes(sub.href) ? sub.name : ''
+                        )}
+                    </div>
+                  ))}
+                </>
+              </h1>
+              {router.pathname.includes('/dtr-management') && <LegendTooltip />}
+              {router.pathname.includes('/my-daily-time-record') && <LegendTooltip />}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="w-full animate-pulse">
+            <div className="h-3 w-32 rounded bg-slate-200/70"></div>
+          </div>
+        )}
       </section>
 
       {/* User Actions */}
       <section className="flex items-center space-x-5 md:space-x-10">
-        <div className="flex items-center space-x-2">
-          {/* Timer */}
-          <Text
-            className={`${time.toString().includes('UTC') ? 'invisible' : 'visible'}`}
-            theme="base"
-            color="slate"
-          >
-            <span>{`0${Math.floor((time as number) / (60 * 60))}`.slice(-2)}:</span>
-            <span>{`0${Math.floor(((time as number) % (60 * 60)) / 60)}`.slice(-2)}:</span>
-            <span>{`0${(time as number) % 60}`.slice(-2)}</span>
-          </Text>
-          {/* Clock In Button */}
-          <Tooltip
-            placement="bottom"
-            overlay="Clock In"
-            arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
-          >
-            <Button
-              disabled={
-                data?.userById.timeEntry?.timeIn !== null ||
-                data.userById.employeeSchedule.workingDayTimes.length < 1
-              }
-              onClick={handleToggleTimeInDrawer}
+        {status !== 'loading' ? (
+          <div className="flex items-center space-x-2">
+            {/* Timer */}
+            <Text
+              className={`${time.toString().includes('UTC') ? 'invisible' : 'visible'}`}
+              theme="base"
+              color="slate"
             >
-              <ClockInIcon className="h-7 w-7 fill-current" />
-            </Button>
-          </Tooltip>
-          {/* Break Button */}
-          <Tooltip
-            placement="bottom"
-            overlay="Break Time"
-            arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
-          >
-            <Button
-              disabled={
-                data?.userById.timeEntry?.timeIn === null ||
-                data?.userById?.timeEntry?.timeOut !== null
-              }
-              onClick={handleToggleWorkInterruptionDrawer}
+              <span>{`0${Math.floor((time as number) / (60 * 60))}`.slice(-2)}:</span>
+              <span>{`0${Math.floor(((time as number) % (60 * 60)) / 60)}`.slice(-2)}:</span>
+              <span>{`0${(time as number) % 60}`.slice(-2)}</span>
+            </Text>
+            {/* Clock In Button */}
+            <Tooltip
+              placement="bottom"
+              overlay="Clock In"
+              arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
             >
-              <BreakIcon className="h-7 w-7 fill-current" />
-            </Button>
-          </Tooltip>
-          {/* Clock Out Button */}
-          <Tooltip
-            placement="bottom"
-            overlay="Clock Out"
-            arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
-          >
-            <Button
-              disabled={
-                data?.userById?.timeEntry?.timeIn === null ||
-                (data?.userById?.timeEntry?.timeIn !== null &&
-                  data?.userById?.timeEntry?.timeOut !== null)
-              }
-              onClick={onToggleTimeOutDrawerClick}
+              <Button
+                disabled={
+                  data?.userById.timeEntry?.timeIn !== null ||
+                  data.userById.employeeSchedule.workingDayTimes.length < 1
+                }
+                onClick={handleToggleTimeInDrawer}
+              >
+                <ClockInIcon className="h-7 w-7 fill-current" />
+              </Button>
+            </Tooltip>
+            {/* Break Button */}
+            <Tooltip
+              placement="bottom"
+              overlay="Break Time"
+              arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
             >
-              <ClockOutIcon className="h-7 w-7 fill-current" />
-            </Button>
-          </Tooltip>
-        </div>
-        <div className="text-slate-500 sm:block">
-          <div className="inline-flex items-center space-x-4">
-            <div className="relative">
-              {newNotificationCount > 0 ? (
-                <>
-                  <span
-                    className={classNames(
-                      'shrink-0 animate-ping rounded-full border border-rose-600 bg-rose-500 !text-[10px] font-semibold text-white',
-                      'absolute -right-1 -top-1 z-50 flex h-4 w-4 select-none items-center justify-center ring-4 ring-white',
-                      newNotificationCount > 9 ? 'px-2 py-0.5' : ' px-1.5'
-                    )}
-                  >
-                    {newNotificationCount > 9 ? '9+' : newNotificationCount}
-                  </span>
-                  <span
-                    className={classNames(
-                      'shrink-0 rounded-full border border-rose-600 bg-rose-500 !text-[10px] font-semibold text-white',
-                      'absolute -right-1 -top-1 z-50 flex h-4 w-4 select-none items-center justify-center ring-4 ring-white',
-                      newNotificationCount > 9 ? 'px-2 py-0.5' : ' px-1.5'
-                    )}
-                  >
-                    {newNotificationCount > 9 ? '9+' : newNotificationCount}
-                  </span>
-                </>
-              ) : null}
-              <NotificationPopover
-                className="h-5 w-5 text-slate-400"
-                notificationsData={notifications}
-                checkNotification={(state: boolean) => handleCheckNotifications(state)}
-              />
-            </div>
-            {/* User Avatar */}
-            <span className="hidden text-slate-500 sm:block">
-              <UserMenuDropDown position="bottom">
-                <Avatar
-                  src={data?.userById.avatarLink}
-                  alt="user-avatar"
-                  size="md"
-                  rounded="full"
-                />
-              </UserMenuDropDown>
-            </span>
+              <Button
+                disabled={
+                  data?.userById.timeEntry?.timeIn === null ||
+                  data?.userById?.timeEntry?.timeOut !== null
+                }
+                onClick={handleToggleWorkInterruptionDrawer}
+              >
+                <BreakIcon className="h-7 w-7 fill-current" />
+              </Button>
+            </Tooltip>
+            {/* Clock Out Button */}
+            <Tooltip
+              placement="bottom"
+              overlay="Clock Out"
+              arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+            >
+              <Button
+                disabled={
+                  data?.userById?.timeEntry?.timeIn === null ||
+                  (data?.userById?.timeEntry?.timeIn !== null &&
+                    data?.userById?.timeEntry?.timeOut !== null)
+                }
+                onClick={onToggleTimeOutDrawerClick}
+              >
+                <ClockOutIcon className="h-7 w-7 fill-current" />
+              </Button>
+            </Tooltip>
           </div>
-        </div>
+        ) : (
+          <div className="inline-flex w-full animate-pulse items-center space-x-2">
+            <div className="flex-shrink-0">
+              <div className="h-7 w-7 rounded-full bg-gray-100"></div>
+            </div>
+            <div className="flex-shrink-0">
+              <div className="h-7 w-7 rounded-full bg-gray-100"></div>
+            </div>
+            <div className="flex-shrink-0">
+              <div className="h-7 w-7 rounded-full bg-gray-100"></div>
+            </div>
+          </div>
+        )}
+        {status !== 'loading' ? (
+          <div className="text-slate-500 sm:block">
+            <div className="inline-flex items-center space-x-4">
+              <div className="relative">
+                {newNotificationCount > 0 ? (
+                  <>
+                    <span
+                      className={classNames(
+                        'shrink-0 animate-ping rounded-full border border-rose-600 bg-rose-500 !text-[10px] font-semibold text-white',
+                        'absolute -right-1 -top-1 z-50 flex h-4 w-4 select-none items-center justify-center ring-4 ring-white',
+                        newNotificationCount > 9 ? 'px-2 py-0.5' : ' px-1.5'
+                      )}
+                    >
+                      {newNotificationCount > NOTIFICATION_LIMIT ? '9+' : newNotificationCount}
+                    </span>
+                    <span
+                      className={classNames(
+                        'shrink-0 rounded-full border border-rose-600 bg-rose-500 !text-[10px] font-semibold text-white',
+                        'absolute -right-1 -top-1 z-50 flex h-4 w-4 select-none items-center justify-center ring-4 ring-white',
+                        newNotificationCount > NOTIFICATION_LIMIT ? 'px-2 py-0.5' : ' px-1.5'
+                      )}
+                    >
+                      {newNotificationCount > NOTIFICATION_LIMIT ? '9+' : newNotificationCount}
+                    </span>
+                  </>
+                ) : null}
+                <NotificationPopover
+                  className="h-5 w-5 text-slate-400"
+                  notificationsData={notifications}
+                  checkNotification={(state: boolean) => handleCheckNotifications(state)}
+                />
+              </div>
+              {/* User Avatar */}
+              <span className="hidden text-slate-500 sm:block">
+                <UserMenuDropDown position="bottom">
+                  <Avatar
+                    src={data?.userById.avatarLink}
+                    alt="user-avatar"
+                    size="md"
+                    rounded="full"
+                  />
+                </UserMenuDropDown>
+              </span>
+            </div>
+          </div>
+        ) : (
+          <div className="animate-pulse">
+            <div className="flex-shrink-0">
+              <div className="h-7 w-7 rounded-full bg-gray-100"></div>
+            </div>
+          </div>
+        )}
       </section>
     </header>
   )

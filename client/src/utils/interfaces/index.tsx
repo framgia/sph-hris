@@ -156,3 +156,15 @@ export interface IMyOvertimeTable {
   remarks: string
   status: string
 }
+
+export interface IFiledOffsetTable {
+  id: number
+  title: string
+  timeIn: string
+  timeOut: string
+  projectLeader: string
+  status: string
+  remarks: string
+  createdAt: string
+  updateAt: string
+}
