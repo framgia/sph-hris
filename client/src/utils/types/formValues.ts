@@ -174,6 +174,13 @@ export type NewOffsetFormValues = {
   description: string
 }
 
+export type FileOffsetFormValues = {
+  offsetTime: TimeEntry
+  title: string
+  teamLeader: ReactSelectOption
+  description: string
+}
+
 export type changeShiftRequestFormValues = {
   // eslint-disable-next-line @typescript-eslint/array-type
   projects: {

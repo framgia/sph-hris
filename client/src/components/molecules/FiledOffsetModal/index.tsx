@@ -13,6 +13,7 @@ import { fuzzyFilter } from '~/utils/fuzzyFilter'
 import { columns } from './columns'
 import FiledOffsetTable from './Table'
 import MobileDisclose from './MobileDisclose'
+import FileOffsetModal from './FileOffsetModal'
 import GlobalSearchFilter from '../GlobalSearchFilter'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import ModalTemplate from '~/components/templates/ModalTemplate'
@@ -43,6 +44,9 @@ const FiledOffsetModal: FC<Props> = (props): JSX.Element => {
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState<string>('')
+  const [isOpenFileOffset, setIsOpenFileOffset] = useState<boolean>(false)
+
+  const handleIsOpenFileOffsetToggle = (): void => setIsOpenFileOffset(!isOpenFileOffset)
 
   const table = useReactTable({
     data: dummyFiledOffsetData,
@@ -89,11 +93,23 @@ const FiledOffsetModal: FC<Props> = (props): JSX.Element => {
           className="w-full"
         />
         {isMyDTRPage === true ? (
-          <Button variant="primary" className="shrink-0 px-4 py-1 text-xs">
+          <Button
+            variant="primary"
+            className="shrink-0 px-4 py-1 text-xs"
+            onClick={handleIsOpenFileOffsetToggle}
+          >
             File Request
           </Button>
         ) : null}
       </div>
+      {isOpenFileOffset ? (
+        <FileOffsetModal
+          {...{
+            isOpen: isOpenFileOffset,
+            closeModal: handleIsOpenFileOffsetToggle
+          }}
+        />
+      ) : null}
       {/* Actual Data Table for Interruption Time Entries */}
       <div className="default-scrollbar overflow-auto">
         <div className="block md:hidden">

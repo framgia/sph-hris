@@ -319,6 +319,16 @@ export const NewOffsetSchema = yup.object().shape({
   description: yup.string().required().label('Description')
 })
 
+export const FileOffsetSchema = yup.object().shape({
+  offsetTime: yup.object().shape({
+    timeIn: yup.string().required().label('Time in'),
+    timeOut: yup.string().required().label('Time out')
+  }),
+  title: yup.string().required().label('Title'),
+  teamLeader: SelectSchema,
+  description: yup.string().required().label('Description')
+})
+
 export const changeShiftRequestSchema = yup.object().shape({
   projects: yup.array().of(
     yup.object().shape({
