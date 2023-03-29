@@ -205,18 +205,18 @@ namespace api.Services
 
                 var notification = await context.ChangeShiftNotifications.FindAsync(request.NotificationId);
                 var changeShiftRequest = notification != null ? await context.ChangeShiftRequests.FindAsync(notification.ChangeShiftRequestId) : null;
-                var notificationData = notification != null ? JsonConvert.DeserializeObject<ChangeShiftData>(notification.Data) : null;
                 var changeShiftNotificationList = changeShiftRequest != null ? await context.ChangeShiftNotifications.Where(x => x.ChangeShiftRequestId == changeShiftRequest.Id && x.RecipientId != changeShiftRequest.ManagerId).ToListAsync() : null;
 
                 var isManager = _customInputValidation.checkManagerUser(request.UserId).Result;
                 var isProjectLeader = _customInputValidation.checkApprovingProjectLeader(request.UserId, changeShiftRequest!.Id, MultiProjectTypeEnum.CHANGE_SHIFT).Result;
+                var notificationData = notification != null ? JsonConvert.DeserializeObject<dynamic>(notification.Data) : null;
 
                 if (isManager && changeShiftRequest.ManagerId != request.UserId) throw new GraphQLException(ErrorBuilder.New().SetMessage(InputValidationMessageEnum.MISMATCH_MANAGER).Build());
                 if (!isManager && !isProjectLeader) throw new GraphQLException(ErrorBuilder.New().SetMessage(InputValidationMessageEnum.MISMATCH_PROJECT_LEADER).Build());
 
                 // Update notification data
-                if (request.IsApproved && notificationData != null) notificationData.Status = RequestStatus.APPROVED;
-                if (!request.IsApproved && notificationData != null) notificationData.Status = RequestStatus.DISAPPROVED;
+                if (request.IsApproved && notificationData != null) notificationData!.Status = RequestStatus.APPROVED;
+                if (!request.IsApproved && notificationData != null) notificationData!.Status = RequestStatus.DISAPPROVED;
 
                 if (notification != null) notification.Data = JsonConvert.SerializeObject(notificationData);
 
@@ -258,7 +258,6 @@ namespace api.Services
                     await context.SaveChangesAsync();
                     return true;
                 }
-                // Console.WriteLine("=============================================================>");
                 await context.SaveChangesAsync();
             }
 

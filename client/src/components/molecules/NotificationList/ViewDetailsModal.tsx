@@ -14,6 +14,7 @@ import { User } from '~/utils/types/userTypes'
 import { Roles } from '~/utils/constants/roles'
 import { NOTIFICATION_TYPE } from '~/utils/constants/notificationTypes'
 import useOvertime from '~/hooks/useOvertime'
+import useChangeShift from '~/hooks/useChangeShift'
 
 type Props = {
   isOpen: boolean
@@ -30,6 +31,9 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
 
   const { handleLeaderApproveOvertimeMutation } = useOvertime()
   const approveDisapproveOvertimeMutation = handleLeaderApproveOvertimeMutation()
+
+  const { handleApproveChangeShiftMutation } = useChangeShift()
+  const approveDisapproveChangeShiftMutation = handleApproveChangeShiftMutation()
 
   const handleClose = (): void => {
     void router.replace({
@@ -76,6 +80,19 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
         }
       )
     }
+
+    if (row.type.toLowerCase() === NOTIFICATION_TYPE.CHANGE_SHIFT) {
+      approveDisapproveChangeShiftMutation.mutate(
+        {
+          userId: user.id,
+          notificationId: parseInt(router.query.id as string),
+          isApproved
+        },
+        {
+          onSuccess: () => handleClose()
+        }
+      )
+    }
   }
 
   return (
@@ -104,10 +121,30 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
             <span className="text-slate-600">Date: </span>
             <span className="flex items-center font-medium">{row.date}</span>
           </li>
-          <li className="inline-flex items-center space-x-3 pt-2">
-            <span className="text-slate-600">Duration: </span>
-            <span className="flex items-center font-medium">{row.duration}</span>
-          </li>
+          {(row.type.toLowerCase() === NOTIFICATION_TYPE.OVERTIME ||
+            row.type.toLowerCase() === NOTIFICATION_TYPE.UNDERTIME ||
+            row.type.toLowerCase() === NOTIFICATION_TYPE.LEAVE ||
+            row.type.toLowerCase() === NOTIFICATION_TYPE.OVERTIME_RESOLVED ||
+            row.type.toLowerCase() === NOTIFICATION_TYPE.UNDERTIME_RESOLVED ||
+            row.type.toLowerCase() === NOTIFICATION_TYPE.LEAVE_RESOLVED) && (
+            <li className="inline-flex items-center space-x-3 pt-2">
+              <span className="text-slate-600">Duration: </span>
+              <span className="flex items-center font-medium">{row.duration}</span>
+            </li>
+          )}
+          {(row.type.toLowerCase() === NOTIFICATION_TYPE.CHANGE_SHIFT ||
+            row.type.toLowerCase() === NOTIFICATION_TYPE.CHANGE_SHIFT_RESOLVED) && (
+            <>
+              <li className="inline-flex items-center space-x-3 pt-2">
+                <span className="text-slate-600">Time In: </span>
+                <span className="flex items-center font-medium">{row.requestedTimeIn}</span>
+              </li>
+              <li className="inline-flex items-center space-x-3 pt-2">
+                <span className="text-slate-600">Time Out: </span>
+                <span className="flex items-center font-medium">{row.requestedTimeOut}</span>
+              </li>
+            </>
+          )}
           <li className="inline-flex items-center space-x-3 pt-2">
             <span className="text-slate-600">Date Filed: </span>
             <span className="flex items-center font-medium">
@@ -119,10 +156,18 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
             <span className="text-slate-600">Status: </span>
             <span className="flex items-center font-medium">{row.status}</span>
           </li>
-          <li className="inline-flex flex-col space-y-2 pt-2">
-            <span className="text-slate-600">Remarks: </span>
-            <span className="font-medium">{row.remarks}</span>
-          </li>
+          {row.type.toLowerCase() === NOTIFICATION_TYPE.CHANGE_SHIFT ||
+          row.type.toLowerCase() === NOTIFICATION_TYPE.CHANGE_SHIFT_RESOLVED ? (
+            <li className="inline-flex flex-col space-y-2 pt-2">
+              <span className="text-slate-600">Description: </span>
+              <span className="font-medium">{row.description}</span>
+            </li>
+          ) : (
+            <li className="inline-flex flex-col space-y-2 pt-2">
+              <span className="text-slate-600">Remarks: </span>
+              <span className="font-medium">{row.remarks}</span>
+            </li>
+          )}
         </ul>
       </main>
       {row.status === STATUS_OPTIONS.PENDING && (

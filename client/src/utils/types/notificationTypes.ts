@@ -27,4 +27,7 @@ export type NotificationData = {
   ApprovedMinutes: number | null
   Status: string
   Type: string
+  RequestedTimeIn: string | null
+  RequestedTimeOut: string | null
+  Description: string | null
 }

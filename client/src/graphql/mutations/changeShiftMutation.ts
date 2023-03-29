@@ -7,3 +7,9 @@ export const CREATE_CHANGE_SHIFT_MUTATION = gql`
     }
   }
 `
+
+export const APROVE_DISAPPROVE_CHANGE_SHIFT_MUTATION = gql`
+  mutation ($changeShiftApproval: ApproveChangeShiftRequestInput!) {
+    approveDisapproveChangeShift(approvingData: $changeShiftApproval)
+  }
+`

@@ -24,7 +24,11 @@ import { NotificationData } from '~/utils/types/notificationTypes'
 import UserMenuDropDown from '~/components/molecules/UserMenuDropdown'
 import NotificationPopover from '~/components/molecules/NotificationPopOver'
 import useNotification, { updateIsRead } from '~/hooks/useNotificationQuery'
-import { getLeaveNotificationSubQuery } from '~/graphql/subscriptions/leaveSubscription'
+import {
+  getChangeShiftNotificationSubQuery,
+  getLeaveNotificationSubQuery,
+  getOvertimeNotificationSubQuery
+} from '~/graphql/subscriptions/leaveSubscription'
 
 const Tooltip = dynamic(async () => await import('rc-tooltip'), { ssr: false })
 
@@ -91,6 +95,9 @@ const Header: FC<Props> = (props): JSX.Element => {
           status: parsedData.Status,
           readAt: notif.readAt,
           isRead: notif.isRead,
+          requestedTimeIn: moment(parsedData.RequestedTimeIn, 'HH:mm:ss').format('hh:mm A'),
+          requestedTimeOut: moment(parsedData.RequestedTimeOut, 'HH:mm:ss').format('hh:mm A'),
+          description: parsedData.Description,
           userAvatarLink: parsedData.User.AvatarLink
         }
         return mapped
@@ -161,7 +168,33 @@ const Header: FC<Props> = (props): JSX.Element => {
           // TO DO: change implementation when integrating with notification modal
           void queryClient.invalidateQueries({ queryKey: ['GET_ALL_USER_NOTIFICATION'] })
         },
-        error: () => toast.error('There was a notification error'),
+        error: () => toast.error('There was a network error'),
+        complete: () => null
+      }
+    )
+
+    clientWebsocket.subscribe(
+      {
+        query: getOvertimeNotificationSubQuery(userId)
+      },
+      {
+        next: ({ data }: any) => {
+          void queryClient.invalidateQueries({ queryKey: ['GET_ALL_USER_NOTIFICATION'] })
+        },
+        error: () => null,
+        complete: () => null
+      }
+    )
+
+    clientWebsocket.subscribe(
+      {
+        query: getChangeShiftNotificationSubQuery(userId)
+      },
+      {
+        next: ({ data }: any) => {
+          void queryClient.invalidateQueries({ queryKey: ['GET_ALL_USER_NOTIFICATION'] })
+        },
+        error: () => null,
         complete: () => null
       }
     )

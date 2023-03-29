@@ -51,6 +51,9 @@ export interface INotification {
   status: string
   readAt: string | null
   isRead: boolean
+  requestedTimeIn: string | null
+  requestedTimeOut: string | null
+  description: string | null
   userAvatarLink: string
 }
 
