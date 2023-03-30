@@ -13,3 +13,9 @@ export interface Project {
   projectId: number
   projectLeaderId: number
 }
+
+export interface IApproveChangeShiftRequestInput {
+  userId: number
+  notificationId: number
+  isApproved: boolean
+}

@@ -14,7 +14,10 @@ export const dummyNotificationData: INotification[] = [
     specificType: 'request',
     readAt: 'December 3, 2023',
     isRead: false,
-    userAvatarLink: 'null'
+    userAvatarLink: 'null',
+    description: 'dummy',
+    requestedTimeIn: null,
+    requestedTimeOut: null
   },
   {
     id: 2,
@@ -29,7 +32,10 @@ export const dummyNotificationData: INotification[] = [
     specificType: 'approve',
     readAt: 'December 3, 2023',
     isRead: false,
-    userAvatarLink: 'null'
+    userAvatarLink: 'null',
+    description: 'dummy',
+    requestedTimeIn: null,
+    requestedTimeOut: null
   },
   {
     id: 3,
@@ -44,7 +50,10 @@ export const dummyNotificationData: INotification[] = [
     specificType: 'request',
     readAt: 'December 3, 2023',
     isRead: true,
-    userAvatarLink: 'null'
+    userAvatarLink: 'null',
+    description: 'dummy',
+    requestedTimeIn: null,
+    requestedTimeOut: null
   },
   {
     id: 4,
@@ -59,7 +68,10 @@ export const dummyNotificationData: INotification[] = [
     specificType: 'disapprove',
     readAt: 'December 3, 2023',
     isRead: true,
-    userAvatarLink: 'null'
+    userAvatarLink: 'null',
+    description: 'dummy',
+    requestedTimeIn: null,
+    requestedTimeOut: null
   },
   {
     id: 5,
@@ -74,7 +86,10 @@ export const dummyNotificationData: INotification[] = [
     specificType: 'request',
     readAt: 'December 3, 2023',
     isRead: false,
-    userAvatarLink: 'null'
+    userAvatarLink: 'null',
+    description: 'dummy',
+    requestedTimeIn: null,
+    requestedTimeOut: null
   },
   {
     id: 6,
@@ -89,6 +104,9 @@ export const dummyNotificationData: INotification[] = [
     readAt: 'December 3, 2023',
     specificType: 'true',
     isRead: false,
-    userAvatarLink: 'null'
+    userAvatarLink: 'null',
+    description: 'dummy',
+    requestedTimeIn: null,
+    requestedTimeOut: null
   }
 ]
