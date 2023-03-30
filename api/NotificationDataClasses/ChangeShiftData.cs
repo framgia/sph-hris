@@ -5,6 +5,7 @@ namespace api.NotificationDataClasses
         public NotificationUser User { get; set; } = default!;
         public TimeSpan RequestedTimeIn { get; set; }
         public TimeSpan RequestedTimeOut { get; set; }
+        public DateTime DateRequested { get; set; }
         public DateTime DateFiled { get; set; }
         public string Type { get; set; } = default!;
         public string Status { get; set; } = default!;

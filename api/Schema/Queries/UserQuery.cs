@@ -22,5 +22,10 @@ namespace api.Schema.Queries
         {
             return await _userService.Index();
         }
+
+        public async Task<List<User>> GetAllESLUsers([Service] UserService _userService, int? exceptUserId = null)
+        {
+            return await _userService.ESLUsers(exceptUserId);
+        }
     }
 }
