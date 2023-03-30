@@ -190,7 +190,8 @@ namespace api.Services
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 var notifications = new List<ChangeShiftNotification>();
-                var user = context.Users.Find(request.UserId);
+                var user = await context.Users.FindAsync(request.UserId);
+                var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
                 var projectNames = context.MultiProjects.Where(x => x.ChangeShiftRequestId == request.Id && x.Type == MultiProjectTypeEnum.CHANGE_SHIFT).Select(x => x.ProjectId == ProjectId.OTHER_PROJECT ? request.OtherProject : x.Project.Name);
 
                 if (isManager)
@@ -206,6 +207,7 @@ namespace api.Services
                         Projects = projectNames,
                         RequestedTimeIn = request.TimeIn,
                         RequestedTimeOut = request.TimeOut,
+                        DateRequested = timeEntry!.Date,
                         DateFiled = (DateTime)request.CreatedAt!,
                         Type = NotificationDataTypeEnum.REQUEST,
                         Description = request.Description,
@@ -240,6 +242,7 @@ namespace api.Services
                             Projects = new List<string> { project.Result!.Name == "Others" ? request.OtherProject! : project.Result.Name! },
                             RequestedTimeIn = request.TimeIn,
                             RequestedTimeOut = request.TimeOut,
+                            DateRequested = timeEntry!.Date,
                             DateFiled = (DateTime)request.CreatedAt!,
                             Type = NotificationDataTypeEnum.REQUEST,
                             Description = request.Description,
@@ -409,6 +412,7 @@ namespace api.Services
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 var user = await context.Users.FindAsync(changeShift.UserId);
+                var timeEntry = await context.TimeEntries.FindAsync(changeShift.TimeEntryId);
                 var projectNames = context.MultiProjects.Where(x => x.ChangeShiftRequestId == changeShift.Id && x.Type == MultiProjectTypeEnum.CHANGE_SHIFT).Select(x => x.ProjectId == ProjectId.OTHER_PROJECT ? changeShift.OtherProject : x.Project.Name);
 
                 var dataToUser = JsonSerializer.Serialize(new ChangeShiftManagerData
@@ -423,6 +427,7 @@ namespace api.Services
 
                     RequestedTimeIn = changeShift.TimeIn,
                     RequestedTimeOut = changeShift.TimeOut,
+                    DateRequested = timeEntry!.Date,
                     DateFiled = (DateTime)changeShift.CreatedAt!,
                     Type = IsApproved ? NotificationDataTypeEnum.APPROVE : NotificationDataTypeEnum.DISAPPROVE,
                     Description = changeShift.Description,

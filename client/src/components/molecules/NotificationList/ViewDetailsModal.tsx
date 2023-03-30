@@ -148,7 +148,7 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
           <li className="inline-flex items-center space-x-3 pt-2">
             <span className="text-slate-600">Date Filed: </span>
             <span className="flex items-center font-medium">
-              {moment(new Date(row.date)).format('MMM DD, YY')} &bull; {``}
+              {moment(new Date(row.dateFiled)).format('MMM DD, YYYY')} &bull; {``}
               {moment(new Date(row.dateFiled)).fromNow()}
             </span>
           </li>
