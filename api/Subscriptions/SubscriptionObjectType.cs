@@ -33,6 +33,12 @@ namespace api.Subscriptions
             return eventReceiver.SubscribeAsync<ChangeShiftNotification>(topic);
         }
 
+        public ValueTask<ISourceStream<ESLChangeShiftNotification>> ESLChangeShiftEventReceiver(int id, [Service] ITopicEventReceiver eventReceiver)
+        {
+            var topic = $"{id}_{nameof(SubscriptionObjectType.ESLChangeShiftCreated)}";
+            return eventReceiver.SubscribeAsync<ESLChangeShiftNotification>(topic);
+        }
+
         // Resolver
         [Subscribe(With = nameof(SubscriptionObjectType.LeaveEventReceiver))]
         public LeaveNotification LeaveCreated([EventMessage] LeaveNotification notification)
@@ -48,6 +54,12 @@ namespace api.Subscriptions
 
         [Subscribe(With = nameof(SubscriptionObjectType.ChangeShiftEventReceiver))]
         public ChangeShiftNotification ChangeShiftCreated([EventMessage] ChangeShiftNotification notification)
+        {
+            return notification;
+        }
+
+        [Subscribe(With = nameof(SubscriptionObjectType.ESLChangeShiftEventReceiver))]
+        public ESLChangeShiftNotification ESLChangeShiftCreated([EventMessage] ESLChangeShiftNotification notification)
         {
             return notification;
         }

@@ -118,6 +118,15 @@ namespace api.Utils
                 return context.ChangeShiftRequests.Where(x => x.TimeEntryId == timeEntryId).Count() > 0;
             }
         }
+
+        public bool checkESLChangeShiftRequestExist(int timeEntryId)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                return context.ESLChangeShiftRequests.Where(x => x.TimeEntryId == timeEntryId).Count() > 0;
+            }
+        }
+
         public bool checkLeaveType(int id)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
@@ -363,6 +372,28 @@ namespace api.Utils
 
                 index++;
             });
+
+            return errors;
+        }
+
+        public List<IError> checkESLChangeShiftRequestInput(CreateESLChangeShiftRequest request)
+        {
+            var errors = new List<IError>();
+
+            if (checkESLChangeShiftRequestExist(request.TimeEntryId))
+                errors.Add(buildError(nameof(request.TimeEntryId), InputValidationMessageEnum.DUPLICATE_REQUEST));
+
+            if (!checkUserExist(request.UserId))
+                errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.INVALID_USER));
+
+            if (checkNonESLUser(request.UserId))
+                errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.INVALID_ESL_USER));
+
+            if (!checkTimeEntryExist(request.TimeEntryId))
+                errors.Add(buildError(nameof(request.TimeEntryId), InputValidationMessageEnum.INVALID_TIME_ENTRY));
+
+            if (checkNonESLUser(request.TeamLeaderId))
+                errors.Add(buildError(nameof(request.TeamLeaderId), InputValidationMessageEnum.INVALID_TEAM_LEADER));
 
             return errors;
         }
