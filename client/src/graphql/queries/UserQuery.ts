@@ -58,3 +58,12 @@ export const GET_ALL_USERS_QUERY = gql`
     }
   }
 `
+
+export const GET_ALL_ESL_USERS_QUERY = gql`
+  query ($requestingUserId: Int) {
+    allESLUsers(exceptUserId: $requestingUserId) {
+      id
+      name
+    }
+  }
+`

@@ -8,15 +8,16 @@ import ReactTextareaAutosize from 'react-textarea-autosize'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
 import TextField from './../TextField'
-import useProject from '~/hooks/useProject'
 import Input from '~/components/atoms/Input'
+import { User } from '~/utils/types/userTypes'
+import useUserQuery from '~/hooks/useUserQuery'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import { NewOffsetSchema } from '~/utils/validation'
-import { User as UserType } from '~/utils/types/userTypes'
+import useOffsetForESL from '~/hooks/useOffsetForESL'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { NewOffsetFormValues } from '~/utils/types/formValues'
 import { customStyles } from '~/utils/customReactSelectStyles'
-import { generateUserSelect } from '~/utils/createLeaveHelpers'
+import { generateESLUserSelect } from '~/utils/createLeaveHelpers'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
@@ -28,11 +29,17 @@ type Props = {
   row: IEmployeeTimeEntry
 }
 
-const AddNewOffsetModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
-  const [leaders, setLeaders] = useState<UserType[]>([])
+const AddNewOffsetModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Element => {
+  const [eslLeaders, setEslLeaders] = useState<Array<Pick<User, 'id' | 'name'>>>([])
 
-  const { handleProjectQuery } = useProject()
-  const { data: projects, isSuccess: isProjectsSuccess } = handleProjectQuery()
+  // ESL OFFSET HOOKS
+  const { handleAddNewOffsetMutation } = useOffsetForESL()
+  const addNewOffsetMutation = handleAddNewOffsetMutation()
+
+  // USER HOOKS && ALL ESL USER HOOKS
+  const { handleUserQuery, getESLUserQuery } = useUserQuery()
+  const { data: user } = handleUserQuery() // SPECIFIC USER
+  const { data: eslUsers, isSuccess: isESLUsersSuccess } = getESLUserQuery()
 
   const {
     reset,
@@ -55,29 +62,28 @@ const AddNewOffsetModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
     }
   })
 
+  // FETCHED
   useEffect(() => {
-    if (isProjectsSuccess && projects.projects.length > 0) {
-      const tempLeaders = [...leaders]
-      projects?.projects.forEach((project) => {
-        if (project?.projectLeader != null || project?.projectSubLeader != null) {
-          if (!tempLeaders.some((leader) => leader.id === project.projectLeader.id))
-            tempLeaders.push(project?.projectLeader)
-          if (!tempLeaders.some((leader) => leader.id === project.projectSubLeader.id))
-            tempLeaders.push(project?.projectSubLeader)
-        }
-      })
-      setLeaders(tempLeaders)
+    if (isESLUsersSuccess && eslUsers?.allESLUsers.length > 0) {
+      const mappedData = eslUsers?.allESLUsers.map((option) => option)
+      setEslLeaders(mappedData)
     }
-  }, [isProjectsSuccess, projects?.projects])
+  }, [isESLUsersSuccess, eslUsers?.allESLUsers])
 
   const handleSave: SubmitHandler<NewOffsetFormValues> = async (data): Promise<void> => {
     return await new Promise((resolve) => {
-      setTimeout(() => {
-        // console.log(data)
-        alert(JSON.stringify(data, null, 2))
-        handleReset()
-        resolve()
-      }, 2000)
+      addNewOffsetMutation.mutate({
+        userId: user?.userById.id as number,
+        teamLeaderId: parseInt(data.teamLeader.value),
+        timeEntryId: row.id,
+        timeIn: data.offsetTime.timeIn,
+        timeOut: data.offsetTime.timeOut,
+        description: data.remarks
+      })
+
+      handleReset()
+      closeModal()
+      resolve()
     })
   }
 
@@ -101,7 +107,7 @@ const AddNewOffsetModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
         isOpen,
         closeModal
       }}
-      className="w-full max-w-[686px] overflow-visible"
+      className="w-full max-w-[686px]"
     >
       <form
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -185,7 +191,7 @@ const AddNewOffsetModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                     onChange={field.onChange}
                     isDisabled={isSubmitting}
                     backspaceRemovesValue={true}
-                    options={generateUserSelect(leaders)}
+                    options={generateESLUserSelect(eslLeaders)}
                   />
                 )}
               />

@@ -85,7 +85,7 @@ const Header: FC<Props> = (props): JSX.Element => {
         const mapped: INotification = {
           id: notif.id,
           name: parsedData.User.Name,
-          project: parsedData.Projects.join(', '),
+          project: parsedData.Projects?.join(', '),
           type: notif.type.charAt(0).toUpperCase() + notif.type.slice(1),
           specificType: parsedData.Type,
           date: moment(parsedData.DateRequested).format('MMMM D, YYYY'),
