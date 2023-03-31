@@ -421,10 +421,11 @@ namespace api.Utils
         {
             var errors = new List<IError>();
 
-            if (!checkUserExist(request.ManagerId))
-                errors.Add(buildError(nameof(request.ManagerId), InputValidationMessageEnum.INVALID_USER));
+            if (!checkUserExist(request.TeamLeaderId))
+                errors.Add(buildError(nameof(request.TeamLeaderId), InputValidationMessageEnum.INVALID_USER));
 
-            if (!(checkManagerUser(request.ManagerId).Result || checkProjectLeaderUser(request.ManagerId).Result)) errors.Add(buildError(nameof(request.ManagerId), InputValidationMessageEnum.NOT_MANAGER_PROJECT_LEADER));
+            if (checkNonESLUser(request.TeamLeaderId))
+                errors.Add(buildError(nameof(request.TeamLeaderId), InputValidationMessageEnum.INVALID_TEAM_LEADER));
 
             if (!checkNotificationExist(request.NotificationId, NotificationTypeEnum.ESL_OFFSET_SCHEDULE).Result) errors.Add(buildError(nameof(request.NotificationId), InputValidationMessageEnum.INVALID_NOTIFICATION));
 

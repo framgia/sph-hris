@@ -618,7 +618,7 @@ namespace api.Services
                     DateFiled = (DateTime)request.CreatedAt!,
                     Type = NotificationDataTypeEnum.REQUEST,
                     Description = request.Description,
-                    Status = _changeShiftService.GetESLChangeShiftStatus(request),
+                    Status = _eslChangeShiftService.GetRequestStatus(request),
                 }
                 );
 

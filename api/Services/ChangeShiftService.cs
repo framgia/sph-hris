@@ -81,12 +81,5 @@ namespace api.Services
             if (request.IsLeaderApproved == false || request.IsManagerApproved == false) return RequestStatus.DISAPPROVED;
             return RequestStatus.PENDING;
         }
-
-        public string GetESLChangeShiftStatus(ESLChangeShiftRequest request)
-        {
-            if (request.IsLeaderApproved == true) return RequestStatus.APPROVED;
-            if (request.IsLeaderApproved == false) return RequestStatus.DISAPPROVED;
-            return RequestStatus.PENDING;
-        }
     }
 }
