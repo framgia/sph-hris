@@ -595,5 +595,48 @@ namespace api.Services
                 { return "There's an error!"; }
             }
         }
+
+        public async Task<ESLChangeShiftNotification> CreateESLChangeShiftStatusRequestNotification(ESLChangeShiftRequest request)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var user = await context.Users.FindAsync(request.UserId);
+                var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
+
+
+                var dataToUser = JsonSerializer.Serialize(new ChangeShiftData
+                {
+                    User = new NotificationUser
+                    {
+                        Id = (int)user?.Id!,
+                        Name = user?.Name!,
+                        AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default)
+                    },
+                    RequestedTimeIn = request.TimeIn,
+                    RequestedTimeOut = request.TimeOut,
+                    DateRequested = timeEntry!.Date,
+                    DateFiled = (DateTime)request.CreatedAt!,
+                    Type = NotificationDataTypeEnum.REQUEST,
+                    Description = request.Description,
+                    Status = _eslChangeShiftService.GetRequestStatus(request),
+                }
+                );
+
+                // Notification to User
+                var notificationToUser = new ESLChangeShiftNotification
+                {
+                    RecipientId = request.UserId,
+                    ESLChangeShiftRequestId = request.Id,
+                    Type = NotificationTypeEnum.ESL_OFFSET_SCHEDULE,
+                    Data = dataToUser
+                };
+
+                context.ESLChangeShiftNotifications.Add(notificationToUser);
+                sendESLChangeShiftNotificationEvent(notificationToUser);
+
+                await context.SaveChangesAsync();
+                return notificationToUser;
+            }
+        }
     }
 }

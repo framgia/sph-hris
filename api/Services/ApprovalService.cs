@@ -263,5 +263,38 @@ namespace api.Services
 
             throw new GraphQLException(ErrorBuilder.New().SetMessage("Something went wrong!").Build());
         }
+
+        public async Task<ESLChangeShiftRequest> ApproveDisapproveESLChangeShiftStatus(ApproveESLChangeShiftRequest request)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var errors = new List<IError>();
+                errors = _customInputValidation.ESLChangeShiftStatusRequestInput(request);
+                if (errors.Count > 0) throw new GraphQLException(errors);
+
+                var notification = await context.ESLChangeShiftNotifications.FindAsync(request.NotificationId);
+                var eSLChangeShiftRequest = notification != null ? await context.ESLChangeShiftRequests.FindAsync(notification.ESLChangeShiftRequestId) : null;
+                var notificationData = notification != null ? JsonConvert.DeserializeObject<dynamic>(notification.Data) : null;
+                var timeEntry = await context.TimeEntries.FindAsync(eSLChangeShiftRequest!.TimeEntryId);
+
+                // Update notification data
+                if (request.IsApproved && notificationData != null) notificationData!.Status = RequestStatus.APPROVED;
+                if (!request.IsApproved && notificationData != null) notificationData!.Status = RequestStatus.DISAPPROVED;
+                if (notification != null) notification.Data = JsonConvert.SerializeObject(notificationData);
+                eSLChangeShiftRequest!.IsLeaderApproved = request.IsApproved;
+                if (request.IsApproved)
+                {
+                    timeEntry!.StartTime = eSLChangeShiftRequest.TimeIn;
+                    timeEntry!.EndTime = eSLChangeShiftRequest.TimeOut;
+                };
+
+                // Send notification
+                await _notificationService.CreateESLChangeShiftStatusRequestNotification(eSLChangeShiftRequest);
+
+                await context.SaveChangesAsync();
+
+                return eSLChangeShiftRequest;
+            }
+        }
     }
 }

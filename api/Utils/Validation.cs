@@ -416,5 +416,20 @@ namespace api.Utils
 
             return errors;
         }
+
+        public List<IError> ESLChangeShiftStatusRequestInput(ApproveESLChangeShiftRequest request)
+        {
+            var errors = new List<IError>();
+
+            if (!checkUserExist(request.TeamLeaderId))
+                errors.Add(buildError(nameof(request.TeamLeaderId), InputValidationMessageEnum.INVALID_USER));
+
+            if (checkNonESLUser(request.TeamLeaderId))
+                errors.Add(buildError(nameof(request.TeamLeaderId), InputValidationMessageEnum.INVALID_TEAM_LEADER));
+
+            if (!checkNotificationExist(request.NotificationId, NotificationTypeEnum.ESL_OFFSET_SCHEDULE).Result) errors.Add(buildError(nameof(request.NotificationId), InputValidationMessageEnum.INVALID_NOTIFICATION));
+
+            return errors;
+        }
     }
 }
