@@ -43,6 +43,16 @@ const FileOffsetModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
     resolver: yupResolver(FileOffsetSchema)
   })
 
+  // modify custom style control
+  customStyles.control = (provided) => ({
+    ...provided,
+    boxShadow: 'none',
+    borderColor: 'none',
+    '&:hover': {
+      color: '#75c55e'
+    }
+  })
+
   useEffect(() => {
     if (isProjectsSuccess && projects.projects.length > 0) {
       const tempLeaders = [...leaders]
@@ -80,7 +90,7 @@ const FileOffsetModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
         label: '',
         value: ''
       },
-      description: ''
+      remarks: ''
     })
   }
 
@@ -203,21 +213,21 @@ const FileOffsetModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
 
           {/* Descriptiohn Field */}
           <section className="col-span-2">
-            <TextField title="Description" isRequired>
+            <TextField title="Remarks" isRequired>
               <ReactTextareaAutosize
                 id="reason"
-                {...register('description')}
+                {...register('remarks')}
                 className={classNames(
                   'text-area-auto-resize pl-12',
-                  errors?.description !== null && errors.description !== undefined
+                  errors?.remarks !== null && errors.remarks !== undefined
                     ? 'border-rose-500 ring-rose-500'
                     : ''
                 )}
                 disabled={isSubmitting}
               />
             </TextField>
-            {errors.description !== null && errors.description !== undefined && (
-              <span className="error text-[10px]">{errors.description?.message}</span>
+            {errors.remarks !== null && errors.remarks !== undefined && (
+              <span className="error text-[10px]">{errors.remarks?.message}</span>
             )}
           </section>
         </main>

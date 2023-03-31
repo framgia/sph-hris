@@ -171,14 +171,14 @@ export type LaptopMonitoringFormValues = {
 export type NewOffsetFormValues = {
   offsetTime: TimeEntry
   teamLeader: ReactSelectOption
-  description: string
+  remarks: string
 }
 
 export type FileOffsetFormValues = {
   offsetTime: TimeEntry
   title: string
   teamLeader: ReactSelectOption
-  description: string
+  remarks: string
 }
 
 export type changeShiftRequestFormValues = {
