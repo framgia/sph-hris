@@ -429,7 +429,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                                   className={menuItemButton}
                                                   onClick={handleIsOpenNewOffsetToggle}
                                                 >
-                                                  <span>ESL Offset Schedule</span>
+                                                  <span>ESL Change Shift </span>
                                                 </button>
                                               </Menu.Item>
                                               <Menu.Item>
