@@ -13,5 +13,6 @@ export const NOTIFICATION_TYPE = {
   UNDERTIME_RESOLVED: 'undertime_resolved',
   LEAVE_RESOLVED: 'leave_resolved',
   CHANGE_SHIFT_RESOLVED: 'change shift_resolved',
-  RESOLVED: 'resolved'
+  RESOLVED: 'resolved',
+  OFFSET_SCHEDULE: 'offset schedule'
 }
