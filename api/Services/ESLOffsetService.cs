@@ -8,59 +8,60 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Services
 {
-    public class ESLChangeShiftService
+    public class ESLOffsetService
     {
         private readonly IDbContextFactory<HrisContext> _contextFactory = default!;
         private readonly ITopicEventSender _eventSender;
         private readonly CustomInputValidation _customInputValidation;
 
-        public ESLChangeShiftService(IDbContextFactory<HrisContext> contextFactory, ITopicEventSender eventSender)
+        public ESLOffsetService(IDbContextFactory<HrisContext> contextFactory, ITopicEventSender eventSender)
         {
             _contextFactory = contextFactory;
             _eventSender = eventSender;
             _customInputValidation = new CustomInputValidation(_contextFactory);
         }
 
-        public async Task<ESLChangeShiftRequest> Create(CreateESLChangeShiftRequest request)
+        public async Task<ESLOffset> Create(CreateESLOffsetRequest request)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 // validate inputs
-                var errors = _customInputValidation.checkESLChangeShiftRequestInput(request);
+                var errors = _customInputValidation.checkESLOffsetRequestInput(request);
 
                 if (errors.Count > 0) throw new GraphQLException(errors);
 
                 //  Create ESLChangeShiftRequest
-                var eslChangeShiftRequest = new ESLChangeShiftRequest
+                var eslOffset = new ESLOffset
                 {
                     UserId = request.UserId,
                     TeamLeaderId = request.TeamLeaderId,
                     TimeEntryId = request.TimeEntryId,
                     TimeIn = TimeSpan.ParseExact(request.TimeIn, "hh':'mm", null),
                     TimeOut = TimeSpan.ParseExact(request.TimeOut, "hh':'mm", null),
-                    Description = request.Description
+                    Description = request.Description,
+                    Title = request.Title
                 };
 
-                context.ESLChangeShiftRequests.Add(eslChangeShiftRequest);
+                context.ESLOffsets.Add(eslOffset);
                 await context.SaveChangesAsync();
-                return eslChangeShiftRequest;
+                return eslOffset;
             }
         }
 
-        public async Task<ESLChangeShiftRequest> GetTimeEntryChangeShift(int timeEntryId)
+        public async Task<List<ESLOffset>> GetTimeEntryOffsets(int timeEntryId)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
-                var eslChangeShiftRequest = await context.ESLChangeShiftRequests
+                var eslOffsets = await context.ESLOffsets
                     .Include(x => x.TeamLeader)
                     .Where(x => x.TimeEntryId == timeEntryId)
-                    .FirstAsync();
+                    .ToListAsync();
 
-                return eslChangeShiftRequest;
+                return eslOffsets;
             }
         }
 
-        public string GetRequestStatus(ESLChangeShiftRequest request)
+        public string GetRequestStatus(ESLOffset request)
         {
             if (request.IsLeaderApproved == true) return RequestStatus.APPROVED;
             if (request.IsLeaderApproved == false) return RequestStatus.DISAPPROVED;

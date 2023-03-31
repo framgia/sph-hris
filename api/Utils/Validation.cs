@@ -397,5 +397,24 @@ namespace api.Utils
 
             return errors;
         }
+
+        public List<IError> checkESLOffsetRequestInput(CreateESLOffsetRequest request)
+        {
+            var errors = new List<IError>();
+
+            if (!checkUserExist(request.UserId))
+                errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.INVALID_USER));
+
+            if (checkNonESLUser(request.UserId))
+                errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.INVALID_ESL_USER));
+
+            if (!checkTimeEntryExist(request.TimeEntryId))
+                errors.Add(buildError(nameof(request.TimeEntryId), InputValidationMessageEnum.INVALID_TIME_ENTRY));
+
+            if (checkNonESLUser(request.TeamLeaderId))
+                errors.Add(buildError(nameof(request.TeamLeaderId), InputValidationMessageEnum.INVALID_TEAM_LEADER));
+
+            return errors;
+        }
     }
 }

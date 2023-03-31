@@ -62,6 +62,19 @@ namespace api.Services
             }
         }
 
+        public async Task<ChangeShiftRequest> GetTimeEntryChangeShift(int timeEntryId)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var changeShiftRequest = await context.ChangeShiftRequests
+                    .Include(x => x.Manager)
+                    .Where(x => x.TimeEntryId == timeEntryId)
+                    .FirstAsync();
+
+                return changeShiftRequest;
+            }
+        }
+
         public string GetRequestStatus(ChangeShiftRequest request)
         {
             if (request.IsLeaderApproved == true && request.IsManagerApproved == true) return RequestStatus.APPROVED;

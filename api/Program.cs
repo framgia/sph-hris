@@ -30,7 +30,10 @@ builder.Services.AddGraphQLServer()
     .AddType<LeaveQuery>()
     .AddType<ProjectQuery>()
     .AddType<NotificationQuery>()
-    .AddType<OvertimeQuery>();
+    .AddType<OvertimeQuery>()
+    .AddType<ChangeShiftQuery>()
+    .AddType<ESLOffsetQuery>()
+    .AddType<ESLChangeShiftQuery>();
 
 builder.Services.AddGraphQLServer()
     .AddMutationType(q => q.Name("Mutation"))
@@ -45,7 +48,8 @@ builder.Services.AddGraphQLServer()
     .AddType<OvertimeMutation>()
     .AddType<ApprovalMutation>()
     .AddType<ChangeShiftMutation>()
-    .AddType<ESLChangeShiftMutation>();
+    .AddType<ESLChangeShiftMutation>()
+    .AddType<ESLOffsetMutation>();
 
 builder.Services.AddGraphQLServer().AddProjections().AddFiltering().AddSorting();
 builder.Services.AddGraphQLServer().AddInMemorySubscriptions()
@@ -72,6 +76,7 @@ builder.Services.AddScoped<OvertimeService>();
 builder.Services.AddScoped<ApprovalService>();
 builder.Services.AddScoped<ChangeShiftService>();
 builder.Services.AddScoped<ESLChangeShiftService>();
+builder.Services.AddScoped<ESLOffsetService>();
 
 
 var app = builder.Build();
