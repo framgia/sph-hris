@@ -44,7 +44,7 @@ const FileOffsetModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
   })
 
   // modify custom style control
-  customStyles.control = (provided) => ({
+  customStyles.control = (provided: Record<string, unknown>, state: any): any => ({
     ...provided,
     boxShadow: 'none',
     borderColor: 'none',
@@ -100,7 +100,7 @@ const FileOffsetModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
         isOpen,
         closeModal
       }}
-      className="w-full max-w-[686px] overflow-visible"
+      className="w-full max-w-[686px]"
     >
       <form
         // eslint-disable-next-line @typescript-eslint/no-misused-promises

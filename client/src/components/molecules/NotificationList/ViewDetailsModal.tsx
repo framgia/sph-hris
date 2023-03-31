@@ -1,20 +1,29 @@
-import moment from 'moment'
 import React, { FC } from 'react'
-import { Check, X } from 'react-feather'
 import { useRouter } from 'next/router'
+import { Check, X } from 'react-feather'
 
 import useLeave from '~/hooks/useLeave'
-import { INotification } from '~/utils/interfaces'
-import Button from '~/components/atoms/Buttons/ButtonAction'
-import ModalTemplate from '~/components/templates/ModalTemplate'
-import { STATUS_OPTIONS } from '~/utils/constants/notificationFilter'
-import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
-import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
+import useOvertime from '~/hooks/useOvertime'
 import { User } from '~/utils/types/userTypes'
 import { Roles } from '~/utils/constants/roles'
-import { NOTIFICATION_TYPE } from '~/utils/constants/notificationTypes'
-import useOvertime from '~/hooks/useOvertime'
+import { INotification } from '~/utils/interfaces'
 import useChangeShift from '~/hooks/useChangeShift'
+import Button from '~/components/atoms/Buttons/ButtonAction'
+import ModalTemplate from '~/components/templates/ModalTemplate'
+import LeaveDetails from './NotificationTypeDetails/LeaveDetails'
+import { STATUS_OPTIONS } from '~/utils/constants/notificationFilter'
+import { NOTIFICATION_TYPE } from '~/utils/constants/notificationTypes'
+import OvertimeDetails from './NotificationTypeDetails/OvertimeDetails'
+import ResolvedDetails from './NotificationTypeDetails/ResolvedDetails'
+import UndertimeDetails from './NotificationTypeDetails/UndertimeDetails'
+import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
+import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
+import ChangeShiftDetails from './NotificationTypeDetails/ChangeShiftDetails'
+import LeaveResolvedDetails from './NotificationTypeDetails/LeaveResolvedDetails'
+import OffsetScheduleDetails from './NotificationTypeDetails/OffsetScheduleDetails'
+import ChangeShiftResolvedDetails from './NotificationTypeDetails/ChangeShiftResolved'
+import OvertimeResolvedDetails from './NotificationTypeDetails/OvertimeResolvedDetails'
+import UndertimeResolvedDetails from './NotificationTypeDetails/UndertimeResolvedDetails'
 
 type Props = {
   isOpen: boolean
@@ -113,60 +122,85 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
       />
       <main className="px-8 py-4 text-sm  text-slate-700">
         <ul className="flex flex-col space-y-3 divide-y divide-slate-200">
-          <li className="inline-flex items-center space-x-3">
-            <span className="text-slate-600">Project: </span>
-            <span className="flex items-center font-medium">{row.project}</span>
-          </li>
-          <li className="inline-flex items-center space-x-3 pt-2">
-            <span className="text-slate-600">Date: </span>
-            <span className="flex items-center font-medium">{row.date}</span>
-          </li>
-          {(row.type.toLowerCase() === NOTIFICATION_TYPE.OVERTIME ||
-            row.type.toLowerCase() === NOTIFICATION_TYPE.UNDERTIME ||
-            row.type.toLowerCase() === NOTIFICATION_TYPE.LEAVE ||
-            row.type.toLowerCase() === NOTIFICATION_TYPE.OVERTIME_RESOLVED ||
-            row.type.toLowerCase() === NOTIFICATION_TYPE.UNDERTIME_RESOLVED ||
-            row.type.toLowerCase() === NOTIFICATION_TYPE.LEAVE_RESOLVED) && (
-            <li className="inline-flex items-center space-x-3 pt-2">
-              <span className="text-slate-600">Duration: </span>
-              <span className="flex items-center font-medium">{row.duration}</span>
-            </li>
+          {/* DETAILS FOR OVERTIME DATA */}
+          {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.OVERTIME && (
+            <OvertimeDetails
+              {...{
+                row
+              }}
+            />
           )}
-          {(row.type.toLowerCase() === NOTIFICATION_TYPE.CHANGE_SHIFT ||
-            row.type.toLowerCase() === NOTIFICATION_TYPE.CHANGE_SHIFT_RESOLVED) && (
-            <>
-              <li className="inline-flex items-center space-x-3 pt-2">
-                <span className="text-slate-600">Time In: </span>
-                <span className="flex items-center font-medium">{row.requestedTimeIn}</span>
-              </li>
-              <li className="inline-flex items-center space-x-3 pt-2">
-                <span className="text-slate-600">Time Out: </span>
-                <span className="flex items-center font-medium">{row.requestedTimeOut}</span>
-              </li>
-            </>
+          {/* DETAILS FOR UNDERTIME DATA */}
+          {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.UNDERTIME && (
+            <UndertimeDetails
+              {...{
+                row
+              }}
+            />
           )}
-          <li className="inline-flex items-center space-x-3 pt-2">
-            <span className="text-slate-600">Date Filed: </span>
-            <span className="flex items-center font-medium">
-              {moment(new Date(row.dateFiled)).format('MMM DD, YYYY')} &bull; {``}
-              {moment(new Date(row.dateFiled)).fromNow()}
-            </span>
-          </li>
-          <li className="inline-flex items-center space-x-3 pt-2">
-            <span className="text-slate-600">Status: </span>
-            <span className="flex items-center font-medium">{row.status}</span>
-          </li>
-          {row.type.toLowerCase() === NOTIFICATION_TYPE.CHANGE_SHIFT ||
-          row.type.toLowerCase() === NOTIFICATION_TYPE.CHANGE_SHIFT_RESOLVED ? (
-            <li className="inline-flex flex-col space-y-2 pt-2">
-              <span className="text-slate-600">Description: </span>
-              <span className="font-medium">{row.description}</span>
-            </li>
-          ) : (
-            <li className="inline-flex flex-col space-y-2 pt-2">
-              <span className="text-slate-600">Remarks: </span>
-              <span className="font-medium">{row.remarks}</span>
-            </li>
+          {/* DETAILS FOR LEAVE DATA */}
+          {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.LEAVE && (
+            <LeaveDetails
+              {...{
+                row
+              }}
+            />
+          )}
+          {/* DETAILS FOR CHANGE SHIFT DATA */}
+          {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.CHANGE_SHIFT && (
+            <ChangeShiftDetails
+              {...{
+                row
+              }}
+            />
+          )}
+          {/* DETAILS FOR OVERTIME RESOLVED DATA */}
+          {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.OVERTIME_RESOLVED && (
+            <OvertimeResolvedDetails
+              {...{
+                row
+              }}
+            />
+          )}
+          {/* DETAILS FOR UNDERTIME RESOLVED DATA */}
+          {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.UNDERTIME_RESOLVED && (
+            <UndertimeResolvedDetails
+              {...{
+                row
+              }}
+            />
+          )}
+          {/* DETAILS FOR LEAVE RESOLVED DATA */}
+          {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.LEAVE_RESOLVED && (
+            <LeaveResolvedDetails
+              {...{
+                row
+              }}
+            />
+          )}
+          {/* DETAILS FOR CHANGE SHIFT RESOLVED DATA */}
+          {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.CHANGE_SHIFT_RESOLVED && (
+            <ChangeShiftResolvedDetails
+              {...{
+                row
+              }}
+            />
+          )}
+          {/* DETAILS FOR RESOLVED DATA */}
+          {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.RESOLVED && (
+            <ResolvedDetails
+              {...{
+                row
+              }}
+            />
+          )}
+          {/* DETAILS FOR OFFSET SCHEDULE DATA */}
+          {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.OFFSET_SCHEDULE && (
+            <OffsetScheduleDetails
+              {...{
+                row
+              }}
+            />
           )}
         </ul>
       </main>

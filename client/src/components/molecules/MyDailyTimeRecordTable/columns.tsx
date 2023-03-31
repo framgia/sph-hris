@@ -359,7 +359,7 @@ export const columns = [
                   <>
                     <Menu.Item>
                       <button className={menuItemButton} onClick={handleIsOpenNewOffsetToggle}>
-                        <span>ESL Offset Schedule</span>
+                        <span>ESL Change Shift</span>
                       </button>
                     </Menu.Item>
                     <Menu.Item>

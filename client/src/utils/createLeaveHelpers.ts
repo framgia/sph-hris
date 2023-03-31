@@ -32,3 +32,11 @@ export const generateNumberOfDaysSelect = (
     return { label: type.value, value: type.value.toString() }
   })
 }
+
+export const generateESLUserSelect = (
+  eslUsers: Array<Pick<User, 'id' | 'name'>>
+): SelectOptionType[] => {
+  return eslUsers?.map((user) => {
+    return { label: user.name, value: user.id.toString() }
+  })
+}
