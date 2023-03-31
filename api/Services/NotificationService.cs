@@ -17,14 +17,16 @@ namespace api.Services
         private readonly LeaveService _leaveService;
         private readonly OvertimeService _overtimeService;
         private readonly ChangeShiftService _changeShiftService;
+        private readonly ESLChangeShiftService _eslChangeShiftService;
         private readonly UserService _userService;
-        public NotificationService(IDbContextFactory<HrisContext> contextFactory, LeaveService leaveService, OvertimeService overtimeService, UserService userService, ChangeShiftService changeShiftService, [Service] ITopicEventSender eventSender)
+        public NotificationService(IDbContextFactory<HrisContext> contextFactory, LeaveService leaveService, OvertimeService overtimeService, UserService userService, ChangeShiftService changeShiftService, ESLChangeShiftService eslChangeShiftService, [Service] ITopicEventSender eventSender)
         {
             _contextFactory = contextFactory;
             _eventSender = eventSender;
             _leaveService = leaveService;
             _overtimeService = overtimeService;
             _changeShiftService = changeShiftService;
+            _eslChangeShiftService = eslChangeShiftService;
             _userService = userService;
         }
 
@@ -267,6 +269,47 @@ namespace api.Services
             }
         }
 
+        public async Task<ESLChangeShiftNotification> createESLChangeShiftRequestNotification(ESLChangeShiftRequest request)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var user = await context.Users.FindAsync(request.UserId);
+                var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
+
+                var data = JsonSerializer.Serialize(new ChangeShiftData
+                {
+                    User = new NotificationUser
+                    {
+                        Id = (int)user?.Id!,
+                        Name = user?.Name!,
+                        AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
+                    },
+                    RequestedTimeIn = request.TimeIn,
+                    RequestedTimeOut = request.TimeOut,
+                    DateFiled = (DateTime)request.CreatedAt!,
+                    DateRequested = timeEntry!.Date,
+                    Type = NotificationDataTypeEnum.REQUEST,
+                    Description = request.Description,
+                    Status = _eslChangeShiftService.GetRequestStatus(request),
+                }
+                );
+
+                var newNotification = new ESLChangeShiftNotification
+                {
+                    RecipientId = request.TeamLeaderId,
+                    ESLChangeShiftRequestId = request.Id,
+                    Type = NotificationTypeEnum.ESL_OFFSET_SCHEDULE,
+                    Data = data
+                };
+
+                context.ESLChangeShiftNotifications.Add(newNotification);
+                sendESLChangeShiftNotificationEvent(newNotification);
+
+                await context.SaveChangesAsync();
+                return newNotification;
+            }
+        }
+
         public async Task<List<Notification>> getByRecipientId(int id)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
@@ -434,6 +477,19 @@ namespace api.Services
             try
             {
                 string topic = $"{notif.RecipientId}_{nameof(SubscriptionObjectType.ChangeShiftCreated)}";
+                await _eventSender.SendAsync(topic, notif);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async void sendESLChangeShiftNotificationEvent(ESLChangeShiftNotification notif)
+        {
+            try
+            {
+                string topic = $"{notif.RecipientId}_{nameof(SubscriptionObjectType.ESLChangeShiftCreated)}";
                 await _eventSender.SendAsync(topic, notif);
             }
             catch (Exception)
