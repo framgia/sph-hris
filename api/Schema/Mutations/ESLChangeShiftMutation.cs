@@ -29,5 +29,24 @@ namespace api.Schema.Mutations
                 }
             }
         }
+
+        public async Task<ESLChangeShiftRequest> ApproveDisapproveESLChangeShiftStatus(ApproveESLChangeShiftRequest request, [Service] ApprovalService _eslChangeShiftStatusService, [Service] IDbContextFactory<HrisContext> contextFactory)
+        {
+            using (HrisContext context = contextFactory.CreateDbContext())
+            {
+                try
+                {
+                    using var transaction = context.Database.BeginTransaction();
+                    var eSLChangeShift = await _eslChangeShiftStatusService.ApproveDisapproveESLChangeShiftStatus(request);
+
+                    transaction.Commit();
+                    return eSLChangeShift;
+                }
+                catch (GraphQLException)
+                {
+                    throw;
+                }
+            }
+        }
     }
 }
