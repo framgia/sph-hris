@@ -22,5 +22,6 @@ namespace api.Entities
         public Overtime? Overtime { get; set; } = default!;
         public ChangeShiftRequest? ChangeShiftRequest { get; set; } = default!;
         public ICollection<WorkInterruption> WorkInterruptions { get; set; } = default!;
+        public ICollection<ESLOffset>? ESLOffsets { get; set; } = default!;
     }
 }
