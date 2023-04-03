@@ -129,7 +129,7 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
                                 {row.original.type.split('_')[0].toLowerCase() ===
                                 NOTIFICATION_TYPE.OVERTIME ? (
                                   <>
-                                    {moment(row.original.dateFiled).fromNow()} &bull;{' '}
+                                    {moment(row.original.createdAt).fromNow()} &bull;{' '}
                                     {row.original.date} -{' '}
                                     <span className="font-medium">
                                       {row.original.duration}{' '}
@@ -141,7 +141,7 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
                                   </>
                                 ) : (
                                   <>
-                                    {moment(row.original.dateFiled).fromNow()} &bull;{' '}
+                                    {moment(row.original.createdAt).fromNow()} &bull;{' '}
                                     {row.original.date}{' '}
                                   </>
                                 )}

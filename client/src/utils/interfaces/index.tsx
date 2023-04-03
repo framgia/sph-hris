@@ -55,6 +55,7 @@ export interface INotification {
   requestedTimeOut: string | null
   description: string | null
   userAvatarLink: string
+  createdAt: string
 }
 
 export interface IEmployeeManagement {

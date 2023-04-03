@@ -70,7 +70,8 @@ const Notifications: NextPage = (): JSX.Element => {
           requestedTimeIn: moment(parsedData.RequestedTimeIn, 'HH:mm:ss').format('hh:mm A'),
           requestedTimeOut: moment(parsedData.RequestedTimeOut, 'HH:mm:ss').format('hh:mm A'),
           description: parsedData.Description,
-          userAvatarLink: parsedData.User.AvatarLink
+          userAvatarLink: parsedData.User.AvatarLink,
+          createdAt: notif.createdAt
         }
         return mapped
       })

@@ -8,6 +8,7 @@ export const GET_ALL_USER_NOTIFICATION = gql`
       data
       readAt
       isRead
+      createdAt
     }
   }
 `
