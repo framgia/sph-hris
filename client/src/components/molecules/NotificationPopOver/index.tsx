@@ -113,14 +113,21 @@ const NotificationPopover: FC<Props> = (props): JSX.Element => {
                               <span className="font-semibold">{i.type.split('_')[0]} </span>
                             </p>
                             <small>
-                              {moment(new Date(i.dateFiled)).fromNow()} &bull;{' '}
-                              {moment(new Date(i.date)).format('MMM DD, YY')} -{' '}
-                              <span className="font-medium">
-                                {i.duration}{' '}
-                                {i.type.split('_')[0].toLowerCase() === NOTIFICATION_TYPE.OVERTIME
-                                  ? 'Mins'
-                                  : 'Hrs'}
-                              </span>
+                              {moment(i.dateFiled).fromNow()} &bull;{' '}
+                              {i.type.split('_')[0].toLowerCase() === NOTIFICATION_TYPE.OVERTIME ? (
+                                <>
+                                  {moment(new Date(i.date)).format('MMM DD, YY')} -{' '}
+                                  <span className="font-medium">
+                                    {i.duration}{' '}
+                                    {i.type.split('_')[0].toLowerCase() ===
+                                    NOTIFICATION_TYPE.OVERTIME
+                                      ? 'Mins'
+                                      : 'Hrs'}
+                                  </span>
+                                </>
+                              ) : (
+                                <>{moment(new Date(i.date)).format('MMM DD, YY')}</>
+                              )}
                             </small>
                           </div>
                         </Link>

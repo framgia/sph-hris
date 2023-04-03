@@ -9,7 +9,6 @@ import { ChevronRight, MoreVertical } from 'react-feather'
 
 import Chip from '~/components/atoms/Chip'
 import Avatar from '~/components/atoms/Avatar'
-import FiledOffsetModal from '../FiledOffsetModal'
 import EditTimeEntriesModal from '../EditTimeEntryModal'
 import { ITimeEntry } from '~/utils/types/timeEntryTypes'
 import { WorkStatus } from '~/utils/constants/work-status'
@@ -37,12 +36,9 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
     setUser(name as string)
   }
 
-  const [isOpenFiledOffset, setIsOpenFiledOffset] = useState<boolean>(false)
   const handleIsOpenEditModalToggle = (): void => {
     setIsOpenEditModal(!isOpenEditModal)
   }
-
-  const handleIsOpenFiledOffsetToggle = (): void => setIsOpenFiledOffset(!isOpenFiledOffset)
 
   const menuItemButton = 'px-3 py-2 text-left text-xs hover:text-slate-700 text-slate-500'
   const EMPTY = 'N/A'
@@ -256,20 +252,6 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                         />
                                       ) : null}
 
-                                      {/* This is for Filed Offset Modal */}
-                                      {isOpenFiledOffset ? (
-                                        <FiledOffsetModal
-                                          {...{
-                                            isOpen: isOpenFiledOffset,
-                                            closeModal: handleIsOpenFiledOffsetToggle,
-                                            row: row.original,
-                                            query: {
-                                              isLoading: false,
-                                              isError: false
-                                            }
-                                          }}
-                                        />
-                                      ) : null}
                                       <Tippy
                                         placement="left"
                                         content="Vertical Ellipsis"
@@ -300,14 +282,6 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                               onClick={handleIsOpenEditModalToggle}
                                             >
                                               <span>Edit DTR</span>
-                                            </button>
-                                          </Menu.Item>
-                                          <Menu.Item>
-                                            <button
-                                              className={menuItemButton}
-                                              onClick={handleIsOpenFiledOffsetToggle}
-                                            >
-                                              <span>Filed Offset</span>
                                             </button>
                                           </Menu.Item>
                                         </Menu.Items>
