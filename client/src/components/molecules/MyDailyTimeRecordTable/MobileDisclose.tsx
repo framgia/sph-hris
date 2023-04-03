@@ -397,15 +397,9 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                           }}
                                         />
                                       ) : null}
-                                      <Tippy
-                                        placement="left"
-                                        content="Vertical Ellipsis"
-                                        className="!text-xs"
-                                      >
-                                        <Menu.Button className="p-0.5 text-slate-500 outline-none">
-                                          <MoreVertical className="h-4" />
-                                        </Menu.Button>
-                                      </Tippy>
+                                      <Menu.Button className="p-0.5 text-slate-500 outline-none">
+                                        <MoreVertical className="h-4" />
+                                      </Menu.Button>
                                       <MenuTransition>
                                         <Menu.Items
                                           className={classNames(
