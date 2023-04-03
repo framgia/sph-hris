@@ -29,5 +29,24 @@ namespace api.Schema.Mutations
                 }
             }
         }
+
+        public async Task<ESLOffset> ApproveDisapproveChangeOffsetStatus(ApproveESLChangeShiftRequest request, [Service] ApprovalService _changeESLOffsetStatusService, [Service] IDbContextFactory<HrisContext> contextFactory)
+        {
+            using (HrisContext context = contextFactory.CreateDbContext())
+            {
+                try
+                {
+                    using var transaction = context.Database.BeginTransaction();
+                    var changeShift = await _changeESLOffsetStatusService.ApproveDisapproveChangeOffsetStatus(request);
+
+                    transaction.Commit();
+                    return changeShift;
+                }
+                catch (GraphQLException)
+                {
+                    throw;
+                }
+            }
+        }
     }
 }

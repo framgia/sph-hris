@@ -66,5 +66,12 @@ namespace api.Services
             if (request.IsLeaderApproved == false) return RequestStatus.DISAPPROVED;
             return RequestStatus.PENDING;
         }
+
+        public string GetOffsetRequestStatus(ESLOffset request)
+        {
+            if (request.IsLeaderApproved == true) return RequestStatus.APPROVED;
+            if (request.IsLeaderApproved == false) return RequestStatus.DISAPPROVED;
+            return RequestStatus.PENDING;
+        }
     }
 }
