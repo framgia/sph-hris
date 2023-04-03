@@ -92,7 +92,7 @@ const Header: FC<Props> = (props): JSX.Element => {
           date: moment(parsedData.DateRequested).format('MMMM D, YYYY'),
           remarks: parsedData.Remarks,
           duration: getDuration(parsedData, notif.type),
-          dateFiled: moment(parsedData.DateFiled).format('MMMM D, YYYY'),
+          dateFiled: parsedData.DateFiled,
           status: parsedData.Status,
           readAt: notif.readAt,
           isRead: notif.isRead,

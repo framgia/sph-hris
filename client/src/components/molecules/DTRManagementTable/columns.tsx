@@ -9,7 +9,6 @@ import { createColumnHelper } from '@tanstack/react-table'
 
 import Chip from '~/components/atoms/Chip'
 import Avatar from '~/components/atoms/Avatar'
-import FiledOffsetModal from './../FiledOffsetModal'
 import CellHeader from '~/components/atoms/CellHeader'
 import EditTimeEntriesModal from '../EditTimeEntryModal'
 import { ITimeEntry } from '~/utils/types/timeEntryTypes'
@@ -171,7 +170,6 @@ export const columns = [
       const { original: timeEntry } = props.row
       const [isOpenTimeEntry, setIsOpenTimeEntry] = useState<boolean>(false)
       const [isOpenEditModal, setIsOpenEditModal] = useState<boolean>(false)
-      const [isOpenFiledOffset, setIsOpenFiledOffset] = useState<boolean>(false)
 
       const handleIsOpenTimeEntryToggle = (id?: string | undefined): void => {
         setIsOpenTimeEntry(!isOpenTimeEntry)
@@ -180,8 +178,6 @@ export const columns = [
       const handleIsOpenEditModalToggle = (): void => {
         setIsOpenEditModal(!isOpenEditModal)
       }
-
-      const handleIsOpenFiledOffsetToggle = (): void => setIsOpenFiledOffset(!isOpenFiledOffset)
 
       const menuItemButton = 'px-3 py-2 text-left text-xs hover:text-slate-700 text-slate-500'
 
@@ -220,21 +216,6 @@ export const columns = [
                 }}
               />
             ) : null}
-
-            {/* This is for Filed Offset Modal */}
-            {isOpenFiledOffset ? (
-              <FiledOffsetModal
-                {...{
-                  isOpen: isOpenFiledOffset,
-                  closeModal: handleIsOpenFiledOffsetToggle,
-                  row: props.row.original,
-                  query: {
-                    isLoading: false,
-                    isError: false
-                  }
-                }}
-              />
-            ) : null}
             <Tippy placement="left" content="Vertical Ellipsis" className="!text-xs">
               <Menu.Button className="p-0.5 text-slate-500 outline-none">
                 <MoreVertical className="h-4" />
@@ -258,11 +239,6 @@ export const columns = [
                 <Menu.Item>
                   <button className={menuItemButton} onClick={handleIsOpenEditModalToggle}>
                     <span>Edit DTR</span>
-                  </button>
-                </Menu.Item>
-                <Menu.Item>
-                  <button className={menuItemButton} onClick={handleIsOpenFiledOffsetToggle}>
-                    <span>Filed Offset</span>
                   </button>
                 </Menu.Item>
               </Menu.Items>

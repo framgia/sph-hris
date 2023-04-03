@@ -125,14 +125,26 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
                               </span>
                             </p>
                             <p>
-                              {moment(row.original.dateFiled).fromNow()} &bull; {row.original.date}{' '}
-                              -{' '}
                               <span className={`font-medium ${isActive ? 'text-amber-500' : ''}`}>
-                                {row.original.duration}{' '}
                                 {row.original.type.split('_')[0].toLowerCase() ===
-                                NOTIFICATION_TYPE.OVERTIME
-                                  ? 'Mins'
-                                  : 'Hrs'}
+                                NOTIFICATION_TYPE.OVERTIME ? (
+                                  <>
+                                    {moment(row.original.dateFiled).fromNow()} &bull;{' '}
+                                    {row.original.date} -{' '}
+                                    <span className="font-medium">
+                                      {row.original.duration}{' '}
+                                      {row.original.type.split('_')[0].toLowerCase() ===
+                                      NOTIFICATION_TYPE.OVERTIME
+                                        ? 'Mins'
+                                        : 'Hrs'}
+                                    </span>
+                                  </>
+                                ) : (
+                                  <>
+                                    {moment(row.original.dateFiled).fromNow()} &bull;{' '}
+                                    {row.original.date}{' '}
+                                  </>
+                                )}
                               </span>
                             </p>
                           </div>
