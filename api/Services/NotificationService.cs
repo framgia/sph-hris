@@ -616,7 +616,7 @@ namespace api.Services
                     RequestedTimeOut = request.TimeOut,
                     DateRequested = timeEntry!.Date,
                     DateFiled = (DateTime)request.CreatedAt!,
-                    Type = NotificationDataTypeEnum.REQUEST,
+                    Type = request.IsLeaderApproved == true ? NotificationDataTypeEnum.APPROVE : NotificationDataTypeEnum.DISAPPROVE,
                     Description = request.Description,
                     Status = _eslChangeShiftService.GetRequestStatus(request),
                 }
@@ -627,12 +627,55 @@ namespace api.Services
                 {
                     RecipientId = request.UserId,
                     ESLChangeShiftRequestId = request.Id,
-                    Type = NotificationTypeEnum.ESL_OFFSET_SCHEDULE,
+                    Type = NotificationTypeEnum.ESL_OFFSET_RESOLVED,
                     Data = dataToUser
                 };
 
                 context.ESLChangeShiftNotifications.Add(notificationToUser);
                 sendESLChangeShiftNotificationEvent(notificationToUser);
+
+                await context.SaveChangesAsync();
+                return notificationToUser;
+            }
+        }
+
+        public async Task<ESLOffsetNotification> CreateESLOffsetStatusRequestNotification(ESLOffset request)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var user = await context.Users.FindAsync(request.UserId);
+                var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
+
+
+                var dataToUser = JsonSerializer.Serialize(new ChangeShiftData
+                {
+                    User = new NotificationUser
+                    {
+                        Id = (int)user?.Id!,
+                        Name = user?.Name!,
+                        AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default)
+                    },
+                    RequestedTimeIn = request.TimeIn,
+                    RequestedTimeOut = request.TimeOut,
+                    DateRequested = timeEntry!.Date,
+                    DateFiled = (DateTime)request.CreatedAt!,
+                    Type = request.IsLeaderApproved == true ? NotificationDataTypeEnum.APPROVE : NotificationDataTypeEnum.DISAPPROVE,
+                    Description = request.Description,
+                    Status = _eslChangeShiftService.GetOffsetRequestStatus(request),
+                }
+                );
+
+                // Notification to User
+                var notificationToUser = new ESLOffsetNotification
+                {
+                    RecipientId = request.UserId,
+                    ESLOffsetId = request.Id,
+                    Type = NotificationTypeEnum.ESL_OFFSET_RESOLVED,
+                    Data = dataToUser
+                };
+
+                context.ESLOffsetNotifications.Add(notificationToUser);
+                sendESLOffsetNotificationEvent(notificationToUser);
 
                 await context.SaveChangesAsync();
                 return notificationToUser;

@@ -44,16 +44,13 @@ namespace api.Utils
             }
         }
 
-        public async Task<bool> checkManagerUser(int id)
+        public async Task<bool> CheckManagerUser(int id)
         {
-            using (HrisContext context = _contextFactory.CreateDbContext())
-            {
-                var user = await context.Users.FindAsync(id);
-                var role = await context.Roles.Where(x => x.Name == RoleEnum.MANAGER).FirstAsync();
-                if (user == null) return false;
-                if (user.RoleId == role.Id) return true;
-                return false;
-            }
+            using HrisContext context = _contextFactory.CreateDbContext();
+            var user = await context.Users.FindAsync(id);
+            var role = await context.Roles.Where(x => x.Name == RoleEnum.MANAGER).FirstAsync();
+            if (user == null) return false;
+            return user.RoleId == role.Id;
         }
 
         public async Task<bool> checkProjectLeaderUser(int id)
@@ -181,7 +178,7 @@ namespace api.Utils
             if (!checkUserExist(leave.UserId))
                 errors.Add(buildError(nameof(leave.UserId), InputValidationMessageEnum.INVALID_USER));
 
-            if (!checkManagerUser(leave.ManagerId).Result)
+            if (!CheckManagerUser(leave.ManagerId).Result)
                 errors.Add(buildError(nameof(leave.ManagerId), InputValidationMessageEnum.INVALID_MANAGER));
 
             if (!checkLeaveType(leave.LeaveTypeId))
@@ -225,7 +222,7 @@ namespace api.Utils
             if (!checkUserExist(overtime.UserId))
                 errors.Add(buildError(nameof(overtime.UserId), InputValidationMessageEnum.INVALID_USER));
 
-            if (!checkManagerUser(overtime.ManagerId).Result)
+            if (!CheckManagerUser(overtime.ManagerId).Result)
                 errors.Add(buildError(nameof(overtime.ManagerId), InputValidationMessageEnum.INVALID_MANAGER));
 
             if (!checkDateFormat(overtime.Date))
@@ -254,7 +251,7 @@ namespace api.Utils
             if (!checkUserExist(request.UserId))
                 errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.INVALID_USER));
 
-            if (!(checkManagerUser(request.UserId).Result || checkProjectLeaderUser(request.UserId).Result)) errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_MANAGER_PROJECT_LEADER));
+            if (!(CheckManagerUser(request.UserId).Result || checkProjectLeaderUser(request.UserId).Result)) errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_MANAGER_PROJECT_LEADER));
 
             if (!checkNotificationExist(request.NotificationId, NotificationTypeEnum.LEAVE).Result)
                 errors.Add(buildError(nameof(request.NotificationId), InputValidationMessageEnum.INVALID_NOTIFICATION));
@@ -270,7 +267,7 @@ namespace api.Utils
                 errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.INVALID_USER));
 
 
-            if (!(checkManagerUser(request.UserId).Result || checkProjectLeaderUser(request.UserId).Result)) errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_MANAGER_PROJECT_LEADER));
+            if (!(CheckManagerUser(request.UserId).Result || checkProjectLeaderUser(request.UserId).Result)) errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_MANAGER_PROJECT_LEADER));
 
             if (!checkNotificationExist(request.NotificationId, NotificationTypeEnum.UNDERTIME).Result)
                 errors.Add(buildError(nameof(request.NotificationId), InputValidationMessageEnum.INVALID_NOTIFICATION));
@@ -285,7 +282,7 @@ namespace api.Utils
             if (!checkUserExist(request.UserId))
                 errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.INVALID_USER));
 
-            if (!(checkManagerUser(request.UserId).Result || checkProjectLeaderUser(request.UserId).Result)) errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_MANAGER_PROJECT_LEADER));
+            if (!(CheckManagerUser(request.UserId).Result || checkProjectLeaderUser(request.UserId).Result)) errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_MANAGER_PROJECT_LEADER));
 
             return errors;
         }
@@ -297,7 +294,7 @@ namespace api.Utils
             if (!checkUserExist(request.UserId))
                 errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.INVALID_USER));
 
-            if (!(checkManagerUser(request.UserId).Result || checkProjectLeaderUser(request.UserId).Result)) errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_MANAGER_PROJECT_LEADER));
+            if (!(CheckManagerUser(request.UserId).Result || checkProjectLeaderUser(request.UserId).Result)) errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_MANAGER_PROJECT_LEADER));
 
             if (request.NotificationId == null || !checkNotificationExist((int)request.NotificationId, NotificationTypeEnum.OVERTIME).Result)
                 errors.Add(buildError(nameof(request.NotificationId), InputValidationMessageEnum.INVALID_NOTIFICATION));
@@ -313,7 +310,7 @@ namespace api.Utils
                 errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.INVALID_USER));
 
 
-            if (!(checkManagerUser(request.UserId).Result || checkProjectLeaderUser(request.UserId).Result)) errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_MANAGER_PROJECT_LEADER));
+            if (!(CheckManagerUser(request.UserId).Result || checkProjectLeaderUser(request.UserId).Result)) errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_MANAGER_PROJECT_LEADER));
 
             if (request.OvertimeId == null || !checkOvertimeExist((int)request.OvertimeId).Result)
                 errors.Add(buildError(nameof(request.OvertimeId), InputValidationMessageEnum.INVALID_OVERTIME));
@@ -331,7 +328,7 @@ namespace api.Utils
             if (!checkUserExist(request.UserId))
                 errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.INVALID_USER));
 
-            if (!(checkManagerUser(request.UserId).Result || checkProjectLeaderUser(request.UserId).Result)) errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_MANAGER_PROJECT_LEADER));
+            if (!(CheckManagerUser(request.UserId).Result || checkProjectLeaderUser(request.UserId).Result)) errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_MANAGER_PROJECT_LEADER));
 
             if (!checkNotificationExist(request.NotificationId, NotificationTypeEnum.CHANGE_SHIFT).Result) errors.Add(buildError(nameof(request.NotificationId), InputValidationMessageEnum.INVALID_NOTIFICATION));
 
@@ -355,7 +352,7 @@ namespace api.Utils
             if (!checkTimeEntryExist(request.TimeEntryId))
                 errors.Add(buildError(nameof(request.TimeEntryId), InputValidationMessageEnum.INVALID_TIME_ENTRY));
 
-            if (!checkManagerUser(request.ManagerId).Result)
+            if (!CheckManagerUser(request.ManagerId).Result)
                 errors.Add(buildError(nameof(request.ManagerId), InputValidationMessageEnum.INVALID_MANAGER));
 
             if (!checkMultiProjects(request.Projects))
@@ -428,6 +425,21 @@ namespace api.Utils
                 errors.Add(buildError(nameof(request.TeamLeaderId), InputValidationMessageEnum.INVALID_TEAM_LEADER));
 
             if (!checkNotificationExist(request.NotificationId, NotificationTypeEnum.ESL_OFFSET_SCHEDULE).Result) errors.Add(buildError(nameof(request.NotificationId), InputValidationMessageEnum.INVALID_NOTIFICATION));
+
+            return errors;
+        }
+
+        public List<IError> ChangeESLOffsetStatusRequestInput(ApproveESLChangeShiftRequest request)
+        {
+            var errors = new List<IError>();
+
+            if (!checkUserExist(request.TeamLeaderId))
+                errors.Add(buildError(nameof(request.TeamLeaderId), InputValidationMessageEnum.INVALID_USER));
+
+            if (checkNonESLUser(request.TeamLeaderId))
+                errors.Add(buildError(nameof(request.TeamLeaderId), InputValidationMessageEnum.INVALID_TEAM_LEADER));
+
+            if (!checkNotificationExist(request.NotificationId, NotificationTypeEnum.ESL_OFFSET).Result) errors.Add(buildError(nameof(request.NotificationId), InputValidationMessageEnum.INVALID_NOTIFICATION));
 
             return errors;
         }

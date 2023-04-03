@@ -36,7 +36,7 @@ namespace api.Services
                 if (errors.Count > 0) throw new GraphQLException(errors);
 
                 // check if approving/disapproving is manager
-                if (_customInputValidation.checkManagerUser(overtimeRequest.UserId).Result)
+                if (_customInputValidation.CheckManagerUser(overtimeRequest.UserId).Result)
                 {
                     // validate input for manager case
                     errors = _customInputValidation.checkManagerApproveOvertimeRequestInput(overtimeRequest);
@@ -159,7 +159,7 @@ namespace api.Services
                 var leave = await context.Leaves.FindAsync(notification?.LeaveId);
                 var notificationData = notification != null ? JsonConvert.DeserializeObject<dynamic>(notification.Data) : null;
 
-                var isManager = _customInputValidation.checkManagerUser(request.UserId).Result;
+                var isManager = _customInputValidation.CheckManagerUser(request.UserId).Result;
                 var isProjectLeader = _customInputValidation.checkApprovingProjectLeader(request.UserId, leave!.Id, MultiProjectTypeEnum.LEAVE).Result;
 
                 // if approving manager/project leader doesn't match
@@ -207,7 +207,7 @@ namespace api.Services
                 var changeShiftRequest = notification != null ? await context.ChangeShiftRequests.FindAsync(notification.ChangeShiftRequestId) : null;
                 var changeShiftNotificationList = changeShiftRequest != null ? await context.ChangeShiftNotifications.Where(x => x.ChangeShiftRequestId == changeShiftRequest.Id && x.RecipientId != changeShiftRequest.ManagerId).ToListAsync() : null;
 
-                var isManager = _customInputValidation.checkManagerUser(request.UserId).Result;
+                var isManager = _customInputValidation.CheckManagerUser(request.UserId).Result;
                 var isProjectLeader = _customInputValidation.checkApprovingProjectLeader(request.UserId, changeShiftRequest!.Id, MultiProjectTypeEnum.CHANGE_SHIFT).Result;
                 var notificationData = notification != null ? JsonConvert.DeserializeObject<dynamic>(notification.Data) : null;
 
@@ -294,6 +294,38 @@ namespace api.Services
                 await context.SaveChangesAsync();
 
                 return eSLChangeShiftRequest;
+            }
+        }
+
+        public async Task<ESLOffset> ApproveDisapproveChangeOffsetStatus(ApproveESLChangeShiftRequest request)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var errors = new List<IError>();
+                errors = _customInputValidation.ChangeESLOffsetStatusRequestInput(request);
+                if (errors.Count > 0) throw new GraphQLException(errors);
+
+                var notification = await context.ESLOffsetNotifications.FindAsync(request.NotificationId);
+                var changeESLOffsetRequest = notification != null ? await context.ESLOffsets.FindAsync(notification.ESLOffsetId) : null;
+                var notificationData = notification != null ? JsonConvert.DeserializeObject<dynamic>(notification.Data) : null;
+                var timeEntry = await context.TimeEntries.FindAsync(changeESLOffsetRequest!.TimeEntryId);
+
+                // Update notification data
+                if (request.IsApproved && notificationData != null) notificationData!.Status = RequestStatus.APPROVED;
+                if (!request.IsApproved && notificationData != null) notificationData!.Status = RequestStatus.DISAPPROVED;
+                if (notification != null) notification.Data = JsonConvert.SerializeObject(notificationData);
+                changeESLOffsetRequest!.IsLeaderApproved = request.IsApproved;
+                if (request.IsApproved)
+                {
+                    timeEntry!.StartTime = changeESLOffsetRequest.TimeIn;
+                    timeEntry!.EndTime = changeESLOffsetRequest.TimeOut;
+                }
+
+                // Send notification
+                await _notificationService.CreateESLOffsetStatusRequestNotification(changeESLOffsetRequest);
+
+                await context.SaveChangesAsync();
+                return changeESLOffsetRequest;
             }
         }
     }
