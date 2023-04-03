@@ -6,3 +6,9 @@ export interface IESLOffsetInput {
   timeOut: string
   description: string
 }
+
+export interface IApproveESLOffsetInput {
+  teamLeaderId: number
+  notificationId: number
+  isApproved: boolean
+}

@@ -2,13 +2,22 @@ import toast from 'react-hot-toast'
 import { useMutation, UseMutationResult } from '@tanstack/react-query'
 
 import { client } from '~/utils/shared/client'
-import { IESLOffsetInput } from '~/utils/interfaces/eslOffsetInterface'
-import { CREATE_ESL_OFFSET_MUTATION } from '~/graphql/mutations/eslOffsetMutation'
+import { IESLOffsetInput, IApproveESLOffsetInput } from '~/utils/interfaces/eslOffsetInterface'
+import {
+  CREATE_ESL_OFFSET_MUTATION,
+  APROVE_DISAPPROVE_ESL_OFFSET_MUTATION
+} from '~/graphql/mutations/eslOffsetMutation'
 
 type NewOffsetFuncReturnType = UseMutationResult<any, unknown, IESLOffsetInput, unknown>
-
+type handleApproveChangeShiftMutationType = UseMutationResult<
+  any,
+  unknown,
+  IApproveESLOffsetInput,
+  unknown
+>
 type HookReturnType = {
   handleAddNewOffsetMutation: () => NewOffsetFuncReturnType
+  handleApproveEslOffsetMutation: () => handleApproveChangeShiftMutationType
 }
 
 const useOffsetForESL = (): HookReturnType => {
@@ -26,8 +35,24 @@ const useOffsetForESL = (): HookReturnType => {
       }
     })
 
+  const handleApproveEslOffsetMutation = (): handleApproveChangeShiftMutationType =>
+    useMutation({
+      mutationFn: async (data: IApproveESLOffsetInput) => {
+        return await client.request(APROVE_DISAPPROVE_ESL_OFFSET_MUTATION, {
+          request: data
+        })
+      },
+      onSuccess: async () => {
+        toast.success('Success!')
+      },
+      onError: async () => {
+        toast.error('Something went wrong')
+      }
+    })
+
   return {
-    handleAddNewOffsetMutation
+    handleAddNewOffsetMutation,
+    handleApproveEslOffsetMutation
   }
 }
 
