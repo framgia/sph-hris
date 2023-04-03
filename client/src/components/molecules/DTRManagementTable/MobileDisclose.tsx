@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import { motion } from 'framer-motion'
 import React, { FC, useState } from 'react'
@@ -9,6 +8,7 @@ import { ChevronRight, MoreVertical } from 'react-feather'
 
 import Chip from '~/components/atoms/Chip'
 import Avatar from '~/components/atoms/Avatar'
+import FiledOffsetModal from '../FiledOffsetModal'
 import EditTimeEntriesModal from '../EditTimeEntryModal'
 import { ITimeEntry } from '~/utils/types/timeEntryTypes'
 import { WorkStatus } from '~/utils/constants/work-status'
@@ -27,6 +27,7 @@ type Props = {
 const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
   const [isOpenTimeEntry, setIsOpenTimeEntry] = useState<boolean>(false)
   const [isOpenEditModal, setIsOpenEditModal] = useState<boolean>(false)
+  const [isOpenFiledOffset, setIsOpenFiledOffset] = useState<boolean>(false)
   const [timeEntryId, setTimeEntryId] = useState<number>(-1)
   const [user, setUser] = useState<string>('')
 
@@ -39,6 +40,8 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
   const handleIsOpenEditModalToggle = (): void => {
     setIsOpenEditModal(!isOpenEditModal)
   }
+
+  const handleIsOpenFiledOffsetToggle = (): void => setIsOpenFiledOffset(!isOpenFiledOffset)
 
   const menuItemButton = 'px-3 py-2 text-left text-xs hover:text-slate-700 text-slate-500'
   const EMPTY = 'N/A'
@@ -252,15 +255,24 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                         />
                                       ) : null}
 
-                                      <Tippy
-                                        placement="left"
-                                        content="Vertical Ellipsis"
-                                        className="!text-xs"
-                                      >
-                                        <Menu.Button className="p-0.5 text-slate-500 outline-none">
-                                          <MoreVertical className="h-4" />
-                                        </Menu.Button>
-                                      </Tippy>
+                                      {/* This is for Filed Offset Modal */}
+                                      {isOpenFiledOffset ? (
+                                        <FiledOffsetModal
+                                          {...{
+                                            isOpen: isOpenFiledOffset,
+                                            closeModal: handleIsOpenFiledOffsetToggle,
+                                            row: row.original,
+                                            query: {
+                                              isLoading: false,
+                                              isError: false
+                                            }
+                                          }}
+                                        />
+                                      ) : null}
+
+                                      <Menu.Button className="p-0.5 text-slate-500 outline-none">
+                                        <MoreVertical className="h-4" />
+                                      </Menu.Button>
                                       <MenuTransition>
                                         <Menu.Items
                                           className={classNames(
@@ -282,6 +294,14 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                               onClick={handleIsOpenEditModalToggle}
                                             >
                                               <span>Edit DTR</span>
+                                            </button>
+                                          </Menu.Item>
+                                          <Menu.Item>
+                                            <button
+                                              className={menuItemButton}
+                                              onClick={handleIsOpenFiledOffsetToggle}
+                                            >
+                                              <span>Filed Offset</span>
                                             </button>
                                           </Menu.Item>
                                         </Menu.Items>
