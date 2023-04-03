@@ -7,3 +7,11 @@ export const CREATE_ESL_OFFSET_MUTATION = gql`
     }
   }
 `
+
+export const APROVE_DISAPPROVE_ESL_OFFSET_MUTATION = gql`
+  mutation ($request: ApproveESLChangeShiftRequestInput!) {
+    approveDisapproveESLChangeShiftStatus(request: $request) {
+      id
+    }
+  }
+`

@@ -113,7 +113,7 @@ const NotificationPopover: FC<Props> = (props): JSX.Element => {
                               <span className="font-semibold">{i.type.split('_')[0]} </span>
                             </p>
                             <small>
-                              {moment(i.dateFiled).fromNow()} &bull;{' '}
+                              {moment(i.createdAt).fromNow()} &bull;{' '}
                               {i.type.split('_')[0].toLowerCase() === NOTIFICATION_TYPE.OVERTIME ? (
                                 <>
                                   {moment(new Date(i.date)).format('MMM DD, YY')} -{' '}

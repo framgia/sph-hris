@@ -11,6 +11,7 @@ import useChangeShift from '~/hooks/useChangeShift'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import LeaveDetails from './NotificationTypeDetails/LeaveDetails'
+import useOffsetForESL from '~/hooks/useOffsetForESL'
 import { STATUS_OPTIONS } from '~/utils/constants/notificationFilter'
 import { NOTIFICATION_TYPE } from '~/utils/constants/notificationTypes'
 import OvertimeDetails from './NotificationTypeDetails/OvertimeDetails'
@@ -43,6 +44,9 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
 
   const { handleApproveChangeShiftMutation } = useChangeShift()
   const approveDisapproveChangeShiftMutation = handleApproveChangeShiftMutation()
+
+  const { handleApproveEslOffsetMutation } = useOffsetForESL()
+  const approveDisapproveEslOffsetMutation = handleApproveEslOffsetMutation()
 
   const handleClose = (): void => {
     void router.replace({
@@ -94,6 +98,19 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
       approveDisapproveChangeShiftMutation.mutate(
         {
           userId: user.id,
+          notificationId: parseInt(router.query.id as string),
+          isApproved
+        },
+        {
+          onSuccess: () => handleClose()
+        }
+      )
+    }
+
+    if (row.type.toLowerCase() === NOTIFICATION_TYPE.OFFSET_SCHEDULE) {
+      approveDisapproveEslOffsetMutation.mutate(
+        {
+          teamLeaderId: user.id,
           notificationId: parseInt(router.query.id as string),
           isApproved
         },
