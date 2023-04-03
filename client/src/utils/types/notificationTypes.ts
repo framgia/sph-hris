@@ -5,6 +5,7 @@ export type Notification = {
   data: string
   readAt: string | null
   isRead: boolean
+  createdAt: string
 }
 
 export type UserNotifications = {
