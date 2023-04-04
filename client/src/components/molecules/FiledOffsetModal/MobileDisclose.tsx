@@ -104,8 +104,11 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                     {filedOffset.timeIn ?? EMPTY}
                                   </span>
                                 </li>
-                                <li className="px-4 py-2.5 font-semibold">
-                                  Project Leader: {filedOffset.projectLeader ?? EMPTY}
+                                <li className="px-4 py-2.5">
+                                  Project Leader:{' '}
+                                  <span className="font-semibold">
+                                    {filedOffset.projectLeader ?? EMPTY}
+                                  </span>
                                 </li>
                                 <li className="flex items-center space-x-1 px-4 py-2.5">
                                   <span>Actions:</span>
@@ -148,7 +151,7 @@ const DiscloseMessage = ({
   return (
     <p
       className={classNames(
-        'py-2 text-center font-medium',
+        'py-2 text-center text-xs font-medium',
         type === 'default' && 'text-slate-500',
         type === 'error' && 'bg-rose-50 text-rose-500'
       )}

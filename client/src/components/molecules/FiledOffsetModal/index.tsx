@@ -1,5 +1,6 @@
+import moment from 'moment'
 import { Clock } from 'react-feather'
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import {
   SortingState,
   useReactTable,
@@ -8,19 +9,22 @@ import {
   getFilteredRowModel,
   getPaginationRowModel
 } from '@tanstack/react-table'
+import { PulseLoader } from 'react-spinners'
 import { fuzzyFilter } from '~/utils/fuzzyFilter'
 
 import { columns } from './columns'
 import FiledOffsetTable from './Table'
 import MobileDisclose from './MobileDisclose'
 import FileOffsetModal from './FileOffsetModal'
+import useFileOffset from '~/hooks/useFileOffset'
 import GlobalSearchFilter from '../GlobalSearchFilter'
+import { IFiledOffsetTable } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/ButtonAction'
+import { getApprovalStatus } from '~/utils/myDailyTimeHelpers'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
 import { IEmployeeTimeEntry, ITimeEntry } from '~/utils/types/timeEntryTypes'
-import { dummyFiledOffsetData } from '~/utils/constants/dummyFiledOffsetsData'
 
 type Props = {
   isOpen: boolean
@@ -45,11 +49,42 @@ const FiledOffsetModal: FC<Props> = (props): JSX.Element => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState<string>('')
   const [isOpenFileOffset, setIsOpenFileOffset] = useState<boolean>(false)
+  const [offsetDataTable, setOffsetDataTable] = useState<IFiledOffsetTable[]>()
+
+  // FILED OFFSET QUERY HOOKS
+  const { getESLFiledOffsetsQuery } = useFileOffset()
+  const { data: filedOffsets } = getESLFiledOffsetsQuery(row.id)
 
   const handleIsOpenFileOffsetToggle = (): void => setIsOpenFileOffset(!isOpenFileOffset)
 
+  // Get FiledOffsets Mapped Data
+  const getFiledOffsetsMappedData = (): IFiledOffsetTable[] | undefined => {
+    return filedOffsets?.eslOffsetsByTimeEntry.map((item) => {
+      const mapped: IFiledOffsetTable = {
+        id: item.id,
+        title: item.title,
+        timeIn: moment(item.timeIn, 'HH:mm').format('hh:mm A'),
+        timeOut: moment(item.timeOut, 'HH:mm').format('hh:mm A'),
+        projectLeader: item.teamLeader.name,
+        status: getApprovalStatus(item.isLeaderApproved),
+        remarks: item.description,
+        createdAt: item.createdAt,
+        updateAt: item.updatedAt
+      }
+      return mapped
+    })
+  }
+
+  // Fetched Once and siplay all data
+  useEffect(() => {
+    if (filedOffsets?.eslOffsetsByTimeEntry !== undefined) {
+      const mappedOffsets = getFiledOffsetsMappedData()
+      setOffsetDataTable(mappedOffsets)
+    }
+  }, [filedOffsets])
+
   const table = useReactTable({
-    data: dummyFiledOffsetData,
+    data: offsetDataTable ?? [],
     columns,
     // Options
     state: {
@@ -79,8 +114,8 @@ const FiledOffsetModal: FC<Props> = (props): JSX.Element => {
         {...{
           title:
             isMyDTRPage === true
-              ? 'Filed Offset'
-              : `${(row as ITimeEntry).user?.name}'s Filed Offset`,
+              ? 'Filed Offsets'
+              : `${(row as ITimeEntry).user?.name}'s Filed Offsets`,
           Icon: Clock,
           closeModal
         }}
@@ -106,7 +141,8 @@ const FiledOffsetModal: FC<Props> = (props): JSX.Element => {
         <FileOffsetModal
           {...{
             isOpen: isOpenFileOffset,
-            closeModal: handleIsOpenFileOffsetToggle
+            closeModal: handleIsOpenFileOffsetToggle,
+            tableRow: row
           }}
         />
       ) : null}
@@ -123,15 +159,21 @@ const FiledOffsetModal: FC<Props> = (props): JSX.Element => {
         </div>
         {/* Show on medium size and beyond */}
         <div className="mx-auto hidden w-full max-w-fit md:block">
-          <FiledOffsetTable
-            {...{
-              table,
-              query: {
-                isLoading,
-                isError
-              }
-            }}
-          />
+          {offsetDataTable !== undefined ? (
+            <FiledOffsetTable
+              {...{
+                table,
+                query: {
+                  isLoading,
+                  isError
+                }
+              }}
+            />
+          ) : (
+            <div className="flex min-h-[20vh] items-center justify-center">
+              <PulseLoader color="#ffb40b" size={10} />
+            </div>
+          )}
         </div>
       </div>
       {/* Custom Modal Footer Style */}

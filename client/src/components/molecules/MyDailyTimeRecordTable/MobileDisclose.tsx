@@ -4,9 +4,9 @@ import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import { motion } from 'framer-motion'
 import { HiFire } from 'react-icons/hi'
-import React, { FC, useState } from 'react'
 import { Table } from '@tanstack/react-table'
 import { Disclosure, Menu } from '@headlessui/react'
+import React, { FC, useState } from 'react'
 import { Check, Calendar, RefreshCw, ThumbsDown, ChevronRight, MoreVertical } from 'react-feather'
 
 import Chip from '~/components/atoms/Chip'
@@ -20,10 +20,10 @@ import { variants } from '~/utils/constants/animationVariants'
 import { NO_OVERTIME } from '~/utils/constants/overtimeStatus'
 import ChangeShiftRequestModal from './ChangeShiftRequestModal'
 import { USER_POSITIONS } from '~/utils/constants/userPositions'
-import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 import MenuTransition from '~/components/templates/MenuTransition'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import InterruptionTimeEntriesModal from '../InterruptionTimeEntriesModal'
+import { IEmployeeTimeEntry, ITimeEntry } from '~/utils/types/timeEntryTypes'
 import DisclosureTransition from '~/components/templates/DisclosureTransition'
 
 type Props = {
@@ -37,7 +37,9 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
   const [isOpenNewOffset, setIsOpenNewOffset] = useState<boolean>(false)
   const [isOpenNewOvertime, setIsOpenNewOvertime] = useState<boolean>(false)
   const [isOpenChangeShiftRequest, setIsOpenChangeShiftRequest] = useState<boolean>(false)
-  const [isOpenFiledOffset, setIsOpenFiledOffset] = useState<boolean>(false)
+  const [timeEntryRowData, setTimeEntryRowData] = useState<
+    ITimeEntry | IEmployeeTimeEntry | undefined
+  >()
 
   const [timeEntryId, setTimeEntryId] = useState<number>(-1)
   const { handleUserQuery } = useUserQuery()
@@ -51,8 +53,14 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
   const handleIsOpenNewOffsetToggle = (): void => setIsOpenNewOffset(!isOpenNewOffset)
   const handleIsOpenChangeShiftRequestToggle = (): void =>
     setIsOpenChangeShiftRequest(!isOpenChangeShiftRequest)
-  const handleIsOpenFiledOffsetToggle = (): void => setIsOpenFiledOffset(!isOpenFiledOffset)
   const handleIsOpenNewOvertime = (): void => setIsOpenNewOvertime(!isOpenNewOvertime)
+
+  const [isOpenFiledOffset, setIsOpenFiledOffset] = useState<boolean>(false)
+
+  const handleIsOpenFiledOffsetToggle = (row?: IEmployeeTimeEntry | undefined): void => {
+    setTimeEntryRowData(row)
+    setIsOpenFiledOffset(!isOpenFiledOffset)
+  }
 
   const EMPTY = 'N/A'
 
@@ -381,22 +389,6 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                           }}
                                         />
                                       ) : null}
-
-                                      {/* This is for Filed Offset Modal */}
-                                      {isOpenFiledOffset ? (
-                                        <FiledOffsetModal
-                                          {...{
-                                            isOpen: isOpenFiledOffset,
-                                            closeModal: handleIsOpenFiledOffsetToggle,
-                                            row: row.original,
-                                            isMyDTRPage: true,
-                                            query: {
-                                              isLoading: false,
-                                              isError: false
-                                            }
-                                          }}
-                                        />
-                                      ) : null}
                                       <Menu.Button className="p-0.5 text-slate-500 outline-none">
                                         <MoreVertical className="h-4" />
                                       </Menu.Button>
@@ -429,7 +421,9 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                               <Menu.Item>
                                                 <button
                                                   className={menuItemButton}
-                                                  onClick={handleIsOpenFiledOffsetToggle}
+                                                  onClick={() =>
+                                                    handleIsOpenFiledOffsetToggle(row.original)
+                                                  }
                                                 >
                                                   <span>Filed Offset</span>
                                                 </button>
@@ -468,6 +462,22 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                       timeEntryId,
                       user: user?.userById.name as string,
                       closeModal: handleIsOpenTimeEntryToggle
+                    }}
+                  />
+                ) : null}
+
+                {/* This is for Filed Offset Modal */}
+                {isOpenFiledOffset ? (
+                  <FiledOffsetModal
+                    {...{
+                      isOpen: isOpenFiledOffset,
+                      closeModal: handleIsOpenFiledOffsetToggle,
+                      row: timeEntryRowData as ITimeEntry | IEmployeeTimeEntry,
+                      isMyDTRPage: true,
+                      query: {
+                        isLoading: false,
+                        isError: false
+                      }
                     }}
                   />
                 ) : null}

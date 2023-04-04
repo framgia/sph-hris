@@ -116,7 +116,7 @@ const AddNewOffsetModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Element 
         {/* Custom Modal Header */}
         <ModalHeader
           {...{
-            title: 'Add New Offset',
+            title: 'ESL Change Shift',
             closeModal
           }}
         />

@@ -1,4 +1,5 @@
 using api.Context;
+using api.DTOs;
 using api.Entities;
 using api.Enums;
 using api.Requests;
@@ -48,13 +49,14 @@ namespace api.Services
             }
         }
 
-        public async Task<List<ESLOffset>> GetTimeEntryOffsets(int timeEntryId)
+        public async Task<List<ESLOffsetDTO>> GetTimeEntryOffsets(int timeEntryId)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 var eslOffsets = await context.ESLOffsets
                     .Include(x => x.TeamLeader)
                     .Where(x => x.TimeEntryId == timeEntryId)
+                    .Select(x => new ESLOffsetDTO(x))
                     .ToListAsync();
 
                 return eslOffsets;
