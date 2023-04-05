@@ -8,10 +8,11 @@ import { User } from '~/utils/types/userTypes'
 import { Roles } from '~/utils/constants/roles'
 import { INotification } from '~/utils/interfaces'
 import useChangeShift from '~/hooks/useChangeShift'
+import useOffsetForESL from '~/hooks/useOffsetForESL'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import LeaveDetails from './NotificationTypeDetails/LeaveDetails'
-import useOffsetForESL from '~/hooks/useOffsetForESL'
+import OffsetDetails from './NotificationTypeDetails/OffsetDetails'
 import { STATUS_OPTIONS } from '~/utils/constants/notificationFilter'
 import { NOTIFICATION_TYPE } from '~/utils/constants/notificationTypes'
 import OvertimeDetails from './NotificationTypeDetails/OvertimeDetails'
@@ -230,6 +231,14 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
           {/* DETAILS FOR OFFSET SCHEDULE DATA */}
           {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.OFFSET_SCHEDULE && (
             <OffsetScheduleDetails
+              {...{
+                row
+              }}
+            />
+          )}
+          {/* DETAILS FOR OFFSET DATA */}
+          {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.OFFSET && (
+            <OffsetDetails
               {...{
                 row
               }}

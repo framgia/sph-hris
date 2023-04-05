@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import toast from 'react-hot-toast'
 import isEmpty from 'lodash/isEmpty'
 import ReactSelect from 'react-select'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -8,29 +9,30 @@ import { FileText, RefreshCcw, Save, X } from 'react-feather'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
 import TextField from '../TextField'
-import useProject from '~/hooks/useProject'
 import Input from '~/components/atoms/Input'
+import { User } from '~/utils/types/userTypes'
+import useUserQuery from '~/hooks/useUserQuery'
+import { queryClient } from '~/lib/queryClient'
+import useFileOffset from '~/hooks/useFileOffset'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import { FileOffsetSchema } from '~/utils/validation'
-import { User as UserType } from '~/utils/types/userTypes'
 import Button from '~/components/atoms/Buttons/ButtonAction'
-import { FileOffsetFormValues } from '~/utils/types/formValues'
 import { customStyles } from '~/utils/customReactSelectStyles'
-import { generateUserSelect } from '~/utils/createLeaveHelpers'
+import { FileOffsetFormValues } from '~/utils/types/formValues'
 import ModalTemplate from '~/components/templates/ModalTemplate'
+import { generateESLUserSelect } from '~/utils/createLeaveHelpers'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
+import { IEmployeeTimeEntry, ITimeEntry } from '~/utils/types/timeEntryTypes'
 
 type Props = {
   isOpen: boolean
   closeModal: () => void
+  tableRow: ITimeEntry | IEmployeeTimeEntry
 }
 
-const FileOffsetModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
-  const [leaders, setLeaders] = useState<UserType[]>([])
-
-  const { handleProjectQuery } = useProject()
-  const { data: projects, isSuccess: isProjectsSuccess } = handleProjectQuery()
+const FileOffsetModal: FC<Props> = ({ isOpen, closeModal, tableRow }): JSX.Element => {
+  const [eslLeaders, setEslLeaders] = useState<Array<Pick<User, 'id' | 'name'>>>([])
 
   const {
     reset,
@@ -43,39 +45,50 @@ const FileOffsetModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
     resolver: yupResolver(FileOffsetSchema)
   })
 
-  // modify custom style control
-  customStyles.control = (provided: Record<string, unknown>, state: any): any => ({
-    ...provided,
-    boxShadow: 'none',
-    borderColor: 'none',
-    '&:hover': {
-      color: '#75c55e'
-    }
-  })
+  // FILE OFFSET HOOKS
+  const { handleAddFileOffsetMutation } = useFileOffset()
+  const addFileOffsetMutation = handleAddFileOffsetMutation()
 
+  // CURRENT USER HOOKS && ALL ESL USERS HOOKS
+  const { handleUserQuery, getESLUserQuery } = useUserQuery()
+  const { data: user } = handleUserQuery() // SPECIFIC USER
+  const { data: eslUsers, isSuccess: isESLUsersSuccess } = getESLUserQuery()
+
+  // FETCHED ALL ESL LEADERS
   useEffect(() => {
-    if (isProjectsSuccess && projects.projects.length > 0) {
-      const tempLeaders = [...leaders]
-      projects?.projects.forEach((project) => {
-        if (project?.projectLeader != null || project?.projectSubLeader != null) {
-          if (!tempLeaders.some((leader) => leader.id === project.projectLeader.id))
-            tempLeaders.push(project?.projectLeader)
-          if (!tempLeaders.some((leader) => leader.id === project.projectSubLeader.id))
-            tempLeaders.push(project?.projectSubLeader)
-        }
-      })
-      setLeaders(tempLeaders)
+    if (isESLUsersSuccess && eslUsers?.allESLUsers.length > 0) {
+      const mappedData = eslUsers?.allESLUsers.map((option) => option)
+      setEslLeaders(mappedData)
     }
-  }, [isProjectsSuccess, projects?.projects])
+  }, [isESLUsersSuccess, eslUsers?.allESLUsers])
 
   const handleSave: SubmitHandler<FileOffsetFormValues> = async (data): Promise<void> => {
     return await new Promise((resolve) => {
-      setTimeout(() => {
-        // console.log(data)
-        alert(JSON.stringify(data, null, 2))
-        handleReset()
-        resolve()
-      }, 2000)
+      addFileOffsetMutation.mutate(
+        {
+          userId: user?.userById.id as number,
+          teamLeaderId: parseInt(data.teamLeader.value),
+          timeEntryId: tableRow.id,
+          timeIn: data.offsetTime.timeIn,
+          timeOut: data.offsetTime.timeOut,
+          description: data.remarks,
+          title: data.title
+        },
+        {
+          onSuccess: () => {
+            void queryClient
+              .invalidateQueries({ queryKey: ['GET_ALL_ESL_FILED_OFFSETS'] })
+              .then(() => {
+                toast.success('Filed New Offset Successfully')
+                handleReset()
+                closeModal()
+              })
+          },
+          onSettled: () => {
+            resolve()
+          }
+        }
+      )
     })
   }
 
@@ -93,6 +106,16 @@ const FileOffsetModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
       remarks: ''
     })
   }
+
+  // modify custom style control
+  customStyles.control = (provided: Record<string, unknown>, state: any): any => ({
+    ...provided,
+    boxShadow: 'none',
+    borderColor: 'none',
+    '&:hover': {
+      color: '#75c55e'
+    }
+  })
 
   return (
     <ModalTemplate
@@ -201,7 +224,7 @@ const FileOffsetModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                     onChange={field.onChange}
                     isDisabled={isSubmitting}
                     backspaceRemovesValue={true}
-                    options={generateUserSelect(leaders)}
+                    options={generateESLUserSelect(eslLeaders)}
                   />
                 )}
               />

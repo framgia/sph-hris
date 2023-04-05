@@ -30,6 +30,7 @@ import {
   getOvertimeNotificationSubQuery
 } from '~/graphql/subscriptions/leaveSubscription'
 import { getESLOffsetNotificationSubscription } from '~/graphql/subscriptions/eslOffsetSubscription'
+import { getFileOffsetNotificationSubscription } from '~/graphql/subscriptions/fileOffsetSubscription'
 
 const Tooltip = dynamic(async () => await import('rc-tooltip'), { ssr: false })
 
@@ -204,6 +205,19 @@ const Header: FC<Props> = (props): JSX.Element => {
     clientWebsocket.subscribe(
       {
         query: getESLOffsetNotificationSubscription(userId)
+      },
+      {
+        next: ({ data }: any) => {
+          void queryClient.invalidateQueries({ queryKey: ['GET_ALL_USER_NOTIFICATION'] })
+        },
+        error: () => null,
+        complete: () => null
+      }
+    )
+
+    clientWebsocket.subscribe(
+      {
+        query: getFileOffsetNotificationSubscription(userId)
       },
       {
         next: ({ data }: any) => {

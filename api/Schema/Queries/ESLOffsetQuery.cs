@@ -1,4 +1,4 @@
-using api.Entities;
+using api.DTOs;
 using api.Services;
 
 namespace api.Schema.Queries
@@ -12,7 +12,7 @@ namespace api.Schema.Queries
             _eslOffsetService = eslOffsetService;
         }
 
-        public async Task<List<ESLOffset>> GetESLOffsetsByTimeEntry(int timeEntryId)
+        public async Task<List<ESLOffsetDTO>> GetESLOffsetsByTimeEntry(int timeEntryId)
         {
             return await _eslOffsetService.GetTimeEntryOffsets(timeEntryId);
         }

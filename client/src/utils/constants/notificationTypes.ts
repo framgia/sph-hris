@@ -14,6 +14,6 @@ export const NOTIFICATION_TYPE = {
   LEAVE_RESOLVED: 'leave_resolved',
   CHANGE_SHIFT_RESOLVED: 'change shift_resolved',
   RESOLVED: 'resolved',
-  OFFSET: 'offset',
-  OFFSET_SCHEDULE: 'offset schedule'
+  OFFSET_SCHEDULE: 'offset schedule',
+  OFFSET: 'offset'
 }
