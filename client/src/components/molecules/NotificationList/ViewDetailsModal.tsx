@@ -249,7 +249,7 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
           {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.OFFSET_RESOLVED && (
             <OffsetResolvedDetails
               {...{
-                row
+                notification: row
               }}
             />
           )}
