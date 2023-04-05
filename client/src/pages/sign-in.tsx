@@ -3,10 +3,11 @@ import { NextPage } from 'next'
 import classNames from 'classnames'
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/router'
-import React, { useEffect } from 'react'
 import { FcGoogle } from 'react-icons/fc'
+import React, { useEffect, useState } from 'react'
 import { signOut, signIn, useSession } from 'next-auth/react'
 
+import { PulseLoader } from 'react-spinners'
 import WaveStyle from '~/utils/icons/WaveStyle'
 import { getServerSideProps } from '~/utils/ssr'
 import useSignInMutation from '~/hooks/useSignInMutation'
@@ -18,6 +19,7 @@ const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
   const session = useSession()
   const { handleSignInMutation } = useSignInMutation()
   const SignInMutation = handleSignInMutation()
+  const [isVerifying, setIsVerifying] = useState<boolean>(false)
 
   useEffect(() => {
     if (session?.status === 'authenticated') {
@@ -32,12 +34,13 @@ const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
   }, [session?.status])
 
   useEffect(() => {
+    if (session?.data != null) setIsVerifying(true)
     if (SignInMutation?.data?.createSignIn === true) {
       void router.push('/')
-      toast.success('Verification Success, redirecting...', { duration: 3000 })
+      toast.success('Verification Success!', { duration: 3000 })
     } else if (session?.data != null) {
       void signOut({ callbackUrl: '/sign-in' })
-      toast.error('Email does not exist', { duration: 3000 })
+      toast.error('Email does not exist!', { duration: 3000 })
     }
   }, [SignInMutation?.data])
 
@@ -64,8 +67,11 @@ const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
               className={classNames(
                 'overflow-hidden border-[#4285f4] px-6 py-2.5 text-xs font-medium shadow-md shadow-blue-100',
                 'relative inline-flex w-full items-center justify-center rounded border text-white focus:scale-95',
-                'focus:shadow-lg focus:outline-none focus:ring-0 hover:shadow-lg hover:shadow-blue-200 active:shadow-lg',
-                'focus:[#4285f4] bg-[#4285f4] transition duration-200 ease-in-out focus:text-white hover:bg-[#4285f4]/90'
+                !isVerifying &&
+                  'focus:shadow-lg focus:outline-none focus:ring-0 hover:shadow-lg hover:shadow-blue-200 active:shadow-lg',
+                !isVerifying
+                  ? 'focus:[#4285f4] bg-[#4285f4] transition duration-200 ease-in-out focus:text-white hover:bg-[#4285f4]/90'
+                  : 'bg-[#4285f4]'
               )}
               onClick={() => {
                 try {
@@ -76,12 +82,20 @@ const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
                     .catch((error) => error.message)
                 } catch (error) {}
               }}
+              disabled={isVerifying}
             >
               <div className="absolute inset-y-0 left-0 flex items-center bg-white px-2">
                 <FcGoogle className="text-xl" />
               </div>
-
-              <p className="text-center font-inter tracking-widest">Sign in with Google</p>
+              {isVerifying ? (
+                <div className="flex items-center justify-center">
+                  <PulseLoader color="#ffffff" size={10} />
+                </div>
+              ) : (
+                <>
+                  <p className="text-center font-inter tracking-widest">Sign in with Google</p>
+                </>
+              )}
             </button>
           </div>
         </MaxWidthContainer>
