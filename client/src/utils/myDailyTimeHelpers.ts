@@ -1,14 +1,12 @@
 type ApprovalStatus = 'pending' | 'approved' | 'disapproved'
 
 export const getApprovalStatus = (isLeaderApprove: boolean | null): ApprovalStatus => {
-  switch (true) {
-    case isLeaderApprove === true:
+  switch (isLeaderApprove) {
+    case true:
       return 'approved'
-    case isLeaderApprove === false:
+    case false:
       return 'disapproved'
-    case isLeaderApprove === null:
-      return 'pending'
     default:
-      return 'disapproved'
+      return 'pending'
   }
 }
