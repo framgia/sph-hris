@@ -48,6 +48,9 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
   const { handleApproveEslOffsetMutation } = useOffsetForESL()
   const approveDisapproveEslOffsetMutation = handleApproveEslOffsetMutation()
 
+  const { handleApproveOffsetMutation } = useOffsetForESL()
+  const approveDisapproveOffsetMutation = handleApproveOffsetMutation()
+
   const handleClose = (): void => {
     void router.replace({
       pathname: '/notifications'
@@ -109,6 +112,19 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
 
     if (row.type.toLowerCase() === NOTIFICATION_TYPE.OFFSET_SCHEDULE) {
       approveDisapproveEslOffsetMutation.mutate(
+        {
+          teamLeaderId: user.id,
+          notificationId: parseInt(router.query.id as string),
+          isApproved
+        },
+        {
+          onSuccess: () => handleClose()
+        }
+      )
+    }
+
+    if (row.type.toLowerCase() === NOTIFICATION_TYPE.OFFSET) {
+      approveDisapproveOffsetMutation.mutate(
         {
           teamLeaderId: user.id,
           notificationId: parseInt(router.query.id as string),
