@@ -59,9 +59,9 @@ const useOffsetForESL = (): HookReturnType => {
 
   const handleApproveOffsetMutation = (): handleApproveOffsetMutationType =>
     useMutation({
-      mutationFn: async (data: IApproveOffsetInput) => {
+      mutationFn: async (request: IApproveOffsetInput) => {
         return await client.request(APROVE_DISAPPROVE_OFFSET_MUTATION, {
-          request: data
+          request: request
         })
       },
       onSuccess: async () => {
