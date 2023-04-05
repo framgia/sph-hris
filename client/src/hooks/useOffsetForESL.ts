@@ -65,7 +65,7 @@ const useOffsetForESL = (): HookReturnType => {
         })
       },
       onSuccess: async () => {
-        toast.success('Success!')
+        toast.success('Request Approved Successfully!')
       },
       onError: async () => {
         toast.error('Something went wrong')
