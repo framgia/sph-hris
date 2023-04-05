@@ -23,6 +23,7 @@ import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import ChangeShiftDetails from './NotificationTypeDetails/ChangeShiftDetails'
 import LeaveResolvedDetails from './NotificationTypeDetails/LeaveResolvedDetails'
 import OffsetScheduleDetails from './NotificationTypeDetails/OffsetScheduleDetails'
+import OffsetResolvedDetails from './NotificationTypeDetails/OffsetResolvedDetails'
 import ChangeShiftResolvedDetails from './NotificationTypeDetails/ChangeShiftResolved'
 import OvertimeResolvedDetails from './NotificationTypeDetails/OvertimeResolvedDetails'
 import UndertimeResolvedDetails from './NotificationTypeDetails/UndertimeResolvedDetails'
@@ -239,6 +240,14 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
           {/* DETAILS FOR OFFSET DATA */}
           {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.OFFSET && (
             <OffsetDetails
+              {...{
+                row
+              }}
+            />
+          )}
+          {/* DETAILS FOR OFFSET RESOLVED DATA */}
+          {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.OFFSET_RESOLVED && (
+            <OffsetResolvedDetails
               {...{
                 row
               }}
