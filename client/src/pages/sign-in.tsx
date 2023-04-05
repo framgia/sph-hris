@@ -19,7 +19,7 @@ const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
   const session = useSession()
   const { handleSignInMutation } = useSignInMutation()
   const SignInMutation = handleSignInMutation()
-  const [isVerifying, setIsVerifying] = useState(false)
+  const [isVerifying, setIsVerifying] = useState<boolean>(false)
 
   useEffect(() => {
     if (session?.status === 'authenticated') {
@@ -89,7 +89,7 @@ const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
               </div>
               {isVerifying ? (
                 <div className="flex items-center justify-center">
-                  <PulseLoader color="#ffb40b" size={10} />
+                  <PulseLoader color="#ffffff" size={10} />
                 </div>
               ) : (
                 <>
