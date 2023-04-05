@@ -14,7 +14,7 @@ import {
 } from '~/graphql/mutations/eslOffsetMutation'
 
 type NewOffsetFuncReturnType = UseMutationResult<any, unknown, IESLOffsetInput, unknown>
-type handleApproveChangeShiftMutationType = UseMutationResult<
+type ApproveChangeShiftMutationType = UseMutationResult<
   any,
   unknown,
   IApproveESLOffsetInput,
@@ -23,7 +23,7 @@ type handleApproveChangeShiftMutationType = UseMutationResult<
 type handleApproveOffsetMutationType = UseMutationResult<any, unknown, IApproveOffsetInput, unknown>
 type HookReturnType = {
   handleAddNewOffsetMutation: () => NewOffsetFuncReturnType
-  handleApproveEslOffsetMutation: () => handleApproveChangeShiftMutationType
+  handleApproveEslOffsetMutation: () => ApproveChangeShiftMutationType
   handleApproveOffsetMutation: () => handleApproveOffsetMutationType
 }
 
@@ -42,7 +42,7 @@ const useOffsetForESL = (): HookReturnType => {
       }
     })
 
-  const handleApproveEslOffsetMutation = (): handleApproveChangeShiftMutationType =>
+  const handleApproveEslOffsetMutation = (): ApproveChangeShiftMutationType =>
     useMutation({
       mutationFn: async (data: IApproveESLOffsetInput) => {
         return await client.request(APROVE_DISAPPROVE_ESL_OFFSET_MUTATION, {
