@@ -12,3 +12,9 @@ export interface IApproveESLOffsetInput {
   notificationId: number
   isApproved: boolean
 }
+
+export interface IApproveOffsetInput {
+  teamLeaderId: number
+  notificationId: number
+  isApproved: boolean
+}
