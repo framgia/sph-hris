@@ -24,8 +24,8 @@ export const columns = [
     header: () => <CellHeader label="Time In" className="!font-medium" />,
     footer: (info) => info.column.id
   }),
-  columnHelper.accessor('projectLeader', {
-    header: () => <CellHeader label="Project Leader" className="!font-medium" />,
+  columnHelper.accessor('teamLeader', {
+    header: () => <CellHeader label="Team Leader" className="!font-medium" />,
     footer: (info) => info.column.id
   }),
   columnHelper.accessor('status', {

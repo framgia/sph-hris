@@ -62,10 +62,10 @@ const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
             <button
               type="button"
               className={classNames(
-                'bg-[#4285f4] transition duration-200 ease-in-out focus:bg-[#4285f4] focus:text-white',
                 'overflow-hidden border-[#4285f4] px-6 py-2.5 text-xs font-medium shadow-md shadow-blue-100',
                 'relative inline-flex w-full items-center justify-center rounded border text-white focus:scale-95',
-                'focus:shadow-lg focus:outline-none focus:ring-0 hover:shadow-lg hover:shadow-blue-200 active:shadow-lg'
+                'focus:shadow-lg focus:outline-none focus:ring-0 hover:shadow-lg hover:shadow-blue-200 active:shadow-lg',
+                'focus:[#4285f4] bg-[#4285f4] transition duration-200 ease-in-out focus:text-white hover:bg-[#4285f4]/90'
               )}
               onClick={() => {
                 try {

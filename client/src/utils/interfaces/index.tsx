@@ -166,7 +166,7 @@ export interface IFiledOffsetTable {
   title: string
   timeIn: string
   timeOut: string
-  projectLeader: string
+  teamLeader: string
   status: string
   remarks: string
   createdAt: string

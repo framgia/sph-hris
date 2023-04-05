@@ -65,7 +65,7 @@ const FiledOffsetModal: FC<Props> = (props): JSX.Element => {
         title: item.title,
         timeIn: moment(item.timeIn, 'HH:mm').format('hh:mm A'),
         timeOut: moment(item.timeOut, 'HH:mm').format('hh:mm A'),
-        projectLeader: item.teamLeader.name,
+        teamLeader: item.teamLeader.name,
         status: getApprovalStatus(item.isLeaderApproved),
         remarks: item.description,
         createdAt: item.createdAt,

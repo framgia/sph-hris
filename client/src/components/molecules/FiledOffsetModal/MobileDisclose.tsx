@@ -105,9 +105,9 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                   </span>
                                 </li>
                                 <li className="px-4 py-2.5">
-                                  Project Leader:{' '}
+                                  Team Leader:{' '}
                                   <span className="font-semibold">
-                                    {filedOffset.projectLeader ?? EMPTY}
+                                    {filedOffset.teamLeader ?? EMPTY}
                                   </span>
                                 </li>
                                 <li className="flex items-center space-x-1 px-4 py-2.5">
