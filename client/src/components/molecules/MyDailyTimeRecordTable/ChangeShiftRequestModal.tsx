@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast'
 import classNames from 'classnames'
 import isEmpty from 'lodash/isEmpty'
 import ReactSelect from 'react-select'
@@ -14,6 +15,7 @@ import useProject from '~/hooks/useProject'
 import Input from '~/components/atoms/Input'
 import { Roles } from '~/utils/constants/roles'
 import useUserQuery from '~/hooks/useUserQuery'
+import { queryClient } from '~/lib/queryClient'
 import useChangeShift from '~/hooks/useChangeShift'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import { User as UserType } from '~/utils/types/userTypes'
@@ -130,10 +132,14 @@ const ChangeShiftRequestModal: FC<Props> = ({ isOpen, timeEntry, closeModal }): 
         },
         {
           onSuccess: () => {
-            closeModal()
-          },
-          onSettled: () => {
-            resolve()
+            void queryClient
+              .invalidateQueries({ queryKey: ['GET_EMPLOYEE_TIMESHEET'] })
+              .then(() => {
+                handleReset()
+                closeModal()
+                resolve()
+                toast.success('Change Shift Request Successfully')
+              })
           }
         }
       )

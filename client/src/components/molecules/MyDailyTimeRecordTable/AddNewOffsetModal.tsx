@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast'
 import classNames from 'classnames'
 import isEmpty from 'lodash/isEmpty'
 import ReactSelect from 'react-select'
@@ -11,15 +12,16 @@ import TextField from './../TextField'
 import Input from '~/components/atoms/Input'
 import { User } from '~/utils/types/userTypes'
 import useUserQuery from '~/hooks/useUserQuery'
+import { queryClient } from '~/lib/queryClient'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import { NewOffsetSchema } from '~/utils/validation'
 import useOffsetForESL from '~/hooks/useOffsetForESL'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { NewOffsetFormValues } from '~/utils/types/formValues'
 import { customStyles } from '~/utils/customReactSelectStyles'
-import { generateESLUserSelect } from '~/utils/createLeaveHelpers'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
+import { generateESLUserSelect } from '~/utils/createLeaveHelpers'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
 
@@ -72,18 +74,28 @@ const AddNewOffsetModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Element 
 
   const handleSave: SubmitHandler<NewOffsetFormValues> = async (data): Promise<void> => {
     return await new Promise((resolve) => {
-      addNewOffsetMutation.mutate({
-        userId: user?.userById.id as number,
-        teamLeaderId: parseInt(data.teamLeader.value),
-        timeEntryId: row.id,
-        timeIn: data.offsetTime.timeIn,
-        timeOut: data.offsetTime.timeOut,
-        description: data.remarks
-      })
-
-      handleReset()
-      closeModal()
-      resolve()
+      addNewOffsetMutation.mutate(
+        {
+          userId: user?.userById.id as number,
+          teamLeaderId: parseInt(data.teamLeader.value),
+          timeEntryId: row.id,
+          timeIn: data.offsetTime.timeIn,
+          timeOut: data.offsetTime.timeOut,
+          description: data.remarks
+        },
+        {
+          onSuccess: () => {
+            void queryClient
+              .invalidateQueries({ queryKey: ['GET_EMPLOYEE_TIMESHEET'] })
+              .then(() => {
+                handleReset()
+                closeModal()
+                resolve()
+                toast.success('Added New Offset Successfully')
+              })
+          }
+        }
+      )
     })
   }
 

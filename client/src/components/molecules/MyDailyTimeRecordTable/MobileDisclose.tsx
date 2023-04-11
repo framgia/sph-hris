@@ -4,9 +4,9 @@ import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import { motion } from 'framer-motion'
 import { HiFire } from 'react-icons/hi'
+import React, { FC, useState } from 'react'
 import { Table } from '@tanstack/react-table'
 import { Disclosure, Menu } from '@headlessui/react'
-import React, { FC, useState } from 'react'
 import { Check, Calendar, RefreshCw, ThumbsDown, ChevronRight, MoreVertical } from 'react-feather'
 
 import Chip from '~/components/atoms/Chip'
@@ -21,6 +21,7 @@ import { NO_OVERTIME } from '~/utils/constants/overtimeStatus'
 import ChangeShiftRequestModal from './ChangeShiftRequestModal'
 import { USER_POSITIONS } from '~/utils/constants/userPositions'
 import MenuTransition from '~/components/templates/MenuTransition'
+import ViewFiledChangeShiftModal from './ViewFiledChangeShiftModal'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import InterruptionTimeEntriesModal from '../InterruptionTimeEntriesModal'
 import { IEmployeeTimeEntry, ITimeEntry } from '~/utils/types/timeEntryTypes'
@@ -40,26 +41,42 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
   const [timeEntryRowData, setTimeEntryRowData] = useState<
     ITimeEntry | IEmployeeTimeEntry | undefined
   >()
+  const [timeEntryId, setTimeEntryId] = useState<number>()
+  const [isOpenFiledOffset, setIsOpenFiledOffset] = useState<boolean>(false)
+  const [isOpenViewFiledOffset, setIsOpenViewFiledOffset] = useState<boolean>(false)
+  const [rowData, setRowData] = useState<IEmployeeTimeEntry>()
 
-  const [timeEntryId, setTimeEntryId] = useState<number>(-1)
   const { handleUserQuery } = useUserQuery()
   const { data: user } = handleUserQuery()
 
-  const handleIsOpenTimeEntryToggle = (id?: string | undefined): void => {
+  const handleIsOpenTimeEntryToggle = (row?: IEmployeeTimeEntry): void => {
     setIsOpenTimeEntry(!isOpenTimeEntry)
-    setTimeEntryId(parseInt(id as string))
+    setTimeEntryId(row?.id as unknown as number)
   }
 
-  const handleIsOpenNewOffsetToggle = (): void => setIsOpenNewOffset(!isOpenNewOffset)
-  const handleIsOpenChangeShiftRequestToggle = (): void =>
-    setIsOpenChangeShiftRequest(!isOpenChangeShiftRequest)
-  const handleIsOpenNewOvertime = (): void => setIsOpenNewOvertime(!isOpenNewOvertime)
+  const handleIsOpenNewOffsetToggle = (row?: IEmployeeTimeEntry): void => {
+    setRowData(row)
+    setIsOpenNewOffset(!isOpenNewOffset)
+  }
 
-  const [isOpenFiledOffset, setIsOpenFiledOffset] = useState<boolean>(false)
+  const handleIsOpenChangeShiftRequestToggle = (row?: IEmployeeTimeEntry): void => {
+    setRowData(row)
+    setIsOpenChangeShiftRequest(!isOpenChangeShiftRequest)
+  }
+
+  const handleIsOpenViewFiledOffset = (row?: IEmployeeTimeEntry): void => {
+    setRowData(row)
+    setIsOpenViewFiledOffset(!isOpenViewFiledOffset)
+  }
 
   const handleIsOpenFiledOffsetToggle = (row?: IEmployeeTimeEntry | undefined): void => {
     setTimeEntryRowData(row)
     setIsOpenFiledOffset(!isOpenFiledOffset)
+  }
+
+  const handleIsOpenNewOvertime = (row?: IEmployeeTimeEntry): void => {
+    setTimeEntryRowData(row)
+    setIsOpenNewOvertime(!isOpenNewOvertime)
   }
 
   const EMPTY = 'N/A'
@@ -252,7 +269,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                         <Button
                                           type="button"
                                           className="flex items-center"
-                                          onClick={handleIsOpenNewOvertime}
+                                          onClick={() => handleIsOpenNewOvertime(row.original)}
                                         >
                                           <>
                                             <span className="font-semibold">
@@ -356,39 +373,6 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                     )}
                                   >
                                     <Menu as="div" className="relative w-full">
-                                      {/* This is for Work Interruption Modal */}
-                                      {isOpenTimeEntry ? (
-                                        <InterruptionTimeEntriesModal
-                                          {...{
-                                            isOpen: isOpenTimeEntry,
-                                            timeEntryId: timeEntry.id,
-                                            user: user?.userById.name as string,
-                                            closeModal: handleIsOpenTimeEntryToggle
-                                          }}
-                                        />
-                                      ) : null}
-
-                                      {/* This is for New Offset */}
-                                      {isOpenNewOffset ? (
-                                        <AddNewOffsetModal
-                                          {...{
-                                            isOpen: isOpenNewOffset,
-                                            closeModal: handleIsOpenNewOffsetToggle,
-                                            row: row.original
-                                          }}
-                                        />
-                                      ) : null}
-
-                                      {/* This is for Change Shift Request */}
-                                      {isOpenChangeShiftRequest ? (
-                                        <ChangeShiftRequestModal
-                                          {...{
-                                            isOpen: isOpenChangeShiftRequest,
-                                            closeModal: handleIsOpenChangeShiftRequestToggle,
-                                            timeEntry: row.original
-                                          }}
-                                        />
-                                      ) : null}
                                       <Menu.Button className="p-0.5 text-slate-500 outline-none">
                                         <MoreVertical className="h-4" />
                                       </Menu.Button>
@@ -402,7 +386,9 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                           <Menu.Item>
                                             <button
                                               className={menuItemButton}
-                                              onClick={() => handleIsOpenTimeEntryToggle(row.id)}
+                                              onClick={() =>
+                                                handleIsOpenTimeEntryToggle(row.original)
+                                              }
                                             >
                                               <span>Work Interruption</span>
                                             </button>
@@ -413,7 +399,16 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                               <Menu.Item>
                                                 <button
                                                   className={menuItemButton}
-                                                  onClick={handleIsOpenNewOffsetToggle}
+                                                  onClick={() => {
+                                                    if (
+                                                      timeEntry?.changeShift === null &&
+                                                      timeEntry?.eslChangeShift === null
+                                                    ) {
+                                                      handleIsOpenNewOffsetToggle(row.original)
+                                                    } else {
+                                                      handleIsOpenViewFiledOffset(row.original)
+                                                    }
+                                                  }}
                                                 >
                                                   <span>ESL Change Shift </span>
                                                 </button>
@@ -435,7 +430,18 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                             <Menu.Item>
                                               <button
                                                 className={menuItemButton}
-                                                onClick={handleIsOpenChangeShiftRequestToggle}
+                                                onClick={() => {
+                                                  if (
+                                                    timeEntry?.changeShift === null &&
+                                                    timeEntry?.eslChangeShift === null
+                                                  ) {
+                                                    handleIsOpenChangeShiftRequestToggle(
+                                                      row.original
+                                                    )
+                                                  } else {
+                                                    handleIsOpenViewFiledOffset(row.original)
+                                                  }
+                                                }}
                                               >
                                                 <span>Change Shift Request</span>
                                               </button>
@@ -454,12 +460,12 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                     </Disclosure>
                   )
                 })}
-
+                {/* This is for Work Interruption Modal */}
                 {isOpenTimeEntry ? (
                   <InterruptionTimeEntriesModal
                     {...{
                       isOpen: isOpenTimeEntry,
-                      timeEntryId,
+                      timeEntryId: timeEntryId as number,
                       user: user?.userById.name as string,
                       closeModal: handleIsOpenTimeEntryToggle
                     }}
@@ -478,6 +484,39 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                         isLoading: false,
                         isError: false
                       }
+                    }}
+                  />
+                ) : null}
+
+                {/* This is for New Offset */}
+                {isOpenNewOffset ? (
+                  <AddNewOffsetModal
+                    {...{
+                      isOpen: isOpenNewOffset,
+                      closeModal: handleIsOpenNewOffsetToggle,
+                      row: rowData as IEmployeeTimeEntry
+                    }}
+                  />
+                ) : null}
+
+                {/* This is for Change Shift Request */}
+                {isOpenChangeShiftRequest ? (
+                  <ChangeShiftRequestModal
+                    {...{
+                      isOpen: isOpenChangeShiftRequest,
+                      closeModal: handleIsOpenChangeShiftRequestToggle,
+                      timeEntry: rowData as IEmployeeTimeEntry
+                    }}
+                  />
+                ) : null}
+
+                {/* This will View the Filed Change Shift Modal */}
+                {isOpenViewFiledOffset ? (
+                  <ViewFiledChangeShiftModal
+                    {...{
+                      isOpen: isOpenViewFiledOffset,
+                      closeModal: handleIsOpenViewFiledOffset,
+                      timeEntry: rowData as IEmployeeTimeEntry
                     }}
                   />
                 ) : null}

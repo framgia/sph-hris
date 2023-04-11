@@ -69,6 +69,24 @@ export const GET_EMPLOYEE_TIMESHEET = gql`
         isManagerApproved
       }
       status
+      changeShift {
+        id
+        manager {
+          name
+        }
+        timeIn
+        timeOut
+        description
+      }
+      eslChangeShift {
+        id
+        teamLeader {
+          name
+        }
+        timeIn
+        timeOut
+        description
+      }
     }
   }
 `
