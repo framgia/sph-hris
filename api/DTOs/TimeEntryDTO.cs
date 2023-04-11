@@ -6,7 +6,7 @@ namespace api.DTOs
     public class TimeEntryDTO : TimeEntry
     {
         private static readonly int ONTIME = 0;
-        public TimeEntryDTO(TimeEntry timeEntry, Leave? leave, string domain)
+        public TimeEntryDTO(TimeEntry timeEntry, Leave? leave, string domain, ChangeShiftRequest? changeShift, ESLChangeShiftRequest? eslChangeShift)
         {
             Id = timeEntry.Id;
             UserId = timeEntry.UserId;
@@ -14,6 +14,7 @@ namespace api.DTOs
             TimeOutId = timeEntry.TimeOutId;
             StartTime = timeEntry.StartTime.ToString(@"hh\:mm");
             EndTime = timeEntry.EndTime.ToString(@"hh\:mm");
+
             Date = DateOnly.FromDateTime(timeEntry.Date);
             WorkedHours = timeEntry.WorkedHours?.Remove(timeEntry.WorkedHours.LastIndexOf(':'));
             TrackedHours = timeEntry.TrackedHours.ToString(@"hh\:mm");
@@ -23,6 +24,8 @@ namespace api.DTOs
             Overtime = timeEntry.Overtime;   // Overtime Entity
             Undertime = 0;
             Late = 0;
+            ChangeShift = changeShift != null ? new ChangeShiftDTO(changeShift) : null;
+            ESLChangeShift = eslChangeShift != null ? new ESLChangeShiftDTO(eslChangeShift) : null;
 
             TimeSpan noonBreakStart = new TimeSpan(12, 0, 0);
             TimeSpan noonBreakEnd = new TimeSpan(13, 0, 0);
@@ -112,5 +115,7 @@ namespace api.DTOs
         public int Undertime { get; set; }
 
         public string Status { get; set; }
+        public ChangeShiftDTO? ChangeShift { get; set; }
+        public ESLChangeShiftDTO? ESLChangeShift { get; set; }
     }
 }
