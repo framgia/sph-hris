@@ -29,11 +29,13 @@ namespace api.Services
                 .FirstAsync();
         }
 
-        public static TimeEntryDTO ToTimeEntryDTO(TimeEntry timeEntry, List<Leave> leaves, string domain)
+        public static TimeEntryDTO ToTimeEntryDTO(TimeEntry timeEntry, List<Leave> leaves, string domain, List<ChangeShiftRequest>? changeShifts, List<ESLChangeShiftRequest>? eslChangeShifts)
         {
             var leave = leaves.Where(x => DateOnly.FromDateTime(x.LeaveDate) == DateOnly.FromDateTime(timeEntry.Date) && x.UserId == timeEntry.UserId).FirstOrDefault();
+            var changeShift = changeShifts?.Where(x => x.TimeEntryId == timeEntry.Id).FirstOrDefault();
+            var eslChangeShift = eslChangeShifts?.Where(x => x.TimeEntryId == timeEntry.Id).FirstOrDefault();
 
-            return new TimeEntryDTO(timeEntry, leave, domain);
+            return new TimeEntryDTO(timeEntry, leave, domain, changeShift, eslChangeShift);
         }
 
         public async Task<List<TimeEntryDTO>?> GetTimeEntriesByEmployeeId(int id)
@@ -46,6 +48,14 @@ namespace api.Services
                     .OrderByDescending(leave => leave.LeaveDate)
                     .ToListAsync();
 
+                var eslChangeShift = await context.ESLChangeShiftRequests
+                    .Include(x => x.TeamLeader)
+                    .ToListAsync();
+
+                var changeShift = await context.ChangeShiftRequests
+                    .Include(x => x.Manager)
+                    .ToListAsync();
+
                 return await context.TimeEntries
                     .Include(entry => entry.TimeIn)
                     .Include(entry => entry.TimeOut)
@@ -53,7 +63,7 @@ namespace api.Services
                         .ThenInclude(x => x.ProfileImage)
                     .Include(entry => entry.Overtime)
                     .Where(c => c.UserId == id)
-                    .Select(x => ToTimeEntryDTO(x, leaves, domain))
+                    .Select(x => ToTimeEntryDTO(x, leaves, domain, changeShift, eslChangeShift))
                     .ToListAsync();
             }
         }
@@ -70,7 +80,7 @@ namespace api.Services
 
                 return await context.TimeEntries
                     .Include(entity => entity.TimeIn)
-                    .Select(x => ToTimeEntryDTO(x, leaves, domain))
+                    .Select(x => ToTimeEntryDTO(x, leaves, domain, null, null))
                     .FirstOrDefaultAsync(c => c.UserId == id);
             }
         }
@@ -118,7 +128,7 @@ namespace api.Services
                     .Include(entry => entry.Overtime)
                     .Include(entry => entry.WorkInterruptions)
                     .OrderByDescending(entry => entry.Date)
-                    .Select(entry => ToTimeEntryDTO(entry, leaves, domain))
+                    .Select(entry => ToTimeEntryDTO(entry, leaves, domain, null, null))
                     .ToListAsync();
 
                 if (date != null)
@@ -164,7 +174,7 @@ namespace api.Services
                     .Include(entry => entry.Overtime)
                     .Include(entry => entry.WorkInterruptions)
                     .OrderByDescending(entry => entry.Date)
-                    .Select(entry => ToTimeEntryDTO(entry, leaves, domain))
+                    .Select(entry => ToTimeEntryDTO(entry, leaves, domain, null, null))
                     .ToListAsync();
 
                 if (startDate != null && endDate != null)
