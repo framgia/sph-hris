@@ -33,9 +33,6 @@ const useOffsetForESL = (): HookReturnType => {
       mutationFn: async (request: IESLOffsetInput) => {
         return await client.request(CREATE_ESL_OFFSET_MUTATION, { request })
       },
-      onSuccess: async () => {
-        toast.success('Added New Offset Successfully')
-      },
       onError: async (err: Error) => {
         const [errorMessage] = err.message.split(/:\s/, 2)
         toast.error(errorMessage)

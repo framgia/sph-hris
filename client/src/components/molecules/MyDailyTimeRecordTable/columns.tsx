@@ -22,6 +22,7 @@ import { USER_POSITIONS } from '~/utils/constants/userPositions'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 import MenuTransition from '~/components/templates/MenuTransition'
 import InterruptionTimeEntriesModal from './../InterruptionTimeEntriesModal'
+import ViewFiledChangeShiftModal from './ViewFiledChangeShiftModal'
 
 const columnHelper = createColumnHelper<IEmployeeTimeEntry>()
 const EMPTY = 'N/A'
@@ -263,18 +264,33 @@ export const columns = [
       const [isOpenNewOffset, setIsOpenNewOffset] = useState<boolean>(false)
       const [isOpenChangeShiftRequest, setIsOpenChangeShiftRequest] = useState<boolean>(false)
       const [isOpenFiledOffset, setIsOpenFiledOffset] = useState<boolean>(false)
+      const [isOpenViewFiledOffset, setIsOpenViewFiledOffset] = useState<boolean>(false)
 
       // CURRENT USER QUERY HOOKS
       const { handleUserQuery } = useUserQuery()
       const { data: user } = handleUserQuery()
 
-      const handleIsOpenTimeEntryToggle = (id?: string | undefined): void => {
+      const handleIsOpenTimeEntryToggle = (id?: string | undefined): void =>
         setIsOpenTimeEntry(!isOpenTimeEntry)
+
+      const handleIsOpenNewOffsetToggle = (): void => {
+        if (timeEntry.changeShift === null && timeEntry.eslChangeShift === null) {
+          setIsOpenNewOffset(!isOpenNewOffset)
+        } else {
+          handleIsOpenViewFiledOffset()
+        }
       }
 
-      const handleIsOpenNewOffsetToggle = (): void => setIsOpenNewOffset(!isOpenNewOffset)
-      const handleIsOpenChangeShiftRequestToggle = (): void =>
-        setIsOpenChangeShiftRequest(!isOpenChangeShiftRequest)
+      const handleIsOpenViewFiledOffset = (): void =>
+        setIsOpenViewFiledOffset(!isOpenViewFiledOffset)
+
+      const handleIsOpenChangeShiftRequestToggle = (): void => {
+        if (timeEntry.changeShift === null && timeEntry.eslChangeShift === null) {
+          setIsOpenChangeShiftRequest(!isOpenChangeShiftRequest)
+        } else {
+          handleIsOpenViewFiledOffset()
+        }
+      }
       const handleIsOpenFiledOffsetToggle = (): void => setIsOpenFiledOffset(!isOpenFiledOffset)
 
       const menuItemButton = 'px-3 py-2 text-left text-xs hover:text-slate-700 text-slate-500'
@@ -333,6 +349,17 @@ export const columns = [
                     isLoading: false,
                     isError: false
                   }
+                }}
+              />
+            ) : null}
+
+            {/* This will View the Filed Change Shift Modal */}
+            {isOpenViewFiledOffset ? (
+              <ViewFiledChangeShiftModal
+                {...{
+                  isOpen: isOpenViewFiledOffset,
+                  closeModal: handleIsOpenViewFiledOffset,
+                  timeEntry
                 }}
               />
             ) : null}

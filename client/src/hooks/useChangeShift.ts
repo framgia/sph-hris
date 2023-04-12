@@ -37,9 +37,6 @@ const useChangeShift = (): returnType => {
           changeShiftRequest: data
         })
       },
-      onSuccess: async () => {
-        toast.success('Success!')
-      },
       onError: async (error: any) => {
         if (error.response.errors[0].message !== undefined)
           toast.error(error.response.errors[0].message)

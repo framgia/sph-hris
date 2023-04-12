@@ -3,30 +3,31 @@ import { useRouter } from 'next/router'
 import { Check, X } from 'react-feather'
 
 import useLeave from '~/hooks/useLeave'
+import LeaveDetails from './LeaveDetails'
+import OffsetDetails from './OffsetDetails'
 import useOvertime from '~/hooks/useOvertime'
 import { User } from '~/utils/types/userTypes'
+import OvertimeDetails from './OvertimeDetails'
+import ResolvedDetails from './ResolvedDetails'
 import { Roles } from '~/utils/constants/roles'
+import UndertimeDetails from './UndertimeDetails'
 import { INotification } from '~/utils/interfaces'
 import useChangeShift from '~/hooks/useChangeShift'
+import ChangeShiftDetails from './ChangeShiftDetails'
 import useOffsetForESL from '~/hooks/useOffsetForESL'
+import LeaveResolvedDetails from './LeaveResolvedDetails'
+import OffsetScheduleDetails from './OffsetScheduleDetails'
+import OffsetResolvedDetails from './OffsetResolvedDetails'
+import ESLChangeShiftDetails from './ESLChangeShiftDetails'
 import Button from '~/components/atoms/Buttons/ButtonAction'
+import ChangeShiftResolvedDetails from './ChangeShiftResolved'
+import OvertimeResolvedDetails from './OvertimeResolvedDetails'
 import ModalTemplate from '~/components/templates/ModalTemplate'
-import LeaveDetails from './NotificationTypeDetails/LeaveDetails'
-import OffsetDetails from './NotificationTypeDetails/OffsetDetails'
+import UndertimeResolvedDetails from './UndertimeResolvedDetails'
 import { STATUS_OPTIONS } from '~/utils/constants/notificationFilter'
 import { NOTIFICATION_TYPE } from '~/utils/constants/notificationTypes'
-import OvertimeDetails from './NotificationTypeDetails/OvertimeDetails'
-import ResolvedDetails from './NotificationTypeDetails/ResolvedDetails'
-import UndertimeDetails from './NotificationTypeDetails/UndertimeDetails'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
-import ChangeShiftDetails from './NotificationTypeDetails/ChangeShiftDetails'
-import LeaveResolvedDetails from './NotificationTypeDetails/LeaveResolvedDetails'
-import OffsetScheduleDetails from './NotificationTypeDetails/OffsetScheduleDetails'
-import OffsetResolvedDetails from './NotificationTypeDetails/OffsetResolvedDetails'
-import ChangeShiftResolvedDetails from './NotificationTypeDetails/ChangeShiftResolved'
-import OvertimeResolvedDetails from './NotificationTypeDetails/OvertimeResolvedDetails'
-import UndertimeResolvedDetails from './NotificationTypeDetails/UndertimeResolvedDetails'
 
 type Props = {
   isOpen: boolean
@@ -149,7 +150,7 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
     >
       <ModalHeader
         {...{
-          title: `${row.name}'s ${row.type.split('_')[0]} request`,
+          title: `${row.name}'s ${row.type.split('_')[0]} ${row.specificType}`,
           closeModal: handleClose,
           hasAvatar: true,
           avatar: row.userAvatarLink
@@ -161,7 +162,7 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
           {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.OVERTIME && (
             <OvertimeDetails
               {...{
-                row
+                notification: row
               }}
             />
           )}
@@ -169,7 +170,7 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
           {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.UNDERTIME && (
             <UndertimeDetails
               {...{
-                row
+                notification: row
               }}
             />
           )}
@@ -177,7 +178,7 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
           {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.LEAVE && (
             <LeaveDetails
               {...{
-                row
+                notification: row
               }}
             />
           )}
@@ -185,7 +186,7 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
           {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.CHANGE_SHIFT && (
             <ChangeShiftDetails
               {...{
-                row
+                notification: row
               }}
             />
           )}
@@ -193,7 +194,7 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
           {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.OVERTIME_RESOLVED && (
             <OvertimeResolvedDetails
               {...{
-                row
+                notification: row
               }}
             />
           )}
@@ -201,7 +202,7 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
           {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.UNDERTIME_RESOLVED && (
             <UndertimeResolvedDetails
               {...{
-                row
+                notification: row
               }}
             />
           )}
@@ -209,7 +210,7 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
           {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.LEAVE_RESOLVED && (
             <LeaveResolvedDetails
               {...{
-                row
+                notification: row
               }}
             />
           )}
@@ -217,7 +218,7 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
           {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.CHANGE_SHIFT_RESOLVED && (
             <ChangeShiftResolvedDetails
               {...{
-                row
+                notification: row
               }}
             />
           )}
@@ -225,7 +226,7 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
           {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.RESOLVED && (
             <ResolvedDetails
               {...{
-                row
+                notification: row
               }}
             />
           )}
@@ -233,7 +234,7 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
           {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.OFFSET_SCHEDULE && (
             <OffsetScheduleDetails
               {...{
-                row
+                notification: row
               }}
             />
           )}
@@ -241,13 +242,21 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
           {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.OFFSET && (
             <OffsetDetails
               {...{
-                row
+                notification: row
               }}
             />
           )}
           {/* DETAILS FOR OFFSET RESOLVED DATA */}
           {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.OFFSET_RESOLVED && (
             <OffsetResolvedDetails
+              {...{
+                notification: row
+              }}
+            />
+          )}
+          {/* DETAILS FOR ESL CHANGE SHIFT REQUEST */}
+          {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.ESL_CHANGE_SHIFT && (
+            <ESLChangeShiftDetails
               {...{
                 notification: row
               }}

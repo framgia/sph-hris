@@ -26,12 +26,9 @@ type Props = {
   closeModal: () => void
 }
 
-const InterruptionTimeEntriesModal: FC<Props> = ({
-  isOpen,
-  closeModal,
-  user,
-  timeEntryId
-}): JSX.Element => {
+const InterruptionTimeEntriesModal: FC<Props> = (props): JSX.Element => {
+  const { isOpen, closeModal, user, timeEntryId } = props
+
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState<string>('')
   const { handleGetAllWorkInterruptionsQuery } = useInterruptionType()
