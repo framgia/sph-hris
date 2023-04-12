@@ -4,42 +4,45 @@ import React, { FC } from 'react'
 import { INotification } from '~/utils/interfaces'
 
 type Props = {
-  row: INotification
+  notification: INotification
 }
 
-const ChangeShiftResolvedDetails: FC<Props> = ({ row }): JSX.Element => {
+const ChangeShiftResolvedDetails: FC<Props> = ({ notification }): JSX.Element => {
+  const { project, date, requestedTimeIn, requestedTimeOut, dateFiled, status, description } =
+    notification
+
   return (
     <>
       <li className="inline-flex items-center space-x-3">
         <span className="text-slate-600">Project: </span>
-        <span className="flex items-center font-medium">{row.project}</span>
+        <span className="flex items-center font-medium">{project}</span>
       </li>
       <li className="inline-flex items-center space-x-3 pt-2">
         <span className="text-slate-600">Date: </span>
-        <span className="flex items-center font-medium">{row.date}</span>
+        <span className="flex items-center font-medium">{date}</span>
       </li>
       <li className="inline-flex items-center space-x-3 pt-2">
         <span className="text-slate-600">Time In: </span>
-        <span className="flex items-center font-medium">{row.requestedTimeIn}</span>
+        <span className="flex items-center font-medium">{requestedTimeIn}</span>
       </li>
       <li className="inline-flex items-center space-x-3 pt-2">
         <span className="text-slate-600">Time Out: </span>
-        <span className="flex items-center font-medium">{row.requestedTimeOut}</span>
+        <span className="flex items-center font-medium">{requestedTimeOut}</span>
       </li>
       <li className="inline-flex items-center space-x-3 pt-2">
         <span className="text-slate-600">Date Filed: </span>
         <span className="flex items-center font-medium">
-          {moment(new Date(row.dateFiled)).format('MMM DD, YYYY')} &bull; {``}
-          {moment(new Date(row.dateFiled)).fromNow()}
+          {moment(new Date(dateFiled)).format('MMM DD, YYYY')} &bull; {``}
+          {moment(new Date(dateFiled)).fromNow()}
         </span>
       </li>
       <li className="inline-flex items-center space-x-3 pt-2">
         <span className="text-slate-600">Status: </span>
-        <span className="flex items-center font-medium">{row.status}</span>
+        <span className="flex items-center font-medium">{status}</span>
       </li>
       <li className="inline-flex flex-col space-y-2 pt-2">
         <span className="text-slate-600">Description: </span>
-        <span className="font-medium">{row.description}</span>
+        <span className="font-medium">{description}</span>
       </li>
     </>
   )

@@ -1,9 +1,9 @@
 import React, { FC } from 'react'
 import { Eye, X } from 'react-feather'
-import Button from '~/components/atoms/Buttons/ButtonAction'
 
 import ChangeShiftDetails from './ChangeShiftDetails'
 import ESLChangeShiftDetails from './ESLChangeShiftDetails'
+import Button from '~/components/atoms/Buttons/ButtonAction'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
@@ -36,14 +36,14 @@ const ViewFiledChangeShiftModal: FC<Props> = ({ isOpen, closeModal, timeEntry })
           {timeEntry?.changeShift !== null ? (
             <ChangeShiftDetails
               {...{
-                timeEntry: timeEntry?.changeShift
+                changeShift: timeEntry?.changeShift
               }}
             />
           ) : null}
           {timeEntry?.eslChangeShift !== null ? (
             <ESLChangeShiftDetails
               {...{
-                timeEntry: timeEntry?.eslChangeShift
+                eslChangeShift: timeEntry?.eslChangeShift
               }}
             />
           ) : null}

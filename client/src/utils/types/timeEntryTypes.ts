@@ -21,8 +21,8 @@ export interface IEmployeeTimeEntry {
   undertime: number
   overtime: ITimeEntryOvertime
   status: string
-  changeShift?: IChangeShift
-  eslChangeShift?: IESLChangeShift
+  changeShift: IChangeShift
+  eslChangeShift: IESLChangeShift
 }
 
 export interface IChangeShift {
