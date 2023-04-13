@@ -23,6 +23,7 @@ namespace api.DTOs
                 User = eslOffset.User;
                 TeamLeader = eslOffset.TeamLeader;
                 TimeEntry = eslOffset.TimeEntry;
+                IsUsed = eslOffset.IsUsed;
             }
 
         }

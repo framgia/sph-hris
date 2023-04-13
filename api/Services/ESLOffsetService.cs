@@ -49,13 +49,13 @@ namespace api.Services
             }
         }
 
-        public async Task<List<ESLOffsetDTO>> GetTimeEntryOffsets(int timeEntryId)
+        public async Task<List<ESLOffsetDTO>> GetTimeEntryOffsets(int timeEntryId, bool onlyUnused)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
                 var eslOffsets = await context.ESLOffsets
                     .Include(x => x.TeamLeader)
-                    .Where(x => x.TimeEntryId == timeEntryId)
+                    .Where(x => x.TimeEntryId == timeEntryId && (onlyUnused ? x.IsUsed == false : true))
                     .Select(x => new ESLOffsetDTO(x))
                     .ToListAsync();
 

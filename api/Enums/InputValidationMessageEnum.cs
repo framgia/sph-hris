@@ -2,6 +2,7 @@ namespace api.Enums
 {
     public class InputValidationMessageEnum
     {
+        public const string ALREADY_USED_ESL_OFFSET = "Already used ESL Offset ID";
         public const string INVALID_USER = "User doesn't exist";
         public const string INVALID_MANAGER = "Manager doesn't exist";
         public const string INVALID_PROJECT_LEADER = "Project Leader doesn't exist";
@@ -12,6 +13,7 @@ namespace api.Enums
         public const string INVALID_TIME_ENTRY = "Time entry doesn't exist";
         public const string INVALID_NON_ESL_USER = "User should not be an ESL Teacher";
         public const string INVALID_ESL_USER = "User should be an ESL Teacher";
+        public const string INVALID_ESL_OFFSET_IDS = "Invalid ESL Offset IDs";
         public const string INVALID_DATE = "Invalid Date";
         public const string INVALID_LEAVE_TYPE = "Invalid leave type";
         public const string MISSING_LEAVE_DATES = "Leave Date/s is required";
