@@ -274,7 +274,7 @@ export const columns = [
         setIsOpenTimeEntry(!isOpenTimeEntry)
 
       const handleIsOpenNewOffsetToggle = (): void => {
-        if (timeEntry.changeShift === null && timeEntry.eslChangeShift === null) {
+        if (timeEntry.eslChangeShift === null) {
           setIsOpenNewOffset(!isOpenNewOffset)
         } else {
           handleIsOpenViewFiledOffset()
@@ -285,7 +285,7 @@ export const columns = [
         setIsOpenViewFiledOffset(!isOpenViewFiledOffset)
 
       const handleIsOpenChangeShiftRequestToggle = (): void => {
-        if (timeEntry.changeShift === null && timeEntry.eslChangeShift === null) {
+        if (timeEntry.changeShift === null) {
           setIsOpenChangeShiftRequest(!isOpenChangeShiftRequest)
         } else {
           handleIsOpenViewFiledOffset()

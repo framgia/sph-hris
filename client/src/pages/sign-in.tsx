@@ -1,10 +1,9 @@
 import Head from 'next/head'
-import { NextPage } from 'next'
 import classNames from 'classnames'
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/router'
 import { FcGoogle } from 'react-icons/fc'
-import React, { useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { signOut, signIn, useSession } from 'next-auth/react'
 
 import { PulseLoader } from 'react-spinners'
@@ -13,7 +12,11 @@ import { getServerSideProps } from '~/utils/ssr'
 import useSignInMutation from '~/hooks/useSignInMutation'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 
-const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
+type Props = {
+  cookies: string | null
+}
+
+const SignIn: FC<Props> = ({ cookies }): JSX.Element => {
   const router = useRouter()
 
   const session = useSession()
@@ -28,7 +31,7 @@ const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
         token: cookies as string,
         expiration: session?.data?.expires
       })
-      localStorage.setItem('cookies', cookies)
+      localStorage.setItem('cookies', cookies as string)
       localStorage.setItem('newNotificationCount', '0')
     }
   }, [session?.status])
@@ -71,7 +74,10 @@ const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
                   'focus:shadow-lg focus:outline-none focus:ring-0 hover:shadow-lg hover:shadow-blue-200 active:shadow-lg',
                 !isVerifying
                   ? 'focus:[#4285f4] bg-[#4285f4] transition duration-200 ease-in-out focus:text-white hover:bg-[#4285f4]/90'
-                  : 'bg-[#4285f4]'
+                  : 'bg-[#4285f4]',
+                isVerifying || session.status === 'loading'
+                  ? 'cursor-not-allowed opacity-50 active:scale-100'
+                  : ''
               )}
               onClick={() => {
                 try {
@@ -82,12 +88,12 @@ const SignIn: NextPage = ({ cookies }: any): JSX.Element => {
                     .catch((error) => error.message)
                 } catch (error) {}
               }}
-              disabled={isVerifying}
+              disabled={isVerifying || session.status === 'loading'}
             >
               <div className="absolute inset-y-0 left-0 flex items-center bg-white px-2">
                 <FcGoogle className="text-xl" />
               </div>
-              {isVerifying ? (
+              {session.status === 'loading' || isVerifying ? (
                 <div className="flex items-center justify-center">
                   <PulseLoader color="#ffffff" size={10} />
                 </div>
