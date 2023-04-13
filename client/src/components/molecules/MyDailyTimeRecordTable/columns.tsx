@@ -21,8 +21,8 @@ import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
 import { USER_POSITIONS } from '~/utils/constants/userPositions'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 import MenuTransition from '~/components/templates/MenuTransition'
-import InterruptionTimeEntriesModal from './../InterruptionTimeEntriesModal'
 import ViewFiledChangeShiftModal from './ViewFiledChangeShiftModal'
+import InterruptionTimeEntriesModal from './../InterruptionTimeEntriesModal'
 
 const columnHelper = createColumnHelper<IEmployeeTimeEntry>()
 const EMPTY = 'N/A'
@@ -274,7 +274,7 @@ export const columns = [
         setIsOpenTimeEntry(!isOpenTimeEntry)
 
       const handleIsOpenNewOffsetToggle = (): void => {
-        if (timeEntry.changeShift === null && timeEntry.eslChangeShift === null) {
+        if (timeEntry.eslChangeShift === null) {
           setIsOpenNewOffset(!isOpenNewOffset)
         } else {
           handleIsOpenViewFiledOffset()
@@ -285,7 +285,7 @@ export const columns = [
         setIsOpenViewFiledOffset(!isOpenViewFiledOffset)
 
       const handleIsOpenChangeShiftRequestToggle = (): void => {
-        if (timeEntry.changeShift === null && timeEntry.eslChangeShift === null) {
+        if (timeEntry.changeShift === null) {
           setIsOpenChangeShiftRequest(!isOpenChangeShiftRequest)
         } else {
           handleIsOpenViewFiledOffset()

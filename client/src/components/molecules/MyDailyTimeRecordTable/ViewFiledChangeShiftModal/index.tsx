@@ -1,13 +1,15 @@
 import React, { FC } from 'react'
 import { Eye, X } from 'react-feather'
 
+import useUserQuery from '~/hooks/useUserQuery'
+import { Position } from '~/utils/constants/position'
 import ChangeShiftDetails from './ChangeShiftDetails'
 import ESLChangeShiftDetails from './ESLChangeShiftDetails'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import ModalTemplate from '~/components/templates/ModalTemplate'
-import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
+import { IChangeShift, IEmployeeTimeEntry, IESLChangeShift } from '~/utils/types/timeEntryTypes'
 
 type Props = {
   isOpen: boolean
@@ -15,7 +17,37 @@ type Props = {
   timeEntry: IEmployeeTimeEntry
 }
 
-const ViewFiledChangeShiftModal: FC<Props> = ({ isOpen, closeModal, timeEntry }): JSX.Element => {
+type GetShiftDetailProps = {
+  isESLTeacher: boolean
+  changeShift: IChangeShift
+  eslChangeShift: IESLChangeShift
+}
+
+const ViewFiledChangeShiftModal: FC<Props> = (props): JSX.Element => {
+  const {
+    isOpen,
+    closeModal,
+    timeEntry: { eslChangeShift, changeShift }
+  } = props
+
+  // CURRENT USER QUERY HOOKS
+  const { handleUserQuery } = useUserQuery()
+  const { data: authUser } = handleUserQuery()
+
+  const isESLTeacher = authUser?.userById?.position.id === Position.ESL_TEACHER
+
+  const getShiftDetails = (shifts: GetShiftDetailProps): JSX.Element => {
+    const { isESLTeacher, changeShift, eslChangeShift } = shifts
+
+    if (isESLTeacher && eslChangeShift !== null) {
+      return <ESLChangeShiftDetails {...{ eslChangeShift }} />
+    }
+    if (!isESLTeacher && changeShift !== null) {
+      return <ChangeShiftDetails {...{ changeShift }} />
+    }
+    return <></>
+  }
+
   return (
     <ModalTemplate
       {...{
@@ -33,20 +65,7 @@ const ViewFiledChangeShiftModal: FC<Props> = ({ isOpen, closeModal, timeEntry })
       />
       <main className="px-8 py-4 text-sm  text-slate-700">
         <ul className="flex flex-col space-y-3 divide-y divide-slate-200">
-          {timeEntry?.changeShift !== null ? (
-            <ChangeShiftDetails
-              {...{
-                changeShift: timeEntry?.changeShift
-              }}
-            />
-          ) : null}
-          {timeEntry?.eslChangeShift !== null ? (
-            <ESLChangeShiftDetails
-              {...{
-                eslChangeShift: timeEntry?.eslChangeShift
-              }}
-            />
-          ) : null}
+          {getShiftDetails({ isESLTeacher, changeShift, eslChangeShift })}
         </ul>
       </main>
       <ModalFooter>
