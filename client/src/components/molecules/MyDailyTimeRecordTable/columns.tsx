@@ -21,8 +21,8 @@ import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
 import { USER_POSITIONS } from '~/utils/constants/userPositions'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 import MenuTransition from '~/components/templates/MenuTransition'
-import InterruptionTimeEntriesModal from './../InterruptionTimeEntriesModal'
 import ViewFiledChangeShiftModal from './ViewFiledChangeShiftModal'
+import InterruptionTimeEntriesModal from './../InterruptionTimeEntriesModal'
 
 const columnHelper = createColumnHelper<IEmployeeTimeEntry>()
 const EMPTY = 'N/A'

@@ -1,6 +1,8 @@
 import React, { FC } from 'react'
 import { Eye, X } from 'react-feather'
 
+import useUserQuery from '~/hooks/useUserQuery'
+import { Position } from '~/utils/constants/position'
 import ChangeShiftDetails from './ChangeShiftDetails'
 import ESLChangeShiftDetails from './ESLChangeShiftDetails'
 import Button from '~/components/atoms/Buttons/ButtonAction'
@@ -16,6 +18,10 @@ type Props = {
 }
 
 const ViewFiledChangeShiftModal: FC<Props> = ({ isOpen, closeModal, timeEntry }): JSX.Element => {
+  // CURRENT USER QUERY HOOKS
+  const { handleUserQuery } = useUserQuery()
+  const { data: authUser } = handleUserQuery()
+
   return (
     <ModalTemplate
       {...{
@@ -33,20 +39,27 @@ const ViewFiledChangeShiftModal: FC<Props> = ({ isOpen, closeModal, timeEntry })
       />
       <main className="px-8 py-4 text-sm  text-slate-700">
         <ul className="flex flex-col space-y-3 divide-y divide-slate-200">
-          {timeEntry?.changeShift !== null ? (
-            <ChangeShiftDetails
-              {...{
-                changeShift: timeEntry?.changeShift
-              }}
-            />
-          ) : null}
-          {timeEntry?.eslChangeShift !== null ? (
-            <ESLChangeShiftDetails
-              {...{
-                eslChangeShift: timeEntry?.eslChangeShift
-              }}
-            />
-          ) : null}
+          {authUser?.userById?.position.id === Position.ESL_TEACHER ? (
+            <>
+              {timeEntry?.eslChangeShift !== null && (
+                <ESLChangeShiftDetails
+                  {...{
+                    eslChangeShift: timeEntry?.eslChangeShift
+                  }}
+                />
+              )}
+            </>
+          ) : (
+            <>
+              {timeEntry?.changeShift !== null && (
+                <ChangeShiftDetails
+                  {...{
+                    changeShift: timeEntry?.changeShift
+                  }}
+                />
+              )}
+            </>
+          )}
         </ul>
       </main>
       <ModalFooter>

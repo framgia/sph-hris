@@ -28,13 +28,9 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
   const [isOpenTimeEntry, setIsOpenTimeEntry] = useState<boolean>(false)
   const [isOpenEditModal, setIsOpenEditModal] = useState<boolean>(false)
   const [isOpenFiledOffset, setIsOpenFiledOffset] = useState<boolean>(false)
-  const [timeEntryId, setTimeEntryId] = useState<number>(-1)
-  const [user, setUser] = useState<string>('')
 
   const handleIsOpenTimeEntryToggle = (id?: string | undefined, name?: string): void => {
     setIsOpenTimeEntry(!isOpenTimeEntry)
-    setTimeEntryId(parseInt(id as string))
-    setUser(name as string)
   }
 
   const handleIsOpenEditModalToggle = (): void => {
@@ -317,17 +313,6 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                     }}
                   </Disclosure>
                 ))}
-
-                {isOpenTimeEntry ? (
-                  <InterruptionTimeEntriesModal
-                    {...{
-                      isOpen: isOpenTimeEntry,
-                      timeEntryId,
-                      user,
-                      closeModal: handleIsOpenTimeEntryToggle
-                    }}
-                  />
-                ) : null}
               </>
             )}
           </>

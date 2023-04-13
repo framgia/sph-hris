@@ -1,3 +1,4 @@
+import moment from 'moment'
 import React, { FC } from 'react'
 
 import { IChangeShift } from '~/utils/types/timeEntryTypes'
@@ -22,11 +23,15 @@ const ChangeShiftDetails: FC<Props> = ({ changeShift }): JSX.Element => {
       </li>
       <li className="inline-flex items-center space-x-3 pt-2">
         <span className="text-slate-600">Time In: </span>
-        <span className="flex items-center font-medium">{timeIn}</span>
+        <span className="flex items-center font-medium">
+          {moment(timeIn, 'HH:mm:ss').format('hh:mm A')}
+        </span>
       </li>
       <li className="inline-flex items-center space-x-3 pt-2">
         <span className="text-slate-600">Time Out: </span>
-        <span className="flex items-center font-medium">{timeOut}</span>
+        <span className="flex items-center font-medium">
+          {moment(timeOut, 'HH:mm:ss').format('hh:mm A')}
+        </span>
       </li>
       <li className="inline-flex flex-col space-y-2 pt-2">
         <span className="text-slate-600">Description: </span>
