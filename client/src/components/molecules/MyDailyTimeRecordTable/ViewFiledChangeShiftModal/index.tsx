@@ -41,11 +41,11 @@ const ViewFiledChangeShiftModal: FC<Props> = (props): JSX.Element => {
 
     if (isESLTeacher && eslChangeShift !== null) {
       return <ESLChangeShiftDetails {...{ eslChangeShift }} />
-    } else if (!isESLTeacher && changeShift !== null) {
-      return <ChangeShiftDetails {...{ changeShift }} />
-    } else {
-      return <></>
     }
+    if (!isESLTeacher && changeShift !== null) {
+      return <ChangeShiftDetails {...{ changeShift }} />
+    }
+    return <></>
   }
 
   return (
