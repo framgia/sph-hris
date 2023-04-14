@@ -16,5 +16,10 @@ namespace api.Schema.Queries
         {
             return await _eslOffsetService.GetTimeEntryOffsets(timeEntryId, onlyUnused);
         }
+
+        public async Task<List<ESLOffsetDTO>> GetAllESLOffsets(bool? isUsed = null)
+        {
+            return await _eslOffsetService.GetAllESLOffsets(isUsed);
+        }
     }
 }

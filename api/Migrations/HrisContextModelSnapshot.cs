@@ -1219,42 +1219,42 @@ namespace api.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 4, 13, 17, 3, 38, 426, DateTimeKind.Local).AddTicks(3599),
+                            CreatedAt = new DateTime(2023, 4, 14, 11, 35, 45, 930, DateTimeKind.Local).AddTicks(5133),
                             LeaveId = 1,
                             ProjectId = 1,
                             ProjectLeaderId = 1,
                             Type = "leave",
-                            UpdatedAt = new DateTime(2023, 4, 13, 17, 3, 38, 426, DateTimeKind.Local).AddTicks(3600)
+                            UpdatedAt = new DateTime(2023, 4, 14, 11, 35, 45, 930, DateTimeKind.Local).AddTicks(5135)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 4, 13, 17, 3, 38, 426, DateTimeKind.Local).AddTicks(4665),
+                            CreatedAt = new DateTime(2023, 4, 14, 11, 35, 45, 930, DateTimeKind.Local).AddTicks(7267),
                             OvertimeId = 2,
                             ProjectId = 1,
                             ProjectLeaderId = 1,
                             Type = "overtime",
-                            UpdatedAt = new DateTime(2023, 4, 13, 17, 3, 38, 426, DateTimeKind.Local).AddTicks(4667)
+                            UpdatedAt = new DateTime(2023, 4, 14, 11, 35, 45, 930, DateTimeKind.Local).AddTicks(7274)
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2023, 4, 13, 17, 3, 38, 426, DateTimeKind.Local).AddTicks(4892),
+                            CreatedAt = new DateTime(2023, 4, 14, 11, 35, 45, 930, DateTimeKind.Local).AddTicks(7591),
                             OvertimeId = 3,
                             ProjectId = 1,
                             ProjectLeaderId = 1,
                             Type = "overtime",
-                            UpdatedAt = new DateTime(2023, 4, 13, 17, 3, 38, 426, DateTimeKind.Local).AddTicks(4893)
+                            UpdatedAt = new DateTime(2023, 4, 14, 11, 35, 45, 930, DateTimeKind.Local).AddTicks(7593)
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2023, 4, 13, 17, 3, 38, 426, DateTimeKind.Local).AddTicks(4894),
+                            CreatedAt = new DateTime(2023, 4, 14, 11, 35, 45, 930, DateTimeKind.Local).AddTicks(7595),
                             OvertimeId = 1,
                             ProjectId = 1,
                             ProjectLeaderId = 1,
                             Type = "overtime",
-                            UpdatedAt = new DateTime(2023, 4, 13, 17, 3, 38, 426, DateTimeKind.Local).AddTicks(4895)
+                            UpdatedAt = new DateTime(2023, 4, 14, 11, 35, 45, 930, DateTimeKind.Local).AddTicks(7596)
                         });
                 });
 
@@ -3293,12 +3293,12 @@ namespace api.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 4, 13, 17, 3, 38, 426, DateTimeKind.Local).AddTicks(6321),
+                            CreatedAt = new DateTime(2023, 4, 14, 11, 35, 45, 930, DateTimeKind.Local).AddTicks(8724),
                             Data = "Some JSON Data",
                             IsRead = false,
                             RecipientId = 70,
                             Type = "leave",
-                            UpdatedAt = new DateTime(2023, 4, 13, 17, 3, 38, 426, DateTimeKind.Local).AddTicks(6324),
+                            UpdatedAt = new DateTime(2023, 4, 14, 11, 35, 45, 930, DateTimeKind.Local).AddTicks(8727),
                             LeaveId = 1
                         });
                 });

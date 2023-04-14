@@ -63,6 +63,20 @@ namespace api.Services
             }
         }
 
+        public async Task<List<ESLOffsetDTO>> GetAllESLOffsets(bool? isUsed)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var eslOffsets = await context.ESLOffsets
+                    .Include(x => x.TeamLeader)
+                    .Where(x => isUsed != null ? x.IsUsed == isUsed : true)
+                    .Select(x => new ESLOffsetDTO(x))
+                    .ToListAsync();
+
+                return eslOffsets;
+            }
+        }
+
         public string GetRequestStatus(ESLOffset request)
         {
             if (request.IsLeaderApproved == true) return RequestStatus.APPROVED;

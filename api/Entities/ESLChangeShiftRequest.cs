@@ -18,6 +18,6 @@ namespace api.Entities
         public User User { get; set; } = default!;
         public User TeamLeader { get; set; } = default!;
         public TimeEntry TimeEntry { get; set; } = default!;
-        public ICollection<ESLOffset> ESLOffsets { get; set; } = default!;
+        public List<ESLOffset> ESLOffsets { get; set; } = default!;
     }
 }
