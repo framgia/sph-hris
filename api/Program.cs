@@ -33,7 +33,8 @@ builder.Services.AddGraphQLServer()
     .AddType<OvertimeQuery>()
     .AddType<ChangeShiftQuery>()
     .AddType<ESLOffsetQuery>()
-    .AddType<ESLChangeShiftQuery>();
+    .AddType<ESLChangeShiftQuery>()
+    .AddType<EmployeeScheduleQuery>();
 
 builder.Services.AddGraphQLServer()
     .AddMutationType(q => q.Name("Mutation"))
@@ -77,6 +78,7 @@ builder.Services.AddScoped<ApprovalService>();
 builder.Services.AddScoped<ChangeShiftService>();
 builder.Services.AddScoped<ESLChangeShiftService>();
 builder.Services.AddScoped<ESLOffsetService>();
+builder.Services.AddScoped<EmployeeScheduleService>();
 
 
 var app = builder.Build();
