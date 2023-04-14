@@ -30,6 +30,14 @@ namespace api.Services
 
                 if (errors.Count > 0) throw new GraphQLException(errors);
 
+                // Get all offsets to be used
+                var offsets = await context.ESLOffsets.Where(x => request.ESLOffsetIDs.Contains(x.Id)).ToListAsync();
+
+                offsets.ForEach(offset =>
+                {
+                    offset.IsUsed = true;
+                });
+
                 //  Create ESLChangeShiftRequest
                 var eslChangeShiftRequest = new ESLChangeShiftRequest
                 {
@@ -38,7 +46,8 @@ namespace api.Services
                     TimeEntryId = request.TimeEntryId,
                     TimeIn = TimeSpan.ParseExact(request.TimeIn, "hh':'mm", null),
                     TimeOut = TimeSpan.ParseExact(request.TimeOut, "hh':'mm", null),
-                    Description = request.Description
+                    Description = request.Description,
+                    ESLOffsets = offsets
                 };
 
                 context.ESLChangeShiftRequests.Add(eslChangeShiftRequest);

@@ -170,6 +170,35 @@ namespace api.Utils
             }
         }
 
+        public async Task<bool> checkAllESLOffsetsExist(List<int> ids)
+        {
+            var errors = new List<IError>();
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var offsets = await context.ESLOffsets.Where(x => ids.Contains(x.Id)).ToListAsync();
+                return offsets.Count() == ids.Count();
+            }
+        }
+
+        public async Task<List<IError>?> checkESLOffsetNotUsed(List<int> ids, string propertyName)
+        {
+            var errors = new List<IError>();
+
+            if (!checkAllESLOffsetsExist(ids).Result)
+                errors.Add(buildError(propertyName, InputValidationMessageEnum.INVALID_ESL_OFFSET_IDS));
+
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var offsets = await context.ESLOffsets.Where(x => ids.Contains(x.Id)).ToListAsync();
+                offsets.ForEach(offset =>
+                {
+                    if (offset.IsUsed)
+                        errors.Add(buildError(propertyName, $"{InputValidationMessageEnum.ALREADY_USED_ESL_OFFSET} {offset.Id}"));
+                });
+            }
+            return errors.Count() > 0 ? errors : null;
+        }
+
         public List<IError> checkLeaveRequestInput(CreateLeaveRequest leave)
         {
             var errors = new List<IError>();
@@ -377,6 +406,8 @@ namespace api.Utils
         {
             var errors = new List<IError>();
 
+            var eslOffsetErrors = checkESLOffsetNotUsed(request.ESLOffsetIDs, nameof(request.ESLOffsetIDs)).Result;
+
             if (checkESLChangeShiftRequestExist(request.TimeEntryId))
                 errors.Add(buildError(nameof(request.TimeEntryId), InputValidationMessageEnum.DUPLICATE_REQUEST));
 
@@ -391,6 +422,9 @@ namespace api.Utils
 
             if (checkNonESLUser(request.TeamLeaderId))
                 errors.Add(buildError(nameof(request.TeamLeaderId), InputValidationMessageEnum.INVALID_TEAM_LEADER));
+
+            if (eslOffsetErrors != null)
+                errors.AddRange(eslOffsetErrors);
 
             return errors;
         }

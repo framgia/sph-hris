@@ -8,5 +8,6 @@ namespace api.Requests
         public string TimeIn { get; set; } = default!;
         public string TimeOut { get; set; } = default!;
         public string Description { get; set; } = default!;
+        public List<int> ESLOffsetIDs { get; set; } = default!;
     }
 }
