@@ -1,3 +1,5 @@
+using api.DTOs;
+
 namespace api.NotificationDataClasses
 {
     public class ChangeShiftData
@@ -20,5 +22,10 @@ namespace api.NotificationDataClasses
     public class ChangeShiftLeaderData : ChangeShiftData
     {
         public List<string> Projects { get; set; } = default!;
+    }
+
+    public class ESLChangeShiftData : ChangeShiftData
+    {
+        public List<ESLOffsetNotificationDTO> Offsets { get; set; } = default!;
     }
 }

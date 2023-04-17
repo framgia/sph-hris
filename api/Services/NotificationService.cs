@@ -1,5 +1,6 @@
 using System.Text.Json;
 using api.Context;
+using api.DTOs;
 using api.Entities;
 using api.Enums;
 using api.NotificationDataClasses;
@@ -286,8 +287,9 @@ namespace api.Services
             {
                 var user = await context.Users.FindAsync(request.UserId);
                 var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
+                var offsets = await context.ESLOffsets.Where(x => x.ESLChangeShiftRequestId == request.Id).Select(x => new ESLOffsetNotificationDTO(x)).ToListAsync();
 
-                var data = JsonSerializer.Serialize(new ChangeShiftData
+                var data = JsonSerializer.Serialize(new ESLChangeShiftData
                 {
                     User = new NotificationUser
                     {
@@ -302,6 +304,7 @@ namespace api.Services
                     Type = NotificationDataTypeEnum.REQUEST,
                     Description = request.Description,
                     Status = _eslChangeShiftService.GetRequestStatus(request),
+                    Offsets = offsets
                 }
                 );
 
@@ -602,9 +605,10 @@ namespace api.Services
             {
                 var user = await context.Users.FindAsync(request.UserId);
                 var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
+                var offsets = await context.ESLOffsets.Where(x => x.ESLChangeShiftRequestId == request.Id).Select(x => new ESLOffsetNotificationDTO(x)).ToListAsync();
 
 
-                var dataToUser = JsonSerializer.Serialize(new ChangeShiftData
+                var dataToUser = JsonSerializer.Serialize(new ESLChangeShiftData
                 {
                     User = new NotificationUser
                     {
@@ -619,6 +623,7 @@ namespace api.Services
                     Type = request.IsLeaderApproved == true ? NotificationDataTypeEnum.APPROVE : NotificationDataTypeEnum.DISAPPROVE,
                     Description = request.Description,
                     Status = _eslChangeShiftService.GetRequestStatus(request),
+                    Offsets = offsets
                 }
                 );
 
@@ -627,7 +632,7 @@ namespace api.Services
                 {
                     RecipientId = request.UserId,
                     ESLChangeShiftRequestId = request.Id,
-                    Type = NotificationTypeEnum.ESL_OFFSET_RESOLVED,
+                    Type = NotificationTypeEnum.ESL_OFFSET_SCHEDULE_RESOLVED,
                     Data = dataToUser
                 };
 
