@@ -477,5 +477,55 @@ namespace api.Utils
 
             return errors;
         }
+
+        internal List<IError> CheckEmployeeScheduleRequestInput(CreateEmployeeScheduleRequest request)
+        {
+            var errors = new List<IError>();
+
+            if (!CheckUserRole(request.UserId))
+                errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_HR_ADMIN));
+
+            if (string.IsNullOrEmpty(request.ScheduleName))
+            {
+                errors.Add(buildError(nameof(request.ScheduleName), InputValidationMessageEnum.INVALID_SCHEDULE_NAME));
+            }
+
+            if (!CheckScheduleNameAlreadyExist(request.ScheduleName!).Result)
+                errors.Add(buildError(nameof(request.ScheduleName), InputValidationMessageEnum.DUPLICATE_SCHEDULE_NAME));
+
+            foreach (var workingDay in request.WorkingDays)
+            {
+                if (string.IsNullOrEmpty(workingDay.Day))
+                {
+                    errors.Add(buildError(nameof(workingDay.Day), InputValidationMessageEnum.INVALID_DAY));
+                }
+
+                if (string.IsNullOrEmpty(workingDay.From))
+                {
+                    errors.Add(buildError(nameof(workingDay.From), InputValidationMessageEnum.INVALID_START_TIME));
+                }
+
+                if (string.IsNullOrEmpty(workingDay.To))
+                {
+                    errors.Add(buildError(nameof(workingDay.To), InputValidationMessageEnum.INVALID_END_TIME));
+                }
+            }
+
+            return errors;
+        }
+
+        public async Task<bool> CheckScheduleNameAlreadyExist(string scheduleName)
+        {
+            using HrisContext context = _contextFactory.CreateDbContext();
+            var workingDay = await context.EmployeeSchedules.Where(x => x.Name == scheduleName).FirstOrDefaultAsync();
+            return workingDay == null;
+        }
+
+        private bool CheckUserRole(int userId)
+        {
+            using HrisContext context = _contextFactory.CreateDbContext();
+            var user = context.Users.Include(x => x.Role).Where(x => x.Id == userId).FirstOrDefault();
+            return user?.Role.Name?.ToLower() == RoleEnum.HR_ADMIN.ToLower();
+        }
     }
 }

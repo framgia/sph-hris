@@ -1,5 +1,9 @@
 using api.Context;
 using api.DTOs;
+using api.Entities;
+using api.Enums;
+using api.Requests;
+using api.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Services
@@ -7,10 +11,12 @@ namespace api.Services
     public class EmployeeScheduleService
     {
         private readonly IDbContextFactory<HrisContext> _contextFactory = default!;
+        private readonly CustomInputValidation _customInputValidation;
 
         public EmployeeScheduleService(IDbContextFactory<HrisContext> contextFactory)
         {
             _contextFactory = contextFactory;
+            _customInputValidation = new CustomInputValidation(_contextFactory);
         }
         public async Task<List<EmployeeScheduleDTO>> GetAllEmployeeScheduleDetails()
         {
@@ -31,6 +37,40 @@ namespace api.Services
                 .Where(x => x.Id == employeeScheduleId)
                 .Select(x => new EmployeeScheduleDTO(x))
                 .ToListAsync();
+        }
+
+        public async Task<string> Create(CreateEmployeeScheduleRequest request)
+        {
+            using HrisContext context = _contextFactory.CreateDbContext();
+
+            // validate inputs
+            var errors = _customInputValidation.CheckEmployeeScheduleRequestInput(request);
+
+            if (errors.Count > 0) throw new GraphQLException(errors);
+
+            //  Create Schedule
+            var newEmployeeSchedule = new EmployeeSchedule
+            {
+                Name = request.ScheduleName
+            };
+            context.EmployeeSchedules.Add(newEmployeeSchedule);
+            await context.SaveChangesAsync();
+
+            // Create WorkingDayTimes
+            foreach (var workingDay in request.WorkingDays)
+            {
+                var newWorkingDayTimes = new WorkingDayTime
+                {
+                    EmployeeScheduleId = newEmployeeSchedule.Id,
+                    Day = workingDay.Day,
+                    From = TimeSpan.Parse(workingDay.From!),
+                    To = TimeSpan.Parse(workingDay.To!)
+                };
+                context.WorkingDayTimes.Add(newWorkingDayTimes);
+            }
+
+            await context.SaveChangesAsync();
+            return SuccessMessageEnum.SCHEDULE_CREATED;
         }
     }
 }
