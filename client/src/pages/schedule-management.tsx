@@ -2,6 +2,8 @@ import { NextPage } from 'next'
 import classNames from 'classnames'
 import isEmpty from 'lodash/isEmpty'
 import { useRouter } from 'next/router'
+import { toast } from 'react-hot-toast'
+import useUserQuery from '~/hooks/useUserQuery'
 import React, { useEffect, useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -9,8 +11,10 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import Input from '~/components/atoms/Input'
 import Alert from '~/components/atoms/Alert'
 import { PulseLoader } from 'react-spinners'
+import { queryClient } from '~/lib/queryClient'
 import { ScheduleSchema } from '~/utils/validation'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
+import { WeekDays } from '~/utils/constants/weekDays'
 import FadeInOut from '~/components/templates/FadeInOut'
 import { ScheduleFormData } from '~/utils/types/formValues'
 import DayButton from '~/components/atoms/Buttons/DayButton'
@@ -21,9 +25,12 @@ import ScheduleManagementLayout from '~/components/templates/ScheduleManagementL
 const ScheduleManagement: NextPage = (): JSX.Element => {
   const router = useRouter()
   const { id } = router.query
-  const { getEmployeeScheduleQuery } = useEmployeeSchedule()
+  const { getEmployeeScheduleQuery, handleCreateEmployeeScheduleMutation } = useEmployeeSchedule()
   const { data, isLoading } = getEmployeeScheduleQuery(Number(id))
   const EmployeeSchedule = data?.employeeScheduleDetails[0]
+  const { handleUserQuery } = useUserQuery()
+  const { data: user } = handleUserQuery()
+  const createEmployeeScheduleMutation = handleCreateEmployeeScheduleMutation()
   const [errorMessage, setErrorMessage] = useState<string>('')
   const {
     reset,
@@ -48,17 +55,72 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
     watch('sundaySelected')
 
   const handleSaveSchedule: SubmitHandler<ScheduleFormData> = async (data): Promise<void> => {
+    // eslint-disable-next-line @typescript-eslint/array-type
+    const workingDays: { day: string; from: string; to: string }[] = []
+    data.mondaySelected &&
+      workingDays.push({
+        day: WeekDays.MONDAY,
+        from: data.monday.timeIn,
+        to: data.monday.timeOut
+      })
+    data.tuesdaySelected &&
+      workingDays.push({
+        day: WeekDays.TUESDAY,
+        from: data.tuesday.timeIn,
+        to: data.tuesday.timeOut
+      })
+    data.wednesdaySelected &&
+      workingDays.push({
+        day: WeekDays.WEDNESDAY,
+        from: data.wednesday.timeIn,
+        to: data.wednesday.timeOut
+      })
+    data.thursdaySelected &&
+      workingDays.push({
+        day: WeekDays.THURSDAY,
+        from: data.thursday.timeIn,
+        to: data.thursday.timeOut
+      })
+    data.fridaySelected &&
+      workingDays.push({
+        day: WeekDays.FRIDAY,
+        from: data.friday.timeIn,
+        to: data.friday.timeOut
+      })
+    data.saturdaySelected &&
+      workingDays.push({
+        day: WeekDays.SATURDAY,
+        from: data.saturday.timeIn,
+        to: data.saturday.timeOut
+      })
+    data.sundaySelected &&
+      workingDays.push({
+        day: WeekDays.SUNDAY,
+        from: data.sunday.timeIn,
+        to: data.sunday.timeOut
+      })
+
     return await new Promise((resolve) => {
-      if (isButtonSelected) {
-        setErrorMessage('')
-        setTimeout(() => {
-          alert(JSON.stringify(data, null, 2))
-          resolve()
-        }, 2000)
-      } else {
-        setErrorMessage('Please select atleast one days of week button!')
-        resolve()
-      }
+      createEmployeeScheduleMutation.mutate(
+        {
+          userId: user?.userById.id as number,
+          scheduleName: data.scheduleName,
+          workingDays
+        },
+        {
+          onSuccess: () => {
+            void queryClient
+              .invalidateQueries({ queryKey: ['GET_ALL_EMPLOYEE_SCHEDULE'] })
+              .then(() => {
+                toast.success('Created new Employee Schedule Successfully')
+                handleReset()
+              })
+          },
+          onSettled: () => {
+            resolve()
+          }
+        }
+      )
     })
   }
 

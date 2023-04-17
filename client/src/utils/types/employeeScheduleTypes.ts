@@ -13,3 +13,14 @@ export interface IGetEmployeeSchedule {
   }[]
   scheduleName: string
 }
+
+export interface ICreateEmployeeScheduleRequestInput {
+  // eslint-disable-next-line @typescript-eslint/array-type
+  workingDays: {
+    day: string
+    from: string
+    to: string
+  }[]
+  userId: number
+  scheduleName: string
+}
