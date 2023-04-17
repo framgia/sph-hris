@@ -8,9 +8,9 @@ import Layout from './../Layout'
 import CustomSearch from './CustomSearch'
 import Card from '~/components/atoms/Card'
 import Button from '~/components/atoms/Buttons/Button'
-import { ISchedule } from '~/utils/types/scheduleTypes'
-import { scheduleList } from '~/utils/constants/dummyScheduleData'
+import useEmployeeSchedule from '~/hooks/useEmployeeSchedule'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
+import { IGetAllEmployeeSchedule } from '~/utils/types/employeeScheduleTypes'
 
 type Props = {
   children: ReactNode
@@ -21,6 +21,9 @@ const ScheduleManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Eleme
   const router = useRouter()
   const [searchedVal, setSearchedVal] = useState<string>('')
   const [isOpenSchedule, setIsOpenSchedule] = useState<boolean>(false)
+  const { getAllEmployeeScheduleQuery } = useEmployeeSchedule()
+  const { data } = getAllEmployeeScheduleQuery()
+  const allEmployeeSchedule = data?.allEmployeeScheduleDetails
 
   const handleOpenScheduleToggle = (): void => setIsOpenSchedule(!isOpenSchedule)
 
@@ -78,7 +81,7 @@ const ScheduleManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Eleme
                   </Button>
                 </div>
                 <ul className="flex flex-col space-y-1">
-                  {scheduleList
+                  {allEmployeeSchedule
                     ?.filter(
                       (row) =>
                         searchedVal?.length === 0 ||
@@ -114,7 +117,7 @@ ScheduleManagementLayout.defaultProps = {
   metaTitle: 'Schedule Management'
 }
 
-const ScheduleItem = (item: ISchedule): JSX.Element => {
+const ScheduleItem = (item: IGetAllEmployeeSchedule): JSX.Element => {
   const router = useRouter()
   const id = Number(router.query.id)
 
