@@ -15,7 +15,7 @@ import AddNewOffsetModal from './AddNewOffsetModal'
 import FiledOffsetModal from './../FiledOffsetModal'
 import Button from '~/components/atoms/Buttons/Button'
 import AddNewOvertimeModal from '../AddNewOvertimeModal'
-import { WorkStatus } from '~/utils/constants/work-status'
+import { statusClassNames } from '~/utils/myDailyTimeHelpers'
 import { variants } from '~/utils/constants/animationVariants'
 import { NO_OVERTIME } from '~/utils/constants/overtimeStatus'
 import ChangeShiftRequestModal from './ChangeShiftRequestModal'
@@ -120,6 +120,8 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                         )
                       : NO_OVERTIME
 
+                  const statusClassName = statusClassNames[timeEntry.status.toLowerCase()] ?? ''
+
                   return (
                     <Disclosure key={row.id}>
                       {({ open }) => (
@@ -133,28 +135,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                             className={classNames(
                               'w-full border-b border-slate-200 py-3 px-4 hover:bg-white',
                               open ? 'bg-white' : 'hover:shadow-md hover:shadow-slate-200',
-                              timeEntry.status === WorkStatus.VACATION_LEAVE.toLowerCase()
-                                ? 'bg-yellow-50 hover:bg-yellow-50'
-                                : '',
-                              timeEntry.status === WorkStatus.ABSENT.toLowerCase()
-                                ? 'bg-fuchsia-50 hover:bg-fuchsia-50'
-                                : '',
-                              timeEntry.status === WorkStatus.SICK_LEAVE.toLowerCase()
-                                ? 'bg-rose-50 hover:bg-rose-50'
-                                : '',
-                              timeEntry.status === WorkStatus.BEREAVEMENT_LEAVE.toLowerCase()
-                                ? 'bg-gray-50 hover:bg-gray-50'
-                                : '',
-                              timeEntry.status === WorkStatus.EMERGENCY_LEAVE.toLowerCase()
-                                ? 'bg-red-50 hover:bg-red-50'
-                                : '',
-                              timeEntry.status ===
-                                WorkStatus.MATERNITY_PATERNITY_LEAVE.toLowerCase()
-                                ? 'bg-violet-50 hover:bg-violet-50'
-                                : '',
-                              timeEntry.status === WorkStatus.UNDERTIME.toLowerCase()
-                                ? 'bg-amber-50 hover:bg-amber-50'
-                                : ''
+                              statusClassName
                             )}
                           >
                             <div className="flex items-center justify-between">
