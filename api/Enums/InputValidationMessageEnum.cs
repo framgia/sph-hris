@@ -16,13 +16,20 @@ namespace api.Enums
         public const string INVALID_ESL_OFFSET_IDS = "Invalid ESL Offset IDs";
         public const string INVALID_DATE = "Invalid Date";
         public const string INVALID_LEAVE_TYPE = "Invalid leave type";
+        public const string INVALID_DAY = "Invalid Day";
+        public const string INVALID_END_TIME = "Invalid End Time";
+        public const string INVALID_START_TIME = "Invalid Start Time";
+        public const string INVALID_SCHEDULE = "Schedule doesn't exist";
+        public const string INVALID_SCHEDULE_NAME = "Invalid Schedule Name";
         public const string MISSING_LEAVE_DATES = "Leave Date/s is required";
         public const string MISSING_PROJECTS = "Project/s is required";
         public const string MISSING_APPROVED_MINUTES = "Approved minutes is required";
         public const string INVALID_NOTIFICATION = "Invalid Notification";
         public const string NOT_MANAGER_PROJECT_LEADER = "User is not Manager or Project Leader";
+        public const string NOT_HR_ADMIN = "User is not an HR Admin";
         public const string MISMATCH_PROJECT_LEADER = "Project Leader doesn't match";
         public const string MISMATCH_MANAGER = "Manager doesn't match";
         public const string DUPLICATE_REQUEST = "There's already an existing request!";
+        public const string DUPLICATE_SCHEDULE_NAME = "Schedule name already exists!";
     }
 }

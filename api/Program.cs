@@ -50,7 +50,8 @@ builder.Services.AddGraphQLServer()
     .AddType<ApprovalMutation>()
     .AddType<ChangeShiftMutation>()
     .AddType<ESLChangeShiftMutation>()
-    .AddType<ESLOffsetMutation>();
+    .AddType<ESLOffsetMutation>()
+    .AddType<EmployeeScheduleMutation>();
 
 builder.Services.AddGraphQLServer().AddProjections().AddFiltering().AddSorting();
 builder.Services.AddGraphQLServer().AddInMemorySubscriptions()
