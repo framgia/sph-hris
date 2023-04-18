@@ -6,12 +6,14 @@ import { QueryClientProvider } from '@tanstack/react-query'
 
 import '~/utils/styles/globals.css'
 import { queryClient } from '~/lib/queryClient'
+import NextProgress from '~/utils/next-progress'
 
 const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   return (
     <SessionProvider>
+      <NextProgress />
+      <Toaster position="top-right" reverseOrder={false} />
       <QueryClientProvider client={queryClient}>
-        <Toaster position="top-right" reverseOrder={false} />
         <Component {...pageProps} />
       </QueryClientProvider>
     </SessionProvider>

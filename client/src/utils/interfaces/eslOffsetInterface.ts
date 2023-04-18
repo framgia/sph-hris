@@ -5,6 +5,7 @@ export interface IESLOffsetInput {
   timeIn: string
   timeOut: string
   description: string
+  eslOffsetIDs: number[]
 }
 
 export interface IApproveESLOffsetInput {

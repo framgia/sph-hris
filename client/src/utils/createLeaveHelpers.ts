@@ -1,6 +1,9 @@
-import { ProjectDetails } from './types/projectTypes'
+import moment from 'moment'
+
 import { User } from '~/utils/types/userTypes'
 import { LeaveType } from './types/leaveTypes'
+import { ProjectDetails } from './types/projectTypes'
+import { IUnusedESLOffset } from './interfaces/unusedELSOffsetInterface'
 
 export type SelectOptionType = {
   label: string
@@ -38,5 +41,18 @@ export const generateESLUserSelect = (
 ): SelectOptionType[] => {
   return eslUsers?.map((user) => {
     return { label: user.name, value: user.id.toString() }
+  })
+}
+
+export const generateUnusedESLDateSelect = (
+  eslOffsetsByTimeEntry: IUnusedESLOffset[]
+): SelectOptionType[] => {
+  return eslOffsetsByTimeEntry?.map((item) => {
+    return {
+      label: `${item.title} (${moment(item.createdAt).format('MMMM DD, YYYY')} - ${item.timeIn}-${
+        item.timeOut
+      })`,
+      value: item.id.toString()
+    }
   })
 }

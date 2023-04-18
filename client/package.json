@@ -27,6 +27,7 @@
     "moment": "^2.29.4",
     "next": "latest",
     "next-auth": "^4.18.8",
+    "nextjs-progressbar": "^0.0.16",
     "rc-tooltip": "^5.2.2",
     "react": "18.2.0",
     "react-apexcharts": "^1.4.0",

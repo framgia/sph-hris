@@ -211,7 +211,7 @@ export const columns = [
                       className="inline-flex items-center rounded border-y border-r border-slate-300 bg-white"
                     >
                       <Check className="h-4 w-5 rounded-l bg-green-500 text-white" />
-                      <span className="px-1 text-green-600">{overtime.approvedMinutes}</span>
+                      <span className="px-1 text-green-600">{overtime.approvedMinutes ?? 0}</span>
                     </Button>
                   </Tippy>
                 )}

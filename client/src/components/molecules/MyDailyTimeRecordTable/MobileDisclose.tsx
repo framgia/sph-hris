@@ -15,7 +15,7 @@ import AddNewOffsetModal from './AddNewOffsetModal'
 import FiledOffsetModal from './../FiledOffsetModal'
 import Button from '~/components/atoms/Buttons/Button'
 import AddNewOvertimeModal from '../AddNewOvertimeModal'
-import { WorkStatus } from '~/utils/constants/work-status'
+import { statusClassNames } from '~/utils/myDailyTimeHelpers'
 import { variants } from '~/utils/constants/animationVariants'
 import { NO_OVERTIME } from '~/utils/constants/overtimeStatus'
 import ChangeShiftRequestModal from './ChangeShiftRequestModal'
@@ -120,6 +120,8 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                         )
                       : NO_OVERTIME
 
+                  const statusClassName = statusClassNames[timeEntry.status.toLowerCase()] ?? ''
+
                   return (
                     <Disclosure key={row.id}>
                       {({ open }) => (
@@ -133,12 +135,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                             className={classNames(
                               'w-full border-b border-slate-200 py-3 px-4 hover:bg-white',
                               open ? 'bg-white' : 'hover:shadow-md hover:shadow-slate-200',
-                              timeEntry.status === WorkStatus.VACATION_LEAVE.toLowerCase()
-                                ? 'bg-amber-50 hover:bg-amber-50'
-                                : '',
-                              timeEntry.status === WorkStatus.ABSENT.toLowerCase()
-                                ? 'bg-fuchsia-50 hover:bg-fuchsia-50'
-                                : ''
+                              statusClassName
                             )}
                           >
                             <div className="flex items-center justify-between">
@@ -400,10 +397,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                                 <button
                                                   className={menuItemButton}
                                                   onClick={() => {
-                                                    if (
-                                                      timeEntry?.changeShift === null &&
-                                                      timeEntry?.eslChangeShift === null
-                                                    ) {
+                                                    if (timeEntry?.eslChangeShift === null) {
                                                       handleIsOpenNewOffsetToggle(row.original)
                                                     } else {
                                                       handleIsOpenViewFiledOffset(row.original)
@@ -431,10 +425,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                               <button
                                                 className={menuItemButton}
                                                 onClick={() => {
-                                                  if (
-                                                    timeEntry?.changeShift === null &&
-                                                    timeEntry?.eslChangeShift === null
-                                                  ) {
+                                                  if (timeEntry?.changeShift === null) {
                                                     handleIsOpenChangeShiftRequestToggle(
                                                       row.original
                                                     )

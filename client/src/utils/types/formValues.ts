@@ -171,6 +171,7 @@ export type LaptopMonitoringFormValues = {
 export type NewOffsetFormValues = {
   offsetTime: TimeEntry
   teamLeader: ReactSelectOption
+  offsetDates: ReactSelectOption[]
   remarks: string
 }
 

@@ -55,7 +55,7 @@ namespace api.Services
             {
                 var eslOffsets = await context.ESLOffsets
                     .Include(x => x.TeamLeader)
-                    .Where(x => x.TimeEntryId == timeEntryId && (onlyUnused ? x.IsUsed == false : true))
+                    .Where(x => x.TimeEntryId == timeEntryId && (onlyUnused ? x.IsUsed == false && x.IsLeaderApproved == true : true))
                     .Select(x => new ESLOffsetDTO(x))
                     .ToListAsync();
 
