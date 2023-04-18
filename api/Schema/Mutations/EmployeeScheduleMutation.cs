@@ -24,5 +24,22 @@ namespace api.Schema.Mutations
                 throw;
             }
         }
+
+        public async Task<string> UpdateEmployeeSchedule([Service] IDbContextFactory<HrisContext> contextFactory, [Service] EmployeeScheduleService _employeeSchedueleService, UpdateEmployeeScheduleRequest request)
+        {
+            using HrisContext context = contextFactory.CreateDbContext();
+            try
+            {
+                using var transaction = context.Database.BeginTransaction();
+                var updatedEmployeeSchedule = await _employeeSchedueleService.Update(request, context);
+
+                transaction.Commit();
+                return updatedEmployeeSchedule;
+            }
+            catch (GraphQLException)
+            {
+                throw;
+            }
+        }
     }
 }

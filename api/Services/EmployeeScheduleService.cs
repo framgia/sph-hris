@@ -79,5 +79,48 @@ namespace api.Services
             }
             return SuccessMessageEnum.SCHEDULE_CREATED;
         }
+
+        public async Task<string> Update(UpdateEmployeeScheduleRequest request, HrisContext context)
+        {
+            // validate inputs
+            var errors = _customInputValidation.CheckUpdateEmployeeScheduleRequestInput(request);
+            if (errors.Count > 0) throw new GraphQLException(errors);
+
+            //  UPDATE Schedule name
+            var updateEmployeeSchedule = await context.EmployeeSchedules.FindAsync(request.EmployeeScheduleId);
+            updateEmployeeSchedule!.Name = request.ScheduleName;
+
+            // DELETE old data
+            var workingDaysList = await context.WorkingDayTimes.Where(x => x.EmployeeScheduleId == request.EmployeeScheduleId).ToListAsync();
+            foreach (WorkingDayTime workingDay in workingDaysList)
+            {
+                context.Remove(workingDay);
+            }
+
+            // Append new data
+            foreach (var workingDay in request.WorkingDays)
+            {
+                var newWorkingDayTimes = new WorkingDayTime
+                {
+                    EmployeeScheduleId = updateEmployeeSchedule.Id,
+                    Day = workingDay.Day,
+                    From = TimeSpan.Parse(workingDay.From!),
+                    To = TimeSpan.Parse(workingDay.To!)
+                };
+                context.WorkingDayTimes.Add(newWorkingDayTimes);
+            }
+
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch
+            {
+                throw new GraphQLException(ErrorBuilder.New()
+                                    .SetMessage(ErrorMessageEnum.FAILED_SHCEDULE_UPDATE)
+                                    .Build());
+            }
+            return SuccessMessageEnum.SCHEDULE_UPDATED;
+        }
     }
 }
