@@ -316,6 +316,16 @@ export const NewOffsetSchema = yup.object().shape({
     timeOut: yup.string().required().label('Time out')
   }),
   teamLeader: SelectSchema,
+  offsetDates: yup
+    .array()
+    .min(1, 'At least one date must be selected')
+    .of(
+      yup.object().shape({
+        value: yup.string().required(),
+        label: yup.string().required()
+      })
+    )
+    .required('Offset Date is required'),
   remarks: yup.string().required().label('Remarks')
 })
 

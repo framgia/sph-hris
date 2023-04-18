@@ -16,14 +16,16 @@ import { queryClient } from '~/lib/queryClient'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import { NewOffsetSchema } from '~/utils/validation'
 import useOffsetForESL from '~/hooks/useOffsetForESL'
+import useUnusedESLOffset from '~/hooks/useUnusedESLOffset'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { NewOffsetFormValues } from '~/utils/types/formValues'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
-import { generateESLUserSelect } from '~/utils/createLeaveHelpers'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
+import { IUnusedESLOffset } from '~/utils/interfaces/unusedELSOffsetInterface'
+import { generateESLUserSelect, generateUnusedESLDateSelect } from '~/utils/createLeaveHelpers'
 
 type Props = {
   isOpen: boolean
@@ -42,6 +44,11 @@ const AddNewOffsetModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Element 
   const { handleUserQuery, getESLUserQuery } = useUserQuery()
   const { data: user } = handleUserQuery() // SPECIFIC USER
   const { data: eslUsers, isSuccess: isESLUsersSuccess } = getESLUserQuery()
+
+  // UNUSED ESL OFFSETS HOOKS
+  const { getAllUnusedESLOffsetQuery } = useUnusedESLOffset()
+  const { data: unusedESLOffsetData, isLoading: isLoadingUnusedESLOffset } =
+    getAllUnusedESLOffsetQuery(row.id, true)
 
   const {
     reset,
@@ -74,6 +81,7 @@ const AddNewOffsetModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Element 
 
   const handleSave: SubmitHandler<NewOffsetFormValues> = async (data): Promise<void> => {
     return await new Promise((resolve) => {
+      const eslOffsetIDs = data?.offsetDates?.map((item) => parseInt(item.value))
       addNewOffsetMutation.mutate(
         {
           userId: user?.userById.id as number,
@@ -81,7 +89,8 @@ const AddNewOffsetModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Element 
           timeEntryId: row.id,
           timeIn: data.offsetTime.timeIn,
           timeOut: data.offsetTime.timeOut,
-          description: data.remarks
+          description: data.remarks,
+          eslOffsetIDs
         },
         {
           onSuccess: () => {
@@ -109,6 +118,7 @@ const AddNewOffsetModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Element 
         label: '',
         value: ''
       },
+      offsetDates: [],
       remarks: ''
     })
   }
@@ -157,7 +167,9 @@ const AddNewOffsetModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Element 
                     className="w-full py-1.5 px-4 text-[13px] placeholder:text-slate-500"
                   />
                   {!isEmpty(errors.offsetTime?.timeIn) && (
-                    <p className="error absolute">{errors.offsetTime?.timeIn.message}</p>
+                    <p className="error absolute text-[10px]">
+                      {errors.offsetTime?.timeIn.message}
+                    </p>
                   )}
                 </div>
                 <span>to</span>
@@ -170,7 +182,9 @@ const AddNewOffsetModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Element 
                     className="py-1.5 px-4 text-[13px] placeholder:text-slate-500"
                   />
                   {!isEmpty(errors.offsetTime?.timeOut) && (
-                    <p className="error absolute">{errors.offsetTime?.timeOut.message}</p>
+                    <p className="error absolute text-[10px]">
+                      {errors.offsetTime?.timeOut.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -210,6 +224,46 @@ const AddNewOffsetModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Element 
             </TextField>
             {errors.teamLeader !== null && errors.teamLeader !== undefined && (
               <span className="error text-[10px]">Team Leader is required</span>
+            )}
+          </section>
+
+          {/* Offset Dates */}
+          <section className="col-span-2">
+            <TextField title="Offset Dates" isRequired className="py-2.5 text-xs">
+              <Controller
+                name="offsetDates"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <ReactSelect
+                    {...field}
+                    isMulti
+                    isClearable
+                    placeholder=""
+                    className="w-full"
+                    classNames={{
+                      control: (state) =>
+                        state.isFocused
+                          ? 'border-primary'
+                          : errors.offsetDates !== null && errors.offsetDates !== undefined
+                          ? 'border-rose-500 ring-rose-500'
+                          : 'border-slate-300'
+                    }}
+                    value={field.value}
+                    styles={customStyles}
+                    onChange={field.onChange}
+                    isDisabled={isSubmitting}
+                    backspaceRemovesValue={true}
+                    isLoading={isLoadingUnusedESLOffset}
+                    options={generateUnusedESLDateSelect(
+                      unusedESLOffsetData?.eslOffsetsByTimeEntry as IUnusedESLOffset[]
+                    )}
+                  />
+                )}
+              />
+            </TextField>
+            {errors.offsetDates !== null && errors.offsetDates !== undefined && (
+              <span className="error text-[10px]">{errors?.offsetDates.message}</span>
             )}
           </section>
 
