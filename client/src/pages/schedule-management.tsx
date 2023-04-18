@@ -52,7 +52,6 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
       if (isButtonSelected) {
         setErrorMessage('')
         setTimeout(() => {
-          // console.log(data)
           alert(JSON.stringify(data, null, 2))
           resolve()
         }, 2000)
@@ -63,30 +62,49 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
     })
   }
 
+  const assignDay = (): void => {
+    const dayProperties: any = {
+      Monday: { selected: 'mondaySelected', timeIn: 'monday.timeIn', timeOut: 'monday.timeOut' },
+      Tuesday: {
+        selected: 'tuesdaySelected',
+        timeIn: 'tuesday.timeIn',
+        timeOut: 'tuesday.timeOut'
+      },
+      Wednesday: {
+        selected: 'wednesdaySelected',
+        timeIn: 'wednesday.timeIn',
+        timeOut: 'wednesday.timeOut'
+      },
+      Thursday: {
+        selected: 'thursdaySelected',
+        timeIn: 'thursday.timeIn',
+        timeOut: 'thursday.timeOut'
+      },
+      Friday: { selected: 'fridaySelected', timeIn: 'friday.timeIn', timeOut: 'friday.timeOut' },
+      Saturday: {
+        selected: 'saturdaySelected',
+        timeIn: 'saturday.timeIn',
+        timeOut: 'saturday.timeOut'
+      },
+      Sunday: { selected: 'sundaySelected', timeIn: 'sunday.timeIn', timeOut: 'sunday.timeOut' }
+    }
+    if (EmployeeSchedule?.days !== undefined) {
+      for (const day of EmployeeSchedule?.days) {
+        const { workingDay, isDaySelected, timeIn, timeOut } = day
+        if (workingDay in dayProperties) {
+          const { selected, timeIn: dayTimeIn, timeOut: dayTimeOut } = dayProperties[workingDay]
+          setValue(selected, isDaySelected)
+          setValue(dayTimeIn, timeIn)
+          setValue(dayTimeOut, timeOut)
+        }
+      }
+    }
+  }
+
   // For Filtering based on route ID and itemID
   useEffect(() => {
     setValue('scheduleName', EmployeeSchedule?.scheduleName as string)
-    setValue('mondaySelected', EmployeeSchedule?.days[0].isDaySelected as boolean)
-    setValue('monday.timeIn', EmployeeSchedule?.days[0].timeIn as string)
-    setValue('monday.timeOut', EmployeeSchedule?.days[0].timeOut as string)
-    setValue('tuesdaySelected', EmployeeSchedule?.days[1].isDaySelected as boolean)
-    setValue('tuesday.timeIn', EmployeeSchedule?.days[1].timeIn as string)
-    setValue('tuesday.timeOut', EmployeeSchedule?.days[1].timeOut as string)
-    setValue('wednesdaySelected', EmployeeSchedule?.days[2].isDaySelected as boolean)
-    setValue('wednesday.timeIn', EmployeeSchedule?.days[2].timeIn as string)
-    setValue('wednesday.timeOut', EmployeeSchedule?.days[2].timeOut as string)
-    setValue('thursdaySelected', EmployeeSchedule?.days[3].isDaySelected as boolean)
-    setValue('thursday.timeIn', EmployeeSchedule?.days[3].timeIn as string)
-    setValue('thursday.timeOut', EmployeeSchedule?.days[3].timeOut as string)
-    setValue('fridaySelected', EmployeeSchedule?.days[4].isDaySelected as boolean)
-    setValue('friday.timeIn', EmployeeSchedule?.days[4].timeIn as string)
-    setValue('friday.timeOut', EmployeeSchedule?.days[4].timeOut as string)
-    setValue('saturdaySelected', EmployeeSchedule?.days[5].isDaySelected as boolean)
-    setValue('saturday.timeIn', EmployeeSchedule?.days[5].timeIn as string)
-    setValue('saturday.timeOut', EmployeeSchedule?.days[5].timeOut as string)
-    setValue('sundaySelected', EmployeeSchedule?.days[6].isDaySelected as boolean)
-    setValue('sunday.timeIn', EmployeeSchedule?.days[6].timeIn as string)
-    setValue('sunday.timeOut', EmployeeSchedule?.days[6].timeOut as string)
+    assignDay()
   }, [id, isLoading])
 
   useEffect(() => {
