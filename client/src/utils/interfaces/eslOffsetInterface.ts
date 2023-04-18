@@ -19,3 +19,17 @@ export interface IApproveOffsetInput {
   notificationId: number
   isApproved: boolean
 }
+
+export interface IESLOffset {
+  Id: number
+  UserId: number
+  TeamEntryId: number
+  TeamLeaderId: number
+  ESLChangeShiftRequestId: number
+  Title: string
+  Description: string
+  IsLeaderApproved: boolean | null
+  IsUsed: boolean | null
+  TimeIn: string
+  TimeOut: string
+}

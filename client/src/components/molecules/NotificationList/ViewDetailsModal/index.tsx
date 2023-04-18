@@ -113,7 +113,7 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
       )
     }
 
-    if (row.type.toLowerCase() === NOTIFICATION_TYPE.OFFSET_SCHEDULE) {
+    if (row.type.toLowerCase() === NOTIFICATION_TYPE.ESL_CHANGE_SHIFT) {
       approveDisapproveEslOffsetMutation.mutate(
         {
           teamLeaderId: user.id,
@@ -255,7 +255,8 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
             />
           )}
           {/* DETAILS FOR ESL CHANGE SHIFT REQUEST */}
-          {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.ESL_CHANGE_SHIFT && (
+          {(row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.ESL_CHANGE_SHIFT ||
+            row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.ESL_CHANGE_SHIFT_RESOLVED) && (
             <ESLChangeShiftDetails
               {...{
                 notification: row
