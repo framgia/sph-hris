@@ -14,7 +14,7 @@ namespace api.Schema.Mutations
             try
             {
                 using var transaction = context.Database.BeginTransaction();
-                var createEmployeeSchedule = await _employeeSchedueleService.Create(request);
+                var createEmployeeSchedule = await _employeeSchedueleService.Create(request, context);
 
                 transaction.Commit();
                 return createEmployeeSchedule;

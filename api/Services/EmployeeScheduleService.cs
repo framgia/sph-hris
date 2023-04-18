@@ -39,10 +39,8 @@ namespace api.Services
                 .ToListAsync();
         }
 
-        public async Task<string> Create(CreateEmployeeScheduleRequest request)
+        public async Task<string> Create(CreateEmployeeScheduleRequest request, HrisContext context)
         {
-            using HrisContext context = _contextFactory.CreateDbContext();
-
             // validate inputs
             var errors = _customInputValidation.CheckEmployeeScheduleRequestInput(request);
 
@@ -69,7 +67,16 @@ namespace api.Services
                 context.WorkingDayTimes.Add(newWorkingDayTimes);
             }
 
-            await context.SaveChangesAsync();
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch
+            {
+                throw new GraphQLException(ErrorBuilder.New()
+                                    .SetMessage(ErrorMessageEnum.FAILED_SHCEDULE_CREATION)
+                                    .Build());
+            }
             return SuccessMessageEnum.SCHEDULE_CREATED;
         }
     }
