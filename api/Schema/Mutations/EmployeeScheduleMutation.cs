@@ -1,4 +1,5 @@
 using api.Context;
+using api.Enums;
 using api.Requests;
 using api.Services;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,9 @@ namespace api.Schema.Mutations
             }
             catch (GraphQLException)
             {
-                throw;
+                throw new GraphQLException(ErrorBuilder.New()
+                                    .SetMessage(ErrorMessageEnum.FAILED_SHCEDULE_CREATION)
+                                    .Build());
             }
         }
 
@@ -38,7 +41,9 @@ namespace api.Schema.Mutations
             }
             catch (GraphQLException)
             {
-                throw;
+                throw new GraphQLException(ErrorBuilder.New()
+                                    .SetMessage(ErrorMessageEnum.FAILED_SHCEDULE_UPDATE)
+                                    .Build());
             }
         }
     }
