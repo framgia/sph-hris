@@ -3,18 +3,17 @@ import classNames from 'classnames'
 import isEmpty from 'lodash/isEmpty'
 import { useRouter } from 'next/router'
 import { toast } from 'react-hot-toast'
-import useUserQuery from '~/hooks/useUserQuery'
+import { PulseLoader } from 'react-spinners'
 import React, { useEffect, useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
 import Input from '~/components/atoms/Input'
 import Alert from '~/components/atoms/Alert'
-import { PulseLoader } from 'react-spinners'
 import { queryClient } from '~/lib/queryClient'
+import useUserQuery from '~/hooks/useUserQuery'
 import { ScheduleSchema } from '~/utils/validation'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
-import { WeekDays } from '~/utils/constants/weekDays'
 import FadeInOut from '~/components/templates/FadeInOut'
 import { ScheduleFormData } from '~/utils/types/formValues'
 import DayButton from '~/components/atoms/Buttons/DayButton'
@@ -54,52 +53,29 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
     watch('saturdaySelected') ||
     watch('sundaySelected')
 
-  const handleSaveSchedule: SubmitHandler<ScheduleFormData> = async (data): Promise<void> => {
+  const handleSaveSchedule: SubmitHandler<any> = async (data): Promise<void> => {
     // eslint-disable-next-line @typescript-eslint/array-type
     const workingDays: { day: string; from: string; to: string }[] = []
-    data.mondaySelected &&
-      workingDays.push({
-        day: WeekDays.MONDAY,
-        from: data.monday.timeIn,
-        to: data.monday.timeOut
-      })
-    data.tuesdaySelected &&
-      workingDays.push({
-        day: WeekDays.TUESDAY,
-        from: data.tuesday.timeIn,
-        to: data.tuesday.timeOut
-      })
-    data.wednesdaySelected &&
-      workingDays.push({
-        day: WeekDays.WEDNESDAY,
-        from: data.wednesday.timeIn,
-        to: data.wednesday.timeOut
-      })
-    data.thursdaySelected &&
-      workingDays.push({
-        day: WeekDays.THURSDAY,
-        from: data.thursday.timeIn,
-        to: data.thursday.timeOut
-      })
-    data.fridaySelected &&
-      workingDays.push({
-        day: WeekDays.FRIDAY,
-        from: data.friday.timeIn,
-        to: data.friday.timeOut
-      })
-    data.saturdaySelected &&
-      workingDays.push({
-        day: WeekDays.SATURDAY,
-        from: data.saturday.timeIn,
-        to: data.saturday.timeOut
-      })
-    data.sundaySelected &&
-      workingDays.push({
-        day: WeekDays.SUNDAY,
-        from: data.sunday.timeIn,
-        to: data.sunday.timeOut
-      })
-
+    const daysOfWeek = [
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday',
+      'sunday'
+    ]
+    for (const day of daysOfWeek) {
+      const dayData = data[`${day}Selected`] !== false && data[day]
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+      if (dayData) {
+        workingDays.push({
+          day: day.charAt(0).toUpperCase() + day.slice(1),
+          from: dayData.timeIn,
+          to: dayData.timeOut
+        })
+      }
+    }
     return await new Promise((resolve) => {
       createEmployeeScheduleMutation.mutate(
         {
