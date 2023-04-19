@@ -156,10 +156,15 @@ const DTRManagement: NextPage = (): JSX.Element => {
     }
   }
 
-  useEffect(() => {
-    const params = new URL(window.location.href).searchParams
-    setGlobalFilter(params.get('searchKey') as string)
-  }, [])
+  const setFetchedData = (data: any, setState: any): void => {
+    if (data !== undefined) {
+      setState({
+        data: data.data,
+        error: data.error,
+        isLoading: data.isLoading
+      })
+    }
+  }
 
   useEffect(() => {
     if (router.isReady) {
@@ -183,12 +188,13 @@ const DTRManagement: NextPage = (): JSX.Element => {
 
   useEffect(() => {
     if (router.isReady) {
+      query.searchKey !== undefined && setGlobalFilter(query.searchKey as string)
       setFilters({
         ...filters,
-        date: query.date !== undefined ? (query.date as string) : filters.date,
-        status: query.status !== undefined ? (query.status as string) : filters.status,
-        startDate: query.startDate !== undefined ? (query.startDate as string) : filters.startDate,
-        endDate: query.endDate !== undefined ? (query.endDate as string) : filters.endDate
+        date: (query.date as string) ?? filters.date,
+        status: (query.status as string) ?? filters.status,
+        startDate: (query.startDate as string) ?? filters.startDate,
+        endDate: (query.endDate as string) ?? filters.endDate
       })
       setIsOpenSummaryTable(query.summary === 'true')
     }
@@ -199,22 +205,11 @@ const DTRManagement: NextPage = (): JSX.Element => {
   }, [router.isReady, filters])
 
   useEffect(() => {
-    if (allEmployee.data !== undefined)
-      setFetchedAllEmployeeData({
-        data: allEmployee.data,
-        error: allEmployee.error,
-        isLoading: allEmployee.isLoading
-      })
+    setFetchedData(allEmployee, setFetchedAllEmployeeData)
   }, [allEmployee.data])
 
   useEffect(() => {
-    if (summary.data !== undefined) {
-      setFetchedSummaryData({
-        data: summary.data,
-        error: summary.error,
-        isLoading: summary.isLoading
-      })
-    }
+    setFetchedData(summary, setFetchedSummaryData)
   }, [summary.data])
 
   return (
