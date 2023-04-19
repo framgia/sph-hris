@@ -82,33 +82,12 @@ namespace api.Services
 
         public async Task<string> Update(UpdateEmployeeScheduleRequest request, HrisContext context)
         {
-            // validate inputs
-            var errors = _customInputValidation.CheckUpdateEmployeeScheduleRequestInput(request);
-            if (errors.Count > 0) throw new GraphQLException(errors);
+            ValidateRequest(request);
+            var employeeSchedule = await GetEmployeeSchedule(request.EmployeeScheduleId, context);
 
-            //  UPDATE Schedule name
-            var updateEmployeeSchedule = await context.EmployeeSchedules.FindAsync(request.EmployeeScheduleId);
-            updateEmployeeSchedule!.Name = request.ScheduleName;
-
-            // DELETE old data
-            var workingDaysList = await context.WorkingDayTimes.Where(x => x.EmployeeScheduleId == request.EmployeeScheduleId).ToListAsync();
-            foreach (WorkingDayTime workingDay in workingDaysList)
-            {
-                context.Remove(workingDay);
-            }
-
-            // Append new data
-            foreach (var workingDay in request.WorkingDays)
-            {
-                var newWorkingDayTimes = new WorkingDayTime
-                {
-                    EmployeeScheduleId = updateEmployeeSchedule.Id,
-                    Day = workingDay.Day,
-                    From = TimeSpan.Parse(workingDay.From!),
-                    To = TimeSpan.Parse(workingDay.To!)
-                };
-                context.WorkingDayTimes.Add(newWorkingDayTimes);
-            }
+            UpdateEmployeeSchedule(employeeSchedule, request);
+            DeleteOldWorkingDays(request.EmployeeScheduleId, context);
+            AddNewWorkingDays(request.WorkingDays, employeeSchedule.Id, context);
 
             try
             {
@@ -121,6 +100,50 @@ namespace api.Services
                                     .Build());
             }
             return SuccessMessageEnum.SCHEDULE_UPDATED;
+        }
+
+        private static async Task<EmployeeSchedule> GetEmployeeSchedule(int employeeScheduleId, HrisContext context)
+        {
+            var employeeSchedule = await context.EmployeeSchedules.FindAsync(employeeScheduleId);
+            if (employeeSchedule == null)
+            {
+                throw new GraphQLException(ErrorBuilder.New()
+                                        .SetMessage(InputValidationMessageEnum.INVALID_SCHEDULE_ID)
+                                        .Build());
+            }
+            return employeeSchedule;
+        }
+
+        private static void UpdateEmployeeSchedule(EmployeeSchedule employeeSchedule, UpdateEmployeeScheduleRequest request)
+        {
+            employeeSchedule.Name = request.ScheduleName;
+        }
+
+        private static void DeleteOldWorkingDays(int employeeScheduleId, HrisContext context)
+        {
+            var workingDays = context.WorkingDayTimes.Where(x => x.EmployeeScheduleId == employeeScheduleId);
+            context.WorkingDayTimes.RemoveRange(workingDays);
+        }
+
+        private static void AddNewWorkingDays(List<WorkingDayTimesRequest> workingDays, int employeeScheduleId, HrisContext context)
+        {
+            var newWorkingDays = workingDays.Select(x => new WorkingDayTime
+            {
+                EmployeeScheduleId = employeeScheduleId,
+                Day = x.Day,
+                From = TimeSpan.Parse(x.From!),
+                To = TimeSpan.Parse(x.To!)
+            });
+            context.WorkingDayTimes.AddRange(newWorkingDays);
+        }
+
+        private void ValidateRequest(UpdateEmployeeScheduleRequest request)
+        {
+            var errors = _customInputValidation.CheckUpdateEmployeeScheduleRequestInput(request);
+            if (errors.Count > 0)
+            {
+                throw new GraphQLException(errors);
+            }
         }
     }
 }
