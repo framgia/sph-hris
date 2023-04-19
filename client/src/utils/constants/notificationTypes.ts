@@ -17,5 +17,6 @@ export const NOTIFICATION_TYPE = {
   OFFSET_SCHEDULE: 'offset schedule',
   OFFSET: 'offset',
   OFFSET_RESOLVED: 'offset_resolved',
-  ESL_CHANGE_SHIFT: 'esl change shift'
+  ESL_CHANGE_SHIFT: 'esl change shift',
+  ESL_CHANGE_SHIFT_RESOLVED: 'esl change shift_resolved'
 }

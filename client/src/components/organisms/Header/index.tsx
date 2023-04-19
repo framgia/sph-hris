@@ -101,7 +101,8 @@ const Header: FC<Props> = (props): JSX.Element => {
           requestedTimeOut: moment(parsedData.RequestedTimeOut, 'HH:mm:ss').format('hh:mm A'),
           description: parsedData.Description,
           userAvatarLink: parsedData.User.AvatarLink,
-          createdAt: notif.createdAt
+          createdAt: notif.createdAt,
+          offsets: parsedData.Offsets
         }
         return mapped
       })

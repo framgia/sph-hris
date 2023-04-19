@@ -1,3 +1,5 @@
+import { IESLOffset } from '../interfaces/eslOffsetInterface'
+
 export type Notification = {
   id: number
   leaveId: number | null
@@ -18,6 +20,7 @@ export type NotificationData = {
     Name: string
     AvatarLink: string
   }
+  Offsets: IESLOffset[]
   ReadAt: string | null
   DateFiled: string
   DateRequested: string

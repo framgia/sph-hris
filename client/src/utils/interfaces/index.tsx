@@ -1,4 +1,5 @@
 import * as Icons from 'react-feather'
+import { IESLOffset } from './eslOffsetInterface'
 
 export type IconName = keyof typeof Icons
 
@@ -56,6 +57,7 @@ export interface INotification {
   description: string | null
   userAvatarLink: string
   createdAt: string
+  offsets: IESLOffset[]
 }
 
 export interface IEmployeeManagement {
