@@ -7,11 +7,15 @@ import {
   GET_EMPLOYEE_SCHEDULE
 } from '~/graphql/queries/employeeSchedule'
 
-import { CREATE_EMPLOYEE_SCHEDULE } from '~/graphql/mutations/employeeScheduleMutation'
+import {
+  CREATE_EMPLOYEE_SCHEDULE,
+  EDIT_EMPLOYEE_SCHEDULE
+} from '~/graphql/mutations/employeeScheduleMutation'
 import {
   IGetAllEmployeeSchedule,
   IGetEmployeeSchedule,
-  ICreateEmployeeScheduleRequestInput
+  ICreateEmployeeScheduleRequestInput,
+  IEditEmployeeScheduleRequestInput
 } from '~/utils/types/employeeScheduleTypes'
 
 type GetAllEmployeeScheduleFuncReturnType = UseQueryResult<
@@ -31,9 +35,17 @@ type createEmployeeScheduleMutationType = UseMutationResult<
   unknown
 >
 
+type editEmployeeScheduleMutationType = UseMutationResult<
+  any,
+  unknown,
+  IEditEmployeeScheduleRequestInput,
+  unknown
+>
+
 type HookReturnType = {
   getAllEmployeeScheduleQuery: () => GetAllEmployeeScheduleFuncReturnType
   handleCreateEmployeeScheduleMutation: () => createEmployeeScheduleMutationType
+  handleEditEmployeeScheduleMutation: () => editEmployeeScheduleMutationType
   getEmployeeScheduleQuery: (employeeScheduleId: number) => GetEmployeeScheduleFuncReturnType
 }
 
@@ -66,9 +78,21 @@ const useEmployeeSchedule = (): HookReturnType => {
       }
     })
 
+  const handleEditEmployeeScheduleMutation = (): editEmployeeScheduleMutationType =>
+    useMutation({
+      mutationFn: async (request: IEditEmployeeScheduleRequestInput) => {
+        return await client.request(EDIT_EMPLOYEE_SCHEDULE, { request })
+      },
+      onError: async (err: Error) => {
+        const [errorMessage] = err.message.split(/:\s/, 2)
+        toast.error(errorMessage)
+      }
+    })
+
   return {
     getEmployeeScheduleQuery,
     getAllEmployeeScheduleQuery,
+    handleEditEmployeeScheduleMutation,
     handleCreateEmployeeScheduleMutation
   }
 }
