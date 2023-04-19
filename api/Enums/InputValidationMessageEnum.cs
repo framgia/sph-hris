@@ -21,6 +21,7 @@ namespace api.Enums
         public const string INVALID_START_TIME = "Invalid Start Time";
         public const string INVALID_SCHEDULE = "Schedule doesn't exist";
         public const string INVALID_SCHEDULE_NAME = "Invalid Schedule Name";
+        public const string INVALID_SCHEDULE_ID = "Employee schedule does not exist";
         public const string MISSING_LEAVE_DATES = "Leave Date/s is required";
         public const string MISSING_PROJECTS = "Project/s is required";
         public const string MISSING_APPROVED_MINUTES = "Approved minutes is required";

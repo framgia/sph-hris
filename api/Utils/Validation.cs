@@ -527,5 +527,59 @@ namespace api.Utils
             var user = context.Users.Include(x => x.Role).Where(x => x.Id == userId).FirstOrDefault();
             return user?.Role.Name?.ToLower() == RoleEnum.HR_ADMIN.ToLower();
         }
+
+        private bool CheckScheduleNameExist(string scheduleName, int employeeScheduleId)
+        {
+            using HrisContext context = _contextFactory.CreateDbContext();
+            var user = context.EmployeeSchedules.Where(x => x.Name == scheduleName).FirstOrDefault();
+            if (user?.Id == employeeScheduleId) return false;
+            return user != null;
+        }
+
+        private bool CheckScheduleExist(int employeeScheduleId)
+        {
+            using HrisContext context = _contextFactory.CreateDbContext();
+            var user = context.EmployeeSchedules.Where(x => x.Id == employeeScheduleId).FirstOrDefault();
+            return user == null;
+        }
+
+        internal List<IError> CheckUpdateEmployeeScheduleRequestInput(UpdateEmployeeScheduleRequest request)
+        {
+            var errors = new List<IError>();
+
+            if (!CheckUserRole(request.UserId))
+                errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_HR_ADMIN));
+
+            if (string.IsNullOrEmpty(request.ScheduleName))
+            {
+                errors.Add(buildError(nameof(request.ScheduleName), InputValidationMessageEnum.INVALID_SCHEDULE_NAME));
+            }
+
+            if (CheckScheduleExist(request.EmployeeScheduleId))
+                errors.Add(buildError(nameof(request.EmployeeScheduleId), InputValidationMessageEnum.INVALID_SCHEDULE_ID));
+
+            if (CheckScheduleNameExist(request.ScheduleName!, request.EmployeeScheduleId))
+                errors.Add(buildError(nameof(request.EmployeeScheduleId), InputValidationMessageEnum.DUPLICATE_SCHEDULE_NAME));
+
+            foreach (var workingDay in request.WorkingDays)
+            {
+                if (string.IsNullOrEmpty(workingDay.Day))
+                {
+                    errors.Add(buildError(nameof(workingDay.Day), InputValidationMessageEnum.INVALID_DAY));
+                }
+
+                if (string.IsNullOrEmpty(workingDay.From))
+                {
+                    errors.Add(buildError(nameof(workingDay.From), InputValidationMessageEnum.INVALID_START_TIME));
+                }
+
+                if (string.IsNullOrEmpty(workingDay.To))
+                {
+                    errors.Add(buildError(nameof(workingDay.To), InputValidationMessageEnum.INVALID_END_TIME));
+                }
+            }
+
+            return errors;
+        }
     }
 }
