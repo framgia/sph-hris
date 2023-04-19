@@ -2,13 +2,16 @@ import { NextPage } from 'next'
 import classNames from 'classnames'
 import isEmpty from 'lodash/isEmpty'
 import { useRouter } from 'next/router'
+import { toast } from 'react-hot-toast'
+import { PulseLoader } from 'react-spinners'
 import React, { useEffect, useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
 import Input from '~/components/atoms/Input'
 import Alert from '~/components/atoms/Alert'
-import { PulseLoader } from 'react-spinners'
+import { queryClient } from '~/lib/queryClient'
+import useUserQuery from '~/hooks/useUserQuery'
 import { ScheduleSchema } from '~/utils/validation'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import FadeInOut from '~/components/templates/FadeInOut'
@@ -21,9 +24,12 @@ import ScheduleManagementLayout from '~/components/templates/ScheduleManagementL
 const ScheduleManagement: NextPage = (): JSX.Element => {
   const router = useRouter()
   const { id } = router.query
-  const { getEmployeeScheduleQuery } = useEmployeeSchedule()
+  const { getEmployeeScheduleQuery, handleCreateEmployeeScheduleMutation } = useEmployeeSchedule()
   const { data, isLoading } = getEmployeeScheduleQuery(Number(id))
   const EmployeeSchedule = data?.employeeScheduleDetails[0]
+  const { handleUserQuery } = useUserQuery()
+  const { data: user } = handleUserQuery()
+  const createEmployeeScheduleMutation = handleCreateEmployeeScheduleMutation()
   const [errorMessage, setErrorMessage] = useState<string>('')
   const {
     reset,
@@ -47,18 +53,50 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
     watch('saturdaySelected') ||
     watch('sundaySelected')
 
-  const handleSaveSchedule: SubmitHandler<ScheduleFormData> = async (data): Promise<void> => {
-    return await new Promise((resolve) => {
-      if (isButtonSelected) {
-        setErrorMessage('')
-        setTimeout(() => {
-          alert(JSON.stringify(data, null, 2))
-          resolve()
-        }, 2000)
-      } else {
-        setErrorMessage('Please select atleast one days of week button!')
-        resolve()
+  const handleSaveSchedule: SubmitHandler<any> = async (data): Promise<void> => {
+    // eslint-disable-next-line @typescript-eslint/array-type
+    const workingDays: { day: string; from: string; to: string }[] = []
+    const daysOfWeek = [
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday',
+      'sunday'
+    ]
+    for (const day of daysOfWeek) {
+      const dayData = data[`${day}Selected`] !== false && data[day]
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+      if (dayData) {
+        workingDays.push({
+          day: day.charAt(0).toUpperCase() + day.slice(1),
+          from: dayData.timeIn,
+          to: dayData.timeOut
+        })
       }
+    }
+    return await new Promise((resolve) => {
+      createEmployeeScheduleMutation.mutate(
+        {
+          userId: user?.userById.id as number,
+          scheduleName: data.scheduleName,
+          workingDays
+        },
+        {
+          onSuccess: () => {
+            void queryClient
+              .invalidateQueries({ queryKey: ['GET_ALL_EMPLOYEE_SCHEDULE'] })
+              .then(() => {
+                toast.success('Created new Employee Schedule Successfully')
+                handleReset()
+              })
+          },
+          onSettled: () => {
+            resolve()
+          }
+        }
+      )
     })
   }
 

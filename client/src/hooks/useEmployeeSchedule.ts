@@ -1,11 +1,18 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query'
+import { toast } from 'react-hot-toast'
+import { useMutation, useQuery, UseQueryResult, UseMutationResult } from '@tanstack/react-query'
 
 import { client } from '~/utils/shared/client'
 import {
   GET_ALL_EMPLOYEE_SCHEDULE,
   GET_EMPLOYEE_SCHEDULE
 } from '~/graphql/queries/employeeSchedule'
-import { IGetAllEmployeeSchedule, IGetEmployeeSchedule } from '~/utils/types/employeeScheduleTypes'
+
+import { CREATE_EMPLOYEE_SCHEDULE } from '~/graphql/mutations/employeeScheduleMutation'
+import {
+  IGetAllEmployeeSchedule,
+  IGetEmployeeSchedule,
+  ICreateEmployeeScheduleRequestInput
+} from '~/utils/types/employeeScheduleTypes'
 
 type GetAllEmployeeScheduleFuncReturnType = UseQueryResult<
   { allEmployeeScheduleDetails: IGetAllEmployeeSchedule[] },
@@ -17,8 +24,16 @@ type GetEmployeeScheduleFuncReturnType = UseQueryResult<
   unknown
 >
 
+type createEmployeeScheduleMutationType = UseMutationResult<
+  any,
+  unknown,
+  ICreateEmployeeScheduleRequestInput,
+  unknown
+>
+
 type HookReturnType = {
   getAllEmployeeScheduleQuery: () => GetAllEmployeeScheduleFuncReturnType
+  handleCreateEmployeeScheduleMutation: () => createEmployeeScheduleMutationType
   getEmployeeScheduleQuery: (employeeScheduleId: number) => GetEmployeeScheduleFuncReturnType
 }
 
@@ -40,9 +55,21 @@ const useEmployeeSchedule = (): HookReturnType => {
       enabled: !isNaN(employeeScheduleId)
     })
 
+  const handleCreateEmployeeScheduleMutation = (): createEmployeeScheduleMutationType =>
+    useMutation({
+      mutationFn: async (request: ICreateEmployeeScheduleRequestInput) => {
+        return await client.request(CREATE_EMPLOYEE_SCHEDULE, { request })
+      },
+      onError: async (err: Error) => {
+        const [errorMessage] = err.message.split(/:\s/, 2)
+        toast.error(errorMessage)
+      }
+    })
+
   return {
+    getEmployeeScheduleQuery,
     getAllEmployeeScheduleQuery,
-    getEmployeeScheduleQuery
+    handleCreateEmployeeScheduleMutation
   }
 }
 
