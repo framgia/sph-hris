@@ -28,14 +28,14 @@ type GetEmployeeScheduleFuncReturnType = UseQueryResult<
   unknown
 >
 
-type createEmployeeScheduleMutationType = UseMutationResult<
+type CreateEmployeeScheduleMutationType = UseMutationResult<
   any,
   unknown,
   ICreateEmployeeScheduleRequestInput,
   unknown
 >
 
-type editEmployeeScheduleMutationType = UseMutationResult<
+type EditEmployeeScheduleMutationType = UseMutationResult<
   any,
   unknown,
   IEditEmployeeScheduleRequestInput,
@@ -44,8 +44,8 @@ type editEmployeeScheduleMutationType = UseMutationResult<
 
 type HookReturnType = {
   getAllEmployeeScheduleQuery: () => GetAllEmployeeScheduleFuncReturnType
-  handleCreateEmployeeScheduleMutation: () => createEmployeeScheduleMutationType
-  handleEditEmployeeScheduleMutation: () => editEmployeeScheduleMutationType
+  handleCreateEmployeeScheduleMutation: () => CreateEmployeeScheduleMutationType
+  handleEditEmployeeScheduleMutation: () => EditEmployeeScheduleMutationType
   getEmployeeScheduleQuery: (employeeScheduleId: number) => GetEmployeeScheduleFuncReturnType
 }
 
@@ -67,7 +67,7 @@ const useEmployeeSchedule = (): HookReturnType => {
       enabled: !isNaN(employeeScheduleId)
     })
 
-  const handleCreateEmployeeScheduleMutation = (): createEmployeeScheduleMutationType =>
+  const handleCreateEmployeeScheduleMutation = (): CreateEmployeeScheduleMutationType =>
     useMutation({
       mutationFn: async (request: ICreateEmployeeScheduleRequestInput) => {
         return await client.request(CREATE_EMPLOYEE_SCHEDULE, { request })
@@ -78,7 +78,7 @@ const useEmployeeSchedule = (): HookReturnType => {
       }
     })
 
-  const handleEditEmployeeScheduleMutation = (): editEmployeeScheduleMutationType =>
+  const handleEditEmployeeScheduleMutation = (): EditEmployeeScheduleMutationType =>
     useMutation({
       mutationFn: async (request: IEditEmployeeScheduleRequestInput) => {
         return await client.request(EDIT_EMPLOYEE_SCHEDULE, { request })
