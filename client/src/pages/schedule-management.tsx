@@ -155,6 +155,7 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
   }
 
   const assignDay = (): void => {
+    setValue('scheduleName', EmployeeSchedule?.scheduleName as string)
     const dayProperties: any = {
       Monday: { selected: 'mondaySelected', timeIn: 'monday.timeIn', timeOut: 'monday.timeOut' },
       Tuesday: {
@@ -195,7 +196,6 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
 
   // For Filtering based on route ID and itemID
   useEffect(() => {
-    setValue('scheduleName', EmployeeSchedule?.scheduleName as string)
     assignDay()
   }, [id, isLoading])
 
@@ -206,45 +206,49 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
   }, [isButtonSelected])
 
   const handleReset = (): void => {
-    setErrorMessage('')
-    reset({
-      scheduleName: '',
-      mondaySelected: false,
-      tuesdaySelected: false,
-      wednesdaySelected: false,
-      thursdaySelected: false,
-      fridaySelected: false,
-      saturdaySelected: false,
-      sundaySelected: false,
-      monday: {
-        timeIn: '',
-        timeOut: ''
-      },
-      tuesday: {
-        timeIn: '',
-        timeOut: ''
-      },
-      wednesday: {
-        timeIn: '',
-        timeOut: ''
-      },
-      thursday: {
-        timeIn: '',
-        timeOut: ''
-      },
-      friday: {
-        timeIn: '',
-        timeOut: ''
-      },
-      saturday: {
-        timeIn: '',
-        timeOut: ''
-      },
-      sunday: {
-        timeIn: '',
-        timeOut: ''
-      }
-    })
+    if (!isEmpty(id)) {
+      assignDay()
+    } else {
+      setErrorMessage('')
+      reset({
+        scheduleName: '',
+        mondaySelected: false,
+        tuesdaySelected: false,
+        wednesdaySelected: false,
+        thursdaySelected: false,
+        fridaySelected: false,
+        saturdaySelected: false,
+        sundaySelected: false,
+        monday: {
+          timeIn: '',
+          timeOut: ''
+        },
+        tuesday: {
+          timeIn: '',
+          timeOut: ''
+        },
+        wednesday: {
+          timeIn: '',
+          timeOut: ''
+        },
+        thursday: {
+          timeIn: '',
+          timeOut: ''
+        },
+        friday: {
+          timeIn: '',
+          timeOut: ''
+        },
+        saturday: {
+          timeIn: '',
+          timeOut: ''
+        },
+        sunday: {
+          timeIn: '',
+          timeOut: ''
+        }
+      })
+    }
   }
 
   return (
@@ -708,7 +712,7 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
                 type="button"
                 variant="secondary"
                 onClick={handleReset}
-                disabled={isSubmitting || !isEmpty(id)}
+                disabled={isSubmitting}
                 className="w-24 rounded-md py-2 text-xs"
               >
                 Cancel
