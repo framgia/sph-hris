@@ -88,53 +88,70 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
         })
       }
     }
-    if (id === undefined) {
-      return await new Promise((resolve) => {
-        createEmployeeScheduleMutation.mutate(
-          {
-            userId: user?.userById.id as number,
-            scheduleName: data.scheduleName,
-            workingDays
-          },
-          {
-            onSuccess: () => {
-              void queryClient
-                .invalidateQueries({
-                  queryKey: ['GET_ALL_EMPLOYEE_SCHEDULE']
-                })
-                .then(() => {
-                  toast.success('Created new Employee Schedule Successfully')
-                  handleReset()
-                })
-            },
-            onSettled: () => {
-              resolve()
-            }
-          }
-        )
-      })
+    const isCreateSchedule = id === undefined
+    if (isCreateSchedule) {
+      await createSchedule(data, workingDays)
     } else {
-      return await new Promise((resolve) => {
-        editEmployeeScheduleMutation.mutate(
-          {
-            employeeScheduleId: Number(id),
-            userId: user?.userById.id as number,
-            scheduleName: data.scheduleName,
-            workingDays
-          },
-          {
-            onSuccess: () => {
-              void queryClient.invalidateQueries().then(() => {
-                toast.success('Updated Employee Schedule Successfully')
-              })
-            },
-            onSettled: () => {
-              resolve()
-            }
-          }
-        )
-      })
+      await editSchedule(data, workingDays)
     }
+  }
+
+  const createSchedule = async (
+    data: ScheduleFormData,
+    // eslint-disable-next-line @typescript-eslint/array-type
+    workingDays: { day: string; from: string; to: string }[]
+  ): Promise<void> => {
+    return await new Promise((resolve) => {
+      createEmployeeScheduleMutation.mutate(
+        {
+          userId: user?.userById.id as number,
+          scheduleName: data.scheduleName,
+          workingDays
+        },
+        {
+          onSuccess: () => {
+            void queryClient
+              .invalidateQueries({
+                queryKey: ['GET_ALL_EMPLOYEE_SCHEDULE']
+              })
+              .then(() => {
+                toast.success('Created new Employee Schedule Successfully')
+                handleReset()
+              })
+          },
+          onSettled: () => {
+            resolve()
+          }
+        }
+      )
+    })
+  }
+
+  const editSchedule = async (
+    data: ScheduleFormData,
+    // eslint-disable-next-line @typescript-eslint/array-type
+    workingDays: { day: string; from: string; to: string }[]
+  ): Promise<void> => {
+    return await new Promise((resolve) => {
+      editEmployeeScheduleMutation.mutate(
+        {
+          employeeScheduleId: Number(id),
+          userId: user?.userById.id as number,
+          scheduleName: data.scheduleName,
+          workingDays
+        },
+        {
+          onSuccess: () => {
+            void queryClient.invalidateQueries().then(() => {
+              toast.success('Updated Employee Schedule Successfully')
+            })
+          },
+          onSettled: () => {
+            resolve()
+          }
+        }
+      )
+    })
   }
 
   const assignDay = (): void => {
