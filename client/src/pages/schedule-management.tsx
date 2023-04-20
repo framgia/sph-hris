@@ -24,12 +24,17 @@ import ScheduleManagementLayout from '~/components/templates/ScheduleManagementL
 const ScheduleManagement: NextPage = (): JSX.Element => {
   const router = useRouter()
   const { id } = router.query
-  const { getEmployeeScheduleQuery, handleCreateEmployeeScheduleMutation } = useEmployeeSchedule()
+  const {
+    getEmployeeScheduleQuery,
+    handleCreateEmployeeScheduleMutation,
+    handleEditEmployeeScheduleMutation
+  } = useEmployeeSchedule()
   const { data, isLoading } = getEmployeeScheduleQuery(Number(id))
   const EmployeeSchedule = data?.employeeScheduleDetails[0]
   const { handleUserQuery } = useUserQuery()
   const { data: user } = handleUserQuery()
   const createEmployeeScheduleMutation = handleCreateEmployeeScheduleMutation()
+  const editEmployeeScheduleMutation = handleEditEmployeeScheduleMutation()
   const [errorMessage, setErrorMessage] = useState<string>('')
   const {
     reset,
@@ -53,6 +58,12 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
     watch('saturdaySelected') ||
     watch('sundaySelected')
 
+  useEffect(() => {
+    if (id === undefined) {
+      handleReset()
+    }
+  }, [id])
+
   const handleSaveSchedule: SubmitHandler<any> = async (data): Promise<void> => {
     // eslint-disable-next-line @typescript-eslint/array-type
     const workingDays: { day: string; from: string; to: string }[] = []
@@ -66,7 +77,8 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
       'sunday'
     ]
     for (const day of daysOfWeek) {
-      const dayData = data[`${day}Selected`] !== false && data[day]
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+      const dayData = data[`${day}Selected`] && data[day]
       // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       if (dayData) {
         workingDays.push({
@@ -76,6 +88,19 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
         })
       }
     }
+    const isCreateSchedule = id === undefined
+    if (isCreateSchedule) {
+      await createSchedule(data, workingDays)
+    } else {
+      await editSchedule(data, workingDays)
+    }
+  }
+
+  const createSchedule = async (
+    data: ScheduleFormData,
+    // eslint-disable-next-line @typescript-eslint/array-type
+    workingDays: { day: string; from: string; to: string }[]
+  ): Promise<void> => {
     return await new Promise((resolve) => {
       createEmployeeScheduleMutation.mutate(
         {
@@ -86,11 +111,40 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
         {
           onSuccess: () => {
             void queryClient
-              .invalidateQueries({ queryKey: ['GET_ALL_EMPLOYEE_SCHEDULE'] })
+              .invalidateQueries({
+                queryKey: ['GET_ALL_EMPLOYEE_SCHEDULE']
+              })
               .then(() => {
                 toast.success('Created new Employee Schedule Successfully')
                 handleReset()
               })
+          },
+          onSettled: () => {
+            resolve()
+          }
+        }
+      )
+    })
+  }
+
+  const editSchedule = async (
+    data: ScheduleFormData,
+    // eslint-disable-next-line @typescript-eslint/array-type
+    workingDays: { day: string; from: string; to: string }[]
+  ): Promise<void> => {
+    return await new Promise((resolve) => {
+      editEmployeeScheduleMutation.mutate(
+        {
+          employeeScheduleId: Number(id),
+          userId: user?.userById.id as number,
+          scheduleName: data.scheduleName,
+          workingDays
+        },
+        {
+          onSuccess: () => {
+            void queryClient.invalidateQueries().then(() => {
+              toast.success('Updated Employee Schedule Successfully')
+            })
           },
           onSettled: () => {
             resolve()
