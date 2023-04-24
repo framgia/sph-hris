@@ -1,7 +1,8 @@
 import React, { FC } from 'react'
+import classNames from 'classnames'
 import { Plus, X } from 'react-feather'
-import Avatar from '~/components/atoms/Avatar'
 
+import Avatar from '~/components/atoms/Avatar'
 import Button from '~/components/atoms/Buttons/Button'
 
 type Props = {
@@ -10,11 +11,20 @@ type Props = {
   closeModal: () => void
   hasAvatar?: boolean
   avatar?: string
+  className?: string | undefined
 }
 
-const ModalHeader: FC<Props> = ({ title, Icon, closeModal, hasAvatar, avatar }): JSX.Element => {
+const ModalHeader: FC<Props> = (props): JSX.Element => {
+  const { title, Icon, closeModal, hasAvatar, avatar, className } = props
+
   return (
-    <header className="flex w-full items-center justify-between border-b border-slate-200 px-5 py-4">
+    <header
+      className={classNames(
+        'flex w-full items-center justify-between',
+        'border-b border-slate-200 px-5 py-4',
+        className
+      )}
+    >
       <div className="flex items-center space-x-2 text-slate-700">
         {hasAvatar === true ? (
           <Avatar src={avatar} size="md" rounded="md" />
@@ -34,7 +44,8 @@ ModalHeader.defaultProps = {
   title: 'Title',
   Icon: Plus,
   hasAvatar: false,
-  avatar: ''
+  avatar: '',
+  className: ''
 }
 
 export default ModalHeader

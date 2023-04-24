@@ -1,6 +1,8 @@
 import { NextPage } from 'next'
+import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import isEmpty from 'lodash/isEmpty'
+import { Users } from 'react-feather'
 import { useRouter } from 'next/router'
 import { toast } from 'react-hot-toast'
 import { PulseLoader } from 'react-spinners'
@@ -14,12 +16,14 @@ import { queryClient } from '~/lib/queryClient'
 import useUserQuery from '~/hooks/useUserQuery'
 import { ScheduleSchema } from '~/utils/validation'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
+import Button from '~/components/atoms/Buttons/Button'
 import FadeInOut from '~/components/templates/FadeInOut'
 import { ScheduleFormData } from '~/utils/types/formValues'
 import DayButton from '~/components/atoms/Buttons/DayButton'
 import useEmployeeSchedule from '~/hooks/useEmployeeSchedule'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
 import ScheduleManagementLayout from '~/components/templates/ScheduleManagementLayout'
+import ViewScheduleMembersModal from '~/components/molecules/ViewScheduleMembersModal'
 
 const ScheduleManagement: NextPage = (): JSX.Element => {
   const router = useRouter()
@@ -29,6 +33,7 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
     handleCreateEmployeeScheduleMutation,
     handleEditEmployeeScheduleMutation
   } = useEmployeeSchedule()
+  const [isOpenViewScheduleMember, setIsOpenViewScheduleMember] = useState<boolean>(false)
   const { data, isLoading } = getEmployeeScheduleQuery(Number(id))
   const EmployeeSchedule = data?.employeeScheduleDetails[0]
   const { handleUserQuery } = useUserQuery()
@@ -90,13 +95,13 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
     }
     const isCreateSchedule = id === undefined
     if (isCreateSchedule) {
-      await createSchedule(data, workingDays)
+      await handleCreateSchedule(data, workingDays)
     } else {
-      await editSchedule(data, workingDays)
+      await handleEditSchedule(data, workingDays)
     }
   }
 
-  const createSchedule = async (
+  const handleCreateSchedule = async (
     data: ScheduleFormData,
     // eslint-disable-next-line @typescript-eslint/array-type
     workingDays: { day: string; from: string; to: string }[]
@@ -115,7 +120,7 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
                 queryKey: ['GET_ALL_EMPLOYEE_SCHEDULE']
               })
               .then(() => {
-                toast.success('Created new Employee Schedule Successfully')
+                toast.success('Added New Schedule Successfully')
                 handleReset()
               })
           },
@@ -127,10 +132,9 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
     })
   }
 
-  const editSchedule = async (
+  const handleEditSchedule = async (
     data: ScheduleFormData,
-    // eslint-disable-next-line @typescript-eslint/array-type
-    workingDays: { day: string; from: string; to: string }[]
+    workingDays: Array<{ day: string; from: string; to: string }>
   ): Promise<void> => {
     return await new Promise((resolve) => {
       editEmployeeScheduleMutation.mutate(
@@ -143,7 +147,7 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
         {
           onSuccess: () => {
             void queryClient.invalidateQueries().then(() => {
-              toast.success('Updated Employee Schedule Successfully')
+              toast.success('Updated Successfully')
             })
           },
           onSettled: () => {
@@ -251,6 +255,9 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
     }
   }
 
+  const handleIsOpenViewScheduleMember = (): void =>
+    setIsOpenViewScheduleMember(!isOpenViewScheduleMember)
+
   return (
     <ScheduleManagementLayout metaTitle="Schedule Management">
       {isLoading && id !== undefined ? (
@@ -259,8 +266,33 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
         </div>
       ) : (
         <FadeInOut className="default-scrollbar overflow-auto p-6 text-slate-800">
-          <header>
+          <header className="flex items-center justify-between">
             <h1 className="font-medium uppercase">{watch('scheduleName') ?? 'New Schedule'}</h1>
+            {!isEmpty(id) && (
+              <>
+                <Tippy content="View all members" placement="left" className="!text-xs">
+                  <Button
+                    type="button"
+                    onClick={handleIsOpenViewScheduleMember}
+                    className={classNames(
+                      'inline-flex items-center space-x-1 border py-0.5 px-1',
+                      'text-slate-500 transition hover:text-slate-600',
+                      'duration-150 ease-in-out'
+                    )}
+                  >
+                    <Users className="h-5 w-5" />
+                    <span className="select-none text-xs font-medium">0</span>
+                  </Button>
+                </Tippy>
+                <ViewScheduleMembersModal
+                  {...{
+                    isOpen: isOpenViewScheduleMember,
+                    closeModal: handleIsOpenViewScheduleMember,
+                    scheduleName: watch('scheduleName')
+                  }}
+                />
+              </>
+            )}
           </header>
           <form
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
