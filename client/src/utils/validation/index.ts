@@ -351,3 +351,16 @@ export const changeShiftRequestSchema = yup.object().shape({
   requested_time_out: yup.string().required().label('Time Out'),
   remarks: yup.string().required().label('Reason')
 })
+
+export const AddScheduleMemberSchema = yup.object().shape({
+  members: yup
+    .array()
+    .min(1, 'At least one member must be selected')
+    .of(
+      yup.object().shape({
+        value: yup.string().required(),
+        label: yup.string().required()
+      })
+    )
+    .required('Member is required')
+})

@@ -2,11 +2,12 @@ import classNames from 'classnames'
 import React, { FC, useState } from 'react'
 import { Coffee, Search, UserPlus } from 'react-feather'
 
-import Input from '~/components/atoms/Input'
-import ModalTemplate from '~/components/templates/ModalTemplate'
-import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
-import { scheduleMembers } from '~/utils/constants/dummyScheduleMembers'
 import MemberList from './MemberList'
+import Input from '~/components/atoms/Input'
+import AddScheduleMembersModal from './AddScheduleMembersModal'
+import ModalTemplate from '~/components/templates/ModalTemplate'
+import { scheduleMembers } from '~/utils/constants/dummyScheduleMembers'
+import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
 
 type Props = {
   isOpen: boolean
@@ -15,7 +16,10 @@ type Props = {
 }
 
 const ViewScheduleMembersModal: FC<Props> = ({ isOpen, closeModal, scheduleName }): JSX.Element => {
+  const [isOpenAddNewSchedule, setIsOpenAddNewSchedule] = useState<boolean>(false)
   const [searchedVal, setSearchedVal] = useState<string>('')
+
+  const handleOpenAddNewScheduleToggle = (): void => setIsOpenAddNewSchedule(!isOpenAddNewSchedule)
 
   return (
     <ModalTemplate
@@ -30,6 +34,7 @@ const ViewScheduleMembersModal: FC<Props> = ({ isOpen, closeModal, scheduleName 
           isOpen,
           closeModal,
           Icon: Coffee,
+          hasBorder: true,
           title: scheduleName
         }}
         className="px-7 py-4"
@@ -53,6 +58,7 @@ const ViewScheduleMembersModal: FC<Props> = ({ isOpen, closeModal, scheduleName 
 
         {/* For Add New Member Button */}
         <section
+          onClick={handleOpenAddNewScheduleToggle}
           className={classNames(
             'flex items-center px-7 py-2 transition',
             'duration-100 ease-in-out hover:bg-slate-100',
@@ -62,7 +68,17 @@ const ViewScheduleMembersModal: FC<Props> = ({ isOpen, closeModal, scheduleName 
           <div className="rounded border border-amber-100 bg-amber-50 p-2">
             <UserPlus className="h-5 w-5 stroke-1 text-amber-500" />
           </div>
-          <span className="text-sm font-medium text-slate-800">Add member</span>
+          <span className="select-none text-sm font-medium text-slate-800">Add member</span>
+
+          {/* Modal FOr Adding New Schedule Members */}
+          {isOpenAddNewSchedule && (
+            <AddScheduleMembersModal
+              {...{
+                isOpen: isOpenAddNewSchedule,
+                closeModal: handleOpenAddNewScheduleToggle
+              }}
+            />
+          )}
         </section>
 
         <div

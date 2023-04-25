@@ -12,16 +12,17 @@ type Props = {
   hasAvatar?: boolean
   avatar?: string
   className?: string | undefined
+  hasBorder?: boolean
 }
 
 const ModalHeader: FC<Props> = (props): JSX.Element => {
-  const { title, Icon, closeModal, hasAvatar, avatar, className } = props
+  const { title, Icon, closeModal, hasAvatar, avatar, className, hasBorder } = props
 
   return (
     <header
       className={classNames(
-        'flex w-full items-center justify-between',
-        'border-b border-slate-200 px-5 py-4',
+        'flex w-full items-center justify-between border-b px-5 py-4 ',
+        hasBorder === true ? 'border-slate-200' : 'border-transparent',
         className
       )}
     >
@@ -45,7 +46,8 @@ ModalHeader.defaultProps = {
   Icon: Plus,
   hasAvatar: false,
   avatar: '',
-  className: ''
+  className: '',
+  hasBorder: true
 }
 
 export default ModalHeader

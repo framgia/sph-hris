@@ -194,3 +194,7 @@ export type changeShiftRequestFormValues = {
   requested_time_out: string
   remarks: string
 }
+
+export type AddScheduleMemberFormValues = {
+  members: ReactSelectOption[]
+}
