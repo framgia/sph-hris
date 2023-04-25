@@ -8,14 +8,21 @@ import AddScheduleMembersModal from './AddScheduleMembersModal'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import { scheduleMembers } from '~/utils/constants/dummyScheduleMembers'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
+import { IScheduleMember } from '~/utils/interfaces/scheduleMemberInterface'
 
 type Props = {
   isOpen: boolean
   closeModal: () => void
   scheduleName: string
+  scheduleMembers: IScheduleMember[] | undefined
 }
 
-const ViewScheduleMembersModal: FC<Props> = ({ isOpen, closeModal, scheduleName }): JSX.Element => {
+const ViewScheduleMembersModal: FC<Props> = ({
+  isOpen,
+  closeModal,
+  scheduleName,
+  scheduleMembers
+}): JSX.Element => {
   const [isOpenAddNewSchedule, setIsOpenAddNewSchedule] = useState<boolean>(false)
   const [searchedVal, setSearchedVal] = useState<string>('')
 
@@ -97,6 +104,11 @@ const ViewScheduleMembersModal: FC<Props> = ({ isOpen, closeModal, scheduleName 
             ?.map((member) => (
               <MemberList key={member.id} {...{ member }} />
             ))}
+          {(scheduleMembers === undefined || scheduleMembers?.length <= 0) && (
+            <span className="absolute inset-x-0 left-0 right-0 w-full w-full flex-1 py-2 text-center font-medium text-slate-500">
+              No Data Available
+            </span>
+          )}
         </div>
       </main>
     </ModalTemplate>

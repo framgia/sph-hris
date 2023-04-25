@@ -22,3 +22,17 @@ export const GET_EMPLOYEE_SCHEDULE = gql`
     }
   }
 `
+
+export const GET_EMPLOYEES_BY_SCHEDULE = gql`
+  query ($employeeScheduleId: Int!) {
+    employeesBySchedule(employeeScheduleId: $employeeScheduleId) {
+      id
+      name
+      avatarLink
+      position {
+        name
+      }
+      isOnline
+    }
+  }
+`

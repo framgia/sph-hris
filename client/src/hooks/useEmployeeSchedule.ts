@@ -4,7 +4,8 @@ import { useMutation, useQuery, UseQueryResult, UseMutationResult } from '@tanst
 import { client } from '~/utils/shared/client'
 import {
   GET_ALL_EMPLOYEE_SCHEDULE,
-  GET_EMPLOYEE_SCHEDULE
+  GET_EMPLOYEE_SCHEDULE,
+  GET_EMPLOYEES_BY_SCHEDULE
 } from '~/graphql/queries/employeeSchedule'
 
 import {
@@ -17,6 +18,7 @@ import {
   ICreateEmployeeScheduleRequestInput,
   IEditEmployeeScheduleRequestInput
 } from '~/utils/types/employeeScheduleTypes'
+import { IScheduleMember } from '~/utils/interfaces/scheduleMemberInterface'
 
 type GetAllEmployeeScheduleFuncReturnType = UseQueryResult<
   { allEmployeeScheduleDetails: IGetAllEmployeeSchedule[] },
@@ -42,11 +44,17 @@ type EditEmployeeScheduleMutationType = UseMutationResult<
   unknown
 >
 
+type GetEmployeesByScheduleFuncReturnType = UseQueryResult<
+  { employeesBySchedule: IScheduleMember[] },
+  unknown
+>
+
 type HookReturnType = {
   getAllEmployeeScheduleQuery: () => GetAllEmployeeScheduleFuncReturnType
   handleCreateEmployeeScheduleMutation: () => CreateEmployeeScheduleMutationType
   handleEditEmployeeScheduleMutation: () => EditEmployeeScheduleMutationType
   getEmployeeScheduleQuery: (employeeScheduleId: number) => GetEmployeeScheduleFuncReturnType
+  getEmployeesByScheduleQuery: (employeeScheduleId: number) => GetEmployeesByScheduleFuncReturnType
 }
 
 const useEmployeeSchedule = (): HookReturnType => {
@@ -89,11 +97,22 @@ const useEmployeeSchedule = (): HookReturnType => {
       }
     })
 
+  const getEmployeesByScheduleQuery = (
+    employeeScheduleId: number
+  ): GetEmployeesByScheduleFuncReturnType =>
+    useQuery({
+      queryKey: ['GET_EMPLOYEES_BY_SCHEDULE', employeeScheduleId],
+      queryFn: async () => await client.request(GET_EMPLOYEES_BY_SCHEDULE, { employeeScheduleId }),
+      select: (data: { employeesBySchedule: IScheduleMember[] }) => data,
+      enabled: !isNaN(employeeScheduleId)
+    })
+
   return {
     getEmployeeScheduleQuery,
     getAllEmployeeScheduleQuery,
     handleEditEmployeeScheduleMutation,
-    handleCreateEmployeeScheduleMutation
+    handleCreateEmployeeScheduleMutation,
+    getEmployeesByScheduleQuery
   }
 }
 
