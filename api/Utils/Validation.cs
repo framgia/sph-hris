@@ -607,7 +607,6 @@ namespace api.Utils
 
             foreach (int employeeId in request.EmployeeIds)
             {
-
                 // Check if employee exists
                 if (!checkUserExist(employeeId))
                     errors.Add(buildError(nameof(employeeId), InputValidationMessageEnum.INVALID_EMPLOYEE));

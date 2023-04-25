@@ -110,13 +110,10 @@ namespace api.Services
         {
             // Validate input request
             AddMemberInputValidation(request, context);
-            foreach (int employeeId in request.EmployeeIds)
-            {
-                var user = await context.Users.FindAsync(employeeId);
+            var users = context.Users.Where(u => request.EmployeeIds.Contains(u.Id)).ToList();
 
-                // Update employee schedule
-                AddEmployeeToSchedule(user!, request);
-            }
+            // Update employee schedule
+            AddEmployeeToSchedule(users, request);
 
             try
             {
@@ -132,9 +129,9 @@ namespace api.Services
             return SuccessMessageEnum.EMPLOYEE_ADDED;
         }
 
-        private static void AddEmployeeToSchedule(User user, AddMemberToScheduleRequest request)
+        private static void AddEmployeeToSchedule(List<User> users, AddMemberToScheduleRequest request)
         {
-            user.EmployeeScheduleId = request.ScheduleId;
+            users.ForEach(c => c.EmployeeScheduleId = request.ScheduleId);
         }
 
         private void AddMemberInputValidation(AddMemberToScheduleRequest request, HrisContext context)
