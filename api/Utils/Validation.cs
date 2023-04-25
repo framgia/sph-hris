@@ -482,7 +482,7 @@ namespace api.Utils
         {
             var errors = new List<IError>();
 
-            if (!CheckUserRole(request.UserId))
+            if (!CheckHrRole(request.UserId))
                 errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_HR_ADMIN));
 
             if (string.IsNullOrEmpty(request.ScheduleName))
@@ -521,7 +521,7 @@ namespace api.Utils
             return workingDay == null;
         }
 
-        private bool CheckUserRole(int userId)
+        private bool CheckHrRole(int userId)
         {
             using HrisContext context = _contextFactory.CreateDbContext();
             var user = context.Users.Include(x => x.Role).Where(x => x.Id == userId).FirstOrDefault();
@@ -547,7 +547,7 @@ namespace api.Utils
         {
             var errors = new List<IError>();
 
-            if (!CheckUserRole(request.UserId))
+            if (!CheckHrRole(request.UserId))
                 errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_HR_ADMIN));
 
             if (string.IsNullOrEmpty(request.ScheduleName))
@@ -576,6 +576,47 @@ namespace api.Utils
                 if (string.IsNullOrEmpty(workingDay.To))
                 {
                     errors.Add(buildError(nameof(workingDay.To), InputValidationMessageEnum.INVALID_END_TIME));
+                }
+            }
+            return errors;
+        }
+
+        private static bool CheckEmployeeWithinSchedule(int employeeId, int scheduleId, HrisContext context)
+        {
+            var employee = context.Users.Where(x => x.Id == employeeId).FirstOrDefault();
+            if (!CheckUserExist(employeeId, context)) return false;
+            return employee!.EmployeeScheduleId == scheduleId;
+        }
+
+        private static bool CheckUserExist(int id, HrisContext context)
+        {
+            var user = context.Users.Find(id);
+            return user != null;
+        }
+
+        internal List<IError> CheckAddMemberRequestInput(AddMemberToScheduleRequest request, HrisContext context)
+        {
+            var errors = new List<IError>();
+            // Check HR role
+            if (!CheckHrRole(request.UserId))
+                errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_HR_ADMIN));
+
+            // Check Schedule exists
+            if (CheckScheduleExist(request.ScheduleId))
+                errors.Add(buildError(nameof(request.ScheduleId), InputValidationMessageEnum.INVALID_SCHEDULE_ID));
+
+            foreach (int employeeId in request.EmployeeIds)
+            {
+
+                // Check if employee exists
+                if (!checkUserExist(employeeId))
+                    errors.Add(buildError(nameof(employeeId), InputValidationMessageEnum.INVALID_EMPLOYEE));
+
+                // Check if the employee already in the schedule
+                if (CheckEmployeeWithinSchedule(employeeId, request.ScheduleId, context))
+                {
+                    User? user = context.Users.Find(employeeId);
+                    errors.Add(buildError(nameof(request.ScheduleId), user!.Name + InputValidationMessageEnum.DUPLICATE_EMPLOYEE));
                 }
             }
 

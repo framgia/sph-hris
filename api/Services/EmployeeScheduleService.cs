@@ -106,6 +106,46 @@ namespace api.Services
             return SuccessMessageEnum.SCHEDULE_UPDATED;
         }
 
+        public async Task<string> AddMembersToSchedule(AddMemberToScheduleRequest request, HrisContext context)
+        {
+            // Validate input request
+            AddMemberInputValidation(request, context);
+            foreach (int employeeId in request.EmployeeIds)
+            {
+                var user = await context.Users.FindAsync(employeeId);
+
+                // Update employee schedule
+                AddEmployeeToSchedule(user!, request);
+            }
+
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch
+            {
+                throw new GraphQLException(ErrorBuilder.New()
+                                    .SetMessage(ErrorMessageEnum.FAILED_ADDING_USER_TO_SCHEDULE)
+                                    .Build());
+            }
+
+            return SuccessMessageEnum.EMPLOYEE_ADDED;
+        }
+
+        private static void AddEmployeeToSchedule(User user, AddMemberToScheduleRequest request)
+        {
+            user.EmployeeScheduleId = request.ScheduleId;
+        }
+
+        private void AddMemberInputValidation(AddMemberToScheduleRequest request, HrisContext context)
+        {
+            var errors = _customInputValidation.CheckAddMemberRequestInput(request, context);
+            if (errors.Count > 0)
+            {
+                throw new GraphQLException(errors);
+            }
+        }
+
         private static async Task<EmployeeSchedule> GetEmployeeSchedule(int employeeScheduleId, HrisContext context)
         {
             var employeeSchedule = await context.EmployeeSchedules.FindAsync(employeeScheduleId);
