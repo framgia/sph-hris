@@ -12,11 +12,13 @@ namespace api.Services
     {
         private readonly IDbContextFactory<HrisContext> _contextFactory = default!;
         private readonly CustomInputValidation _customInputValidation;
+        private readonly HttpContextService _httpService;
 
-        public EmployeeScheduleService(IDbContextFactory<HrisContext> contextFactory)
+        public EmployeeScheduleService(IDbContextFactory<HrisContext> contextFactory, IHttpContextAccessor accessor)
         {
             _contextFactory = contextFactory;
             _customInputValidation = new CustomInputValidation(_contextFactory);
+            _httpService = new HttpContextService(accessor);
         }
         public async Task<List<EmployeeScheduleDTO>> GetAllEmployeeScheduleDetails()
         {
@@ -144,6 +146,22 @@ namespace api.Services
             {
                 throw new GraphQLException(errors);
             }
+        }
+
+        public async Task<List<UserDTO>> GetEmployeesBySchedule(int employeeScheduleId)
+        {
+            var domain = _httpService.getDomainURL();
+            using HrisContext context = _contextFactory.CreateDbContext();
+
+            return await context.Users
+                .Include(i => i.Role)
+                .Include(i => i.Position)
+                .Include(i => i.EmployeeSchedule)
+                .Include(i => i.ProfileImage)
+                .Include(i => i.Position)
+                .Where(x => x.EmployeeScheduleId == employeeScheduleId)
+                .Select(x => new UserDTO(x, domain))
+                .ToListAsync();
         }
     }
 }

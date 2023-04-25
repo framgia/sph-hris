@@ -21,5 +21,10 @@ namespace api.Schema.Queries
         {
             return await _employeeScheduleService.GetEmployeeScheduleDetails(employeeScheduleId);
         }
+
+        public async Task<List<UserDTO>> GetEmployeesBySchedule(int employeeScheduleId)
+        {
+            return await _employeeScheduleService.GetEmployeesBySchedule(employeeScheduleId);
+        }
     }
 }
