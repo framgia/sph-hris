@@ -17,7 +17,7 @@ namespace api.DTOs
             EmployeeSchedule = user.EmployeeSchedule;
             Role = user.Role;
             Position = user.Position;
-            TimeEntry = checkLatestTimeEntry(user);
+            TimeEntry = user.TimeEntries != null ? checkLatestTimeEntry(user) : null;
             AvatarLink = $"{domain}/media/{user.ProfileImage?.CollectionName}/{user.ProfileImage?.FileName}";
             Position = user.Position;
         }
