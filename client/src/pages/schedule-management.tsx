@@ -120,7 +120,7 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
                 queryKey: ['GET_ALL_EMPLOYEE_SCHEDULE']
               })
               .then(() => {
-                toast.success('Added New Schedule Successfully')
+                toast.success('The schedule has been added successfully!')
                 handleReset()
               })
           },
@@ -147,7 +147,7 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
         {
           onSuccess: () => {
             void queryClient.invalidateQueries().then(() => {
-              toast.success('Updated Successfully')
+              toast.success('The schedule has been updated successfully!')
             })
           },
           onSettled: () => {
