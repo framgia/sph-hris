@@ -281,7 +281,9 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
                     )}
                   >
                     <Users className="h-5 w-5" />
-                    <span className="select-none text-xs font-medium">0</span>
+                    <span className="select-none text-xs font-medium">
+                      {EmployeeSchedule?.memberCount}
+                    </span>
                   </Button>
                 </Tippy>
                 <ViewScheduleMembersModal
