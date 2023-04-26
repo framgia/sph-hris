@@ -41,5 +41,22 @@ namespace api.Schema.Mutations
                 throw;
             }
         }
+
+        public async Task<string> AddMembersToSchedule([Service] IDbContextFactory<HrisContext> contextFactory, [Service] EmployeeScheduleService _employeeSchedueleService, AddMemberToScheduleRequest request)
+        {
+            using HrisContext context = contextFactory.CreateDbContext();
+            try
+            {
+                using var transaction = context.Database.BeginTransaction();
+                var addMemberToSchedule = await _employeeSchedueleService.AddMembersToSchedule(request, context);
+
+                transaction.Commit();
+                return addMemberToSchedule;
+            }
+            catch (GraphQLException)
+            {
+                throw;
+            }
+        }
     }
 }

@@ -3,7 +3,9 @@ namespace api.Enums
     public class InputValidationMessageEnum
     {
         public const string ALREADY_USED_ESL_OFFSET = "Already used ESL Offset ID";
+        public const string INVALID_USER_ID = "Invalid user ID";
         public const string INVALID_USER = "User doesn't exist";
+        public const string INVALID_EMPLOYEE = "Employee doesn't exist";
         public const string INVALID_MANAGER = "Manager doesn't exist";
         public const string INVALID_PROJECT_LEADER = "Project Leader doesn't exist";
         public const string INVALID_TEAM_LEADER = "Invalid Team Leader";
@@ -32,5 +34,6 @@ namespace api.Enums
         public const string MISMATCH_MANAGER = "Manager doesn't match";
         public const string DUPLICATE_REQUEST = "There's already an existing request!";
         public const string DUPLICATE_SCHEDULE_NAME = "Schedule name already exists!";
+        public const string DUPLICATE_EMPLOYEE = " is already in the schedule!";
     }
 }
