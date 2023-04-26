@@ -215,15 +215,17 @@ namespace api.Services
         public async Task<string> Delete(DeleteEmployeeScheduleRequest request, HrisContext context)
         {
             ValidateDeleteRequest(request);
-            var employeeScheduleId = await context.EmployeeSchedules.Where(x => x.Id == request.EmployeeScheduleId).FirstAsync();
+            var employeeSchedule = await context.EmployeeSchedules.Where(x => x.Id == request.EmployeeScheduleId).FirstAsync();
             var ifHasEmployee = await context.Users.Where(x => x.EmployeeScheduleId == request.EmployeeScheduleId).FirstOrDefaultAsync();
             if (ifHasEmployee == null)
             {
-                context.EmployeeSchedules.Remove(employeeScheduleId);
+                context.EmployeeSchedules.Remove(employeeSchedule);
             }
             else
             {
-                return ErrorMessageEnum.FAILED_SCHEDULE_DELETE_USER;
+                throw new GraphQLException(ErrorBuilder.New()
+                    .SetMessage(ErrorMessageEnum.FAILED_SCHEDULE_DELETE_USER)
+                    .Build());
             }
             try
             {
