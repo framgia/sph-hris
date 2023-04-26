@@ -26,6 +26,7 @@ namespace api.Services
 
             return await context.EmployeeSchedules
                 .Include(x => x.WorkingDayTimes)
+                .Include(x => x.Users)
                 .Select(x => new EmployeeScheduleDTO(x))
                 .ToListAsync();
         }
@@ -36,6 +37,7 @@ namespace api.Services
 
             return await context.EmployeeSchedules
                 .Include(x => x.WorkingDayTimes)
+                .Include(x => x.Users)
                 .Where(x => x.Id == employeeScheduleId)
                 .Select(x => new EmployeeScheduleDTO(x))
                 .ToListAsync();

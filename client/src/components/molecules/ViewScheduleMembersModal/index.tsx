@@ -1,12 +1,14 @@
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
 import React, { FC, useState } from 'react'
+import { PulseLoader } from 'react-spinners'
 import { Coffee, Search, UserPlus } from 'react-feather'
 
 import MemberList from './MemberList'
 import Input from '~/components/atoms/Input'
+import useEmployeeSchedule from '~/hooks/useEmployeeSchedule'
 import AddScheduleMembersModal from './AddScheduleMembersModal'
 import ModalTemplate from '~/components/templates/ModalTemplate'
-import { scheduleMembers } from '~/utils/constants/dummyScheduleMembers'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
 import { IScheduleMember } from '~/utils/interfaces/scheduleMemberInterface'
 
@@ -14,17 +16,25 @@ type Props = {
   isOpen: boolean
   closeModal: () => void
   scheduleName: string
-  scheduleMembers: IScheduleMember[] | undefined
 }
 
-const ViewScheduleMembersModal: FC<Props> = ({
-  isOpen,
-  closeModal,
-  scheduleName,
-  scheduleMembers
-}): JSX.Element => {
+const ViewScheduleMembersModal: FC<Props> = (props): JSX.Element => {
+  const { isOpen, closeModal, scheduleName } = props
   const [isOpenAddNewSchedule, setIsOpenAddNewSchedule] = useState<boolean>(false)
   const [searchedVal, setSearchedVal] = useState<string>('')
+  const router = useRouter()
+  const { id } = router.query
+
+  const { getEmployeesByScheduleQuery } = useEmployeeSchedule()
+  const { data, isLoading } = getEmployeesByScheduleQuery(Number(id), isOpen)
+  const scheduleMembers = data?.employeesBySchedule
+
+  const filterMembers = (member: IScheduleMember, searchedVal: string): boolean => {
+    if (searchedVal.length === 0) {
+      return true
+    }
+    return member.name.toString().toLowerCase().includes(searchedVal.toString().toLowerCase())
+  }
 
   const handleOpenAddNewScheduleToggle = (): void => setIsOpenAddNewSchedule(!isOpenAddNewSchedule)
 
@@ -95,19 +105,22 @@ const ViewScheduleMembersModal: FC<Props> = ({
           )}
         >
           {/* List of all Members */}
-          {scheduleMembers
-            ?.filter(
-              (row) =>
-                searchedVal?.length === 0 ||
-                row?.name.toString().toLowerCase().includes(searchedVal.toString().toLowerCase())
-            )
-            ?.map((member) => (
-              <MemberList key={member.id} {...{ member }} />
-            ))}
-          {(scheduleMembers === undefined || scheduleMembers?.length <= 0) && (
-            <span className="absolute inset-x-0 left-0 right-0 w-full w-full flex-1 py-2 text-center font-medium text-slate-500">
-              No Data Available
-            </span>
+          {!isLoading ? (
+            <>
+              {scheduleMembers === undefined || scheduleMembers?.length <= 0 ? (
+                <span className="absolute inset-x-0 left-0 right-0 w-full w-full flex-1 py-2 text-center font-medium text-slate-500">
+                  No Data Available
+                </span>
+              ) : (
+                scheduleMembers
+                  ?.filter((row) => filterMembers(row, searchedVal))
+                  ?.map((member) => <MemberList key={member.id} {...{ member }} />)
+              )}
+            </>
+          ) : (
+            <div className="flex min-h-[20vh] items-center justify-center">
+              <PulseLoader color="#ffb40b" size={10} />
+            </div>
           )}
         </div>
       </main>

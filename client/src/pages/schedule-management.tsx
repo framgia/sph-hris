@@ -30,7 +30,6 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
   const { id } = router.query
   const {
     getEmployeeScheduleQuery,
-    getEmployeesByScheduleQuery,
     handleCreateEmployeeScheduleMutation,
     handleEditEmployeeScheduleMutation
   } = useEmployeeSchedule()
@@ -41,8 +40,6 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
   const { data: user } = handleUserQuery()
   const createEmployeeScheduleMutation = handleCreateEmployeeScheduleMutation()
   const editEmployeeScheduleMutation = handleEditEmployeeScheduleMutation()
-  const { data: scheduleMembers, isLoading: isLoadingScheduleMembers } =
-    getEmployeesByScheduleQuery(Number(id))
   const [errorMessage, setErrorMessage] = useState<string>('')
   const {
     reset,
@@ -263,7 +260,7 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
 
   return (
     <ScheduleManagementLayout metaTitle="Schedule Management">
-      {isLoading && isLoadingScheduleMembers && id !== undefined ? (
+      {isLoading && id !== undefined ? (
         <div className="flex min-h-[50vh] items-center justify-center">
           <PulseLoader color="#ffb40b" size={10} />
         </div>
@@ -285,7 +282,7 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
                   >
                     <Users className="h-5 w-5" />
                     <span className="select-none text-xs font-medium">
-                      {scheduleMembers?.employeesBySchedule.length}
+                      {EmployeeSchedule?.memberCount}
                     </span>
                   </Button>
                 </Tippy>
@@ -293,8 +290,7 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
                   {...{
                     isOpen: isOpenViewScheduleMember,
                     closeModal: handleIsOpenViewScheduleMember,
-                    scheduleName: watch('scheduleName'),
-                    scheduleMembers: scheduleMembers?.employeesBySchedule
+                    scheduleName: watch('scheduleName')
                   }}
                 />
               </>

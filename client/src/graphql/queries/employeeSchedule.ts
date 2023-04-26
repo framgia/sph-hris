@@ -19,6 +19,7 @@ export const GET_EMPLOYEE_SCHEDULE = gql`
         timeIn
         timeOut
       }
+      memberCount
     }
   }
 `

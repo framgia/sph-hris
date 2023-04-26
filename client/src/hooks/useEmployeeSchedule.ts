@@ -54,7 +54,10 @@ type HookReturnType = {
   handleCreateEmployeeScheduleMutation: () => CreateEmployeeScheduleMutationType
   handleEditEmployeeScheduleMutation: () => EditEmployeeScheduleMutationType
   getEmployeeScheduleQuery: (employeeScheduleId: number) => GetEmployeeScheduleFuncReturnType
-  getEmployeesByScheduleQuery: (employeeScheduleId: number) => GetEmployeesByScheduleFuncReturnType
+  getEmployeesByScheduleQuery: (
+    employeeScheduleId: number,
+    isOpen: boolean
+  ) => GetEmployeesByScheduleFuncReturnType
 }
 
 const useEmployeeSchedule = (): HookReturnType => {
@@ -98,13 +101,14 @@ const useEmployeeSchedule = (): HookReturnType => {
     })
 
   const getEmployeesByScheduleQuery = (
-    employeeScheduleId: number
+    employeeScheduleId: number,
+    isOpen: boolean
   ): GetEmployeesByScheduleFuncReturnType =>
     useQuery({
       queryKey: ['GET_EMPLOYEES_BY_SCHEDULE', employeeScheduleId],
       queryFn: async () => await client.request(GET_EMPLOYEES_BY_SCHEDULE, { employeeScheduleId }),
       select: (data: { employeesBySchedule: IScheduleMember[] }) => data,
-      enabled: !isNaN(employeeScheduleId)
+      enabled: !isNaN(employeeScheduleId) && isOpen
     })
 
   return {

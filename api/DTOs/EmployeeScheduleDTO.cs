@@ -8,12 +8,14 @@ namespace api.DTOs
         public new int? Id { get; set; }
         public string? ScheduleName { get; set; }
         public ICollection<Day> Days { get; set; }
+        public int MemberCount { get; set; }
 
         public EmployeeScheduleDTO(EmployeeSchedule employeeSchedule)
         {
             Id = employeeSchedule.Id;
             ScheduleName = employeeSchedule.Name;
             Days = new List<Day>();
+            MemberCount = employeeSchedule.Users.Count();
             if (employeeSchedule.WorkingDayTimes is not null)
             {
                 string[]? DaysOfTheWeek = { DaysOfTheWeekEnum.MONDAY, DaysOfTheWeekEnum.TUESDAY, DaysOfTheWeekEnum.WEDNESDAY, DaysOfTheWeekEnum.THURSDAY, DaysOfTheWeekEnum.FRIDAY, DaysOfTheWeekEnum.SATURDAY, DaysOfTheWeekEnum.SUNDAY };

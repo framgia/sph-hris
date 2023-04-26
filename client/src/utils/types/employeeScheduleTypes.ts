@@ -12,6 +12,7 @@ export interface IGetEmployeeSchedule {
     timeOut: string
   }[]
   scheduleName: string
+  memberCount: number
 }
 
 export interface ICreateEmployeeScheduleRequestInput {
