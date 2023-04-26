@@ -12,6 +12,7 @@ export const GET_ALL_EMPLOYEE_SCHEDULE = gql`
 export const GET_EMPLOYEE_SCHEDULE = gql`
   query ($employeeScheduleId: Int!) {
     employeeScheduleDetails(employeeScheduleId: $employeeScheduleId) {
+      id
       scheduleName
       days {
         isDaySelected

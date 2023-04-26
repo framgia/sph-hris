@@ -5,7 +5,6 @@ import isEmpty from 'lodash/isEmpty'
 import { Users } from 'react-feather'
 import { useRouter } from 'next/router'
 import { toast } from 'react-hot-toast'
-import { PulseLoader } from 'react-spinners'
 import React, { useEffect, useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -260,10 +259,8 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
 
   return (
     <ScheduleManagementLayout metaTitle="Schedule Management">
-      {isLoading && id !== undefined ? (
-        <div className="flex min-h-[50vh] items-center justify-center">
-          <PulseLoader color="#ffb40b" size={10} />
-        </div>
+      {isLoading && !isEmpty(id) ? (
+        <CustomSkeletonLoading />
       ) : (
         <FadeInOut className="default-scrollbar overflow-auto p-6 text-slate-800">
           <header className="flex items-center justify-between">
@@ -773,6 +770,50 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
         </FadeInOut>
       )}
     </ScheduleManagementLayout>
+  )
+}
+
+const CustomSkeletonLoading = (): JSX.Element => {
+  const skeletonItems = [1, 2, 3, 4, 5, 6, 7]
+  return (
+    <div className="min-h-[50vh] p-6">
+      <div className="flex animate-pulse items-center justify-between px-4">
+        <div className="h-4 w-20 rounded bg-slate-200/70"></div>
+        <div className="h-4 w-12 rounded bg-slate-200/70"></div>
+      </div>
+      <div className="mx-auto mt-8 flex w-full max-w-lg flex-col space-y-5">
+        <div
+          className="flex h-5 w-[80%] animate-pulse rounded bg-slate-200/70"
+          style={{ animationFillMode: 'backwards', animationDelay: '200ms' }}
+        ></div>
+        <div
+          className="flex animate-pulse items-center space-x-6"
+          style={{ animationFillMode: 'backwards', animationDelay: '350ms' }}
+        >
+          {skeletonItems.map((_, index) => (
+            <div key={index} className="h-12 w-12 rounded-full bg-slate-200/70"></div>
+          ))}
+        </div>
+        <div
+          className="animate-pulse space-y-6"
+          style={{ animationFillMode: 'backwards', animationDelay: '550ms' }}
+        >
+          {skeletonItems.map((_, index) => (
+            <div key={index} className="flex justify-start space-x-8">
+              <div className="h-4 w-28 rounded bg-slate-200/70"></div>
+              <div className="h-4 w-28 rounded bg-slate-200/70"></div>
+            </div>
+          ))}
+        </div>
+        <div
+          className="flex animate-pulse justify-end space-x-5 "
+          style={{ animationFillMode: 'backwards', animationDelay: '750ms' }}
+        >
+          <div className="h-4 w-20 rounded bg-slate-200/70"></div>
+          <div className="h-4 w-20 rounded bg-slate-200/70"></div>
+        </div>
+      </div>
+    </div>
   )
 }
 

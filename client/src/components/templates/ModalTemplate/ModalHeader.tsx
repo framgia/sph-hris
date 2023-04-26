@@ -26,9 +26,9 @@ const ModalHeader: FC<Props> = (props): JSX.Element => {
         className
       )}
     >
-      <div className="flex items-center space-x-2 text-slate-700">
+      <div className="flex items-start space-x-2 text-slate-700">
         {hasAvatar === true ? (
-          <Avatar src={avatar} size="md" rounded="md" />
+          <Avatar src={avatar} size="md" rounded="md" className="flex-shrink-0" />
         ) : (
           <Icon className="h-5 w-5 text-slate-600" />
         )}
