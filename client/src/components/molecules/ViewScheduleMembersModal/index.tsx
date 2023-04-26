@@ -40,13 +40,13 @@ const ViewScheduleMembersModal: FC<Props> = (props): JSX.Element => {
   }
 
   const NoDataAvailable = (): JSX.Element => (
-    <span className="absolute inset-x-0 left-0 right-0 w-full w-full flex-1 py-2 text-center font-medium text-slate-500">
+    <span className="absolute inset-x-0 left-0 right-0 w-full flex-1 py-2 text-center text-xs text-slate-400">
       No Data Available
     </span>
   )
 
   const FetchError = (): JSX.Element => (
-    <span className="absolute inset-x-0 left-0 right-0 w-full w-full flex-1 bg-red-50 py-2 text-center font-medium text-red-500">
+    <span className="absolute inset-x-0 left-0 right-0 w-full flex-1 bg-red-50 py-2 text-center text-xs text-red-500">
       Error Fetching Data
     </span>
   )

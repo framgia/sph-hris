@@ -364,3 +364,7 @@ export const AddScheduleMemberSchema = yup.object().shape({
     )
     .required('Member is required')
 })
+
+export const ReassignScheduleSchema = yup.object().shape({
+  schedule: SelectSchema.label('Schedule')
+})
