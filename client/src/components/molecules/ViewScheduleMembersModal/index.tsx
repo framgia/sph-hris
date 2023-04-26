@@ -6,6 +6,7 @@ import { Coffee, Search, UserPlus } from 'react-feather'
 
 import MemberList from './MemberList'
 import Input from '~/components/atoms/Input'
+import { FetchStatus } from '~/utils/constants/fetchStatus'
 import useEmployeeSchedule from '~/hooks/useEmployeeSchedule'
 import AddScheduleMembersModal from './AddScheduleMembersModal'
 import ModalTemplate from '~/components/templates/ModalTemplate'
@@ -26,15 +27,35 @@ const ViewScheduleMembersModal: FC<Props> = (props): JSX.Element => {
   const { id } = router.query
 
   const { getEmployeesByScheduleQuery } = useEmployeeSchedule()
-  const { data, isLoading } = getEmployeesByScheduleQuery(Number(id), isOpen)
+  const { data, isLoading, isError, fetchStatus } = getEmployeesByScheduleQuery(Number(id), isOpen)
   const scheduleMembers = data?.employeesBySchedule
 
   const filterMembers = (member: IScheduleMember, searchedVal: string): boolean => {
     if (searchedVal.length === 0) {
       return true
     }
-    return member.name.toString().toLowerCase().includes(searchedVal.toString().toLowerCase())
+    const lowerCaseSearchedVal = String(searchedVal).toLowerCase()
+    const lowerCaseName = member.name.toLowerCase()
+    return lowerCaseName.includes(lowerCaseSearchedVal)
   }
+
+  const NoDataAvailable = (): JSX.Element => (
+    <span className="absolute inset-x-0 left-0 right-0 w-full w-full flex-1 py-2 text-center font-medium text-slate-500">
+      No Data Available
+    </span>
+  )
+
+  const FetchError = (): JSX.Element => (
+    <span className="absolute inset-x-0 left-0 right-0 w-full w-full flex-1 bg-red-50 py-2 text-center font-medium text-red-500">
+      Error Fetching Data
+    </span>
+  )
+
+  const Loading = (): JSX.Element => (
+    <div className="amber-500 flex min-h-[20vh] items-center justify-center">
+      <PulseLoader color="#ffb40b" size={10} />
+    </div>
+  )
 
   const handleOpenAddNewScheduleToggle = (): void => setIsOpenAddNewSchedule(!isOpenAddNewSchedule)
 
@@ -105,12 +126,10 @@ const ViewScheduleMembersModal: FC<Props> = (props): JSX.Element => {
           )}
         >
           {/* List of all Members */}
-          {!isLoading ? (
+          {!isLoading && !isError && fetchStatus !== FetchStatus.PAUSED ? (
             <>
               {scheduleMembers === undefined || scheduleMembers?.length <= 0 ? (
-                <span className="absolute inset-x-0 left-0 right-0 w-full w-full flex-1 py-2 text-center font-medium text-slate-500">
-                  No Data Available
-                </span>
+                <NoDataAvailable />
               ) : (
                 scheduleMembers
                   ?.filter((row) => filterMembers(row, searchedVal))
@@ -118,9 +137,7 @@ const ViewScheduleMembersModal: FC<Props> = (props): JSX.Element => {
               )}
             </>
           ) : (
-            <div className="flex min-h-[20vh] items-center justify-center">
-              <PulseLoader color="#ffb40b" size={10} />
-            </div>
+            <>{fetchStatus !== FetchStatus.PAUSED && !isError ? <Loading /> : <FetchError />}</>
           )}
         </div>
       </main>
