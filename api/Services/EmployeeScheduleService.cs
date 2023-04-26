@@ -110,13 +110,14 @@ namespace api.Services
         {
             // Validate input request
             AddMemberInputValidation(request, context);
-            var users = context.Users.Where(u => request.EmployeeIds.Contains(u.Id)).ToList();
-
-            // Update employee schedule
-            AddEmployeeToSchedule(users, request);
 
             try
             {
+                var users = context.Users.Where(u => request.EmployeeIds.Contains(u.Id)).ToList();
+
+                // Update employee schedule
+                AddEmployeeToSchedule(users, request);
+
                 await context.SaveChangesAsync();
             }
             catch
