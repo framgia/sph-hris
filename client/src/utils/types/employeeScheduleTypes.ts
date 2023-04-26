@@ -4,13 +4,13 @@ export interface IGetAllEmployeeSchedule {
 }
 
 export interface IGetEmployeeSchedule {
-  // eslint-disable-next-line @typescript-eslint/array-type
-  days: {
+  id: number
+  days: Array<{
     isDaySelected: boolean
     workingDay: string
     timeIn: string
     timeOut: string
-  }[]
+  }>
   scheduleName: string
   memberCount: number
 }

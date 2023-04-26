@@ -1,10 +1,11 @@
-import React, { FC } from 'react'
 import classNames from 'classnames'
 import { Menu } from '@headlessui/react'
+import React, { FC, useState } from 'react'
 import { CornerDownRight, MoreVertical } from 'react-feather'
 
 import Button from '~/components/atoms/Buttons/Button'
 import MenuTransition from '~/components/templates/MenuTransition'
+import ReassignMemberScheduleModal from './ReassignMemberScheduleModal'
 import { IScheduleMember } from '~/utils/interfaces/scheduleMemberInterface'
 
 type Props = {
@@ -12,6 +13,11 @@ type Props = {
 }
 
 const MemberList: FC<Props> = ({ member }): JSX.Element => {
+  const [isOpenReassignSchedule, setIsOpenReassignSchedule] = useState<boolean>(false)
+
+  const handleReassignScheduleToggle = (): void =>
+    setIsOpenReassignSchedule(!isOpenReassignSchedule)
+
   return (
     <section
       className={classNames(
@@ -61,7 +67,11 @@ const MemberList: FC<Props> = ({ member }): JSX.Element => {
                   )}
                 >
                   <Menu.Item>
-                    <Button className="flex items-center space-x-2 px-3 py-2 text-xs hover:text-slate-700">
+                    <Button
+                      type="button"
+                      onClick={handleReassignScheduleToggle}
+                      className="flex items-center space-x-2 px-3 py-2 text-xs hover:text-slate-700"
+                    >
                       <CornerDownRight className="h-5 w-5 stroke-0.5" aria-hidden="true" />
                       <span className="text-xs">Re-assigned Schedule</span>
                     </Button>
@@ -71,6 +81,17 @@ const MemberList: FC<Props> = ({ member }): JSX.Element => {
             </>
           )}
         </Menu>
+
+        {/* Reassign member schedule modal */}
+        {isOpenReassignSchedule && (
+          <ReassignMemberScheduleModal
+            {...{
+              isOpen: isOpenReassignSchedule,
+              closeModal: handleReassignScheduleToggle,
+              member
+            }}
+          />
+        )}
       </div>
     </section>
   )

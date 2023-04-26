@@ -1,14 +1,17 @@
+import toast from 'react-hot-toast'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
+import { confirmAlert } from 'react-confirm-alert'
 import React, { FC, ReactNode, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Calendar, ChevronDown, Plus } from 'react-feather'
+import { Calendar, ChevronDown, Plus, Trash2 } from 'react-feather'
 
 import Layout from './../Layout'
 import CustomSearch from './CustomSearch'
 import Card from '~/components/atoms/Card'
 import Button from '~/components/atoms/Buttons/Button'
 import useEmployeeSchedule from '~/hooks/useEmployeeSchedule'
+import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import { IGetAllEmployeeSchedule } from '~/utils/types/employeeScheduleTypes'
 
@@ -121,15 +124,57 @@ const ScheduleItem = (item: IGetAllEmployeeSchedule): JSX.Element => {
   const router = useRouter()
   const id = Number(router.query.id)
 
+  const active = item.id === id
+
+  // FOR CONFIRMATION ONLY
+  const handleRemoveConfirmation = (item: IGetAllEmployeeSchedule): void => {
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <Card className="w-full max-w-xs px-8 py-6" shadow-size="xl" rounded="lg">
+            <h1 className="text-center text-xl font-bold">Confirmation</h1>
+            <p className="mt-2 text-sm font-medium">
+              Are you sure you want to delete{' '}
+              <b className="text-amber-500 underline">{item.scheduleName}</b> schedule?
+            </p>
+            <div className="mt-6 flex items-center justify-center space-x-2 text-white">
+              <ButtonAction
+                variant="danger"
+                onClick={() => handleDeleteSchedule(onClose)}
+                className="w-full py-1 px-4"
+              >
+                Yes
+              </ButtonAction>
+              <ButtonAction
+                onClick={onClose}
+                variant="secondary"
+                className="w-full py-1 px-4 text-slate-500"
+              >
+                No
+              </ButtonAction>
+            </div>
+          </Card>
+        )
+      }
+    })
+  }
+
+  // THIS WILL MUTATE THE DELETE ACTION
+  const handleDeleteSchedule = (onClose: () => void): void => {
+    onClose()
+    toast.success('Deleted Successfully!')
+  }
+
   return (
     <li
       className={classNames(
-        'flex w-full cursor-pointer items-center space-x-2 px-4',
-        'select-none py-2 transition duration-75 ease-in-out',
-        'hover:bg-amber-50',
-        item.id === id ? 'bg-amber-50 text-amber-600 hover:text-amber-600' : ''
+        'group flex w-full items-center justify-between',
+        'py-2 px-4 transition duration-75 ease-in-out',
+        'cursor-pointer select-none hover:bg-amber-50',
+        active ? 'bg-amber-50 text-amber-600 hover:text-amber-600' : ''
       )}
-      onClick={() => {
+      onClick={(e) => {
+        e.preventDefault()
         void router.replace({
           pathname: router.pathname,
           query: {
@@ -138,8 +183,15 @@ const ScheduleItem = (item: IGetAllEmployeeSchedule): JSX.Element => {
         })
       }}
     >
-      <Calendar className="h-5 w-5 stroke-1" />
-      <span>{item.scheduleName}</span>
+      <div className="flex items-center space-x-2">
+        <Calendar className="h-5 w-5 stroke-1" />
+        <span>{item.scheduleName}</span>
+      </div>
+      <div className={classNames('group-hover:opacity-100', active ? 'opacity-100' : 'opacity-0 ')}>
+        <Button type="button" onClick={() => handleRemoveConfirmation(item)}>
+          <Trash2 className="h-5 w-5 stroke-1" />
+        </Button>
+      </div>
     </li>
   )
 }

@@ -198,3 +198,7 @@ export type changeShiftRequestFormValues = {
 export type AddScheduleMemberFormValues = {
   members: ReactSelectOption[]
 }
+
+export type ReassigneScheduleFormValues = {
+  schedule: ReactSelectOption
+}
