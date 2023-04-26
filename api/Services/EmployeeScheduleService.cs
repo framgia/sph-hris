@@ -78,7 +78,7 @@ namespace api.Services
             catch
             {
                 throw new GraphQLException(ErrorBuilder.New()
-                                    .SetMessage(ErrorMessageEnum.FAILED_SHCEDULE_CREATION)
+                                    .SetMessage(ErrorMessageEnum.FAILED_SCHEDULE_CREATION)
                                     .Build());
             }
             return SuccessMessageEnum.SCHEDULE_CREATED;
@@ -100,7 +100,7 @@ namespace api.Services
             catch
             {
                 throw new GraphQLException(ErrorBuilder.New()
-                                    .SetMessage(ErrorMessageEnum.FAILED_SHCEDULE_UPDATE)
+                                    .SetMessage(ErrorMessageEnum.FAILED_SCHEDULE_UPDATE)
                                     .Build());
             }
             return SuccessMessageEnum.SCHEDULE_UPDATED;
@@ -188,6 +188,15 @@ namespace api.Services
             }
         }
 
+        private void ValidateDeleteRequest(DeleteEmployeeScheduleRequest request)
+        {
+            var errors = _customInputValidation.CheckDeleteEmployeeScheduleRequestInput(request);
+            if (errors.Count > 0)
+            {
+                throw new GraphQLException(errors);
+            }
+        }
+
         public async Task<List<UserDTO>> GetEmployeesBySchedule(int employeeScheduleId)
         {
             var domain = _httpService.getDomainURL();
@@ -202,6 +211,35 @@ namespace api.Services
                 .Where(x => x.EmployeeScheduleId == employeeScheduleId)
                 .Select(x => new UserDTO(x, domain))
                 .ToListAsync();
+        }
+        public async Task<string> Delete(DeleteEmployeeScheduleRequest request, HrisContext context)
+        {
+            var error = ErrorMessageEnum.FAILED_SCHEDULE_DELETE;
+            try
+            {
+                ValidateDeleteRequest(request);
+                var employeeSchedule = await context.EmployeeSchedules.Where(x => x.Id == request.EmployeeScheduleId).FirstAsync();
+                var ifHasEmployee = await context.Users.Where(x => x.EmployeeScheduleId == request.EmployeeScheduleId).FirstOrDefaultAsync();
+                if (ifHasEmployee == null)
+                {
+                    context.EmployeeSchedules.Remove(employeeSchedule);
+                }
+                else
+                {
+                    error = ErrorMessageEnum.FAILED_SCHEDULE_DELETE_USER;
+                    throw new GraphQLException(ErrorBuilder.New()
+                        .SetMessage(ErrorMessageEnum.FAILED_SCHEDULE_DELETE_USER)
+                        .Build());
+                }
+                await context.SaveChangesAsync();
+            }
+            catch
+            {
+                throw new GraphQLException(ErrorBuilder.New()
+                                    .SetMessage(error)
+                                    .Build());
+            }
+            return SuccessMessageEnum.SCHEDULE_DELETED;
         }
     }
 }

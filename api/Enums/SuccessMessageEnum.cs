@@ -5,5 +5,6 @@ namespace api.Enums
         public const string SCHEDULE_CREATED = "Successfully created a schedule!";
         public const string SCHEDULE_UPDATED = "Successfully updated a schedule!";
         public const string EMPLOYEE_ADDED = "Employee sccessfully added to the schedule!";
+        public const string SCHEDULE_DELETED = "Successfully deleted a schedule!";
     }
 }

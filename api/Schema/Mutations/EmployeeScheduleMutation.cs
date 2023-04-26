@@ -58,5 +58,22 @@ namespace api.Schema.Mutations
                 throw;
             }
         }
+
+        public async Task<string> DeleteEmployeeSchedule([Service] IDbContextFactory<HrisContext> contextFactory, [Service] EmployeeScheduleService _employeeSchedueleService, DeleteEmployeeScheduleRequest request)
+        {
+            using HrisContext context = contextFactory.CreateDbContext();
+            try
+            {
+                using var transaction = context.Database.BeginTransaction();
+                var deletedEmployeeSchedule = await _employeeSchedueleService.Delete(request, context);
+
+                transaction.Commit();
+                return deletedEmployeeSchedule;
+            }
+            catch (GraphQLException)
+            {
+                throw;
+            }
+        }
     }
 }

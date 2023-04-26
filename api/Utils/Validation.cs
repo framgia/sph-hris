@@ -621,5 +621,17 @@ namespace api.Utils
 
             return errors;
         }
+        internal List<IError> CheckDeleteEmployeeScheduleRequestInput(DeleteEmployeeScheduleRequest request)
+        {
+            var errors = new List<IError>();
+
+            if (!CheckHrRole(request.UserId))
+                errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_HR_ADMIN));
+
+            if (CheckScheduleExist(request.EmployeeScheduleId))
+                errors.Add(buildError(nameof(request.EmployeeScheduleId), InputValidationMessageEnum.INVALID_SCHEDULE_ID));
+
+            return errors;
+        }
     }
 }
