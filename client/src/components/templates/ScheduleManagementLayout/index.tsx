@@ -173,14 +173,16 @@ const ScheduleItem = (item: IGetAllEmployeeSchedule): JSX.Element => {
       },
       {
         onSuccess: () => {
-          void queryClient.invalidateQueries()
-        },
-        onSettled: () => {
+          void queryClient.invalidateQueries({
+            queryKey: ['GET_ALL_EMPLOYEE_SCHEDULE']
+          })
           void router.replace({
             pathname: router.pathname
           })
-          onClose()
           toast.success('Deleted Successfully!')
+        },
+        onSettled: () => {
+          onClose()
         }
       }
     )
