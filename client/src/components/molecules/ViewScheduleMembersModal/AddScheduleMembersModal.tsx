@@ -1,5 +1,5 @@
+import router from 'next/router'
 import React, { FC } from 'react'
-import toast from 'react-hot-toast'
 import isEmpty from 'lodash/isEmpty'
 import ReactSelect from 'react-select'
 import { UserPlus } from 'react-feather'
@@ -8,14 +8,17 @@ import makeAnimated from 'react-select/animated'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
+import { User } from '~/utils/types/userTypes'
+import useUserQuery from '~/hooks/useUserQuery'
 import { AddScheduleMemberSchema } from '~/utils/validation'
 import Button from '~/components/atoms/Buttons/ButtonAction'
+import useEmployeeSchedule from '~/hooks/useEmployeeSchedule'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import { AddScheduleMemberFormValues } from '~/utils/types/formValues'
-import { scheduleMembers } from '~/utils/constants/dummyScheduleMembers'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
 import { generateMemberSelect } from '~/utils/helpers/scheduleMemberHelpers'
+import { IAddMemberToScheduleInput } from '~/utils/types/employeeScheduleTypes'
 
 type Props = {
   isOpen: boolean
@@ -25,6 +28,14 @@ type Props = {
 const animatedComponents = makeAnimated()
 
 const AddScheduleMembersModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
+  const { handleAllUsersQuery, handleUserQuery } = useUserQuery()
+  const { handleAddMemberToScheduleMutation } = useEmployeeSchedule()
+  const addMemberToSchedule = handleAddMemberToScheduleMutation()
+  const { data: allUser } = handleAllUsersQuery()
+  const { data: currentUser } = handleUserQuery()
+  const { id: scheduleId } = router.query
+  const currentUserId = currentUser?.userById.id as Number
+
   const {
     control,
     handleSubmit,
@@ -45,12 +56,21 @@ const AddScheduleMembersModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element
   })
 
   const handleSave: SubmitHandler<AddScheduleMemberFormValues> = async (data): Promise<void> => {
+    const employeeIds: Number[] = []
+    data.members.map((x) => employeeIds.push(Number(x.value)))
+
     return await new Promise((resolve) => {
-      setTimeout(() => {
-        closeModal()
-        resolve()
-        toast.success('Added New Member(s) Successfully')
-      }, 2000)
+      const data: IAddMemberToScheduleInput = {
+        userId: Number(currentUserId),
+        employeeIds,
+        scheduleId: Number(scheduleId)
+      }
+      addMemberToSchedule.mutate(data, {
+        onSettled: () => {
+          closeModal()
+          resolve()
+        }
+      })
     })
   }
 
@@ -98,7 +118,11 @@ const AddScheduleMembersModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element
                         : 'border-slate-300'
                   }}
                   value={field.value}
-                  options={generateMemberSelect(scheduleMembers)}
+                  options={generateMemberSelect(
+                    allUser?.allUsers.filter(
+                      (x) => Number(x.employeeScheduleId) !== Number(scheduleId)
+                    ) as User[]
+                  )}
                   styles={customStyles}
                   closeMenuOnSelect={false}
                   onChange={field.onChange}

@@ -15,6 +15,12 @@ export interface IGetEmployeeSchedule {
   memberCount: number
 }
 
+export interface IAddMemberToScheduleInput {
+  employeeIds: Number[]
+  userId: number
+  scheduleId: number
+}
+
 export interface ICreateEmployeeScheduleRequestInput {
   // eslint-disable-next-line @typescript-eslint/array-type
   workingDays: {

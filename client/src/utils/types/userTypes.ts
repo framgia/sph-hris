@@ -1,6 +1,7 @@
 export type User = {
   id: number
   name: string
+  employeeScheduleId: number
   role: Role
   position: Position
   timeEntry: TimeEntry
