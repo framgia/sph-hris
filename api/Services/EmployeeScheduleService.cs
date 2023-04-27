@@ -226,9 +226,9 @@ namespace api.Services
                 .Include(i => i.Position)
                 .Where(x =>
                     x.EmployeeScheduleId == request.employeeScheduleId && (
-                        x.Name!.ToLower().Contains(request.searchKey.ToLower()) ||
-                        x.Email!.ToLower().Contains(request.searchKey.ToLower()) ||
-                        x.Position.Name.ToLower().Contains(request.searchKey.ToLower())
+                        x.Name!.Contains(request.searchKey) ||
+                        x.Email!.Contains(request.searchKey) ||
+                        x.Position.Name.Contains(request.searchKey)
                     )
                 )
                 .Select(x => new UserDTO(x, domain))
