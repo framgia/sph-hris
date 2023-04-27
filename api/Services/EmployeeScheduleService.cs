@@ -212,6 +212,28 @@ namespace api.Services
                 .Select(x => new UserDTO(x, domain))
                 .ToListAsync();
         }
+
+        public async Task<List<UserDTO>> SearchEmployeesBySchedule(SearchEmployeesByScheduleRequest request)
+        {
+            var domain = _httpService.getDomainURL();
+            using HrisContext context = _contextFactory.CreateDbContext();
+
+            return await context.Users
+                .Include(i => i.Role)
+                .Include(i => i.Position)
+                .Include(i => i.EmployeeSchedule)
+                .Include(i => i.ProfileImage)
+                .Include(i => i.Position)
+                .Where(x =>
+                    x.EmployeeScheduleId == request.employeeScheduleId && (
+                        x.Name!.Contains(request.searchKey) ||
+                        x.Email!.Contains(request.searchKey) ||
+                        x.Position.Name.Contains(request.searchKey)
+                    )
+                )
+                .Select(x => new UserDTO(x, domain))
+                .ToListAsync();
+        }
         public async Task<string> Delete(DeleteEmployeeScheduleRequest request, HrisContext context)
         {
             var error = ErrorMessageEnum.FAILED_SCHEDULE_DELETE;
