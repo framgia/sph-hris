@@ -145,7 +145,7 @@ const ScheduleItem = (item: IGetAllEmployeeSchedule): JSX.Element => {
             <div className="mt-6 flex items-center justify-center space-x-2 text-white">
               <ButtonAction
                 variant="danger"
-                onClick={() => handleDeleteSchedule(onClose)}
+                onClick={() => handleDeleteSchedule(onClose, item.id)}
                 className="w-full py-1 px-4"
               >
                 Yes
@@ -165,7 +165,7 @@ const ScheduleItem = (item: IGetAllEmployeeSchedule): JSX.Element => {
   }
 
   // THIS WILL MUTATE THE DELETE ACTION
-  const handleDeleteSchedule = (onClose: () => void): void => {
+  const handleDeleteSchedule = (onClose: () => void, id: Number): void => {
     deleteEmployeeScheduleMutation.mutate(
       {
         employeeScheduleId: Number(id),
@@ -180,12 +180,10 @@ const ScheduleItem = (item: IGetAllEmployeeSchedule): JSX.Element => {
             pathname: router.pathname
           })
           toast.success('Deleted Successfully!')
-        },
-        onSettled: () => {
-          onClose()
         }
       }
     )
+    onClose()
   }
 
   return (
