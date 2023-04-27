@@ -37,3 +37,7 @@ export interface IEditEmployeeScheduleRequestInput {
   scheduleName: string
   employeeScheduleId: number
 }
+export interface IDeleteEmployeeScheduleRequestInput {
+  userId: number
+  employeeScheduleId: number
+}
