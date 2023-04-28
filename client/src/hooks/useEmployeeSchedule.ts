@@ -10,13 +10,15 @@ import {
 
 import {
   CREATE_EMPLOYEE_SCHEDULE,
-  EDIT_EMPLOYEE_SCHEDULE
+  EDIT_EMPLOYEE_SCHEDULE,
+  DELETE_EMPLOYEE_SCHEDULE
 } from '~/graphql/mutations/employeeScheduleMutation'
 import {
   IGetAllEmployeeSchedule,
   IGetEmployeeSchedule,
   ICreateEmployeeScheduleRequestInput,
-  IEditEmployeeScheduleRequestInput
+  IEditEmployeeScheduleRequestInput,
+  IDeleteEmployeeScheduleRequestInput
 } from '~/utils/types/employeeScheduleTypes'
 import { IScheduleMember } from '~/utils/interfaces/scheduleMemberInterface'
 
@@ -44,6 +46,13 @@ type EditEmployeeScheduleMutationType = UseMutationResult<
   unknown
 >
 
+type DeleteEmployeeScheduleMutationType = UseMutationResult<
+  any,
+  unknown,
+  IDeleteEmployeeScheduleRequestInput,
+  unknown
+>
+
 type GetEmployeesByScheduleFuncReturnType = UseQueryResult<
   { employeesBySchedule: IScheduleMember[] },
   unknown
@@ -53,6 +62,7 @@ type HookReturnType = {
   getAllEmployeeScheduleQuery: () => GetAllEmployeeScheduleFuncReturnType
   handleCreateEmployeeScheduleMutation: () => CreateEmployeeScheduleMutationType
   handleEditEmployeeScheduleMutation: () => EditEmployeeScheduleMutationType
+  handleDeleteEmployeeScheduleMutation: () => DeleteEmployeeScheduleMutationType
   getEmployeeScheduleQuery: (employeeScheduleId: number) => GetEmployeeScheduleFuncReturnType
   getEmployeesByScheduleQuery: (
     employeeScheduleId: number,
@@ -100,6 +110,17 @@ const useEmployeeSchedule = (): HookReturnType => {
       }
     })
 
+  const handleDeleteEmployeeScheduleMutation = (): DeleteEmployeeScheduleMutationType =>
+    useMutation({
+      mutationFn: async (request: IDeleteEmployeeScheduleRequestInput) => {
+        return await client.request(DELETE_EMPLOYEE_SCHEDULE, { request })
+      },
+      onError: async (err: Error) => {
+        const [errorMessage] = err.message.split(/:\s/, 2)
+        toast.error(errorMessage)
+      }
+    })
+
   const getEmployeesByScheduleQuery = (
     employeeScheduleId: number,
     isOpen: boolean
@@ -116,6 +137,7 @@ const useEmployeeSchedule = (): HookReturnType => {
     getAllEmployeeScheduleQuery,
     handleEditEmployeeScheduleMutation,
     handleCreateEmployeeScheduleMutation,
+    handleDeleteEmployeeScheduleMutation,
     getEmployeesByScheduleQuery
   }
 }

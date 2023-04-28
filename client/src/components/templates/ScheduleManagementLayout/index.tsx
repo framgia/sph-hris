@@ -9,6 +9,8 @@ import { Calendar, ChevronDown, Plus, Trash2 } from 'react-feather'
 import Layout from './../Layout'
 import CustomSearch from './CustomSearch'
 import Card from '~/components/atoms/Card'
+import { queryClient } from '~/lib/queryClient'
+import useUserQuery from '~/hooks/useUserQuery'
 import Button from '~/components/atoms/Buttons/Button'
 import useEmployeeSchedule from '~/hooks/useEmployeeSchedule'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
@@ -123,7 +125,10 @@ ScheduleManagementLayout.defaultProps = {
 const ScheduleItem = (item: IGetAllEmployeeSchedule): JSX.Element => {
   const router = useRouter()
   const id = Number(router.query.id)
-
+  const { handleUserQuery } = useUserQuery()
+  const { data: user } = handleUserQuery()
+  const { handleDeleteEmployeeScheduleMutation } = useEmployeeSchedule()
+  const deleteEmployeeScheduleMutation = handleDeleteEmployeeScheduleMutation()
   const active = item.id === id
 
   // FOR CONFIRMATION ONLY
@@ -140,7 +145,7 @@ const ScheduleItem = (item: IGetAllEmployeeSchedule): JSX.Element => {
             <div className="mt-6 flex items-center justify-center space-x-2 text-white">
               <ButtonAction
                 variant="danger"
-                onClick={() => handleDeleteSchedule(onClose)}
+                onClick={() => handleDeleteSchedule(onClose, item.id)}
                 className="w-full py-1 px-4"
               >
                 Yes
@@ -160,9 +165,25 @@ const ScheduleItem = (item: IGetAllEmployeeSchedule): JSX.Element => {
   }
 
   // THIS WILL MUTATE THE DELETE ACTION
-  const handleDeleteSchedule = (onClose: () => void): void => {
+  const handleDeleteSchedule = (onClose: () => void, id: Number): void => {
+    deleteEmployeeScheduleMutation.mutate(
+      {
+        employeeScheduleId: Number(id),
+        userId: user?.userById.id as number
+      },
+      {
+        onSuccess: () => {
+          void queryClient.invalidateQueries({
+            queryKey: ['GET_ALL_EMPLOYEE_SCHEDULE']
+          })
+          void router.replace({
+            pathname: router.pathname
+          })
+          toast.success('Deleted Successfully!')
+        }
+      }
+    )
     onClose()
-    toast.success('Deleted Successfully!')
   }
 
   return (
