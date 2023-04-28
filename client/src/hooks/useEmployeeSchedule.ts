@@ -5,7 +5,8 @@ import { client } from '~/utils/shared/client'
 import {
   GET_ALL_EMPLOYEE_SCHEDULE,
   GET_EMPLOYEE_SCHEDULE,
-  GET_EMPLOYEES_BY_SCHEDULE
+  GET_EMPLOYEES_BY_SCHEDULE,
+  SEARCH_EMPLOYEES_BY_SCHEDULE
 } from '~/graphql/queries/employeeSchedule'
 
 import { queryClient } from '~/lib/queryClient'
@@ -21,7 +22,8 @@ import {
   ICreateEmployeeScheduleRequestInput,
   IEditEmployeeScheduleRequestInput,
   IDeleteEmployeeScheduleRequestInput,
-  IAddMemberToScheduleInput
+  IAddMemberToScheduleInput,
+  ISearchEmployeesByScheduleRequestInput
 } from '~/utils/types/employeeScheduleTypes'
 import { IScheduleMember } from '~/utils/interfaces/scheduleMemberInterface'
 
@@ -68,6 +70,11 @@ type AddMemberToScheduleReturnType = UseMutationResult<
   unknown
 >
 
+type GetSearchEmployeesByScheduleFuncReturnType = UseQueryResult<
+  { searchEmployeesBySchedule: IScheduleMember[] },
+  unknown
+>
+
 type HookReturnType = {
   getAllEmployeeScheduleQuery: () => GetAllEmployeeScheduleFuncReturnType
   handleCreateEmployeeScheduleMutation: () => CreateEmployeeScheduleMutationType
@@ -79,6 +86,10 @@ type HookReturnType = {
     employeeScheduleId: number,
     isOpen: boolean
   ) => GetEmployeesByScheduleFuncReturnType
+  getSearchEmployeesByScheduleQuery: (
+    request: ISearchEmployeesByScheduleRequestInput,
+    isOpen: boolean
+  ) => GetSearchEmployeesByScheduleFuncReturnType
 }
 
 const useEmployeeSchedule = (): HookReturnType => {
@@ -159,6 +170,17 @@ const useEmployeeSchedule = (): HookReturnType => {
       enabled: !isNaN(employeeScheduleId) && isOpen
     })
 
+  const getSearchEmployeesByScheduleQuery = (
+    request: ISearchEmployeesByScheduleRequestInput,
+    isOpen: boolean
+  ): GetSearchEmployeesByScheduleFuncReturnType =>
+    useQuery({
+      queryKey: ['SEARCH_EMPLOYEES_BY_SCHEDULE', request.employeeScheduleId, request.searchKey],
+      queryFn: async () => await client.request(SEARCH_EMPLOYEES_BY_SCHEDULE, { request }),
+      select: (data: { searchEmployeesBySchedule: IScheduleMember[] }) => data,
+      enabled: !isNaN(request.employeeScheduleId) && isOpen
+    })
+
   return {
     getEmployeeScheduleQuery,
     getAllEmployeeScheduleQuery,
@@ -166,7 +188,8 @@ const useEmployeeSchedule = (): HookReturnType => {
     handleCreateEmployeeScheduleMutation,
     handleDeleteEmployeeScheduleMutation,
     getEmployeesByScheduleQuery,
-    handleAddMemberToScheduleMutation
+    handleAddMemberToScheduleMutation,
+    getSearchEmployeesByScheduleQuery
   }
 }
 
