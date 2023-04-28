@@ -52,3 +52,9 @@ export interface ISearchEmployeesByScheduleRequestInput {
   employeeScheduleId: number
   searchKey: string
 }
+
+export interface IReassignEmployeesScheduleRequestInput {
+  userId: number
+  employeeId: number
+  scheduleId: number
+}

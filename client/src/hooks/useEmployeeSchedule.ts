@@ -14,7 +14,8 @@ import {
   ADD_EMPLOYEE_TO_SCHEDULE,
   CREATE_EMPLOYEE_SCHEDULE,
   EDIT_EMPLOYEE_SCHEDULE,
-  DELETE_EMPLOYEE_SCHEDULE
+  DELETE_EMPLOYEE_SCHEDULE,
+  REASSIGN_EMPLOYEE_TO_SCHEDULE
 } from '~/graphql/mutations/employeeScheduleMutation'
 import {
   IGetAllEmployeeSchedule,
@@ -23,7 +24,8 @@ import {
   IEditEmployeeScheduleRequestInput,
   IDeleteEmployeeScheduleRequestInput,
   IAddMemberToScheduleInput,
-  ISearchEmployeesByScheduleRequestInput
+  ISearchEmployeesByScheduleRequestInput,
+  IReassignEmployeesScheduleRequestInput
 } from '~/utils/types/employeeScheduleTypes'
 import { IScheduleMember } from '~/utils/interfaces/scheduleMemberInterface'
 
@@ -48,6 +50,13 @@ type EditEmployeeScheduleMutationType = UseMutationResult<
   any,
   unknown,
   IEditEmployeeScheduleRequestInput,
+  unknown
+>
+
+type ReassignEmployeeScheduleMutationType = UseMutationResult<
+  any,
+  unknown,
+  IReassignEmployeesScheduleRequestInput,
   unknown
 >
 
@@ -80,6 +89,7 @@ type HookReturnType = {
   handleCreateEmployeeScheduleMutation: () => CreateEmployeeScheduleMutationType
   handleEditEmployeeScheduleMutation: () => EditEmployeeScheduleMutationType
   handleDeleteEmployeeScheduleMutation: () => DeleteEmployeeScheduleMutationType
+  handleReassignEmployeeScheduleMutation: () => ReassignEmployeeScheduleMutationType
   handleAddMemberToScheduleMutation: () => AddMemberToScheduleReturnType
   getEmployeeScheduleQuery: (employeeScheduleId: number) => GetEmployeeScheduleFuncReturnType
   getEmployeesByScheduleQuery: (
@@ -148,6 +158,22 @@ const useEmployeeSchedule = (): HookReturnType => {
       }
     })
 
+  const handleReassignEmployeeScheduleMutation = (): ReassignEmployeeScheduleMutationType =>
+    useMutation({
+      mutationFn: async (request: IReassignEmployeesScheduleRequestInput) => {
+        return await client.request(REASSIGN_EMPLOYEE_TO_SCHEDULE, { request })
+      },
+      onSuccess: async (data) => {
+        void queryClient.invalidateQueries().then(() => {
+          toast.success(data.updateMemberSchedule)
+        })
+      },
+      onError: async (err: Error) => {
+        const [errorMessage] = err.message.split(/:\s/, 2)
+        toast.error(errorMessage)
+      }
+    })
+
   const handleDeleteEmployeeScheduleMutation = (): DeleteEmployeeScheduleMutationType =>
     useMutation({
       mutationFn: async (request: IDeleteEmployeeScheduleRequestInput) => {
@@ -189,7 +215,8 @@ const useEmployeeSchedule = (): HookReturnType => {
     handleDeleteEmployeeScheduleMutation,
     getEmployeesByScheduleQuery,
     handleAddMemberToScheduleMutation,
-    getSearchEmployeesByScheduleQuery
+    getSearchEmployeesByScheduleQuery,
+    handleReassignEmployeeScheduleMutation
   }
 }
 
