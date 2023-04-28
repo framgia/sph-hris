@@ -23,3 +23,8 @@ export const ADD_EMPLOYEE_TO_SCHEDULE = gql`
     addMembersToSchedule(request: $request)
   }
 `
+export const REASSIGN_EMPLOYEE_TO_SCHEDULE = gql`
+  mutation ($request: UpdateMemberScheduleRequestInput!) {
+    updateMemberSchedule(request: $request)
+  }
+`

@@ -73,7 +73,7 @@ const MemberList: FC<Props> = ({ member }): JSX.Element => {
                       className="flex items-center space-x-2 px-3 py-2 text-xs hover:text-slate-700"
                     >
                       <CornerDownRight className="h-5 w-5 stroke-0.5" aria-hidden="true" />
-                      <span className="text-xs">Re-assigned Schedule</span>
+                      <span className="text-xs">Re-assign Schedule</span>
                     </Button>
                   </Menu.Item>
                 </Menu.Items>

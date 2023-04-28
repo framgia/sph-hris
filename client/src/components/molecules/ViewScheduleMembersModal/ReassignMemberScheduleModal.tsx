@@ -1,5 +1,5 @@
+import router from 'next/router'
 import React, { FC } from 'react'
-import toast from 'react-hot-toast'
 import isEmpty from 'lodash/isEmpty'
 import ReactSelect from 'react-select'
 import { Calendar } from 'react-feather'
@@ -8,6 +8,7 @@ import makeAnimated from 'react-select/animated'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
+import useUserQuery from '~/hooks/useUserQuery'
 import { ReassignScheduleSchema } from '~/utils/validation'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import useEmployeeSchedule from '~/hooks/useEmployeeSchedule'
@@ -16,7 +17,10 @@ import ModalTemplate from '~/components/templates/ModalTemplate'
 import { ReassigneScheduleFormValues } from '~/utils/types/formValues'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
 import { IScheduleMember } from '~/utils/interfaces/scheduleMemberInterface'
-import { IGetAllEmployeeSchedule } from '~/utils/types/employeeScheduleTypes'
+import {
+  IGetAllEmployeeSchedule,
+  IReassignEmployeesScheduleRequestInput
+} from '~/utils/types/employeeScheduleTypes'
 import { generateScheduleSelect } from '~/utils/helpers/scheduleMemberHelpers'
 
 type Props = {
@@ -28,11 +32,15 @@ type Props = {
 const animatedComponents = makeAnimated()
 
 const ReassignMemberScheduleModal: FC<Props> = ({ isOpen, closeModal, member }): JSX.Element => {
-  // FETCH ALL SCHEDULES QUERY HOOKS
-  const { getAllEmployeeScheduleQuery } = useEmployeeSchedule()
-
+  const { handleUserQuery } = useUserQuery()
+  const { getAllEmployeeScheduleQuery, handleReassignEmployeeScheduleMutation } =
+    useEmployeeSchedule()
+  const reassignEmployeeScheduleMutation = handleReassignEmployeeScheduleMutation()
   const { data, isLoading } = getAllEmployeeScheduleQuery()
   const scheduleList = data?.allEmployeeScheduleDetails
+  const { data: currentUser } = handleUserQuery()
+  const currentUserId = currentUser?.userById.id as Number
+  const { id: scheduleId } = router.query
 
   const {
     control,
@@ -55,12 +63,17 @@ const ReassignMemberScheduleModal: FC<Props> = ({ isOpen, closeModal, member }):
 
   const handleSave: SubmitHandler<ReassigneScheduleFormValues> = async (data): Promise<void> => {
     return await new Promise((resolve) => {
-      setTimeout(() => {
-        closeModal()
-        resolve()
-        toast.success('Reassigned Successfully')
-        alert(JSON.stringify(data, null, 2))
-      }, 2000)
+      const request: IReassignEmployeesScheduleRequestInput = {
+        userId: Number(currentUserId),
+        employeeId: Number(member.id),
+        scheduleId: Number(data.schedule.value)
+      }
+      reassignEmployeeScheduleMutation.mutate(request, {
+        onSettled: () => {
+          closeModal()
+          resolve()
+        }
+      })
     })
   }
 
@@ -112,7 +125,11 @@ const ReassignMemberScheduleModal: FC<Props> = ({ isOpen, closeModal, member }):
                   backspaceRemovesValue={true}
                   components={animatedComponents}
                   isLoading={isLoading || isSubmitting}
-                  options={generateScheduleSelect(scheduleList as IGetAllEmployeeSchedule[])}
+                  options={generateScheduleSelect(
+                    scheduleList?.filter(
+                      (x) => Number(x.id) !== Number(scheduleId)
+                    ) as IGetAllEmployeeSchedule[]
+                  )}
                 />
               )}
             />
