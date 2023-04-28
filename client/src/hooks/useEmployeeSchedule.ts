@@ -8,7 +8,9 @@ import {
   GET_EMPLOYEES_BY_SCHEDULE
 } from '~/graphql/queries/employeeSchedule'
 
+import { queryClient } from '~/lib/queryClient'
 import {
+  ADD_EMPLOYEE_TO_SCHEDULE,
   CREATE_EMPLOYEE_SCHEDULE,
   EDIT_EMPLOYEE_SCHEDULE,
   DELETE_EMPLOYEE_SCHEDULE
@@ -18,7 +20,8 @@ import {
   IGetEmployeeSchedule,
   ICreateEmployeeScheduleRequestInput,
   IEditEmployeeScheduleRequestInput,
-  IDeleteEmployeeScheduleRequestInput
+  IDeleteEmployeeScheduleRequestInput,
+  IAddMemberToScheduleInput
 } from '~/utils/types/employeeScheduleTypes'
 import { IScheduleMember } from '~/utils/interfaces/scheduleMemberInterface'
 
@@ -58,11 +61,19 @@ type GetEmployeesByScheduleFuncReturnType = UseQueryResult<
   unknown
 >
 
+type AddMemberToScheduleReturnType = UseMutationResult<
+  any,
+  unknown,
+  IAddMemberToScheduleInput,
+  unknown
+>
+
 type HookReturnType = {
   getAllEmployeeScheduleQuery: () => GetAllEmployeeScheduleFuncReturnType
   handleCreateEmployeeScheduleMutation: () => CreateEmployeeScheduleMutationType
   handleEditEmployeeScheduleMutation: () => EditEmployeeScheduleMutationType
   handleDeleteEmployeeScheduleMutation: () => DeleteEmployeeScheduleMutationType
+  handleAddMemberToScheduleMutation: () => AddMemberToScheduleReturnType
   getEmployeeScheduleQuery: (employeeScheduleId: number) => GetEmployeeScheduleFuncReturnType
   getEmployeesByScheduleQuery: (
     employeeScheduleId: number,
@@ -71,6 +82,22 @@ type HookReturnType = {
 }
 
 const useEmployeeSchedule = (): HookReturnType => {
+  const handleAddMemberToScheduleMutation = (): AddMemberToScheduleReturnType =>
+    useMutation({
+      mutationFn: async (request: IAddMemberToScheduleInput) => {
+        return await client.request(ADD_EMPLOYEE_TO_SCHEDULE, { request })
+      },
+      onSuccess: async (data) => {
+        void queryClient.invalidateQueries().then(() => {
+          toast.success(data.addMembersToSchedule)
+        })
+      },
+      onError: async (err: Error) => {
+        const [errorMessage] = err.message.split(/:\s/, 2)
+        toast.error(errorMessage)
+      }
+    })
+
   const getAllEmployeeScheduleQuery = (): GetAllEmployeeScheduleFuncReturnType =>
     useQuery({
       queryKey: ['GET_ALL_EMPLOYEE_SCHEDULE'],
@@ -138,7 +165,8 @@ const useEmployeeSchedule = (): HookReturnType => {
     handleEditEmployeeScheduleMutation,
     handleCreateEmployeeScheduleMutation,
     handleDeleteEmployeeScheduleMutation,
-    getEmployeesByScheduleQuery
+    getEmployeesByScheduleQuery,
+    handleAddMemberToScheduleMutation
   }
 }
 

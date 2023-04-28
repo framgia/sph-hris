@@ -17,3 +17,9 @@ export const DELETE_EMPLOYEE_SCHEDULE = gql`
     deleteEmployeeSchedule(request: $request)
   }
 `
+
+export const ADD_EMPLOYEE_TO_SCHEDULE = gql`
+  mutation ($request: AddMemberToScheduleRequestInput!) {
+    addMembersToSchedule(request: $request)
+  }
+`

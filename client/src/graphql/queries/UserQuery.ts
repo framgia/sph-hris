@@ -51,6 +51,7 @@ export const GET_ALL_USERS_QUERY = gql`
     allUsers {
       id
       name
+      employeeScheduleId
       role {
         id
         name
