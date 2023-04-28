@@ -633,5 +633,30 @@ namespace api.Utils
 
             return errors;
         }
+
+        internal List<IError> CheckUpdateMemberScheduleRequestInput(UpdateMemberScheduleRequest request, HrisContext context)
+        {
+            var errors = new List<IError>();
+            // Check HR role
+            if (!CheckHrRole(request.UserId))
+                errors.Add(buildError(nameof(request.UserId), InputValidationMessageEnum.NOT_HR_ADMIN));
+
+            // Check Schedule exists
+            if (CheckScheduleExist(request.ScheduleId))
+                errors.Add(buildError(nameof(request.ScheduleId), InputValidationMessageEnum.INVALID_SCHEDULE_ID));
+
+            // Check if employee exists
+            if (!checkUserExist(request.EmployeeId))
+                errors.Add(buildError(nameof(request.EmployeeId), InputValidationMessageEnum.INVALID_EMPLOYEE));
+
+            // Check if the employee already in the schedule
+            if (CheckEmployeeWithinSchedule(request.EmployeeId, request.ScheduleId, context))
+            {
+                User? user = context.Users.Find(request.EmployeeId);
+                errors.Add(buildError(nameof(request.ScheduleId), user!.Name + InputValidationMessageEnum.DUPLICATE_EMPLOYEE));
+            }
+
+            return errors;
+        }
     }
 }
