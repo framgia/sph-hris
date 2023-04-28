@@ -38,3 +38,17 @@ export const GET_EMPLOYEES_BY_SCHEDULE = gql`
     }
   }
 `
+
+export const SEARCH_EMPLOYEES_BY_SCHEDULE = gql`
+  query ($request: SearchEmployeesByScheduleRequestInput!) {
+    searchEmployeesBySchedule(request: $request) {
+      id
+      name
+      avatarLink
+      position {
+        name
+      }
+      isOnline
+    }
+  }
+`

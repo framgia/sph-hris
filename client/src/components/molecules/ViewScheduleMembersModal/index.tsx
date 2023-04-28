@@ -1,8 +1,9 @@
+import { debounce } from 'lodash'
 import classNames from 'classnames'
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/router'
-import React, { FC, useState } from 'react'
 import { PulseLoader } from 'react-spinners'
+import React, { FC, useEffect, useState } from 'react'
 import { Coffee, Search, UserPlus } from 'react-feather'
 
 import MemberList from './MemberList'
@@ -21,24 +22,30 @@ type Props = {
 }
 
 const ViewScheduleMembersModal: FC<Props> = (props): JSX.Element => {
-  const { isOpen, closeModal, scheduleName } = props
-  const [isOpenAddNewSchedule, setIsOpenAddNewSchedule] = useState<boolean>(false)
-  const [searchedVal, setSearchedVal] = useState<string>('')
   const router = useRouter()
   const { id } = router.query
+  const { isOpen, closeModal, scheduleName } = props
+  const [searchedVal, setSearchedVal] = useState<string>('')
+  const [isOpenAddNewSchedule, setIsOpenAddNewSchedule] = useState<boolean>(false)
+  const [scheduleMembers, setScheduleMembers] = useState<IScheduleMember[]>()
 
-  const { getEmployeesByScheduleQuery } = useEmployeeSchedule()
-  const { data, isLoading, isError, fetchStatus } = getEmployeesByScheduleQuery(Number(id), isOpen)
-  const scheduleMembers = data?.employeesBySchedule
+  const debouncedSetSearchVal = debounce(setSearchedVal, 500)
 
-  const filterMembers = (member: IScheduleMember, searchedVal: string): boolean => {
-    if (searchedVal.length === 0) {
-      return true
-    }
-    const lowerCaseSearchedVal = String(searchedVal).toLowerCase()
-    const lowerCaseName = member.name.toLowerCase()
-    return lowerCaseName.includes(lowerCaseSearchedVal)
-  }
+  const { getSearchEmployeesByScheduleQuery } = useEmployeeSchedule()
+  const { data, isLoading, isError, fetchStatus } = getSearchEmployeesByScheduleQuery(
+    { employeeScheduleId: Number(id), searchKey: searchedVal },
+    isOpen
+  )
+
+  const ONLINE_NO_ERROR = fetchStatus !== FetchStatus.PAUSED && !isError
+
+  useEffect(() => {
+    if (data !== undefined) setScheduleMembers(data?.searchEmployeesBySchedule)
+  }, [data])
+
+  useEffect(() => {
+    if (!isOpen) debouncedSetSearchVal('')
+  }, [isOpen])
 
   const NoDataAvailable = (): JSX.Element => (
     <span className="absolute inset-x-0 left-0 right-0 w-full flex-1 py-2 text-center text-xs text-slate-400">
@@ -96,7 +103,7 @@ const ViewScheduleMembersModal: FC<Props> = (props): JSX.Element => {
             placeholder="Find Members"
             className="py-2.5 pl-10 text-sm text-slate-800"
             onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
-              setSearchedVal(e.target.value)
+              debouncedSetSearchVal(e.target.value)
             }
           />
         </section>
@@ -133,18 +140,16 @@ const ViewScheduleMembersModal: FC<Props> = (props): JSX.Element => {
           )}
         >
           {/* List of all Members */}
-          {!isLoading && !isError && fetchStatus !== FetchStatus.PAUSED ? (
+          {!isLoading && ONLINE_NO_ERROR ? (
             <>
               {scheduleMembers === undefined || scheduleMembers?.length <= 0 ? (
                 <NoDataAvailable />
               ) : (
-                scheduleMembers
-                  ?.filter((row) => filterMembers(row, searchedVal))
-                  ?.map((member) => <MemberList key={member.id} {...{ member }} />)
+                scheduleMembers?.map((member) => <MemberList key={member.id} {...{ member }} />)
               )}
             </>
           ) : (
-            <>{fetchStatus !== FetchStatus.PAUSED && !isError ? <Loading /> : <FetchError />}</>
+            <>{ONLINE_NO_ERROR ? <Loading /> : <FetchError />}</>
           )}
         </div>
       </main>

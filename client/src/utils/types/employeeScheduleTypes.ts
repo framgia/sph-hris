@@ -47,3 +47,8 @@ export interface IDeleteEmployeeScheduleRequestInput {
   userId: number
   employeeScheduleId: number
 }
+
+export interface ISearchEmployeesByScheduleRequestInput {
+  employeeScheduleId: number
+  searchKey: string
+}
