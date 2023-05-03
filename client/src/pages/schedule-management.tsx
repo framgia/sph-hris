@@ -296,7 +296,7 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
           <form
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSubmit={handleSubmit(handleSaveSchedule)}
-            className="mx-auto w-full max-w-full text-sm sm:max-w-xl"
+            className="mx-auto w-full max-w-full text-sm sm:max-w-2xl sm:px-4"
           >
             <main className="mt-8 flex flex-col space-y-5 text-[13px]">
               {errorMessage !== '' ? <Alert type="info" message={errorMessage} /> : null}
@@ -305,7 +305,7 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
               <section className="flex flex-col">
                 <label
                   htmlFor="schedule-name"
-                  className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2"
+                  className="flex flex-col space-y-2 lg:flex-row lg:items-center lg:space-y-0 lg:space-x-2"
                 >
                   <div className="shrink-0">Schedule Name</div>
                   <div className="w-full">
@@ -327,10 +327,10 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
               </section>
 
               {/* Days of Week Buttons */}
-              <section className="sm:-ml-2">
+              <section className="lg:-mx-2">
                 <label
                   htmlFor="schedule-name"
-                  className="flex flex-1 flex-col space-y-2 overflow-x-auto sm:flex-row sm:items-center sm:space-x-2 sm:space-y-0"
+                  className="flex flex-1 flex-col space-y-2 overflow-x-auto lg:flex-row lg:items-center lg:space-x-2 lg:space-y-0"
                 >
                   <span className="shrink-0">Days of the week</span>
                   <div className="flex flex-wrap items-center gap-2 rounded-lg">
@@ -402,11 +402,11 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
               </section>
 
               {/* Monday Field */}
-              <section className="sm:ml-12">
+              <section className="lg:mx-12">
                 <label
                   htmlFor="schedule-name"
                   className={classNames(
-                    'flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2',
+                    'flex flex-col space-y-2 lg:flex-row lg:items-center lg:space-y-0 lg:space-x-2',
                     !isEmpty(errors.monday?.timeIn) || !isEmpty(errors.monday?.timeOut)
                       ? 'mb-5'
                       : ''
@@ -450,11 +450,11 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
               </section>
 
               {/* Tuesday Field */}
-              <section className="sm:ml-12">
+              <section className="lg:mx-12">
                 <label
                   htmlFor="schedule-name"
                   className={classNames(
-                    'flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2',
+                    'flex flex-col space-y-2 lg:flex-row lg:items-center lg:space-y-0 lg:space-x-2',
                     !isEmpty(errors.tuesday?.timeIn) || !isEmpty(errors.tuesday?.timeOut)
                       ? 'mb-5'
                       : ''
@@ -498,11 +498,11 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
               </section>
 
               {/* Wednesday Field */}
-              <section className="sm:ml-7">
+              <section className="lg:mx-7">
                 <label
                   htmlFor="schedule-name"
                   className={classNames(
-                    'flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2',
+                    'flex flex-col space-y-2 lg:flex-row lg:items-center lg:space-y-0 lg:space-x-2',
                     !isEmpty(errors.wednesday?.timeIn) || !isEmpty(errors.wednesday?.timeOut)
                       ? 'mb-5'
                       : ''
@@ -546,11 +546,11 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
               </section>
 
               {/* Thursday Field */}
-              <section className="sm:ml-11">
+              <section className="lg:ml-11">
                 <label
                   htmlFor="schedule-name"
                   className={classNames(
-                    'flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2',
+                    'flex flex-col space-y-2 lg:flex-row lg:items-center lg:space-y-0 lg:space-x-2',
                     !isEmpty(errors.thursday?.timeIn) || !isEmpty(errors.thursday?.timeOut)
                       ? 'mb-5'
                       : ''
@@ -594,11 +594,11 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
               </section>
 
               {/* Friday Field */}
-              <section className="sm:ml-[65px]">
+              <section className="lg:ml-[65px]">
                 <label
                   htmlFor="schedule-name"
                   className={classNames(
-                    'flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2',
+                    'flex flex-col space-y-2 lg:flex-row lg:items-center lg:space-y-0 lg:space-x-2',
                     !isEmpty(errors.friday?.timeIn) || !isEmpty(errors.friday?.timeOut)
                       ? 'mb-5'
                       : ''
@@ -642,11 +642,11 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
               </section>
 
               {/* Saturday Field */}
-              <section className="sm:ml-11">
+              <section className="lg:ml-11">
                 <label
                   htmlFor="schedule-name"
                   className={classNames(
-                    'flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2',
+                    'flex flex-col space-y-2 lg:flex-row lg:items-center lg:space-y-0 lg:space-x-2',
                     !isEmpty(errors.saturday?.timeIn) || !isEmpty(errors.saturday?.timeOut)
                       ? 'mb-5'
                       : ''
@@ -690,11 +690,11 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
               </section>
 
               {/* Sunday Field */}
-              <section className="sm:ml-14">
+              <section className="lg:ml-14">
                 <label
                   htmlFor="schedule-name"
                   className={classNames(
-                    'flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2',
+                    'flex flex-col space-y-2 lg:flex-row lg:items-center lg:space-y-0 lg:space-x-2',
                     !isEmpty(errors.sunday?.timeIn) || !isEmpty(errors.sunday?.timeOut)
                       ? 'mb-5'
                       : ''
