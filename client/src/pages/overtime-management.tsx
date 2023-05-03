@@ -149,7 +149,7 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
     <Layout metaTitle="Overtime Management">
       <section
         className={classNames(
-          'default-scrollbar relative h-screen min-h-full',
+          'default-scrollbar relative h-full min-h-full',
           'overflow-auto text-xs text-slate-800'
         )}
       >
