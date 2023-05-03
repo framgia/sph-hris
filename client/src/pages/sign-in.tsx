@@ -11,6 +11,7 @@ import WaveStyle from '~/utils/icons/WaveStyle'
 import { getServerSideProps } from '~/utils/ssr'
 import useSignInMutation from '~/hooks/useSignInMutation'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
+import { client } from '~/utils/shared/client'
 
 type Props = {
   cookies: string | null
@@ -39,7 +40,8 @@ const SignIn: FC<Props> = ({ cookies }): JSX.Element => {
   useEffect(() => {
     if (session?.data != null) setIsVerifying(true)
     if (SignInMutation?.data?.createSignIn === true) {
-      void router.push('/')
+      client.setHeaders({ 'nextauth-token': cookies as string })
+      void router.replace('/')
       toast.success('Verification Success!', { duration: 3000 })
     } else if (session?.data != null) {
       void signOut({ callbackUrl: '/sign-in' })

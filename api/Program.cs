@@ -1,4 +1,5 @@
 using api.Context;
+using api.Middlewares;
 using api.Schedulers;
 using api.Schema.Mutations;
 using api.Schema.Queries;
@@ -24,6 +25,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddGraphQLServer()
     .AddQueryType(q => q.Name("Query"))
+    .UseField<AuthorizeUser>()
     .AddType<UserQuery>()
     .AddType<TimeSheetQuery>()
     .AddType<InterruptionQuery>()
