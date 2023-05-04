@@ -1,4 +1,5 @@
 using api.Context;
+using api.Middlewares.Attributes;
 using api.Requests;
 using api.Services;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ namespace api.Schema.Mutations
     [ExtendObjectType("Mutation")]
     public class EmployeeScheduleMutation
     {
+        [AdminUser]
         public async Task<string> CreateEmployeeSchedule([Service] IDbContextFactory<HrisContext> contextFactory, [Service] EmployeeScheduleService _employeeSchedueleService, CreateEmployeeScheduleRequest request)
         {
             using HrisContext context = contextFactory.CreateDbContext();
@@ -25,6 +27,7 @@ namespace api.Schema.Mutations
             }
         }
 
+        [AdminUser]
         public async Task<string> UpdateEmployeeSchedule([Service] IDbContextFactory<HrisContext> contextFactory, [Service] EmployeeScheduleService _employeeSchedueleService, UpdateEmployeeScheduleRequest request)
         {
             using HrisContext context = contextFactory.CreateDbContext();
@@ -42,6 +45,7 @@ namespace api.Schema.Mutations
             }
         }
 
+        [AdminUser]
         public async Task<string> AddMembersToSchedule([Service] IDbContextFactory<HrisContext> contextFactory, [Service] EmployeeScheduleService _employeeSchedueleService, AddMemberToScheduleRequest request)
         {
             using HrisContext context = contextFactory.CreateDbContext();
@@ -59,6 +63,7 @@ namespace api.Schema.Mutations
             }
         }
 
+        [AdminUser]
         public async Task<string> UpdateMemberSchedule([Service] IDbContextFactory<HrisContext> contextFactory, [Service] EmployeeScheduleService _employeeSchedueleService, UpdateMemberScheduleRequest request)
         {
             using HrisContext context = contextFactory.CreateDbContext();
@@ -76,6 +81,7 @@ namespace api.Schema.Mutations
             }
         }
 
+        [AdminUser]
         public async Task<string> DeleteEmployeeSchedule([Service] IDbContextFactory<HrisContext> contextFactory, [Service] EmployeeScheduleService _employeeSchedueleService, DeleteEmployeeScheduleRequest request)
         {
             using HrisContext context = contextFactory.CreateDbContext();

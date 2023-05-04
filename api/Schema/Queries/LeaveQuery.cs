@@ -1,5 +1,6 @@
 using api.DTOs;
 using api.Entities;
+using api.Middlewares.Attributes;
 using api.Services;
 
 namespace api.Schema.Queries
@@ -13,6 +14,7 @@ namespace api.Schema.Queries
             _leaveService = leaveService;
         }
 
+        [AdminUser]
         public async Task<List<LeaveDTO>> GetAllLeaves()
         {
             return await _leaveService.Index();
@@ -26,6 +28,7 @@ namespace api.Schema.Queries
             return await _leaveService.GetLeavesSummary(userId, year);
         }
 
+        [AdminUser]
         public async Task<LeavesDTO> GetYearlyAllLeaves(int year)
         {
             return await _leaveService.ShowYearlyLeavesSummary(year);
