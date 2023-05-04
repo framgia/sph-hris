@@ -168,9 +168,18 @@ const Header: FC<Props> = (props): JSX.Element => {
         query: getLeaveNotificationSubQuery(userId)
       },
       {
-        next: ({ data }: any) => {
+        next: () => {
           // TO DO: change implementation when integrating with notification modal
-          void queryClient.invalidateQueries({ queryKey: ['GET_ALL_USER_NOTIFICATION'] })
+          void queryClient
+            .invalidateQueries({
+              queryKey: ['GET_ALL_USER_NOTIFICATION']
+            })
+            .then(() => {
+              // Updates the remaining paid leaves counter
+              void queryClient.invalidateQueries({
+                queryKey: ['GET_ALL_REQUESTED_LEAVES', userId]
+              })
+            })
         },
         error: () => toast.error('There was a network error'),
         complete: () => null

@@ -158,6 +158,8 @@ namespace api.Services
                 var notification = await context.LeaveNotifications.FindAsync(request.NotificationId);
                 var leave = await context.Leaves.FindAsync(notification?.LeaveId);
                 var notificationData = notification != null ? JsonConvert.DeserializeObject<dynamic>(notification.Data) : null;
+                int userId = notificationData?.User.Id;
+                User? userDetails = await context.Users.FindAsync(userId);
 
                 var isManager = _customInputValidation.CheckManagerUser(request.UserId).Result;
                 var isProjectLeader = _customInputValidation.checkApprovingProjectLeader(request.UserId, leave!.Id, MultiProjectTypeEnum.LEAVE).Result;
@@ -173,6 +175,9 @@ namespace api.Services
                 // if project leader
                 if (leave != null && isProjectLeader)
                     leave.IsLeaderApproved = request.IsApproved;
+
+                // Update remaining paid leaves
+                UpdatePaidLeaves(leave, userDetails);
 
                 // Update notification data
                 if (request.IsApproved && notificationData != null) notificationData!.Status = RequestStatus.APPROVED;
@@ -192,6 +197,33 @@ namespace api.Services
                 await context.SaveChangesAsync();
 
                 return leave;
+            }
+        }
+
+        private static void UpdatePaidLeaves(Leave? leave, User? userDetails)
+        {
+            if (leave!.IsLeaderApproved == true && leave!.IsManagerApproved == true && leave!.IsWithPay)
+            {
+
+                if (leave.Days > userDetails?.PaidLeaves)
+                {
+                    if (userDetails?.PaidLeaves <= 0)
+                    {
+                        throw new GraphQLException(ErrorBuilder.New()
+                                                        .SetMessage(userDetails?.Name + ErrorMessageEnum.MAXIMUM_LIMIT_OF_PAID_LEAVES)
+                                                        .Build());
+                    }
+                    else
+                    {
+                        throw new GraphQLException(ErrorBuilder.New()
+                                    .SetMessage(userDetails?.Name + ErrorMessageEnum.EXCEEDS_MAXIMUM_REMAINING_PAID_LEAVES)
+                                    .Build());
+                    }
+                }
+                else
+                {
+                    userDetails!.PaidLeaves -= leave.Days;
+                }
             }
         }
 

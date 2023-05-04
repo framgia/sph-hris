@@ -9,6 +9,7 @@ namespace api.NotificationDataClasses
         public string Type { get; set; } = default!;
         public string Status { get; set; } = default!;
         public string? Remarks { get; set; } = default!;
+        public bool? IsWithPay { get; set; } = default!;
     }
 
     public class LeaveManagerData : LeaveData
