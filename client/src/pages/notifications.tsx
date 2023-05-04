@@ -104,6 +104,7 @@ const Notifications: NextPage = (): JSX.Element => {
           (x.status.toLowerCase() === (query.status as string).toLowerCase() ||
             (query.status as string) === STATUS_OPTIONS.ALL.toLowerCase()) &&
           (x.type.toLowerCase() === (query.type as string).toLowerCase() ||
+            x.type.toLowerCase() === (query.type as string).toLowerCase() + '_resolved' ||
             (query.type as string) === TYPE_OPTIONS.ALL.toLowerCase())
       )
 
