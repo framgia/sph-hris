@@ -6,14 +6,14 @@ import { createColumnHelper } from '@tanstack/react-table'
 
 import SortIcon from '~/utils/icons/SortIcon'
 import Avatar from '~/components/atoms/Avatar'
-import { IEmployeeManagement } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/Button'
+import { IEmployeeManagement } from '~/utils/interfaces'
 
 const columnHelper = createColumnHelper<IEmployeeManagement>()
 
 const CellHeader = ({ label }: { label: string }): JSX.Element => {
   return (
-    <span className="group flex w-[14.7vw] items-center font-normal text-slate-500">
+    <span className="group flex w-[273px] items-center font-normal text-slate-500">
       {label}
       <SortIcon className="ml-2 h-3 w-3 shrink-0 fill-current group-active:scale-95" />
     </span>
