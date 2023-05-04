@@ -33,40 +33,45 @@ const ButtonLink: FC<Props> = (props): JSX.Element => {
   } = props
 
   return (
-    <Link
-      href={
-        submenu === true && isOpenSidebar
-          ? ''
-          : href === '/leave-management'
-          ? `${href}/list-of-leave`
-          : href === '/my-forms'
-          ? `${href}/first-day-onboarding`
-          : href
-      }
-      className={classNames(
-        'relative flex items-center transition duration-75 ease-in-out',
-        'outline-none hover:bg-slate-100 hover:text-slate-700',
-        router.pathname.includes(href) && href !== '/'
-          ? 'font-medium text-slate-800'
-          : 'subpixel-antialiased',
-        router.pathname === href ? 'font-medium text-slate-800' : 'subpixel-antialiased'
-      )}
-    >
-      <span
+    <div className="relative flex w-full items-center">
+      <Link
+        href={
+          submenu === true && isOpenSidebar
+            ? ''
+            : href === '/leave-management'
+            ? `${href}/list-of-leave`
+            : href === '/my-forms'
+            ? `${href}/first-day-onboarding`
+            : href
+        }
         className={classNames(
-          'absolute inset-y-0 border-r-[4px]',
-          router.pathname === href ? 'rounded-r-lg border-slate-600' : 'border-transparent'
+          'relative flex items-center transition duration-75 ease-in-out',
+          'w-full outline-none hover:bg-slate-100 hover:text-slate-700',
+          router.pathname.includes(href) && href !== '/'
+            ? 'font-medium text-slate-800'
+            : 'subpixel-antialiased',
+          router.pathname === href ? 'font-medium text-slate-800' : 'subpixel-antialiased'
         )}
-      />
-      <div className="flex w-full items-center space-x-3 py-1.5 pr-8 pl-7">
-        <Icon className="h-5 w-5 shrink-0 stroke-0.5" />
-        <span className={`${isOpenSidebar ? 'line-clamp-1' : 'hidden'} select-none duration-300`}>
-          {name}
-        </span>
-      </div>
+      >
+        <span
+          className={classNames(
+            'absolute inset-y-0 border-r-[4px]',
+            router.pathname === href ? 'rounded-r-lg border-slate-600' : 'border-transparent'
+          )}
+        />
+        <div className="flex w-full items-center space-x-3 py-1.5 pr-8 pl-7">
+          <Icon className="h-5 w-5 shrink-0 stroke-0.5" />
+          <span className={`${isOpenSidebar ? 'line-clamp-1' : 'hidden'} select-none duration-300`}>
+            {name}
+          </span>
+        </div>
+      </Link>
       {submenu === true && (
         <Button
-          className={classNames('group ml-2 mr-4', !isOpenSidebar && 'hidden')}
+          className={classNames(
+            'group absolute -right-0 z-50 ml-2 mr-4 flex items-center',
+            !isOpenSidebar && 'hidden'
+          )}
           onClick={() => toggleSubmenu(index)}
         >
           <ChevronRight
@@ -77,7 +82,7 @@ const ButtonLink: FC<Props> = (props): JSX.Element => {
           />
         </Button>
       )}
-    </Link>
+    </div>
   )
 }
 
