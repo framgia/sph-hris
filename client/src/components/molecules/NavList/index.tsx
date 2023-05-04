@@ -3,6 +3,7 @@ import Tooltip from 'rc-tooltip'
 import React, { FC } from 'react'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
+import { ChevronRight } from 'react-feather'
 import { motion, AnimatePresence } from 'framer-motion'
 import useLocalStorageState from 'use-local-storage-state'
 
@@ -50,24 +51,46 @@ const NavList: FC<Props> = ({ lists, isOpenSidebar }): JSX.Element => {
                   arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
                 >
                   <div>
-                    <ButtonLink
-                      {...{
-                        item: {
-                          name: item.name,
-                          href: item.href,
-                          Icon: item.Icon,
-                          submenu: item?.submenu
-                        },
-                        state: {
-                          index,
-                          isOpenSidebar,
-                          openIndexes
-                        },
-                        actions: {
-                          toggleSubmenu
-                        }
-                      }}
-                    />
+                    {item.submenu === true && isOpenSidebar ? (
+                      <div
+                        onClick={() => toggleSubmenu(index)}
+                        className={classNames(
+                          'relative flex cursor-pointer items-center transition',
+                          'duration-75 ease-in-out hover:bg-slate-100 hover:text-slate-700'
+                        )}
+                      >
+                        <div className="flex w-full items-center space-x-3 py-1.5 pr-8 pl-7">
+                          <item.Icon className="h-5 w-5 shrink-0 stroke-0.5" />
+                          <span
+                            className={`${
+                              isOpenSidebar ? 'line-clamp-1' : 'hidden'
+                            } select-none duration-300`}
+                          >
+                            {item.name}
+                          </span>
+                        </div>
+                        <ChevronRight
+                          className={classNames(
+                            'mr-4 h-4 w-4 shrink-0 stroke-1 duration-200 group-hover:stroke-2',
+                            openIndexes.includes(index) ? 'rotate-90' : ''
+                          )}
+                        />
+                      </div>
+                    ) : (
+                      <ButtonLink
+                        {...{
+                          item: {
+                            name: item.name,
+                            href: item.href,
+                            Icon: item.Icon,
+                            submenu: item?.submenu
+                          },
+                          state: {
+                            isOpenSidebar
+                          }
+                        }}
+                      />
+                    )}
                   </div>
                 </Tooltip>
               ) : null}
