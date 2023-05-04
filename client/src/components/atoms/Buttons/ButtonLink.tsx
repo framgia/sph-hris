@@ -32,18 +32,23 @@ const ButtonLink: FC<Props> = (props): JSX.Element => {
     actions: { toggleSubmenu }
   } = props
 
+  const generateHref = (href: string, isOpenSidebar: boolean, submenu?: boolean): string => {
+    switch (true) {
+      case submenu === true && isOpenSidebar:
+        return ''
+      case href === '/leave-management':
+        return `${href}/list-of-leave`
+      case href === '/my-forms':
+        return `${href}/first-day-onboarding`
+      default:
+        return href
+    }
+  }
+
   return (
     <div className="relative flex w-full items-center">
       <Link
-        href={
-          submenu === true && isOpenSidebar
-            ? ''
-            : href === '/leave-management'
-            ? `${href}/list-of-leave`
-            : href === '/my-forms'
-            ? `${href}/first-day-onboarding`
-            : href
-        }
+        href={generateHref(href, isOpenSidebar, submenu)}
         className={classNames(
           'relative flex items-center transition duration-75 ease-in-out',
           'w-full outline-none hover:bg-slate-100 hover:text-slate-700',
