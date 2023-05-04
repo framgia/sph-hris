@@ -202,23 +202,21 @@ namespace api.Services
 
         private static void UpdatePaidLeaves(Leave? leave, User? userDetails)
         {
+            if (leave == null || userDetails == null)
+            {
+                throw new GraphQLException(ErrorBuilder.New().SetMessage(ErrorMessageEnum.LEAVE_USERDETAILS_NULL_IDENTIFIER).Build());
+            }
+
             if (leave!.IsLeaderApproved == true && leave!.IsManagerApproved == true && leave!.IsWithPay)
             {
-
                 if (leave.Days > userDetails?.PaidLeaves)
                 {
                     if (userDetails?.PaidLeaves <= 0)
                     {
-                        throw new GraphQLException(ErrorBuilder.New()
-                                                        .SetMessage(userDetails?.Name + ErrorMessageEnum.MAXIMUM_LIMIT_OF_PAID_LEAVES)
-                                                        .Build());
+                        throw new GraphQLException(ErrorBuilder.New().SetMessage(userDetails?.Name + ErrorMessageEnum.MAXIMUM_LIMIT_OF_PAID_LEAVES).Build());
                     }
-                    else
-                    {
-                        throw new GraphQLException(ErrorBuilder.New()
-                                    .SetMessage(userDetails?.Name + ErrorMessageEnum.EXCEEDS_MAXIMUM_REMAINING_PAID_LEAVES)
-                                    .Build());
-                    }
+
+                    throw new GraphQLException(ErrorBuilder.New().SetMessage(userDetails?.Name + ErrorMessageEnum.EXCEEDS_MAXIMUM_REMAINING_PAID_LEAVES).Build());
                 }
                 else
                 {
