@@ -97,8 +97,9 @@ const useLeave = (): returnType => {
       onSuccess: async () => {
         toast.success('Success!')
       },
-      onError: async () => {
-        toast.error('Something went wrong')
+      onError: async (err: Error) => {
+        const [errorMessage] = err.message.split(/:\s/, 2)
+        toast.error(errorMessage)
       }
     })
 

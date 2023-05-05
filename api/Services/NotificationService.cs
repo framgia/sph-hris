@@ -62,7 +62,8 @@ namespace api.Services
                     DateFiled = (DateTime)leave.CreatedAt!,
                     Type = NotificationDataTypeEnum.REQUEST,
                     Status = _leaveService.GetLeaveRequestStatus(leave),
-                    Remarks = leave.Reason
+                    Remarks = leave.Reason,
+                    IsWithPay = leave.IsWithPay
                 }
                     );
 
@@ -93,7 +94,8 @@ namespace api.Services
                         DateFiled = (DateTime)leave.CreatedAt,
                         Type = NotificationDataTypeEnum.REQUEST,
                         Status = _leaveService.GetLeaveRequestStatus(leave),
-                        Remarks = leave.Reason
+                        Remarks = leave.Reason,
+                        IsWithPay = leave.IsWithPay
                     }
                     );
                     var notificationToProjectLeader = new LeaveNotification

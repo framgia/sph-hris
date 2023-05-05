@@ -5,6 +5,7 @@ export const GET_USER_QUERY = gql`
       id
       name
       avatarLink
+      paidLeaves
       position {
         id
         name

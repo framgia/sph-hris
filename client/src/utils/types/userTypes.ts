@@ -7,6 +7,7 @@ export type User = {
   timeEntry: TimeEntry
   employeeSchedule: EmployeeSchedule
   avatarLink: string
+  paidLeaves: number
 }
 export type Position = {
   id: number

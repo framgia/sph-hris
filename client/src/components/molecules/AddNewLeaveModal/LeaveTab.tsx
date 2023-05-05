@@ -60,6 +60,9 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
     label: '',
     value: ''
   }
+  const paidLeaves = user?.userById.paidLeaves
+
+  const hasRemainingPaidLeaves = paidLeaves !== undefined ? paidLeaves <= 0 : false
 
   // modify custom style control
   customStyles.control = (provided: Record<string, unknown>, state: any): any => ({
@@ -466,14 +469,21 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                 <div className="shrink-0">
                   <label className="flex items-center">
                     <input
+                      disabled={hasRemainingPaidLeaves}
                       type="checkbox"
                       className={classNames(
-                        'h-4 w-4 rounded border-slate-300 bg-slate-100',
+                        `h-4 w-4 rounded border-slate-300 bg-slate-100 ${
+                          hasRemainingPaidLeaves ? 'opacity-30' : ''
+                        }`,
                         'text-primary focus:ring-primary'
                       )}
                       {...register(`leave_date.${index}.is_with_pay` as any)}
                     />
-                    <span className="ml-2 select-none text-xs capitalize text-slate-500">
+                    <span
+                      className={`ml-2 select-none text-xs capitalize text-slate-500 ${
+                        hasRemainingPaidLeaves ? 'opacity-30' : ''
+                      }`}
+                    >
                       With Pay
                     </span>
                   </label>
