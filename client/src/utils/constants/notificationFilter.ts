@@ -9,5 +9,8 @@ export const TYPE_OPTIONS = {
   ALL: 'All',
   OVERTIME: 'Overtime',
   UNDERTIME: 'Undertime',
-  LEAVE: 'Leave'
+  LEAVE: 'Leave',
+  OFFSET: 'Offset',
+  ESL_CHANGE_SHIFT: 'Esl Change Shift',
+  OFFSET_SCHEDULE: 'Offset Schedule'
 }
