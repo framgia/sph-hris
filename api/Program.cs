@@ -6,6 +6,7 @@ using api.Schema.Queries;
 using api.Services;
 using api.Subscriptions;
 using LiteX.Storage.FileSystem;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -85,6 +86,11 @@ builder.Services.AddScoped<EmployeeScheduleService>();
 
 
 var app = builder.Build();
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
 app.UseCors(MyAllowSpecificOrigins);
 app.UseStaticFiles();
