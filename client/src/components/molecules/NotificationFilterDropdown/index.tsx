@@ -38,7 +38,10 @@ const NotificationFilterDropdown: FC<Props> = (props): JSX.Element => {
     TYPE_OPTIONS.ALL,
     TYPE_OPTIONS.OVERTIME,
     TYPE_OPTIONS.UNDERTIME,
-    TYPE_OPTIONS.LEAVE
+    TYPE_OPTIONS.LEAVE,
+    TYPE_OPTIONS.OFFSET,
+    TYPE_OPTIONS.ESL_CHANGE_SHIFT,
+    TYPE_OPTIONS.OFFSET_SCHEDULE
   ]
 
   const filterStatusOptions = (statusList: string[]): JSX.Element[] => {
