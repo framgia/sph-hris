@@ -41,8 +41,8 @@ const Notifications: NextPage = (): JSX.Element => {
     user?.userById.id as number
   )
 
-  const [notifications, setNotifications] = useState<INotification[]>()
-  const [filteredNotifications, setFilteredNotifications] = useState<INotification[]>()
+  const [notifications, setNotifications] = useState<INotification[]>([])
+  const [filteredNotifications, setFilteredNotifications] = useState<INotification[]>([])
   const [loading, setLoading] = useState(true)
   const [globalFilter, setGlobalFilter] = useState<string>('')
   const [filters, setFilters] = useState({
@@ -161,7 +161,7 @@ const Notifications: NextPage = (): JSX.Element => {
           <NotificationList
             {...{
               query: {
-                data: filteredNotifications as INotification[]
+                data: filteredNotifications
               },
               table: {
                 columns,
