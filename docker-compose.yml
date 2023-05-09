@@ -1,6 +1,7 @@
 version: "3.9"
 
 services:
+  # ASP.NET Service
   api:
     build:
       context: ./api
@@ -17,7 +18,8 @@ services:
       - prac-hris
     depends_on:
       - db
-      - nginx
+
+  # NextJS Service
   client:
     build:
       context: ./client
@@ -33,11 +35,13 @@ services:
       - ./client:/usr/src/app
       - /usr/src/app/node_modules
       - /usr/src/app/.next
+
+  # MSSQL Service
   db:
     image: "mcr.microsoft.com/mssql/server:2022-latest"
     user: root
     ports:
-      - "1433:1433"
+      - 1433:1433
     restart: always
     volumes:
       - ./data:/var/opt/mssql/data
@@ -47,25 +51,28 @@ services:
       - .env.db
     networks:
       - prac-hris
-  nginx:
+
+  # Nginx service
+  webserver:
     build:
       context: ./nginx
     ports:
       - 80:80
       - 443:443
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./certbot/www/:/var/www/certbot/:ro
-      - ./certbot/conf/:/etc/nginx/ssl/:ro
+      - ./certbot/conf/:/etc/letsencrypt/:ro
     networks:
       - prac-hris
     restart: always
+
+  # Certbot Srevice
   certbot:
     image: certbot/certbot:latest
     volumes:
       - ./certbot/www/:/var/www/certbot/:rw
       - ./certbot/conf/:/etc/letsencrypt/:rw
-    command: certonly --webroot -w /var/www/certbot --force-renewal --email ardendave.cabotaje@sun-asterisk.com -d sun-hris.org --agree-tos
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email abduljalil.palala@sun-asterisk.com -d sun-hris.org --agree-tos
     networks:
       - prac-hris
 networks:
