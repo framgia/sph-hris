@@ -1,6 +1,7 @@
 **/data
 **/log
 **/secrets
+**/certbot
 
 .env.client
 .env.api
