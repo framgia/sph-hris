@@ -54,7 +54,8 @@ builder.Services.AddGraphQLServer()
     .AddType<ChangeShiftMutation>()
     .AddType<ESLChangeShiftMutation>()
     .AddType<ESLOffsetMutation>()
-    .AddType<EmployeeScheduleMutation>();
+    .AddType<EmployeeScheduleMutation>()
+    .AddType<EmployeeMutation>();
 
 builder.Services.AddGraphQLServer().AddProjections().AddFiltering().AddSorting();
 builder.Services.AddGraphQLServer().AddInMemorySubscriptions()
@@ -83,6 +84,7 @@ builder.Services.AddScoped<ChangeShiftService>();
 builder.Services.AddScoped<ESLChangeShiftService>();
 builder.Services.AddScoped<ESLOffsetService>();
 builder.Services.AddScoped<EmployeeScheduleService>();
+builder.Services.AddScoped<EmployeeService>();
 
 
 var app = builder.Build();

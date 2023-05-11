@@ -7,6 +7,7 @@ namespace api.Enums
         public const string FAILED_SCHEDULE_CREATION = "Failed to create schedule!";
         public const string FAILED_SCHEDULE_UPDATE = "Failed to update schedule!";
         public const string FAILED_ADDING_USER_TO_SCHEDULE = "Failed to add user to schedule!";
+        public const string FAILED_ADDING_NEW_EMPLOYEE = "Failed to add new employee!";
         public const string FAILED_SCHEDULE_DELETE = "Failed to delete schedule!";
         public const string FAILED_SCHEDULE_DELETE_USER = "Schedule has currently assigned Employees. Failed to delete schedule!";
         public const string MAXIMUM_LIMIT_OF_PAID_LEAVES = " has 0 remaining paid leaves!";
