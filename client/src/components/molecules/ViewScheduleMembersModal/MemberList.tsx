@@ -4,6 +4,7 @@ import React, { FC, useState } from 'react'
 import { CornerDownRight, MoreVertical } from 'react-feather'
 
 import Button from '~/components/atoms/Buttons/Button'
+import handleImageError from '~/utils/handleImageError'
 import MenuTransition from '~/components/templates/MenuTransition'
 import ReassignMemberScheduleModal from './ReassignMemberScheduleModal'
 import { IScheduleMember } from '~/utils/interfaces/scheduleMemberInterface'
@@ -28,7 +29,11 @@ const MemberList: FC<Props> = ({ member }): JSX.Element => {
       {/* Member Details */}
       <div className="flex items-center space-x-4">
         <div className="relative">
-          <img src={member.avatarLink} className="h-9 w-9 shrink rounded-md" />
+          <img
+            onError={(e) => handleImageError(e, '/images/default.png')}
+            src={member.avatarLink}
+            className="h-9 w-9 shrink rounded-md"
+          />
           {/* This will act as online and offline */}
           <span
             className={classNames(

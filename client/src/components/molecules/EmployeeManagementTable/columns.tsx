@@ -7,6 +7,7 @@ import { createColumnHelper } from '@tanstack/react-table'
 import SortIcon from '~/utils/icons/SortIcon'
 import Avatar from '~/components/atoms/Avatar'
 import Button from '~/components/atoms/Buttons/Button'
+import handleImageError from '~/utils/handleImageError'
 import { IEmployeeManagement } from '~/utils/interfaces'
 
 const columnHelper = createColumnHelper<IEmployeeManagement>()
@@ -27,6 +28,9 @@ export const columns = [
     cell: (props) => (
       <div className="flex items-center space-x-2">
         <Avatar
+          onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) =>
+            handleImageError(e, '/images/default.png')
+          }
           src={`https://placeimg.com/640/480/abstract/${props.row.id}`}
           size="base"
           rounded="full"

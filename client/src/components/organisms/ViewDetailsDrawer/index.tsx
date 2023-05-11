@@ -5,6 +5,7 @@ import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import { parse } from 'iso8601-duration'
 import { Calendar, Clock, Download, X } from 'react-feather'
+import { DefaultExtensionType, FileIcon, defaultStyles } from 'react-file-icon'
 
 import Text from '~/components/atoms/Text'
 import Avatar from '~/components/atoms/Avatar'
@@ -13,6 +14,8 @@ import {
   getSpecificTimeEntryById,
   getUserProfileLink
 } from '~/hooks/useTimesheetQuery'
+import { IMedia } from '~/utils/types/timeEntryTypes'
+import handleImageError from '~/utils/handleImageError'
 import DrawerTemplate from '~/components/templates/DrawerTemplate'
 
 type Props = {
@@ -22,23 +25,14 @@ type Props = {
   }
 }
 
-const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
-  const router = useRouter()
-  const timeIdExists = router.query.time_in ?? router.query.time_out
-  const res = getSpecificTimeEntry(Number(timeIdExists))
-  const timeIn = parse(res.data?.timeById?.timeHour ?? 'PT0H')
-  const date = res.data?.timeById?.createdAt
-  const { data } = getSpecificTimeEntryById(Number(timeIdExists))
-  const { data: profileLink } = getUserProfileLink(Number(data?.specificTimeEntryById?.user?.id))
+type UploadFileProps = {
+  file: IMedia
+  index: number
+}
 
-  const {
-    isOpenViewDetailsDrawer,
-    actions: { handleToggleViewDetailsDrawer }
-  } = props
-
-  const handleToggleDrawer = (): void => {
-    void router.replace(router.pathname, undefined, { shallow: false })
-  }
+const UploadedFiles = ({ file, index }: UploadFileProps): JSX.Element => {
+  const fileExtension = file.fileName.split('.').pop()
+  const styles = defaultStyles[fileExtension as DefaultExtensionType]
 
   const LinkChecker = (link: string): void => {
     void fetch(link).then(async (resp) => {
@@ -72,6 +66,47 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
   }
 
   return (
+    <div
+      key={index}
+      className="group flex w-full justify-between rounded px-2 py-2 text-xs font-medium text-slate-700 transition duration-150 ease-in-out focus:outline-none focus:ring-0 hover:bg-slate-700 hover:bg-opacity-5"
+    >
+      <div className="mr-1">
+        <div className="h-4 w-4">
+          <FileIcon extension={fileExtension} {...styles} />
+        </div>
+      </div>
+      <div className="flex w-full truncate" onClick={() => LinkChecker(file.link)}>
+        <div>{file.fileName}</div>
+      </div>
+      <button
+        className="rounded bg-white p-0.5 opacity-0 focus:outline-slate-400 group-hover:opacity-100"
+        onClick={() => handleDownloadFile(file.link, file.fileName)}
+      >
+        <Download className="h-4 w-4 text-slate-500" />
+      </button>
+    </div>
+  )
+}
+
+const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
+  const router = useRouter()
+  const timeIdExists = router.query.time_in ?? router.query.time_out
+  const res = getSpecificTimeEntry(Number(timeIdExists))
+  const timeIn = parse(res.data?.timeById?.timeHour ?? 'PT0H')
+  const date = res.data?.timeById?.createdAt
+  const { data } = getSpecificTimeEntryById(Number(timeIdExists))
+  const { data: profileLink } = getUserProfileLink(Number(data?.specificTimeEntryById?.user?.id))
+
+  const {
+    isOpenViewDetailsDrawer,
+    actions: { handleToggleViewDetailsDrawer }
+  } = props
+
+  const handleToggleDrawer = (): void => {
+    void router.replace(router.pathname, undefined, { shallow: false })
+  }
+
+  return (
     <DrawerTemplate
       {...{
         isOpen: timeIdExists !== undefined ? !isOpenViewDetailsDrawer : isOpenViewDetailsDrawer,
@@ -92,6 +127,9 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
         {/* User */}
         <div className="flex items-center space-x-3 border-b border-slate-200 py-3">
           <Avatar
+            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) =>
+              handleImageError(e, '/images/default.png')
+            }
             src={profileLink?.specificUserProfileDetail?.avatarLink as string}
             alt="user-avatar"
             size="lg"
@@ -192,36 +230,9 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
                     'default-scrollbar '
                   )}
                 >
-                  {res.data?.timeById?.media?.map((i, index: number) => (
-                    <div
-                      key={index}
-                      className="group flex w-full justify-between rounded px-2 py-2 text-xs font-medium text-slate-700 transition duration-150 ease-in-out focus:outline-none focus:ring-0 hover:bg-slate-700 hover:bg-opacity-5"
-                    >
-                      <div className="mr-1">
-                        <img
-                          src={
-                            i.mimeType.includes('.document')
-                              ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Microsoft_Word_2013-2019_logo.svg/2170px-Microsoft_Word_2013-2019_logo.svg.png'
-                              : i.mimeType?.includes('pdf')
-                              ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/833px-PDF_file_icon.svg.png'
-                              : i.mimeType?.includes('image')
-                              ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png'
-                              : 'https://w7.pngwing.com/pngs/770/995/png-transparent-computer-icons-text-file-tiff-plain-text-tiff-text-logo-sign.png'
-                          }
-                          width={'17px'}
-                        ></img>
-                      </div>
-                      <div className="flex w-full truncate" onClick={() => LinkChecker(i.link)}>
-                        <div>{i.fileName}</div>
-                      </div>
-                      <button
-                        className="rounded bg-white p-0.5 opacity-0 focus:outline-slate-400 group-hover:opacity-100"
-                        onClick={() => handleDownloadFile(i.link, i.fileName)}
-                      >
-                        <Download className="h-4 w-4 text-slate-500" />
-                      </button>
-                    </div>
-                  ))}
+                  {res.data?.timeById?.media?.map((file: IMedia, index: number) => {
+                    return <UploadedFiles file={file} index={index} key={index} />
+                  })}
                 </div>
               </label>
             </div>

@@ -11,6 +11,7 @@ import Chip from '~/components/atoms/Chip'
 import Avatar from '~/components/atoms/Avatar'
 import FiledOffsetModal from './../FiledOffsetModal'
 import CellHeader from '~/components/atoms/CellHeader'
+import handleImageError from '~/utils/handleImageError'
 import EditTimeEntriesModal from '../EditTimeEntryModal'
 import { ITimeEntry } from '~/utils/types/timeEntryTypes'
 import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
@@ -29,7 +30,14 @@ export const columns = [
 
       return (
         <div className="flex items-center space-x-2">
-          <Avatar src={`${avatarLink}`} size="base" rounded="full" />
+          <Avatar
+            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) =>
+              handleImageError(e, '/images/default.png')
+            }
+            src={`${avatarLink}`}
+            size="base"
+            rounded="full"
+          />
           <div className="flex flex-col items-start">
             <h1 className="font-semibold">{props.getValue()}</h1>
             <small className="text-slate-500">Web Developer</small>

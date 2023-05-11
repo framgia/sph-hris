@@ -6,6 +6,7 @@ import { Table } from '@tanstack/react-table'
 import { Disclosure } from '@headlessui/react'
 
 import Avatar from '~/components/atoms/Avatar'
+import handleImageError from '~/utils/handleImageError'
 import { variants } from '~/utils/constants/animationVariants'
 import { ITimesheetSummary } from '~/utils/types/timeEntryTypes'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
@@ -59,7 +60,14 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-2">
                               <div className="flex items-center space-x-2">
-                                <Avatar src={`${avatarLink}`} size="base" rounded="full" />
+                                <Avatar
+                                  onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) =>
+                                    handleImageError(e, '/images/default.png')
+                                  }
+                                  src={`${avatarLink}`}
+                                  size="base"
+                                  rounded="full"
+                                />
                                 <div className="flex flex-col items-start">
                                   <h1 className="font-semibold">{name}</h1>
                                   <small className="text-slate-500">Web Developer</small>
