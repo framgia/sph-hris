@@ -117,7 +117,7 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
                             }
                             src={`${row.original.userAvatarLink}`}
                             size="md"
-                            rounded="lg"
+                            rounded="full"
                           />
                           <div
                             className={classNames(
