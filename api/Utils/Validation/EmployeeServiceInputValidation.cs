@@ -7,6 +7,7 @@ namespace api.Utils
 {
     public class EmployeeServiceInputValidation : CustomInputValidation
     {
+        // constructor
         public EmployeeServiceInputValidation(IDbContextFactory<HrisContext> contextFactory) : base(contextFactory)
         {
 
@@ -28,13 +29,13 @@ namespace api.Utils
             if (request.ScheduleId != null && !checkScheduleExist((int)request.ScheduleId).Result)
                 errors.Add(buildError(nameof(request.ScheduleId), InputValidationMessageEnum.INVALID_SCHEDULE));
 
-            if (request.FirstName == "")
+            if (string.IsNullOrEmpty(request.FirstName))
                 errors.Add(buildError(nameof(request.FirstName), InputValidationMessageEnum.INVALID_FIRST_NAME));
 
-            if (request.MiddleName != null && request.MiddleName == "")
+            if (string.IsNullOrEmpty(request.MiddleName))
                 errors.Add(buildError(nameof(request.MiddleName), InputValidationMessageEnum.INVALID_MIDDLE_NAME));
 
-            if (request.LastName == "")
+            if (string.IsNullOrEmpty(request.LastName))
                 errors.Add(buildError(nameof(request.LastName), InputValidationMessageEnum.INVALID_LAST_NAME));
 
             return errors;

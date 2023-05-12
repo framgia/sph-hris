@@ -60,324 +60,145 @@ namespace api.Services
         }
 
         // Private Methods
-        private void GenerateEmployeeFormInitialData(User user, AddNewEmployeeRequest rawNewEmployeeData, HrisContext context)
+        private async void GenerateEmployeeFormInitialData(User user, AddNewEmployeeRequest rawNewEmployeeData, HrisContext context)
         {
-            context.Forms.AddRange(new List<Form>(){
-                // For First Day Onboarding
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.FIRST_DAY_ONBOARDING,
-                    Field = FirstDayOnboardingFieldEnum.TOOLS
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.FIRST_DAY_ONBOARDING,
-                    Field = FirstDayOnboardingFieldEnum.GITHUB_ACCOUNT
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.FIRST_DAY_ONBOARDING,
-                    Field = FirstDayOnboardingFieldEnum.EMAIL_TWO_FACTOR_AUTH_SCREENSHOT
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.FIRST_DAY_ONBOARDING,
-                    Field = FirstDayOnboardingFieldEnum.GITHUB_TWO_FACTOR_AUTH_SCREENSHOT
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.FIRST_DAY_ONBOARDING,
-                    Field = FirstDayOnboardingFieldEnum.E_SIGN
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.FIRST_DAY_ONBOARDING,
-                    Field = FirstDayOnboardingFieldEnum.TWO_X_TWO_PICTURE
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.FIRST_DAY_ONBOARDING,
-                    Field = FirstDayOnboardingFieldEnum.PROBATIONARY_CONTRACT
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.FIRST_DAY_ONBOARDING,
-                    Field = FirstDayOnboardingFieldEnum.SSS_LOAN
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.FIRST_DAY_ONBOARDING,
-                    Field = FirstDayOnboardingFieldEnum.PAGIBIG_LOAN
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.FIRST_DAY_ONBOARDING,
-                    Field = FirstDayOnboardingFieldEnum.SSS_MONTHLY_AMORTIZATION
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.FIRST_DAY_ONBOARDING,
-                    Field = FirstDayOnboardingFieldEnum.PAGIBIG_MONTHLY_AMORTIZATION
-                },
+            var formsList = new List<Form>();
+            GenerateOnboardingForms(user, rawNewEmployeeData, formsList);
+            GeneratePersonalInformationForms(user, rawNewEmployeeData, formsList);
+            GenerateATMApplicationsForms(user, rawNewEmployeeData, formsList);
+            GenerateLaptopMonitoringForms(user, rawNewEmployeeData, formsList);
 
-                // For Personal Information
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.FIRST_NAME,
-                    Value = rawNewEmployeeData.FirstName,
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.MIDDLE_NAME,
-                    Value = rawNewEmployeeData.MiddleName,
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.LAST_NAME,
-                    Value = rawNewEmployeeData.LastName,
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.POSITION,
-                    Value = user.Position.Name,
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.SSS_NUMBER
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.SSS_NUMBER
-                },new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.TIN_NUMBER
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.PHILHEALTH_NUMBER
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.PAGIBIG_NUMBER
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.BIRTHDAY
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.EDUCATIONAL_BACKGROUND
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.CONTACT_NUMBER
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.MOBILE_CARRIER
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.ADDRESS
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.EMAIL
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.SLACK_ACCOUNT
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.EMERGENCY_NAME
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.EMERGENCY_RELATIONSHIPP
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.EMERGENCY_ADDRESS
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.PERSONAL_INFORMATION,
-                    Field = PersonalInformationFieldEnum.EMERGENCY_CONTACT_NUMBER
-                },
+            await context.Forms.AddRangeAsync(formsList);
+        }
 
-                // For ATM Applications
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.ATM_APPLICATIONS,
-                    Field = ATMApplicationsFieldEnum.FIRST_NAME,
-                    Value = rawNewEmployeeData.FirstName,
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.ATM_APPLICATIONS,
-                    Field = ATMApplicationsFieldEnum.MIDDLE_NAME,
-                    Value = rawNewEmployeeData.MiddleName,
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.ATM_APPLICATIONS,
-                    Field = ATMApplicationsFieldEnum.LAST_NAME,
-                    Value = rawNewEmployeeData.LastName,
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.ATM_APPLICATIONS,
-                    Field = ATMApplicationsFieldEnum.MOTHER_NAME
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.ATM_APPLICATIONS,
-                    Field = ATMApplicationsFieldEnum.MARITAL_STATUS
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.ATM_APPLICATIONS,
-                    Field = ATMApplicationsFieldEnum.GENDER
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.ATM_APPLICATIONS,
-                    Field = ATMApplicationsFieldEnum.PERMANENT_ADDRESS
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.ATM_APPLICATIONS,
-                    Field = ATMApplicationsFieldEnum.CITY_MUNICIPALITY_PROVINCE
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.ATM_APPLICATIONS,
-                    Field = ATMApplicationsFieldEnum.ZIP_CODE
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.ATM_APPLICATIONS,
-                    Field = ATMApplicationsFieldEnum.CONTACT_NUMBER
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.ATM_APPLICATIONS,
-                    Field = ATMApplicationsFieldEnum.BIRTH_PLACE
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.ATM_APPLICATIONS,
-                    Field = ATMApplicationsFieldEnum.BIRTHDAY
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.ATM_APPLICATIONS,
-                    Field = ATMApplicationsFieldEnum.POSITION
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.ATM_APPLICATIONS,
-                    Field = ATMApplicationsFieldEnum.TIN_NUMBER
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.ATM_APPLICATIONS,
-                    Field = ATMApplicationsFieldEnum.SSS_NUMBER
-                },
+        private void GenerateOnboardingForms(User user, AddNewEmployeeRequest rawNewEmployeeData, List<Form> formsList)
+        {
+            var firstDayOnboardingFields = new[]
+            {
+                FirstDayOnboardingFieldEnum.TOOLS,
+                FirstDayOnboardingFieldEnum.GITHUB_ACCOUNT,
+                FirstDayOnboardingFieldEnum.EMAIL_TWO_FACTOR_AUTH_SCREENSHOT,
+                FirstDayOnboardingFieldEnum.GITHUB_TWO_FACTOR_AUTH_SCREENSHOT,
+                FirstDayOnboardingFieldEnum.E_SIGN,
+                FirstDayOnboardingFieldEnum.TWO_X_TWO_PICTURE,
+                FirstDayOnboardingFieldEnum.PROBATIONARY_CONTRACT,
+                FirstDayOnboardingFieldEnum.SSS_LOAN,
+                FirstDayOnboardingFieldEnum.PAGIBIG_LOAN,
+                FirstDayOnboardingFieldEnum.SSS_MONTHLY_AMORTIZATION,
+                FirstDayOnboardingFieldEnum.PAGIBIG_MONTHLY_AMORTIZATION
+            };
 
-                // For Laptop Monitoring
-                new Form {
+            var formsToAdd = firstDayOnboardingFields
+                .Select(field => new Form
+                {
+                    User = user,
+                    Type = FormTypeEnum.FIRST_DAY_ONBOARDING,
+                    Field = field
+                }).ToList();
+
+            formsList.AddRange(formsToAdd);
+        }
+
+        private void GeneratePersonalInformationForms(User user, AddNewEmployeeRequest rawNewEmployeeData, List<Form> formsList)
+        {
+            var personalInformationFields = new[]
+            {
+                (PersonalInformationFieldEnum.FIRST_NAME, rawNewEmployeeData.FirstName),
+                (PersonalInformationFieldEnum.MIDDLE_NAME, rawNewEmployeeData.MiddleName),
+                (PersonalInformationFieldEnum.LAST_NAME, rawNewEmployeeData.LastName),
+                (PersonalInformationFieldEnum.POSITION, user.Position.Name),
+                (PersonalInformationFieldEnum.SSS_NUMBER, null),
+                (PersonalInformationFieldEnum.TIN_NUMBER, null),
+                (PersonalInformationFieldEnum.PHILHEALTH_NUMBER, null),
+                (PersonalInformationFieldEnum.PAGIBIG_NUMBER, null),
+                (PersonalInformationFieldEnum.BIRTHDAY, null),
+                (PersonalInformationFieldEnum.EDUCATIONAL_BACKGROUND, null),
+                (PersonalInformationFieldEnum.CONTACT_NUMBER, null),
+                (PersonalInformationFieldEnum.MOBILE_CARRIER, null),
+                (PersonalInformationFieldEnum.ADDRESS, null),
+                (PersonalInformationFieldEnum.EMAIL, null),
+                (PersonalInformationFieldEnum.SLACK_ACCOUNT, null),
+                (PersonalInformationFieldEnum.EMERGENCY_NAME, null),
+                (PersonalInformationFieldEnum.EMERGENCY_RELATIONSHIPP, null),
+                (PersonalInformationFieldEnum.EMERGENCY_ADDRESS, null),
+                (PersonalInformationFieldEnum.EMERGENCY_CONTACT_NUMBER, null)
+            };
+
+            var formsToAdd = personalInformationFields
+                .Select(field => new Form
+                {
+                    User = user,
+                    Type = FormTypeEnum.PERSONAL_INFORMATION,
+                    Field = field.Item1,
+                    Value = field.Item2
+                }).ToList();
+
+            formsList.AddRange(formsToAdd);
+        }
+
+        private void GenerateATMApplicationsForms(User user, AddNewEmployeeRequest rawNewEmployeeData, List<Form> formsList)
+        {
+            var atmApplicationsFields = new[]
+            {
+                (ATMApplicationsFieldEnum.FIRST_NAME, rawNewEmployeeData.FirstName),
+                (ATMApplicationsFieldEnum.MIDDLE_NAME, rawNewEmployeeData.MiddleName),
+                (ATMApplicationsFieldEnum.LAST_NAME, rawNewEmployeeData.LastName),
+                (ATMApplicationsFieldEnum.MOTHER_NAME, null),
+                (ATMApplicationsFieldEnum.MARITAL_STATUS, null),
+                (ATMApplicationsFieldEnum.GENDER, null),
+                (ATMApplicationsFieldEnum.PERMANENT_ADDRESS, null),
+                (ATMApplicationsFieldEnum.CITY_MUNICIPALITY_PROVINCE, null),
+                (ATMApplicationsFieldEnum.ZIP_CODE, null),
+                (ATMApplicationsFieldEnum.CONTACT_NUMBER, null),
+                (ATMApplicationsFieldEnum.BIRTH_PLACE, null),
+                (ATMApplicationsFieldEnum.BIRTHDAY, null),
+                (ATMApplicationsFieldEnum.POSITION, null),
+                (ATMApplicationsFieldEnum.TIN_NUMBER, null),
+                (ATMApplicationsFieldEnum.SSS_NUMBER, null)
+            };
+
+            var formsToAdd = atmApplicationsFields
+                .Select(field => new Form
+                {
+                    User = user,
+                    Type = FormTypeEnum.ATM_APPLICATIONS,
+                    Field = field.Item1,
+                    Value = field.Item2
+                }).ToList();
+
+            formsList.AddRange(formsToAdd);
+        }
+
+        private void GenerateLaptopMonitoringForms(User user, AddNewEmployeeRequest rawNewEmployeeData, List<Form> formsList)
+        {
+            var laptopMonitoringFields = new[]
+            {
+                (LaptopMonitoringFieldEnum.OWNER, user.Name),
+                (LaptopMonitoringFieldEnum.BRAND, null),
+                (LaptopMonitoringFieldEnum.MODEL, null),
+                (LaptopMonitoringFieldEnum.SERIAL_NUMBER, null),
+                (LaptopMonitoringFieldEnum.COMPANY_TAG, null),
+                (LaptopMonitoringFieldEnum.ISSUE_DATE, null),
+                (LaptopMonitoringFieldEnum.CONDITION, null),
+                (LaptopMonitoringFieldEnum.HAS_ISSUE_PROBLEM, null),
+                (LaptopMonitoringFieldEnum.ISSUE_PROBLEM, null),
+                (LaptopMonitoringFieldEnum.OS, null),
+                (LaptopMonitoringFieldEnum.RAM, null),
+                (LaptopMonitoringFieldEnum.PROCESSOR, null),
+                (LaptopMonitoringFieldEnum.VIDEO_MEMORY, null),
+                (LaptopMonitoringFieldEnum.OTHER_NOTE, null)
+            };
+
+            var formsToAdd = laptopMonitoringFields
+                .Select(field => new Form
+                {
                     User = user,
                     Type = FormTypeEnum.LAPTOP_MONITORING,
-                    Field = LaptopMonitoringFieldEnum.OWNER,
-                    Value = user.Name
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.LAPTOP_MONITORING,
-                    Field = LaptopMonitoringFieldEnum.BRAND
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.LAPTOP_MONITORING,
-                    Field = LaptopMonitoringFieldEnum.MODEL
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.LAPTOP_MONITORING,
-                    Field = LaptopMonitoringFieldEnum.SERIAL_NUMBER
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.LAPTOP_MONITORING,
-                    Field = LaptopMonitoringFieldEnum.COMPANY_TAG
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.LAPTOP_MONITORING,
-                    Field = LaptopMonitoringFieldEnum.ISSUE_DATE
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.LAPTOP_MONITORING,
-                    Field = LaptopMonitoringFieldEnum.CONDITION
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.LAPTOP_MONITORING,
-                    Field = LaptopMonitoringFieldEnum.HAS_ISSUE_PROBLEM
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.LAPTOP_MONITORING,
-                    Field = LaptopMonitoringFieldEnum.ISSUE_PROBLEM
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.LAPTOP_MONITORING,
-                    Field = LaptopMonitoringFieldEnum.OS
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.LAPTOP_MONITORING,
-                    Field = LaptopMonitoringFieldEnum.RAM
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.LAPTOP_MONITORING,
-                    Field = LaptopMonitoringFieldEnum.PROCESSOR
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.LAPTOP_MONITORING,
-                    Field = LaptopMonitoringFieldEnum.VIDEO_MEMORY
-                },
-                new Form {
-                    User = user,
-                    Type = FormTypeEnum.LAPTOP_MONITORING,
-                    Field = LaptopMonitoringFieldEnum.OTHER_NOTE
-                },
-            });
+                    Field = field.Item1,
+                    Value = field.Item2
+                }).ToList();
+
+            formsList.AddRange(formsToAdd);
         }
 
     }
