@@ -18,7 +18,7 @@ namespace api.Services
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
-                return await context.Users.Include(i => i.Role).ToListAsync();
+                return await context.Users.Include(i => i.Role).Include(i => i.Position).ToListAsync();
             }
         }
 

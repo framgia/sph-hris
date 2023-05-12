@@ -16,6 +16,7 @@ import {
 } from '~/utils/generateData'
 import useLeave from '~/hooks/useLeave'
 import useUserQuery from '~/hooks/useUserQuery'
+import FadeInOut from '~/components/templates/FadeInOut'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { getRemainingPaidLeaves } from '~/hooks/useLeaveQuery'
 import { Chip } from '~/components/templates/LeaveManagementLayout'
@@ -125,7 +126,7 @@ const MyLeaves: NextPage = (): JSX.Element => {
 
   return (
     <Layout metaTitle="My Leaves">
-      <main className="h-full">
+      <FadeInOut className="h-full">
         <header
           className={classNames(
             'flex flex-wrap justify-between space-x-2 border-b',
@@ -199,7 +200,7 @@ const MyLeaves: NextPage = (): JSX.Element => {
             <PulseLoader color="#ffb40b" size={10} />
           </div>
         )}
-      </main>
+      </FadeInOut>
     </Layout>
   )
 }

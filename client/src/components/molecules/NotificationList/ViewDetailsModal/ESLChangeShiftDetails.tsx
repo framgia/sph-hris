@@ -65,7 +65,7 @@ const ESLChangeShiftDetails: FC<Props> = ({ notification }): JSX.Element => {
       </li>
       <li className="inline-flex flex-col space-y-2 pt-2">
         <span className="text-slate-600">Offsets: </span>
-        {offsets.map((offset) => (
+        {offsets?.map((offset) => (
           <span key={offset.Id} className="ml-4 font-medium">
             {`- ${offset.Title} (${date} - ${renderOffsets(offset)})`}
           </span>

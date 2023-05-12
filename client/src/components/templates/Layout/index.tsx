@@ -127,6 +127,7 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
             <FadeInOut className="overflow-hidden">{children}</FadeInOut>
           )}
         </main>
+        {/* Time In Drawer */}
         <TimeInDrawer
           {...{
             isOpenTimeInDrawer,

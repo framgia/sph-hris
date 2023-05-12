@@ -32,7 +32,8 @@ const Card = w.section(``, {
     },
     border: {
       gray: 'border border-gray-200',
-      slate: 'border border-slate-200'
+      slate: 'border border-slate-200',
+      primary: 'border border-primary'
     },
     rounded,
     iserror,

@@ -18,8 +18,8 @@ import {
   FileStaffOne,
   FileEditingOne,
   MedicationTime,
-  ChartProportion,
-  CalendarThirtyTwo
+  CalendarThirtyTwo,
+  ChartProportion
 } from '@icon-park/react'
 
 import { Roles } from './roles'

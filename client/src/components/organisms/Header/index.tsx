@@ -20,20 +20,20 @@ import Button from '~/components/atoms/Buttons/Button'
 import handleImageError from '~/utils/handleImageError'
 import { getDuration } from '~/utils/notificationHelpers'
 import useNotification from '~/hooks/useNotificationQuery'
+import useScreenCondition from '~/hooks/useScreenCondition'
 import LegendTooltip from '~/components/molecules/LegendTooltip'
 import { getWebsocketClient } from '~/utils/shared/webSocketClient'
 import useNotificationMutation from '~/hooks/useNotificationMutation'
 import UserMenuDropDown from '~/components/molecules/UserMenuDropdown'
 import NotificationPopover from '~/components/molecules/NotificationPopOver'
-import { NotificationRequestInput, NotificationData } from '~/utils/types/notificationTypes'
-import {
-  getChangeShiftNotificationSubQuery,
-  getLeaveNotificationSubQuery,
-  getOvertimeNotificationSubQuery
-} from '~/graphql/subscriptions/leaveSubscription'
-import useScreenCondition from '~/hooks/useScreenCondition'
 import { getESLOffsetNotificationSubscription } from '~/graphql/subscriptions/eslOffsetSubscription'
 import { getFileOffsetNotificationSubscription } from '~/graphql/subscriptions/fileOffsetSubscription'
+import {
+  getLeaveNotificationSubQuery,
+  getOvertimeNotificationSubQuery,
+  getChangeShiftNotificationSubQuery
+} from '~/graphql/subscriptions/leaveSubscription'
+import { NotificationData, NotificationRequestInput } from '~/utils/types/notificationTypes'
 
 const Tooltip = dynamic(async () => await import('rc-tooltip'), { ssr: false })
 
@@ -389,7 +389,7 @@ const Header: FC<Props> = (props): JSX.Element => {
           </div>
         )}
         {status !== 'loading' ? (
-          <div className="text-slate-500 sm:block">
+          <div className="text-slate-600 sm:block">
             <div className="inline-flex items-center space-x-4">
               <div className="relative">
                 {newNotificationCount > 0 ? (

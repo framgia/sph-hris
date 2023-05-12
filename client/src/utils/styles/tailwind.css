@@ -16,4 +16,7 @@
     @apply ease-in-out focus:bg-white focus:text-slate-700 focus:outline-none;
     @apply disabled:cursor-not-allowed disabled:opacity-50;
   }
+  .custom-shadow {
+    @apply shadow-[6px_10px_70px_-14px_rgba(125,153,180,0.25)];
+  }
 }
