@@ -46,6 +46,11 @@ export const columns = [
       )
     }
   }),
+  columnHelper.accessor('status', {
+    header: () => <CellHeader label="Status" />,
+    footer: (info) => info.column.id,
+    cell: (props) => <Chip label={props.getValue()} />
+  }),
   columnHelper.accessor('timeIn.timeHour', {
     id: 'Time In',
     header: () => <CellHeader label="Time In" />,
@@ -166,11 +171,6 @@ export const columns = [
       return <span>{timeEntry.overtime != null ? timeEntry.overtime.approvedMinutes ?? 0 : 0}</span>
     },
     footer: (info) => info.column.id
-  }),
-  columnHelper.accessor('status', {
-    header: () => <CellHeader label="Status" />,
-    footer: (info) => info.column.id,
-    cell: (props) => <Chip label={props.getValue()} />
   }),
   columnHelper.display({
     id: 'id',

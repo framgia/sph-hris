@@ -33,6 +33,11 @@ export const columns = [
     header: () => <CellHeader label="Date" />,
     footer: (info) => info.column.id
   }),
+  columnHelper.accessor('status', {
+    header: () => <CellHeader label="Status" />,
+    footer: (info) => info.column.id,
+    cell: (props) => <Chip label={props.getValue()} />
+  }),
   columnHelper.accessor((row) => row.timeIn?.timeHour, {
     id: 'Time In',
     header: () => <CellHeader label="Time In" />,
@@ -249,11 +254,6 @@ export const columns = [
         </div>
       )
     }
-  }),
-  columnHelper.accessor('status', {
-    header: () => <CellHeader label="Status" />,
-    footer: (info) => info.column.id,
-    cell: (props) => <Chip label={props.getValue()} />
   }),
   columnHelper.display({
     id: 'id',
