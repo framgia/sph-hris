@@ -1,5 +1,6 @@
 
 using System.Globalization;
+using System.Text.RegularExpressions;
 using api.Context;
 using api.Entities;
 using api.Enums;
@@ -124,6 +125,30 @@ namespace api.Utils
             }
         }
 
+        public async Task<bool> checkPositionExist(int id)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.Positions.FindAsync(id) != null;
+            }
+        }
+
+        public async Task<bool> checkRoleExist(int id)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.Roles.FindAsync(id) != null;
+            }
+        }
+
+        public async Task<bool> checkScheduleExist(int id)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.EmployeeSchedules.FindAsync(id) != null;
+            }
+        }
+
         public bool checkLeaveType(int id)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
@@ -141,6 +166,13 @@ namespace api.Utils
                 return DateTime.TryParseExact(date, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out datetime);
             }
         }
+
+        public bool checkEmailFormat(string email)
+        {
+            string regexPattern = @"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$";
+            return Regex.IsMatch(email, regexPattern);
+        }
+
 
         public bool checkLeaveDates(List<LeaveDateRequest> leaveDates)
         {
