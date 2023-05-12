@@ -12,6 +12,7 @@ import useUserQuery from '~/hooks/useUserQuery'
 import ViewDetailsModal from './ViewDetailsModal'
 import { INotification } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/Button'
+import handleImageError from '~/utils/handleImageError'
 import useNotification from '~/hooks/useNotificationQuery'
 import { switchMessage } from '~/utils/notificationHelpers'
 import { NOTIFICATION_TYPE } from '~/utils/constants/notificationTypes'
@@ -110,7 +111,14 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex w-full items-start space-x-2 md:items-center">
-                          <Avatar src={`${row.original.userAvatarLink}`} size="md" rounded="lg" />
+                          <Avatar
+                            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) =>
+                              handleImageError(e, '/images/default.png')
+                            }
+                            src={`${row.original.userAvatarLink}`}
+                            size="md"
+                            rounded="lg"
+                          />
                           <div
                             className={classNames(
                               'flex flex-col space-y-0.5',

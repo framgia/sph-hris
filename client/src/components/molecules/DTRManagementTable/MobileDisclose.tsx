@@ -9,6 +9,7 @@ import { ChevronRight, MoreVertical } from 'react-feather'
 import Chip from '~/components/atoms/Chip'
 import Avatar from '~/components/atoms/Avatar'
 import FiledOffsetModal from '../FiledOffsetModal'
+import handleImageError from '~/utils/handleImageError'
 import EditTimeEntriesModal from '../EditTimeEntryModal'
 import { ITimeEntry } from '~/utils/types/timeEntryTypes'
 import { WorkStatus } from '~/utils/constants/work-status'
@@ -87,7 +88,14 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                             <div className="flex items-center justify-between">
                               <div className="flex items-center space-x-2">
                                 <div className="flex items-center space-x-2">
-                                  <Avatar src={`${avatarLink}`} size="base" rounded="full" />
+                                  <Avatar
+                                    onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) =>
+                                      handleImageError(e, '/images/default.png')
+                                    }
+                                    src={`${avatarLink}`}
+                                    size="base"
+                                    rounded="full"
+                                  />
                                   <div className="flex flex-col items-start">
                                     <h1 className="font-semibold">{name}</h1>
                                     <small className="text-slate-500">Web Developer</small>

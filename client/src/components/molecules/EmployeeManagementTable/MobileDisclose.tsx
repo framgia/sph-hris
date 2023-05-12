@@ -8,6 +8,7 @@ import { ChevronRight, Edit, Trash2 } from 'react-feather'
 
 import Avatar from '~/components/atoms/Avatar'
 import Button from '~/components/atoms/Buttons/Button'
+import handleImageError from '~/utils/handleImageError'
 import { IEmployeeManagement } from '~/utils/interfaces'
 import { WorkStatus } from '~/utils/constants/work-status'
 import { variants } from '~/utils/constants/animationVariants'
@@ -46,6 +47,9 @@ const MobileDisclose: FC<Props> = ({ table }): JSX.Element => {
                       <div className="flex items-center space-x-2">
                         <div className="flex items-center space-x-2">
                           <Avatar
+                            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) =>
+                              handleImageError(e, '/images/default.png')
+                            }
                             src={`https://placeimg.com/640/480/abstract/${row.id}`}
                             size="base"
                             rounded="full"

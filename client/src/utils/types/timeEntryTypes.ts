@@ -85,13 +85,13 @@ export interface ITimeEntryById {
   timeHour: string
   remarks: string
   createdAt: string
-  media: [
-    {
-      mimeType: string
-      link: string
-      fileName: string
-    }
-  ]
+  media: IMedia[]
+}
+
+export interface IMedia {
+  mimeType: string
+  link: string
+  fileName: string
 }
 
 export interface ISpecificTimeEntryById {

@@ -10,6 +10,7 @@ import Avatar from '~/components/atoms/Avatar'
 import ShowReasonModal from './ShowReasonModal'
 import { IListOfLeave } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/Button'
+import handleImageError from '~/utils/handleImageError'
 import { variants } from '~/utils/constants/animationVariants'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import DisclosureTransition from '~/components/templates/DisclosureTransition'
@@ -78,7 +79,14 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex items-center space-x-2">
-                                <Avatar src={`${avatar}`} size="base" rounded="full" />
+                                <Avatar
+                                  onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) =>
+                                    handleImageError(e, '/images/default.png')
+                                  }
+                                  src={`${avatar}`}
+                                  size="base"
+                                  rounded="full"
+                                />
                                 <div className="flex flex-col items-start">
                                   <h1 className="font-semibold">{name}</h1>
                                   <small className="text-slate-500">Web Developer</small>

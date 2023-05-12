@@ -8,6 +8,7 @@ import ShowReasonModal from './ShowReasonModal'
 import { IListOfLeave } from '~/utils/interfaces'
 import CellHeader from '~/components/atoms/CellHeader'
 import Button from '~/components/atoms/Buttons/Button'
+import handleImageError from '~/utils/handleImageError'
 
 const columnHelper = createColumnHelper<IListOfLeave>()
 
@@ -20,7 +21,14 @@ export const columns = [
 
       return (
         <div className="flex items-center space-x-2">
-          <Avatar src={`${avatar}`} size="base" rounded="full" />
+          <Avatar
+            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) =>
+              handleImageError(e, '/images/default.png')
+            }
+            src={`${avatar}`}
+            size="base"
+            rounded="full"
+          />
           <div className="flex flex-col items-start">
             <h1 className="font-semibold">{props.getValue()}</h1>
             <small className="text-slate-500">Web Developer</small>

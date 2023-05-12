@@ -4,6 +4,7 @@ import { Plus, X } from 'react-feather'
 
 import Avatar from '~/components/atoms/Avatar'
 import Button from '~/components/atoms/Buttons/Button'
+import handleImageError from '~/utils/handleImageError'
 
 type Props = {
   title?: string
@@ -28,7 +29,15 @@ const ModalHeader: FC<Props> = (props): JSX.Element => {
     >
       <div className="flex items-start space-x-2 text-slate-700">
         {hasAvatar === true ? (
-          <Avatar src={avatar} size="md" rounded="md" className="flex-shrink-0" />
+          <Avatar
+            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) =>
+              handleImageError(e, '/images/default.png')
+            }
+            src={avatar}
+            size="md"
+            rounded="md"
+            className="flex-shrink-0"
+          />
         ) : (
           <Icon className="h-5 w-5 text-slate-600" />
         )}

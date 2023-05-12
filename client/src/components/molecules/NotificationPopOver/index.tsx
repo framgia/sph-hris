@@ -8,10 +8,11 @@ import { Popover } from '@headlessui/react'
 import Text from '~/components/atoms/Text'
 import Avatar from '~/components/atoms/Avatar'
 import { INotification } from '~/utils/interfaces'
-import useNotificationMutation from '~/hooks/useNotificationMutation'
-import PopoverTransition from '~/components/templates/PopoverTransition'
+import handleImageError from '~/utils/handleImageError'
 import { switchMessage } from '~/utils/notificationHelpers'
+import useNotificationMutation from '~/hooks/useNotificationMutation'
 import { NOTIFICATION_TYPE } from '~/utils/constants/notificationTypes'
+import PopoverTransition from '~/components/templates/PopoverTransition'
 
 type Props = {
   className: string
@@ -95,6 +96,9 @@ const NotificationPopover: FC<Props> = (props): JSX.Element => {
                           )}
                         >
                           <Avatar
+                            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) =>
+                              handleImageError(e, '/images/default.png')
+                            }
                             src={`${i.userAvatarLink}`}
                             className="mt-1"
                             size="md"

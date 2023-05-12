@@ -17,6 +17,7 @@ import useUserQuery from '~/hooks/useUserQuery'
 import ShowRemarksModal from './ShowRemarksModal'
 import Button from '~/components/atoms/Buttons/Button'
 import UpdateOvertimeModal from './UpdateOvertimeModal'
+import handleImageError from '~/utils/handleImageError'
 import { IOvertimeManagement } from '~/utils/interfaces'
 import { variants } from '~/utils/constants/animationVariants'
 import ApproveConfirmationModal from './ApproveConfirmationModal'
@@ -136,6 +137,9 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                               <div className="flex items-center space-x-2">
                                 <div className="flex items-center space-x-2">
                                   <Avatar
+                                    onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) =>
+                                      handleImageError(e, '/images/default.png')
+                                    }
                                     src={`${overtimeManagement.user.link}`}
                                     size="base"
                                     rounded="full"

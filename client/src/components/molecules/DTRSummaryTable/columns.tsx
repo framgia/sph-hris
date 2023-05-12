@@ -3,6 +3,7 @@ import { createColumnHelper } from '@tanstack/react-table'
 
 import SortIcon from '~/utils/icons/SortIcon'
 import Avatar from '~/components/atoms/Avatar'
+import handleImageError from '~/utils/handleImageError'
 import { ITimesheetSummary } from '~/utils/types/timeEntryTypes'
 
 const columnHelper = createColumnHelper<ITimesheetSummary>()
@@ -25,7 +26,14 @@ export const columns = [
 
       return (
         <div className="flex items-center space-x-2">
-          <Avatar src={`${avatarLink}`} size="base" rounded="full" />
+          <Avatar
+            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) =>
+              handleImageError(e, '/images/default.png')
+            }
+            src={`${avatarLink}`}
+            size="base"
+            rounded="full"
+          />
           <div className="flex flex-col items-start">
             <h1 className="font-semibold">{props.getValue()}</h1>
             <small className="text-slate-500">Web Developer</small>

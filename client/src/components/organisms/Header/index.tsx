@@ -5,7 +5,6 @@ import classNames from 'classnames'
 import { Menu } from 'react-feather'
 import { useRouter } from 'next/router'
 import { parse } from 'iso8601-duration'
-import { createClient } from 'graphql-ws'
 import { useQueryClient } from '@tanstack/react-query'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 
@@ -18,9 +17,11 @@ import ClockInIcon from '~/utils/icons/ClockInIcon'
 import ClockOutIcon from '~/utils/icons/ClockOutIcon'
 import { Menus } from '~/utils/constants/sidebarMenu'
 import Button from '~/components/atoms/Buttons/Button'
+import handleImageError from '~/utils/handleImageError'
 import { getDuration } from '~/utils/notificationHelpers'
 import LegendTooltip from '~/components/molecules/LegendTooltip'
 import { NotificationData } from '~/utils/types/notificationTypes'
+import { getWebsocketClient } from '~/utils/shared/webSocketClient'
 import UserMenuDropDown from '~/components/molecules/UserMenuDropdown'
 import NotificationPopover from '~/components/molecules/NotificationPopOver'
 import useNotification, { updateIsRead } from '~/hooks/useNotificationQuery'
@@ -159,9 +160,7 @@ const Header: FC<Props> = (props): JSX.Element => {
 
   // Notification
   const startNotificationService = (userId: number): void => {
-    const clientWebsocket = createClient({
-      url: process.env.NEXT_PUBLIC_BACKEND_WEBSOCKET_URL as string
-    })
+    const clientWebsocket = getWebsocketClient()
 
     clientWebsocket.subscribe(
       {
@@ -409,6 +408,9 @@ const Header: FC<Props> = (props): JSX.Element => {
               <span className="hidden text-slate-500 sm:block">
                 <UserMenuDropDown position="bottom">
                   <Avatar
+                    onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) =>
+                      handleImageError(e, '/images/default.png')
+                    }
                     src={data?.userById.avatarLink}
                     alt="user-avatar"
                     size="md"

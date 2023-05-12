@@ -18,6 +18,7 @@ import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import { Position } from '~/utils/constants/position'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
+import handleImageError from '~/utils/handleImageError'
 import UpdateOvertimeModal from './UpdateOvertimeModal'
 import ApproveConfirmationModal from './ApproveConfirmationModal'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
@@ -34,7 +35,14 @@ export const hrColumns = [
       const { original: overtimeManagement } = props.row
       return (
         <div className="flex items-center space-x-2">
-          <Avatar src={`${overtimeManagement.user.link}`} size="base" rounded="full" />
+          <Avatar
+            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) =>
+              handleImageError(e, '/images/default.png')
+            }
+            src={`${overtimeManagement.user.link}`}
+            size="base"
+            rounded="full"
+          />
           <div className="flex flex-col items-start">
             <h1 className="font-semibold">{overtimeManagement.user.name}</h1>
             <small className="text-slate-500">{overtimeManagement.user.role.name}</small>
@@ -221,7 +229,14 @@ export const managerColumns = [
 
       return (
         <div className="flex items-center space-x-2">
-          <Avatar src={`${overtimeManagement.user.link}`} size="base" rounded="full" />
+          <Avatar
+            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) =>
+              handleImageError(e, '/images/default.png')
+            }
+            src={`${overtimeManagement.user.link}`}
+            size="base"
+            rounded="full"
+          />
           <div className="flex flex-col items-start">
             <h1 className="font-semibold">{overtimeManagement.user.name}</h1>
             <small className="text-slate-500">{overtimeManagement.user.role.name}</small>
