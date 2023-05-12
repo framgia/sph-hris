@@ -7,5 +7,7 @@ namespace api.Enums
         public const int ADMIN = 3;
         public const int WEB_DEVELOPER = 4;
         public const int ESL_TEACHER = 5;
+        public const int WEB_DEVELOPER_TRAINER = 6;
+        public const int WEB_DEVELOPER_TEAM_LEADER = 7;
     }
 }
