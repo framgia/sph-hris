@@ -29,7 +29,7 @@ const LegendTooltip: FC<Props> = ({ placement }): JSX.Element => {
             </li>
             <li className="flex items-center space-x-2">
               <HiFire className="h-5 w-4 text-red-500" />
-              <p>Beyond 7:30 rendered time</p>
+              <p>Beyond 8hrs rendered time</p>
             </li>
             <li className="flex items-center space-x-2">
               <Check className="h-4 w-4 rounded bg-green-500 p-0.5 text-white" />
