@@ -35,3 +35,7 @@ export type NotificationData = {
   RequestedTimeOut: string | null
   Description: string | null
 }
+
+export type NotificationRequestInput = {
+  id: number
+}

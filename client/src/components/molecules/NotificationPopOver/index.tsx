@@ -13,6 +13,8 @@ import { switchMessage } from '~/utils/notificationHelpers'
 import useNotificationMutation from '~/hooks/useNotificationMutation'
 import { NOTIFICATION_TYPE } from '~/utils/constants/notificationTypes'
 import PopoverTransition from '~/components/templates/PopoverTransition'
+import { NotificationRequestInput } from '~/utils/types/notificationTypes'
+import useUserQuery from '~/hooks/useUserQuery'
 
 type Props = {
   className: string
@@ -30,11 +32,20 @@ const NotificationPopover: FC<Props> = (props): JSX.Element => {
   )
   const main =
     'default-scrollbar max-h-[25vh] min-h-[25vh] divide-y divide-slate-200 bg-white scrollbar-thumb-slate-300'
-  const { handleNotificationMutation } = useNotificationMutation()
+  const { handleNotificationMutation, handleReadAllNotificationMutation } =
+    useNotificationMutation()
   const notificationMutations = handleNotificationMutation()
+  const readAllNotifications = handleReadAllNotificationMutation()
+  const { handleUserQuery } = useUserQuery()
+  const { data: user } = handleUserQuery()
+  const userId = user?.userById.id as unknown as NotificationRequestInput
 
   const handleLink = (id: number, open: boolean): void => {
     void notificationMutations.mutate({ id }, { onSuccess: () => checkNotification(open) })
+  }
+
+  const handleReadAllNotifications = (id: NotificationRequestInput): void => {
+    void readAllNotifications.mutate(id)
   }
 
   return (
@@ -55,6 +66,7 @@ const NotificationPopover: FC<Props> = (props): JSX.Element => {
                 open ? 'bg-slate-100' : ' text-slate-400'
               )}
               fill={open ? 'currentColor' : 'transparent'}
+              onClick={() => handleReadAllNotifications(userId)}
             />
           </Popover.Button>
           <PopoverTransition>

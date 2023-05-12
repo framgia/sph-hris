@@ -19,12 +19,13 @@ import { Menus } from '~/utils/constants/sidebarMenu'
 import Button from '~/components/atoms/Buttons/Button'
 import handleImageError from '~/utils/handleImageError'
 import { getDuration } from '~/utils/notificationHelpers'
+import useNotification from '~/hooks/useNotificationQuery'
 import LegendTooltip from '~/components/molecules/LegendTooltip'
-import { NotificationData } from '~/utils/types/notificationTypes'
 import { getWebsocketClient } from '~/utils/shared/webSocketClient'
+import useNotificationMutation from '~/hooks/useNotificationMutation'
 import UserMenuDropDown from '~/components/molecules/UserMenuDropdown'
 import NotificationPopover from '~/components/molecules/NotificationPopOver'
-import useNotification, { updateIsRead } from '~/hooks/useNotificationQuery'
+import { NotificationRequestInput, NotificationData } from '~/utils/types/notificationTypes'
 import {
   getChangeShiftNotificationSubQuery,
   getLeaveNotificationSubQuery,
@@ -63,19 +64,17 @@ const Header: FC<Props> = (props): JSX.Element => {
 
   const { handleUserQuery } = useUserQuery()
   const { data, status } = handleUserQuery()
+  const userId = data?.userById.id as number
   const { getUserNotificationsQuery } = useNotification()
-  const {
-    data: notificationsData,
-    isLoading: notificationLoading,
-    refetch
-  } = getUserNotificationsQuery(data?.userById.id as number)
+  const { handleReadAllNotificationMutation } = useNotificationMutation()
+  const readAllNotifications = handleReadAllNotificationMutation()
+  const { data: notificationsData, isLoading: notificationLoading } =
+    getUserNotificationsQuery(userId)
   const [seconds, setSeconds] = useState(0)
-  const [ready, setReady] = useState(false)
   const [running, setRunning] = useState(false)
   const [time, setTime] = useState<string | number>(() => {
     return '0 UTC'
   })
-  updateIsRead(data?.userById.id as number, ready)
 
   useEffect(() => {
     if (notificationsData != null && !notificationLoading) {
@@ -107,10 +106,16 @@ const Header: FC<Props> = (props): JSX.Element => {
         }
         return mapped
       })
-      setNewNotificationCount(count)
+      handleNotificationCount(count)
       setNotifications(mappedNotifications)
     }
   }, [notificationsData])
+
+  const handleNotificationCount = (count: number): void => {
+    router.pathname.includes('/notifications')
+      ? readAllNotifications.mutate(userId as unknown as NotificationRequestInput)
+      : setNewNotificationCount(count)
+  }
 
   useEffect(() => {
     setRunning(false)
@@ -238,10 +243,9 @@ const Header: FC<Props> = (props): JSX.Element => {
     )
   }
 
-  const handleCheckNotifications = (state: boolean): void => {
-    setReady(state)
-    void refetch()
+  const handleCheckNotifications = (): void => {
     setNewNotificationCount(0)
+    void queryClient.invalidateQueries({ queryKey: ['GET_ALL_USER_NOTIFICATION'] })
   }
 
   const NOTIFICATION_LIMIT = 9
@@ -401,7 +405,7 @@ const Header: FC<Props> = (props): JSX.Element => {
                 <NotificationPopover
                   className="h-5 w-5 text-slate-400"
                   notificationsData={notifications}
-                  checkNotification={(state: boolean) => handleCheckNotifications(state)}
+                  checkNotification={() => handleCheckNotifications()}
                 />
               </div>
               {/* User Avatar */}
