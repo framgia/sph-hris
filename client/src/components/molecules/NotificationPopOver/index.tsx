@@ -102,7 +102,7 @@ const NotificationPopover: FC<Props> = (props): JSX.Element => {
                             src={`${i.userAvatarLink}`}
                             className="mt-1"
                             size="md"
-                            rounded="lg"
+                            rounded="full"
                             alt="avatar"
                           />
                           <div

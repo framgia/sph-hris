@@ -32,7 +32,7 @@ const MemberList: FC<Props> = ({ member }): JSX.Element => {
           <img
             onError={(e) => handleImageError(e, '/images/default.png')}
             src={member.avatarLink}
-            className="h-9 w-9 shrink rounded-md"
+            className="h-9 w-9 shrink rounded-full"
           />
           {/* This will act as online and offline */}
           <span

@@ -35,7 +35,7 @@ const ModalHeader: FC<Props> = (props): JSX.Element => {
             }
             src={avatar}
             size="md"
-            rounded="md"
+            rounded="full"
             className="flex-shrink-0"
           />
         ) : (
