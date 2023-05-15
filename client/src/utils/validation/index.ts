@@ -98,7 +98,8 @@ export const MyBulkOvertimeSchema = yup.object().shape({
 
 export const NewEmployeeSchema = yup.object().shape({
   email: yup.string().required().label('Email'),
-  position: yup.string().required().label('Position'),
+  position: SelectSchema.required().label('Position'),
+  role: SelectSchema.required().label('Role'),
   first_name: yup.string().required().label('First Name'),
   middle_name: yup.string().label('Middle Name'),
   last_name: yup.string().required().label('Last Name')

@@ -52,9 +52,10 @@ const EmployeeManagement: NextPage = (): JSX.Element => {
               type="button"
               variant="primary"
               onClick={handleToggle}
-              className="px-1.5 py-[3px]"
+              className="flex items-center space-x-1 px-1.5 py-[3px]"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4" /> {''}
+              <span>Employee</span>
             </Button>
           </div>
         ) : (

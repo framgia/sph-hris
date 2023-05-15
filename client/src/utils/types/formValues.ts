@@ -72,7 +72,8 @@ export type NewBulkOvertimeFormValues = {
 export type NewEmployeeFormValues = {
   // eslint-disable-next-line @typescript-eslint/array-type
   email: string
-  position: string
+  position: ReactSelectOption
+  role: ReactSelectOption
   first_name: string
   middle_name?: string
   last_name: string
