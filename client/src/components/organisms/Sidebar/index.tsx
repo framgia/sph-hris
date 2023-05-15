@@ -4,7 +4,7 @@ import { ChevronsLeft } from 'react-feather'
 
 import Logo from '~/components/atoms/Logo'
 import NavList from '~/components/molecules/NavList'
-import { Menus } from '~/utils/constants/sidebarMenu'
+import { Menus, productionMenu } from '~/utils/constants/sidebarMenu'
 
 type Props = {
   isOpenSidebar: boolean
@@ -36,12 +36,27 @@ const Sidebar: FC<Props> = (props): JSX.Element => {
       {/* Navigation Links */}
       <nav className="default-scrollbar hidden md:block">
         <div className="space-y-1.5 text-xs text-slate-500 overflow-x-hidden">
-          <NavList
-            {...{
-              isOpenSidebar,
-              lists: Menus
-            }}
-          />
+          {process.env.NODE_ENV !== 'production' ? (
+            <>
+              {' '}
+              <NavList
+                {...{
+                  isOpenSidebar,
+                  lists: Menus
+                }}
+              />
+            </>
+          ) : (
+            <>
+              {' '}
+              <NavList
+                {...{
+                  isOpenSidebar,
+                  lists: productionMenu
+                }}
+              />
+            </>
+          )}
         </div>
       </nav>
       {/* Footer Ooptions */}
