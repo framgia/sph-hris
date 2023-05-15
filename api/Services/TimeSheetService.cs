@@ -63,6 +63,7 @@ namespace api.Services
                         .ThenInclude(x => x.ProfileImage)
                     .Include(entry => entry.Overtime)
                     .Where(c => c.UserId == id)
+                    .OrderByDescending(entry => entry.Date)
                     .Select(x => ToTimeEntryDTO(x, leaves, domain, changeShift, eslChangeShift))
                     .ToListAsync();
             }
