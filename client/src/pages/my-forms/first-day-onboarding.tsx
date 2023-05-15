@@ -9,6 +9,7 @@ import { Controller, useForm, SubmitHandler } from 'react-hook-form'
 
 import Card from '~/components/atoms/Card'
 import Input from '~/components/atoms/Input'
+import Layout from '~/components/templates/Layout'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import FadeInOut from '~/components/templates/FadeInOut'
 import Button from '~/components/atoms/Buttons/ButtonAction'
@@ -16,6 +17,7 @@ import { FirstDayOnBoardingSchema } from '~/utils/validation'
 import MyFormsLayout from '~/components/templates/MyFormsLayout'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import { FirstDayOnBoardingFormValues } from '~/utils/types/formValues'
+import UnderConstructionPage from '~/components/pages/UnderContructionPage'
 
 const FirstDayOnboarding: NextPage = (): JSX.Element => {
   const {
@@ -115,6 +117,13 @@ const FirstDayOnboarding: NextPage = (): JSX.Element => {
   const isExistingSSSLoanErrors = !isEmpty(errors?.is_existing_sss_loan)
   const isExistingPagIbigLoanErrors = !isEmpty(errors?.is_existing_pag_ibig_loan)
 
+  if (process.env.NODE_ENV === 'production') {
+    return (
+      <Layout metaTitle="Home">
+        <UnderConstructionPage />
+      </Layout>
+    )
+  }
   return (
     <MyFormsLayout metaTitle="First day Onboarding">
       <FadeInOut className="default-scrollbar h-full overflow-y-auto">

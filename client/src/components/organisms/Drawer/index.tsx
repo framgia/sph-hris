@@ -4,7 +4,7 @@ import classNames from 'classnames'
 
 import Logo from '~/components/atoms/Logo'
 import NavList from '~/components/molecules/NavList'
-import { Menus } from '~/utils/constants/sidebarMenu'
+import { Menus, productionMenu } from '~/utils/constants/sidebarMenu'
 
 type Props = {
   isOpenDrawer: boolean
@@ -37,12 +37,27 @@ const Drawer: FC<Props> = (props): JSX.Element => {
         {/* Navigation Links */}
         <nav className="default-scrollbar">
           <ul className="space-y-1.5 text-xs text-slate-500">
-            <NavList
-              {...{
-                isOpenSidebar: isOpenDrawer,
-                lists: Menus
-              }}
-            />
+            {process.env.NODE_ENV !== 'production' ? (
+              <>
+                {' '}
+                <NavList
+                  {...{
+                    isOpenSidebar: isOpenDrawer,
+                    lists: Menus
+                  }}
+                />
+              </>
+            ) : (
+              <>
+                {' '}
+                <NavList
+                  {...{
+                    isOpenSidebar: isOpenDrawer,
+                    lists: productionMenu
+                  }}
+                />
+              </>
+            )}
           </ul>
         </nav>
         {/* Footer Options */}

@@ -8,6 +8,7 @@ import { Controller, useForm, SubmitHandler } from 'react-hook-form'
 
 import Card from '~/components/atoms/Card'
 import Input from '~/components/atoms/Input'
+import Layout from '~/components/templates/Layout'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import FadeInOut from '~/components/templates/FadeInOut'
 import TextField from '~/components/molecules/TextField'
@@ -16,6 +17,7 @@ import Button from '~/components/atoms/Buttons/ButtonAction'
 import MyFormsLayout from '~/components/templates/MyFormsLayout'
 import { ATMApplicationFormValues } from '~/utils/types/formValues'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
+import UnderConstructionPage from '~/components/pages/UnderContructionPage'
 
 const ATMApplication: NextPage = (): JSX.Element => {
   const {
@@ -62,6 +64,13 @@ const ATMApplication: NextPage = (): JSX.Element => {
   const sssnumberErrors = !isEmpty(errors?.sss_number)
   const tinnumberErrors = !isEmpty(errors?.tin_number)
 
+  if (process.env.NODE_ENV === 'production') {
+    return (
+      <Layout metaTitle="Home">
+        <UnderConstructionPage />
+      </Layout>
+    )
+  }
   return (
     <MyFormsLayout metaTitle="First day Onboarding">
       <FadeInOut className="default-scrollbar h-full overflow-y-auto">

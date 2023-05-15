@@ -8,6 +8,7 @@ import { Controller, useForm, SubmitHandler } from 'react-hook-form'
 
 import Card from '~/components/atoms/Card'
 import Input from '~/components/atoms/Input'
+import Layout from '~/components/templates/Layout'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import TextField from '~/components/molecules/TextField'
 import FadeInOut from '~/components/templates/FadeInOut'
@@ -16,6 +17,7 @@ import Button from '~/components/atoms/Buttons/ButtonAction'
 import MyFormsLayout from '~/components/templates/MyFormsLayout'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import { LaptopMonitoringFormValues } from '~/utils/types/formValues'
+import UnderConstructionPage from '~/components/pages/UnderContructionPage'
 
 const LaptopMonitoring: NextPage = (): JSX.Element => {
   const {
@@ -62,6 +64,13 @@ const LaptopMonitoring: NextPage = (): JSX.Element => {
   const laptopProcessorErrors = !isEmpty(errors?.laptop_processor)
   const laptopVideoMemoryErrors = !isEmpty(errors?.laptop_video_memory)
 
+  if (process.env.NODE_ENV === 'production') {
+    return (
+      <Layout metaTitle="Home">
+        <UnderConstructionPage />
+      </Layout>
+    )
+  }
   return (
     <MyFormsLayout metaTitle="Laptop Monitoring ">
       <FadeInOut className="default-scrollbar h-full overflow-y-auto">
