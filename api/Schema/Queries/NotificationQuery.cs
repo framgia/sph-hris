@@ -17,9 +17,5 @@ namespace api.Schema.Queries
             return await _notificationService.getByRecipientId(id);
         }
 
-        public async Task<List<Notification>> GetIsReadAll(int id)
-        {
-            return await _notificationService.IsReadAll(id);
-        }
     }
 }

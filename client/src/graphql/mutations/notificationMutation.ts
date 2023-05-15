@@ -5,3 +5,12 @@ export const NOTIFICATION_READ_AT_MUTATION = gql`
     readNotification(notification: $notification)
   }
 `
+export const READ_ALL_NOTIFICATIONS = gql`
+  mutation ($id: Int!) {
+    isReadAll(id: $id) {
+      id
+      readAt
+      isRead
+    }
+  }
+`

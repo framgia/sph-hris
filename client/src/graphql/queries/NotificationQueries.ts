@@ -12,13 +12,3 @@ export const GET_ALL_USER_NOTIFICATION = gql`
     }
   }
 `
-
-export const IS_READ = gql`
-  query ($id: Int!) {
-    isReadAll(id: $id) {
-      id
-      readAt
-      isRead
-    }
-  }
-`
