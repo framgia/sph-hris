@@ -1,5 +1,6 @@
 using api.Context;
 using api.Entities;
+using api.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Services
@@ -20,6 +21,22 @@ namespace api.Services
                             .Include(i => i.ProjectLeader)
                             .Include(i => i.ProjectSubLeader)
                             .ToListAsync();
+            }
+        }
+
+        public async Task<List<User>> GetAllLeaders(int? projectId)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var ids = new List<int> { PositionEnum.ADMIN, PositionEnum.WEB_DEVELOPER_TEAM_LEADER, PositionEnum.WEB_DEVELOPER_TRAINER };
+
+                if (projectId == ProjectId.OJT)
+                {
+                    ids = new List<int> { PositionEnum.WEB_DEVELOPER_TRAINER };
+                }
+
+                return await context.Users
+                            .Where(x => ids.Contains(x.PositionId)).ToListAsync();
             }
         }
     }
