@@ -5,6 +5,7 @@ import { createColumnHelper } from '@tanstack/react-table'
 import CellHeader from '~/components/atoms/CellHeader'
 import { LeaveTable } from '~/utils/types/leaveTypes'
 import { getLeaveType } from '~/utils/getLeaveType'
+import Chip from '~/components/atoms/Chip'
 
 const columnHelper = createColumnHelper<LeaveTable>()
 
@@ -12,6 +13,11 @@ export const columns = [
   columnHelper.accessor('date', {
     header: () => <CellHeader label="Date" className="text-xs text-slate-500" />,
     cell: (props) => moment(props.getValue()).format('MMMM D, YYYY'),
+    footer: (info) => info.column.id
+  }),
+  columnHelper.accessor('status', {
+    header: () => <CellHeader label="Status" className="text-xs text-slate-500" />,
+    cell: (props) => <Chip label={props.getValue().toLowerCase()} />,
     footer: (info) => info.column.id
   }),
   columnHelper.accessor('leaveTypeId', {

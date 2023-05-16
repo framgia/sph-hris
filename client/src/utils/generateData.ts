@@ -10,7 +10,6 @@ export const generateData = (count: number, yrange: { min: number; max: number }
   while (i < count) {
     const x = (i + 1).toString()
     const y = Math.floor(Math.random() * (yrange.max - yrange.min + 1)) + yrange.min
-
     series.push({ x, y })
     i++
   }
@@ -23,8 +22,9 @@ export const getHeatmapData = (count: number, heatmap: HeatmapDetails[]): Series
     const x = (i + 1).toString()
     const temp = heatmap?.filter((h) => h.day === parseInt(x))
     const y = temp?.length > 0 ? temp[0]?.value : 0
+    const leaveName = temp?.length > 0 ? temp[0]?.leaveName : 0
 
-    series.push({ x, y })
+    series.push({ x, y, leaveName })
     i++
   }
   return series
@@ -48,16 +48,32 @@ export const initialChartOptions = {
     }
   },
   tooltip: {
-    enabled: false,
-    y: {
-      title: {
-        formatter: function (seriesName: string) {
-          return `${seriesName}: `
-        }
-      },
-      formatter: function (val: number) {
-        return val > 0 ? '1' : '0'
+    enabled: true,
+    custom: function ({
+      series,
+      seriesIndex,
+      dataPointIndex,
+      w
+    }: {
+      series: number[][]
+      seriesIndex: number
+      dataPointIndex: number
+      w: any
+    }) {
+      const leaveName = w.config.series[seriesIndex].data[dataPointIndex].leaveName as string
+
+      // Check if the data point is pending
+      if (series[seriesIndex][dataPointIndex] === 42) {
+        return (
+          '<div class="arrow_box font-semibold text-xs m-1 p-1">' +
+          '<span>' +
+          `Pending: ${leaveName}` +
+          '</span>' +
+          '</div>'
+        )
       }
+
+      return ''
     }
   },
   plotOptions: {
@@ -102,6 +118,12 @@ export const initialChartOptions = {
             to: 36,
             name: 'Maternity Leave',
             color: '#ffe814'
+          },
+          {
+            from: 37,
+            to: 42,
+            name: 'Pending',
+            color: '#CD5C5C'
           }
         ]
       }

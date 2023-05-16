@@ -25,6 +25,7 @@ export interface ILeave {
 export type HeatmapDetails = {
   value: number
   day: number
+  leaveName: string
 }
 export type Heatmap = {
   january: HeatmapDetails[]
@@ -46,6 +47,7 @@ export type LeaveTable = {
   isWithPay: boolean
   reason: string
   numLeaves: number
+  status: string
 }
 export type Breakdown = {
   sickLeave: number
@@ -56,6 +58,7 @@ export type Breakdown = {
   maternityLeave: number
   withoutPayTotal: number
   withPayTotal: number
+  pending: number
 }
 export type Leaves = {
   leaves: {
