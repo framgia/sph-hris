@@ -15,3 +15,12 @@ export const GET_ALL_PROJECTS_QUERY = gql`
     }
   }
 `
+
+export const GET_ALL_LEADERS_QUERY = gql`
+  query ($projectId: Int) {
+    allLeaders(projectId: $projectId) {
+      id
+      name
+    }
+  }
+`

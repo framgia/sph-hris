@@ -19,7 +19,7 @@ import { Roles } from '~/utils/constants/roles'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import { UndertimeLeaveSchema } from '~/utils/validation'
 import { LeaveTypes } from '~/utils/constants/leaveTypes'
-import { ProjectDetails } from '~/utils/types/projectTypes'
+import { LeaderDetails, ProjectDetails } from '~/utils/types/projectTypes'
 import { User as UserType } from '~/utils/types/userTypes'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { customStyles } from '~/utils/customReactSelectStyles'
@@ -42,8 +42,8 @@ const animatedComponents = makeAnimated()
 const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
   const router = useRouter()
   const [managers, setManagers] = useState<UserType[]>([])
-  const [leaders, setLeaders] = useState<UserType[]>([])
-  const { handleProjectQuery } = useProject()
+  const [leaders, setLeaders] = useState<LeaderDetails[]>([])
+  const { handleProjectQuery, getLeadersQuery } = useProject()
   const { handleAllUsersQuery, handleUserQuery } = useUserQuery()
   const { handleLeaveMutation } = useLeave()
   const { data: user } = handleUserQuery()
@@ -51,8 +51,17 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
     user?.userById.id as number,
     parseInt(router.query.year as string)
   )
-  const { data: projects, isSuccess: isProjectsSuccess } = handleProjectQuery()
+  const { data: projects } = handleProjectQuery()
   const { data: users, isSuccess: isUsersSuccess } = handleAllUsersQuery()
+  const {
+    data: leadersList,
+    isSuccess: isLeadersSuccess,
+    isFetching: isLeadersFetching
+  } = getLeadersQuery(undefined)
+
+  useEffect(() => {
+    if (leadersList !== undefined) setLeaders(leadersList.allLeaders)
+  }, [leadersList])
 
   const emptyReactSelectOption = {
     label: '',
@@ -76,32 +85,23 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
     }
   }, [isUsersSuccess])
 
-  useEffect(() => {
-    if (isProjectsSuccess && projects.projects.length > 0) {
-      const tempLeaders = [...leaders]
-      projects?.projects.forEach((project) => {
-        if (project?.projectLeader != null || project?.projectSubLeader != null) {
-          if (!tempLeaders.some((leader) => leader.id === project.projectLeader.id))
-            tempLeaders.push(project?.projectLeader)
-          // Commented out so File Leave Modal won't break
-          // if (!tempLeaders.some((leader) => leader.id === project.projectSubLeader.id))
-          //   tempLeaders.push(project?.projectSubLeader)
-        }
-      })
-      setLeaders(tempLeaders)
-    }
-  }, [isProjectsSuccess, projects?.projects])
-
   const {
     reset,
     control,
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting }
   } = useForm<UndertimeFormValues>({
     mode: 'onTouched',
     resolver: yupResolver(UndertimeLeaveSchema)
   })
+
+  const hasProject = (index: number): boolean => {
+    const watchProject = watch(`projects.${index}.project_name`)
+
+    return watchProject?.value !== undefined && watchProject?.value !== ''
+  }
 
   const {
     fields: projectFields,
@@ -263,7 +263,12 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                           placeholder=""
                           styles={customStyles}
                           closeMenuOnSelect={true}
-                          isDisabled={isSubmitting}
+                          isDisabled={
+                            isSubmitting ||
+                            !hasProject(index) ||
+                            isLeadersFetching ||
+                            !isLeadersSuccess
+                          }
                           classNames={{
                             control: (state) =>
                               state.isFocused
@@ -274,7 +279,7 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                                 : 'border-slate-300'
                           }}
                           backspaceRemovesValue={true}
-                          options={generateUserSelect(leaders)}
+                          options={generateUserSelect(leaders as UserType[])}
                           components={animatedComponents}
                           className="w-full"
                         />
