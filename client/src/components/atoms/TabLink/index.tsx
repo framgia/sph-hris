@@ -14,6 +14,8 @@ type Props = {
 const TabLink: FC<Props> = ({ href, name, Icon }): JSX.Element => {
   const router = useRouter()
 
+  const isActive = router.pathname.includes(href)
+
   return (
     <Link
       href={href}
@@ -21,7 +23,7 @@ const TabLink: FC<Props> = ({ href, name, Icon }): JSX.Element => {
         'relative flex select-none items-center',
         'border-b-[3px] border-transparent py-2.5 focus:outline-none',
         'transition duration-150 ease-in-out',
-        router.pathname.includes(href)
+        isActive
           ? 'font-medium text-amber-500'
           : classNames(
               'font-normal text-slate-500 focus:border-slate-300',
@@ -32,7 +34,7 @@ const TabLink: FC<Props> = ({ href, name, Icon }): JSX.Element => {
         WebkitTapHighlightColor: 'transparent'
       }}
     >
-      {router.pathname.includes(href) && (
+      {isActive && (
         <motion.span
           layoutId="bubble"
           className="absolute inset-0 -bottom-1 z-10 border-b-[3px] border-amber-500"
@@ -40,7 +42,11 @@ const TabLink: FC<Props> = ({ href, name, Icon }): JSX.Element => {
         />
       )}
       <Icon
-        className={classNames('h-4 w-4 shrink-0', router.pathname !== href ? 'stroke-1' : '')}
+        className="shrink-0"
+        theme={isActive ? 'filled' : 'outline'}
+        size={16}
+        strokeWidth="3"
+        strokeLinecap="butt"
       />
       <span className="relative ml-2 flex-shrink-0">{name}</span>
     </Link>

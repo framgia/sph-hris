@@ -3,11 +3,11 @@ import { Eye } from 'react-feather'
 import React, { useState } from 'react'
 import { createColumnHelper } from '@tanstack/react-table'
 
-import Chip from './Chip'
 import ShowRemarksModal from './ShowRemarksModal'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
 import { IFiledOffsetTable } from '~/utils/interfaces'
+import RequestStatusChip from '~/components/atoms/RequestStatusChip'
 
 const columnHelper = createColumnHelper<IFiledOffsetTable>()
 
@@ -31,7 +31,7 @@ export const columns = [
   columnHelper.accessor('status', {
     header: () => <CellHeader label="Status" className="!font-medium" />,
     footer: (info) => info.column.id,
-    cell: (props) => <Chip label={props.getValue()} />
+    cell: (props) => <RequestStatusChip label={props.getValue()} />
   }),
   columnHelper.display({
     id: 'action',

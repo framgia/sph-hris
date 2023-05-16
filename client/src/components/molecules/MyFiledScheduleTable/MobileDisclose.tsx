@@ -7,25 +7,28 @@ import { Table } from '@tanstack/react-table'
 import { Disclosure } from '@headlessui/react'
 import { Calendar, ChevronRight, Eye } from 'react-feather'
 
-import ShowRemarksModal from './ShowRemarksModal'
-import { IMyOvertimeTable } from '~/utils/interfaces'
+import ViewScheduleModal from './ViewScheduleModal'
 import Button from '~/components/atoms/Buttons/Button'
-import { decimalFormatter } from '~/utils/myOvertimeHelpers'
+import { IMyFiledScheduleData } from '~/utils/interfaces'
 import { variants } from '~/utils/constants/animationVariants'
-import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import RequestStatusChip from '~/components/atoms/RequestStatusChip'
+import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import DisclosureTransition from '~/components/templates/DisclosureTransition'
 
 type Props = {
-  table: Table<IMyOvertimeTable>
+  table: Table<IMyFiledScheduleData>
   isLoading: boolean
   error: unknown
 }
 
 const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [rowData, setRowData] = useState<IMyFiledScheduleData>()
 
-  const handleToggle = (): void => setIsOpen(!isOpen)
+  const handleToggle = (row?: IMyFiledScheduleData): void => {
+    setIsOpen(!isOpen)
+    setRowData(row)
+  }
 
   return (
     <>
@@ -63,9 +66,8 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                             <div className="flex items-center space-x-2 text-slate-600">
                               <Calendar className="h-4 w-4" />
                               <span className="font-medium">
-                                {moment(new Date(row.original.date)).format('MMMM DD, YYYY')}
+                                {moment(new Date(row.original.dateFiled)).format('MMMM DD, YYYY')}
                               </span>
-                              <RequestStatusChip label={row.original.status} />
                             </div>
                             <ChevronRight
                               className={classNames(
@@ -83,68 +85,11 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                             )}
                           >
                             <ul className="flex flex-col divide-y divide-slate-200">
-                              <li className="flex flex-col space-y-2 px-4 py-2.5">
-                                <span>Projects:</span>
-                                <div className="flex flex-wrap items-center space-x-2">
-                                  {row?.original?.projects.map((option, index) => {
-                                    const projectName = option.project_name.label
-                                    const otherProjects =
-                                      option.project_name.label !== 'Others' &&
-                                      option.project_name.label.split(',')
-
-                                    return (
-                                      <div key={index}>
-                                        <>
-                                          {typeof otherProjects === 'object' &&
-                                          projectName !== '' ? (
-                                            <>
-                                              {otherProjects.map((val, index) => (
-                                                <span
-                                                  key={index}
-                                                  className="rounded border border-slate-300 bg-slate-50 px-1.5 font-medium"
-                                                >
-                                                  {val}
-                                                </span>
-                                              ))}
-                                            </>
-                                          ) : null}
-                                        </>
-                                      </div>
-                                    )
-                                  })}
-                                </div>
+                              <li className="px-4 py-2.5">
+                                No.: <span className="font-semibold">{row.original.id}</span>
                               </li>
                               <li className="px-4 py-2.5">
-                                Date:{' '}
-                                <span className="font-semibold">
-                                  {moment(new Date(row.original.date)).format('MMMM DD, YYYY')}
-                                </span>
-                              </li>
-                              <li className="px-4 py-2.5">
-                                Requested hours:{' '}
-                                <span className="font-semibold">
-                                  {decimalFormatter(row?.original?.requestedHours)}
-                                </span>
-                              </li>
-                              <li className="px-4 py-2.5">
-                                Supervisor:{' '}
-                                <span className="font-semibold">{row.original.supervisor}</span>
-                              </li>
-                              <li className="px-4 py-2.5">
-                                Approved Minutes:{' '}
-                                <span className="font-semibold">
-                                  {row.original.approvedMinutes ?? (
-                                    <span className="italic text-slate-400">
-                                      (pending approval)
-                                    </span>
-                                  )}
-                                </span>
-                              </li>
-                              <li className="flex flex-col space-y-2 px-4 py-3">
-                                <span> Remarks:</span>
-                                <span className="font-medium leading-relaxed tracking-wide">
-                                  {row.original.remarks}
-                                </span>
+                                Status: <RequestStatusChip label={row.original.status} />
                               </li>
                               <li className="flex items-center space-x-2 px-4 py-2">
                                 <span>Actions:</span>
@@ -155,22 +100,11 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                     content="View Remarks"
                                   >
                                     <Button
-                                      onClick={handleToggle}
+                                      onClick={() => handleToggle(row.original)}
                                       rounded="none"
                                       className="py-0.5 px-1 text-slate-500"
                                     >
                                       <Eye className="h-4 w-4" />
-
-                                      {/* This will show the remarks modal */}
-                                      {isOpen ? (
-                                        <ShowRemarksModal
-                                          {...{
-                                            isOpen,
-                                            closeModal: () => handleToggle(),
-                                            row: row.original
-                                          }}
-                                        />
-                                      ) : null}
                                     </Button>
                                   </Tippy>
                                 </div>
@@ -182,6 +116,16 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                     )}
                   </Disclosure>
                 ))}
+
+                {isOpen ? (
+                  <ViewScheduleModal
+                    {...{
+                      isOpen,
+                      closeModal: handleToggle,
+                      schedule: rowData
+                    }}
+                  />
+                ) : null}
               </>
             )}
           </>

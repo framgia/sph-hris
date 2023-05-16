@@ -59,8 +59,14 @@ const NavList: FC<Props> = ({ lists, isOpenSidebar }): JSX.Element => {
                           'duration-75 ease-in-out hover:bg-slate-100 hover:text-slate-700'
                         )}
                       >
-                        <div className="flex w-full items-center space-x-3 py-1.5 pr-8 pl-7">
-                          <item.Icon className="h-5 w-5 shrink-0 stroke-0.5" />
+                        <div className="flex w-full items-center space-x-3 py-2 pr-8 pl-7">
+                          <item.Icon
+                            className="shrink-0"
+                            theme="outline"
+                            size={18}
+                            strokeWidth="3"
+                            strokeLinecap="butt"
+                          />
                           <span
                             className={`${
                               isOpenSidebar ? 'line-clamp-1' : 'hidden'
@@ -105,7 +111,7 @@ const NavList: FC<Props> = ({ lists, isOpenSidebar }): JSX.Element => {
                       animate={{ height: 'auto' }}
                       initial={{ height: 0 }}
                       exit={{ height: 0 }}
-                      className="overflow-hidden"
+                      className="!overflow-hidden"
                     >
                       <div
                         className={classNames(
@@ -117,42 +123,51 @@ const NavList: FC<Props> = ({ lists, isOpenSidebar }): JSX.Element => {
                           (
                             { name, href, Icon }: { name: string; href: string; Icon: any },
                             i: number
-                          ) => (
-                            <Link
-                              key={i}
-                              href={href}
-                              className="relative mt-2 flex items-center space-x-2 py-2 pl-10 hover:bg-slate-100"
-                            >
-                              <span
+                          ) => {
+                            const isActive = router.pathname === href
+
+                            return (
+                              <Link
+                                key={i}
+                                href={href}
                                 className={classNames(
-                                  'absolute inset-y-0 left-0 z-20 border-r-[4px]',
-                                  router.pathname === href
-                                    ? 'rounded-r-lg border-slate-600'
-                                    : 'border-transparent'
-                                )}
-                              />
-                              <Icon
-                                className={classNames(
-                                  'h-4 w-4 stroke-1',
-                                  !isOpenSidebar && 'hidden',
-                                  router.pathname === href
-                                    ? 'font-medium text-slate-800'
-                                    : 'subpixel-antialiased'
-                                )}
-                              />
-                              <span
-                                className={classNames(
-                                  'select-none duration-300',
-                                  router.pathname === href
-                                    ? 'font-medium text-slate-800'
-                                    : 'subpixel-antialiased',
-                                  isOpenSidebar ? 'line-clamp-1' : 'hidden'
+                                  'relative mt-2 flex items-center space-x-2 py-2 pl-10 hover:bg-slate-100',
+                                  'transition duration-75 ease-in-out hover:text-slate-700'
                                 )}
                               >
-                                {name}
-                              </span>
-                            </Link>
-                          )
+                                <span
+                                  className={classNames(
+                                    'absolute inset-y-0 left-0 z-20 border-r-[4px]',
+                                    isActive
+                                      ? 'rounded-r-lg border-slate-700'
+                                      : 'border-transparent'
+                                  )}
+                                />
+                                <Icon
+                                  className={classNames(
+                                    'shrink-0',
+                                    !isOpenSidebar && 'hidden',
+                                    isActive ? 'text-slate-700' : 'subpixel-antialiased'
+                                  )}
+                                  theme={isActive ? 'filled' : 'outline'}
+                                  size={18}
+                                  strokeWidth="3"
+                                  strokeLinecap="butt"
+                                />
+                                <span
+                                  className={classNames(
+                                    'select-none duration-300',
+                                    isActive
+                                      ? 'font-medium text-slate-800'
+                                      : 'subpixel-antialiased',
+                                    isOpenSidebar ? 'line-clamp-1' : 'hidden'
+                                  )}
+                                >
+                                  {name}
+                                </span>
+                              </Link>
+                            )
+                          }
                         )}
                       </div>
                     </motion.div>

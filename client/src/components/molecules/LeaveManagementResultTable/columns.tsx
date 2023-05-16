@@ -2,10 +2,10 @@ import React from 'react'
 import moment from 'moment'
 import { createColumnHelper } from '@tanstack/react-table'
 
-import CellHeader from '~/components/atoms/CellHeader'
-import { LeaveTable } from '~/utils/types/leaveTypes'
 import { getLeaveType } from '~/utils/getLeaveType'
-import Chip from '~/components/atoms/Chip'
+import { LeaveTable } from '~/utils/types/leaveTypes'
+import CellHeader from '~/components/atoms/CellHeader'
+import WorkStatusChip from '~/components/atoms/WorkStatusChip'
 
 const columnHelper = createColumnHelper<LeaveTable>()
 
@@ -17,7 +17,7 @@ export const columns = [
   }),
   columnHelper.accessor('status', {
     header: () => <CellHeader label="Status" className="text-xs text-slate-500" />,
-    cell: (props) => <Chip label={props.getValue().toLowerCase()} />,
+    cell: (props) => <WorkStatusChip label={props.getValue().toLowerCase()} />,
     footer: (info) => info.column.id
   }),
   columnHelper.accessor('leaveTypeId', {

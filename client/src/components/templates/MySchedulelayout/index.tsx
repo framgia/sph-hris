@@ -10,7 +10,7 @@ type Props = {
   metaTitle: string
 }
 
-const MyFormsLayout: FC<Props> = ({ children, metaTitle }): JSX.Element => {
+const MyScheduleLayout: FC<Props> = ({ children, metaTitle }): JSX.Element => {
   return (
     <Layout
       {...{
@@ -26,7 +26,7 @@ const MyFormsLayout: FC<Props> = ({ children, metaTitle }): JSX.Element => {
             )}
           >
             <section className="flex shrink-0 items-center space-x-4 px-4 md:space-x-6">
-              {Menus[5].submenuItems?.map(({ name, Icon, href }, i) => (
+              {Menus[4].submenuItems?.map(({ name, Icon, href }, i) => (
                 <TabLink
                   key={i}
                   {...{
@@ -45,8 +45,8 @@ const MyFormsLayout: FC<Props> = ({ children, metaTitle }): JSX.Element => {
   )
 }
 
-MyFormsLayout.defaultProps = {
-  metaTitle: 'My Forms'
+MyScheduleLayout.defaultProps = {
+  metaTitle: 'My Schedule'
 }
 
-export default MyFormsLayout
+export default MyScheduleLayout

@@ -14,6 +14,7 @@ import FooterTable from './../FooterTable'
 import MobileDisclose from './MobileDisclose'
 import { fuzzyFilter } from '~/utils/fuzzyFilter'
 import { IMyOvertimeTable } from '~/utils/interfaces'
+import useScreenCondition from '~/hooks/useScreenCondition'
 
 type Props = {
   query: {
@@ -28,6 +29,9 @@ type Props = {
 }
 
 const MyOvertimeTable: FC<Props> = (props): JSX.Element => {
+  // SCREEN SIZE CONDITION HOOKS
+  const isMediumScreen = useScreenCondition('(max-width: 768px)')
+
   const {
     query: { data, error },
     table: { columns, globalFilter, setGlobalFilter }
@@ -59,8 +63,7 @@ const MyOvertimeTable: FC<Props> = (props): JSX.Element => {
 
   return (
     <>
-      {/* Show only on mobile size */}
-      <div className="block md:hidden">
+      {isMediumScreen ? (
         <MobileDisclose
           {...{
             table,
@@ -68,17 +71,17 @@ const MyOvertimeTable: FC<Props> = (props): JSX.Element => {
             error
           }}
         />
-      </div>
-      {/* Show on medium size and beyond */}
-      <div className="mx-auto mb-8 hidden w-full max-w-fit md:block">
-        <DesktopTable
-          {...{
-            table,
-            isLoading: false,
-            error
-          }}
-        />
-      </div>
+      ) : (
+        <div className="mx-auto mb-8 w-full max-w-fit">
+          <DesktopTable
+            {...{
+              table,
+              isLoading: false,
+              error
+            }}
+          />
+        </div>
+      )}
       {/* Table Pagination & Filtering */}
       {table.getPageCount() >= 1 && (
         <FooterTable

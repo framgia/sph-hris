@@ -13,6 +13,7 @@ import DesktopTable from './DesktopTable'
 import FooterTable from './../FooterTable'
 import MobileDisclose from './MobileDisclose'
 import { fuzzyFilter } from '~/utils/fuzzyFilter'
+import useScreenCondition from '~/hooks/useScreenCondition'
 import { ITimesheetSummary } from '~/utils/types/timeEntryTypes'
 
 type Props = {
@@ -29,6 +30,9 @@ type Props = {
 }
 
 const DTRSummaryTable: FC<Props> = (props): JSX.Element => {
+  // SCREEN SIZE CONDITION HOOKS
+  const isMediumScreen = useScreenCondition('(max-width: 768px)')
+
   const {
     query: { data: dtrSummaryData, error },
     table: { columns, globalFilter, setGlobalFilter }
@@ -60,8 +64,7 @@ const DTRSummaryTable: FC<Props> = (props): JSX.Element => {
 
   return (
     <>
-      {/* Show only on mobile size */}
-      <div className="block md:hidden">
+      {isMediumScreen ? (
         <MobileDisclose
           {...{
             table,
@@ -69,17 +72,18 @@ const DTRSummaryTable: FC<Props> = (props): JSX.Element => {
             error
           }}
         />
-      </div>
-      {/* Show on medium size and beyond */}
-      <div className="mx-auto hidden w-full max-w-fit md:block">
-        <DesktopTable
-          {...{
-            table,
-            isLoading: false,
-            error
-          }}
-        />
-      </div>
+      ) : (
+        <div className="mx-auto w-full max-w-fit">
+          <DesktopTable
+            {...{
+              table,
+              isLoading: false,
+              error
+            }}
+          />
+        </div>
+      )}
+
       {/* Table Pagination & Filtering */}
       {table.getPageCount() >= 1 && (
         <FooterTable

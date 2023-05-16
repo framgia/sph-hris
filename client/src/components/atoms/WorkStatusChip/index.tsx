@@ -8,7 +8,7 @@ type Props = {
   label: string
 }
 
-const Chip: FC<Props> = ({ label }): JSX.Element => {
+const WorkStatusChip: FC<Props> = ({ label }): JSX.Element => {
   const styles = classNames(
     'border rounded-full px-1 font-normal select-none capitalize',
     label === WorkStatus.ON_DUTY.toLowerCase()
@@ -48,8 +48,8 @@ const Chip: FC<Props> = ({ label }): JSX.Element => {
   return <span className={styles}>{label}</span>
 }
 
-Chip.defaultProps = {
+WorkStatusChip.defaultProps = {
   label: WorkStatus.ON_DUTY
 }
 
-export default Chip
+export default WorkStatusChip

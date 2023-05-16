@@ -9,12 +9,12 @@ import { Table } from '@tanstack/react-table'
 import { Disclosure, Menu } from '@headlessui/react'
 import { Check, Calendar, RefreshCw, ThumbsDown, ChevronRight, MoreVertical } from 'react-feather'
 
-import Chip from '~/components/atoms/Chip'
 import useUserQuery from '~/hooks/useUserQuery'
 import AddNewOffsetModal from './AddNewOffsetModal'
 import FiledOffsetModal from './../FiledOffsetModal'
 import Button from '~/components/atoms/Buttons/Button'
 import AddNewOvertimeModal from '../AddNewOvertimeModal'
+import WorkStatusChip from '~/components/atoms/WorkStatusChip'
 import { statusClassNames } from '~/utils/myDailyTimeHelpers'
 import { variants } from '~/utils/constants/animationVariants'
 import { NO_OVERTIME } from '~/utils/constants/overtimeStatus'
@@ -144,7 +144,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                 <span className="font-medium">
                                   {moment(new Date(row.original.date)).format('MMMM DD, YYYY')}
                                 </span>
-                                <Chip label={row.original.status} />
+                                <WorkStatusChip label={row.original.status} />
                               </div>
                               <ChevronRight
                                 className={classNames(

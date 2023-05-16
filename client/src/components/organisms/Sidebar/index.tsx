@@ -38,7 +38,6 @@ const Sidebar: FC<Props> = (props): JSX.Element => {
         <div className="space-y-1.5 text-xs text-slate-500 overflow-x-hidden">
           {process.env.NODE_ENV !== 'production' ? (
             <>
-              {' '}
               <NavList
                 {...{
                   isOpenSidebar,
@@ -48,7 +47,6 @@ const Sidebar: FC<Props> = (props): JSX.Element => {
             </>
           ) : (
             <>
-              {' '}
               <NavList
                 {...{
                   isOpenSidebar,

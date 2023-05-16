@@ -6,13 +6,13 @@ import { Table } from '@tanstack/react-table'
 import { Disclosure, Menu } from '@headlessui/react'
 import { ChevronRight, MoreVertical } from 'react-feather'
 
-import Chip from '~/components/atoms/Chip'
 import Avatar from '~/components/atoms/Avatar'
 import FiledOffsetModal from '../FiledOffsetModal'
 import handleImageError from '~/utils/handleImageError'
 import EditTimeEntriesModal from '../EditTimeEntryModal'
 import { ITimeEntry } from '~/utils/types/timeEntryTypes'
 import { WorkStatus } from '~/utils/constants/work-status'
+import WorkStatusChip from '~/components/atoms/WorkStatusChip'
 import { variants } from '~/utils/constants/animationVariants'
 import MenuTransition from '~/components/templates/MenuTransition'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
@@ -101,7 +101,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                     <small className="text-slate-500">Web Developer</small>
                                   </div>
                                 </div>
-                                <Chip label={timeEntry.status} />
+                                <WorkStatusChip label={timeEntry.status} />
                               </div>
                               <ChevronRight
                                 className={classNames(

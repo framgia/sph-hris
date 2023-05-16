@@ -1,19 +1,28 @@
 import {
-  Home,
-  Clock,
-  Users,
-  Filter,
-  Layers,
-  Layout,
-  Sunrise,
-  FileText,
-  UserCheck,
-  CreditCard
-} from 'react-feather'
-import { AiOutlineLaptop } from 'react-icons/ai'
+  Form,
+  Timer,
+  Sleep,
+  Credit,
+  AddUser,
+  ListOne,
+  Calendar,
+  Schedule,
+  ViewList,
+  FileStaff,
+  EveryUser,
+  CodeLaptop,
+  SendToBack,
+  ListSuccess,
+  MindmapList,
+  FileDateOne,
+  FileStaffOne,
+  FileEditingOne,
+  MedicationTime,
+  ChartProportion,
+  CalendarThirtyTwo
+} from '@icon-park/react'
 
 import { Roles } from './roles'
-import MyOvertimeIcon from './../icons/MyOvertimeIcon'
 
 export interface IMenu {
   name: string
@@ -34,32 +43,56 @@ export type ISubMenu = Array<{
 
 export const Menus: IMenu[] = [
   {
-    name: 'Home',
-    Icon: Home,
+    name: 'Dashboard',
+    Icon: ChartProportion,
     href: '/',
     role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
   },
   {
     name: 'My Leaves',
-    Icon: FileText,
+    Icon: FileStaff,
     href: '/my-leaves',
     role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
   },
   {
     name: 'My Daily Time Record',
-    Icon: Clock,
+    Icon: Timer,
     href: '/my-daily-time-record',
     role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
   },
   {
     name: 'My Overtime',
     href: '/my-overtime',
-    Icon: MyOvertimeIcon,
+    Icon: Sleep,
     role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
   },
   {
+    name: 'My Schedule',
+    Icon: Schedule,
+    href: '/my-schedule',
+    role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER],
+    submenu: true,
+    submenuItems: [
+      {
+        name: 'Current Schedule',
+        Icon: CalendarThirtyTwo,
+        href: '/my-schedule/current-schedule'
+      },
+      {
+        name: 'Request New Schedule',
+        Icon: SendToBack,
+        href: '/my-schedule/request-new-schedule'
+      },
+      {
+        name: 'Filed Schedules',
+        Icon: ViewList,
+        href: '/my-schedule/filed-schedules'
+      }
+    ]
+  },
+  {
     name: 'My Forms',
-    Icon: Layout,
+    Icon: Form,
     href: '/my-forms',
     role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER],
     submenu: true,
@@ -67,71 +100,71 @@ export const Menus: IMenu[] = [
     submenuItems: [
       {
         name: 'First Day Onboarding',
-        Icon: FileText,
+        Icon: FileStaffOne,
         href: '/my-forms/first-day-onboarding'
       },
       {
         name: 'Personal Information',
-        Icon: UserCheck,
+        Icon: AddUser,
         href: '/my-forms/personal-information'
       },
       {
         name: 'ATM Applications',
-        Icon: CreditCard,
+        Icon: Credit,
         href: '/my-forms/atm-applications'
       },
       {
         name: 'Laptop Monitoring',
-        Icon: AiOutlineLaptop,
+        Icon: CodeLaptop,
         href: '/my-forms/laptop-monitoring'
       }
     ]
   },
   {
     name: 'Schedule Management',
-    Icon: Sunrise,
+    Icon: Calendar,
     href: '/schedule-management',
     role: [Roles.HR_ADMIN]
   },
   {
     name: 'Employee Management',
-    Icon: Users,
+    Icon: EveryUser,
     href: '/employee-management',
     role: [Roles.HR_ADMIN]
   },
   {
     name: 'Leave Management',
-    Icon: FileText,
+    Icon: FileEditingOne,
     href: '/leave-management',
     role: [Roles.HR_ADMIN],
     submenu: true,
     submenuItems: [
       {
         name: 'List of Leave',
-        Icon: FileText,
+        Icon: ListOne,
         href: '/leave-management/list-of-leave'
       },
       {
         name: 'Leave Summary',
-        Icon: Filter,
+        Icon: ListSuccess,
         href: '/leave-management/leave-summary'
       },
       {
         name: 'Yearly Summary',
-        Icon: Filter,
+        Icon: MindmapList,
         href: '/leave-management/yearly-summary'
       }
     ]
   },
   {
     name: 'DTR Management',
-    Icon: Clock,
+    Icon: MedicationTime,
     href: '/dtr-management',
     role: [Roles.HR_ADMIN]
   },
   {
     name: 'Overtime Management',
-    Icon: Layers,
+    Icon: FileDateOne,
     href: '/overtime-management',
     role: [Roles.HR_ADMIN, Roles.MANAGER]
   }
@@ -139,75 +172,98 @@ export const Menus: IMenu[] = [
 
 export const productionMenu: IMenu[] = [
   {
-    name: 'Home',
-    Icon: Home,
+    name: 'Dashboard',
+    Icon: ChartProportion,
     href: '/',
     role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
   },
   {
     name: 'My Leaves',
-    Icon: FileText,
+    Icon: FileStaff,
     href: '/my-leaves',
     role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
   },
   {
     name: 'My Daily Time Record',
-    Icon: Clock,
+    Icon: Timer,
     href: '/my-daily-time-record',
     role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
   },
   {
     name: 'My Overtime',
     href: '/my-overtime',
-    Icon: MyOvertimeIcon,
-    spacing: true,
+    Icon: Sleep,
     role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
   },
   {
+    name: 'My Schedule',
+    Icon: Schedule,
+    href: '/my-schedule',
+    role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER],
+    submenu: true,
+    submenuItems: [
+      {
+        name: 'Current Schedule',
+        Icon: CalendarThirtyTwo,
+        href: '/my-schedule/current-schedule'
+      },
+      {
+        name: 'Request New Schedule',
+        Icon: SendToBack,
+        href: '/my-schedule/request-new-schedule'
+      },
+      {
+        name: 'Filed Schedules',
+        Icon: ViewList,
+        href: '/my-schedule/filed-schedules'
+      }
+    ]
+  },
+  {
     name: 'Schedule Management',
-    Icon: Sunrise,
+    Icon: Calendar,
     href: '/schedule-management',
     role: [Roles.HR_ADMIN]
   },
   {
     name: 'Employee Management',
-    Icon: Users,
+    Icon: EveryUser,
     href: '/employee-management',
     role: [Roles.HR_ADMIN]
   },
   {
     name: 'Leave Management',
-    Icon: FileText,
+    Icon: FileEditingOne,
     href: '/leave-management',
     role: [Roles.HR_ADMIN],
     submenu: true,
     submenuItems: [
       {
         name: 'List of Leave',
-        Icon: FileText,
+        Icon: ListOne,
         href: '/leave-management/list-of-leave'
       },
       {
         name: 'Leave Summary',
-        Icon: Filter,
+        Icon: ListSuccess,
         href: '/leave-management/leave-summary'
       },
       {
         name: 'Yearly Summary',
-        Icon: Filter,
+        Icon: MindmapList,
         href: '/leave-management/yearly-summary'
       }
     ]
   },
   {
     name: 'DTR Management',
-    Icon: Clock,
+    Icon: MedicationTime,
     href: '/dtr-management',
     role: [Roles.HR_ADMIN]
   },
   {
     name: 'Overtime Management',
-    Icon: Layers,
+    Icon: FileDateOne,
     href: '/overtime-management',
     role: [Roles.HR_ADMIN, Roles.MANAGER]
   }

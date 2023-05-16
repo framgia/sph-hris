@@ -7,13 +7,13 @@ import { Menu } from '@headlessui/react'
 import { MoreVertical } from 'react-feather'
 import { createColumnHelper } from '@tanstack/react-table'
 
-import Chip from '~/components/atoms/Chip'
 import Avatar from '~/components/atoms/Avatar'
 import FiledOffsetModal from './../FiledOffsetModal'
 import CellHeader from '~/components/atoms/CellHeader'
 import handleImageError from '~/utils/handleImageError'
 import EditTimeEntriesModal from '../EditTimeEntryModal'
 import { ITimeEntry } from '~/utils/types/timeEntryTypes'
+import WorkStatusChip from '~/components/atoms/WorkStatusChip'
 import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
 import MenuTransition from '~/components/templates/MenuTransition'
 import InterruptionTimeEntriesModal from './../InterruptionTimeEntriesModal'
@@ -49,7 +49,7 @@ export const columns = [
   columnHelper.accessor('status', {
     header: () => <CellHeader label="Status" />,
     footer: (info) => info.column.id,
-    cell: (props) => <Chip label={props.getValue()} />
+    cell: (props) => <WorkStatusChip label={props.getValue()} />
   }),
   columnHelper.accessor('timeIn.timeHour', {
     id: 'Time In',

@@ -368,3 +368,111 @@ export const AddScheduleMemberSchema = yup.object().shape({
 export const ReassignScheduleSchema = yup.object().shape({
   schedule: SelectSchema.label('Schedule')
 })
+
+export const RequestNewScheduleSchema = yup.object().shape({
+  monday: yup.object().when('mondaySelected', {
+    is: true,
+    then: yup.object().shape({
+      timeIn: yup.string().required('Time In is required'),
+      timeOut: yup.string().required('Time Out is required'),
+      breakFrom: yup.string().required('Break From is required'),
+      breakTo: yup.string().required('Break To is required')
+    }),
+    otherwise: yup.object().shape({
+      timeIn: yup.string(),
+      timeOut: yup.string(),
+      breakFrom: yup.string(),
+      breakTo: yup.string()
+    })
+  }),
+  tuesday: yup.object().when('tuesdaySelected', {
+    is: true,
+    then: yup.object().shape({
+      timeIn: yup.string().required('Time In is required'),
+      timeOut: yup.string().required('Time Out is required'),
+      breakFrom: yup.string().required('Break From is required'),
+      breakTo: yup.string().required('Break To is required')
+    }),
+    otherwise: yup.object().shape({
+      timeIn: yup.string(),
+      timeOut: yup.string(),
+      breakFrom: yup.string(),
+      breakTo: yup.string()
+    })
+  }),
+  wednesday: yup.object().when('wednesdaySelected', {
+    is: true,
+    then: yup.object().shape({
+      timeIn: yup.string().required('Time In is required'),
+      timeOut: yup.string().required('Time Out is required'),
+      breakFrom: yup.string().required('Break From is required'),
+      breakTo: yup.string().required('Break To is required')
+    }),
+    otherwise: yup.object().shape({
+      timeIn: yup.string(),
+      timeOut: yup.string(),
+      breakFrom: yup.string(),
+      breakTo: yup.string()
+    })
+  }),
+  thursday: yup.object().when('thursdaySelected', {
+    is: true,
+    then: yup.object().shape({
+      timeIn: yup.string().required('Time In is required'),
+      timeOut: yup.string().required('Time Out is required'),
+      breakFrom: yup.string().required('Break From is required'),
+      breakTo: yup.string().required('Break To is required')
+    }),
+    otherwise: yup.object().shape({
+      timeIn: yup.string(),
+      timeOut: yup.string(),
+      breakFrom: yup.string(),
+      breakTo: yup.string()
+    })
+  }),
+  friday: yup.object().when('fridaySelected', {
+    is: true,
+    then: yup.object().shape({
+      timeIn: yup.string().required('Time In is required'),
+      timeOut: yup.string().required('Time Out is required'),
+      breakFrom: yup.string().required('Break From is required'),
+      breakTo: yup.string().required('Break To is required')
+    }),
+    otherwise: yup.object().shape({
+      timeIn: yup.string(),
+      timeOut: yup.string(),
+      breakFrom: yup.string(),
+      breakTo: yup.string()
+    })
+  }),
+  saturday: yup.object().when('saturdaySelected', {
+    is: true,
+    then: yup.object().shape({
+      timeIn: yup.string().required('Time In is required'),
+      timeOut: yup.string().required('Time Out is required'),
+      breakFrom: yup.string().required('Break From is required'),
+      breakTo: yup.string().required('Break To is required')
+    }),
+    otherwise: yup.object().shape({
+      timeIn: yup.string(),
+      timeOut: yup.string(),
+      breakFrom: yup.string(),
+      breakTo: yup.string()
+    })
+  }),
+  sunday: yup.object().when('sundaySelected', {
+    is: true,
+    then: yup.object().shape({
+      timeIn: yup.string().required('Time In is required'),
+      timeOut: yup.string().required('Time Out is required'),
+      breakFrom: yup.string().required('Break From is required'),
+      breakTo: yup.string().required('Break To is required')
+    }),
+    otherwise: yup.object().shape({
+      timeIn: yup.string(),
+      timeOut: yup.string(),
+      breakFrom: yup.string(),
+      breakTo: yup.string()
+    })
+  })
+})

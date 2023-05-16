@@ -6,12 +6,12 @@ import { AiOutlineCaretDown } from 'react-icons/ai'
 import { Listbox, Transition } from '@headlessui/react'
 import { createColumnHelper } from '@tanstack/react-table'
 
-import Chip from './Chip'
 import ShowRemarksModal from './ShowRemarksModal'
 import { IMyOvertimeTable } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
 import { decimalFormatter } from '~/utils/myOvertimeHelpers'
+import RequestStatusChip from '~/components/atoms/RequestStatusChip'
 import { STATUS_OPTIONS } from '~/utils/constants/notificationFilter'
 
 const columnHelper = createColumnHelper<IMyOvertimeTable>()
@@ -134,7 +134,7 @@ export const columns = [
   columnHelper.accessor('status', {
     header: () => <CellHeader label="Status" />,
     footer: (info) => info.column.id,
-    cell: ({ row: { original } }) => <Chip label={original?.status} />
+    cell: ({ row: { original } }) => <RequestStatusChip label={original?.status} />
   }),
   columnHelper.display({
     id: 'empty3',

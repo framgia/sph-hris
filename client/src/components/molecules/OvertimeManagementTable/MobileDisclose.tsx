@@ -8,7 +8,6 @@ import { Disclosure } from '@headlessui/react'
 import { confirmAlert } from 'react-confirm-alert'
 import { Check, ChevronRight, Edit, Eye, X } from 'react-feather'
 
-import Chip from './Chip'
 import Card from '~/components/atoms/Card'
 import useOvertime from '~/hooks/useOvertime'
 import Avatar from '~/components/atoms/Avatar'
@@ -23,6 +22,7 @@ import { variants } from '~/utils/constants/animationVariants'
 import ApproveConfirmationModal from './ApproveConfirmationModal'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
+import RequestStatusChip from '~/components/atoms/RequestStatusChip'
 import DisclosureTransition from '~/components/templates/DisclosureTransition'
 
 type Props = {
@@ -153,7 +153,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                     </small>
                                   </div>
                                 </div>
-                                <Chip label={overtimeManagement.status} />
+                                <RequestStatusChip label={overtimeManagement.status} />
                               </div>
                               <ChevronRight
                                 className={classNames(
