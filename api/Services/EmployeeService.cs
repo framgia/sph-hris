@@ -32,6 +32,46 @@ namespace api.Services
 
             try
             {
+                // Create new schedule
+                EmployeeSchedule newSchedule = new EmployeeSchedule
+                {
+                    Name = $"{capitalizedName}{(capitalizedName[^1] == 's' ? "'" : "'s")} Shift"
+                };
+
+                // Create WorkingDays for new schedule
+                List<WorkingDayTime> newWorkingDayTimes = new List<WorkingDayTime>() {
+                    new WorkingDayTime {
+                        EmployeeSchedule = newSchedule,
+                        From = new TimeSpan(9, 30, 0),
+                        To = new TimeSpan(18, 30, 0),
+                        Day = DaysOfTheWeekEnum.MONDAY
+                    },
+                    new WorkingDayTime {
+                        EmployeeSchedule = newSchedule,
+                        From = new TimeSpan(9, 30, 0),
+                        To = new TimeSpan(18, 30, 0),
+                        Day = DaysOfTheWeekEnum.TUESDAY
+                    },
+                    new WorkingDayTime {
+                        EmployeeSchedule = newSchedule,
+                        From = new TimeSpan(9, 30, 0),
+                        To = new TimeSpan(18, 30, 0),
+                        Day = DaysOfTheWeekEnum.WEDNESDAY
+                    },
+                    new WorkingDayTime {
+                        EmployeeSchedule = newSchedule,
+                        From = new TimeSpan(9, 30, 0),
+                        To = new TimeSpan(18, 30, 0),
+                        Day = DaysOfTheWeekEnum.THURSDAY
+                    },
+                    new WorkingDayTime {
+                        EmployeeSchedule = newSchedule,
+                        From = new TimeSpan(9, 30, 0),
+                        To = new TimeSpan(18, 30, 0),
+                        Day = DaysOfTheWeekEnum.FRIDAY
+                    },
+                };
+
                 var newEmployee = new User
                 {
                     Name = capitalizedName,
@@ -41,6 +81,14 @@ namespace api.Services
                     Position = position!,
                     EmployeeScheduleId = newEmployeeData.ScheduleId != null ? (int)newEmployeeData.ScheduleId : 1
                 };
+
+                // Add to context if ESL Teacher
+                if (newEmployeeData.PositionId == PositionEnum.ESL_TEACHER)
+                {
+                    context.EmployeeSchedules.Add(newSchedule);
+                    context.WorkingDayTimes.AddRange(newWorkingDayTimes);
+                    newEmployee.EmployeeSchedule = newSchedule;
+                }
 
                 context.Users.Add(newEmployee);
 
