@@ -13,33 +13,27 @@ namespace api.DTOs
             day = (leaveData.Date ?? DateTime.Now).Day;
             if (leaveData.IsLeaderApproved == null || leaveData.IsManagerApproved == null)
             {
-                value = 42;
+                value = HeatmapValueEnum.PENDING;
                 leaveName = leaveData.LeaveName;
             }
             else
             {
-                switch (leaveData.LeaveTypeId)
-                {
-                    case LeaveTypeEnum.UNDERTIME:
-                        value = 6;
-                        break;
-                    case LeaveTypeEnum.SICK_LEAVE:
-                        value = 12;
-                        break;
-                    case LeaveTypeEnum.VACATION_LEAVE:
-                        value = 18;
-                        break;
-                    case LeaveTypeEnum.EMERGENCY_LEAVE:
-                        value = 24;
-                        break;
-                    case LeaveTypeEnum.BEREAVEMENT_LEAVE:
-                        value = 30;
-                        break;
-                    case LeaveTypeEnum.MATERNITY_LEAVE:
-                        value = 36;
-                        break;
-                }
+                value = GetLeaveValue(leaveData.LeaveTypeId);
             }
+        }
+
+        public int GetLeaveValue(int leaveType)
+        {
+            return leaveType switch
+            {
+                LeaveTypeEnum.UNDERTIME => HeatmapValueEnum.UNDERTIME,
+                LeaveTypeEnum.SICK_LEAVE => HeatmapValueEnum.SICK_LEAVE,
+                LeaveTypeEnum.VACATION_LEAVE => HeatmapValueEnum.VACATION_LEAVE,
+                LeaveTypeEnum.EMERGENCY_LEAVE => HeatmapValueEnum.EMERGENCY_LEAVE,
+                LeaveTypeEnum.BEREAVEMENT_LEAVE => HeatmapValueEnum.BEREAVEMENT_LEAVE,
+                LeaveTypeEnum.MATERNITY_LEAVE => HeatmapValueEnum.MATERNITY_LEAVE,
+                _ => 0,
+            };
         }
 
         public HeatMapDTO(int day, int value, string? leaveName)
