@@ -52,6 +52,10 @@ const BreakdownOfLeaveCard: FC<Props> = ({ data }): JSX.Element => {
               <span>Maternity Leave</span>
               <span className="pr-2 font-medium">{data?.maternityLeave}</span>
             </li>
+            <li className="flex items-center justify-between py-2 px-4 hover:bg-slate-50">
+              <span>Pending</span>
+              <span className="pr-2 font-medium">{data?.pending}</span>
+            </li>
           </ul>
           <nav
             className={classNames(

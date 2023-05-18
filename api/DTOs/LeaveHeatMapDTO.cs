@@ -17,7 +17,7 @@ namespace api.DTOs
 
         public LeaveHeatMapDTO(List<LeavesTableDTO> leaves)
         {
-            leaves.OrderBy(leave => leave.Date).ToList().ForEach(leave =>
+            leaves.Where(x => x.IsManagerApproved != false && x.IsLeaderApproved != false).OrderBy(leave => leave.Date).ToList().ForEach(leave =>
             {
                 switch (leave.Date?.Month)
                 {
@@ -85,7 +85,7 @@ namespace api.DTOs
             foreach (var dayGroup in groupedByDays)
             {
                 var majority = dayGroup.GroupBy(group => group.value).OrderByDescending(value => value.Count()).First();
-                newHeatmap.Add(new HeatMapDTO(dayGroup.Key, majority.Key));
+                newHeatmap.Add(new HeatMapDTO(dayGroup.Key, majority.Key, dayGroup.First().leaveName));
             }
 
             return newHeatmap;

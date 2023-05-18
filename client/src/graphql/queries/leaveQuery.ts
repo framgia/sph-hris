@@ -18,50 +18,62 @@ export const GET_MY_LEAVES_QUERY = gql`
         january {
           value
           day
+          leaveName
         }
         february {
           value
           day
+          leaveName
         }
         march {
           value
           day
+          leaveName
         }
         april {
           value
           day
+          leaveName
         }
         may {
           value
           day
+          leaveName
         }
         june {
           value
           day
+          leaveName
         }
         july {
           value
           day
+          leaveName
         }
         august {
           value
           day
+          leaveName
         }
         september {
           value
           day
+          leaveName
         }
         october {
           value
           day
+          leaveName
         }
         november {
           value
           day
+          leaveName
         }
         december {
           value
           day
+          leaveName
         }
       }
       table {
@@ -70,6 +82,7 @@ export const GET_MY_LEAVES_QUERY = gql`
         isWithPay
         reason
         numLeaves
+        status
       }
       breakdown {
         sickLeave
@@ -80,6 +93,7 @@ export const GET_MY_LEAVES_QUERY = gql`
         maternityLeave
         withoutPayTotal
         withPayTotal
+        pending
       }
     }
   }

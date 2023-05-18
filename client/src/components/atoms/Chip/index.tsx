@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import classNames from 'classnames'
 
 import { WorkStatus } from '~/utils/constants/work-status'
+import { LeaveStatus } from '~/utils/constants/leaveStatus'
 
 type Props = {
   label: string
@@ -33,6 +34,15 @@ const Chip: FC<Props> = ({ label }): JSX.Element => {
       : null,
     label === WorkStatus.UNDERTIME.toLowerCase()
       ? 'border-amber-300 bg-amber-50 text-amber-600'
+      : null,
+    label === LeaveStatus.PENDING.toLowerCase()
+      ? 'border-amber-300 bg-amber-50 text-amber-600'
+      : null,
+    label === LeaveStatus.APPROVED.toLowerCase()
+      ? 'border-green-300 bg-green-50 text-green-600'
+      : null,
+    label === LeaveStatus.DISAPPROVED.toLowerCase()
+      ? 'border-rose-300 bg-rose-50 text-rose-600'
       : null
   )
   return <span className={styles}>{label}</span>

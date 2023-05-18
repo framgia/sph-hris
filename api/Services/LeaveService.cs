@@ -35,7 +35,7 @@ namespace api.Services
             {
                 var leaves = await context.Leaves
                             .Include(i => i.LeaveType)
-                            .Where(u => u.UserId == userId && u.LeaveDate.Year == year && (u.IsLeaderApproved ?? false) && (u.IsManagerApproved ?? false))
+                            .Where(u => u.UserId == userId && u.LeaveDate.Year == year)
                             .OrderBy(o => o.LeaveDate.Day)
                             .Select(s => new LeavesTableDTO(s))
                             .ToListAsync();
