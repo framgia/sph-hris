@@ -2,12 +2,12 @@ import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import React, { FC, ReactNode } from 'react'
-import { FileText, Filter } from 'react-feather'
 
 import Layout from './../Layout'
 import useLeave from '~/hooks/useLeave'
 import useUserQuery from '~/hooks/useUserQuery'
 import TabLink from '~/components/atoms/TabLink'
+import { Menus } from '~/utils/constants/sidebarMenu'
 import SummaryFilterDropdown from '~/components/molecules/SummaryFilterDropdown'
 
 type Props = {
@@ -34,24 +34,6 @@ const LeaveManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Element 
   const isListOfLeaveTabPage = router.pathname === '/leave-management/list-of-leave'
   const isLeaveSummaryTabPage = router.pathname === '/leave-management/leave-summary'
 
-  const submenuItems = [
-    {
-      name: 'List of Leave',
-      Icon: FileText,
-      href: '/leave-management/list-of-leave'
-    },
-    {
-      name: 'Leave Summary',
-      Icon: Filter,
-      href: '/leave-management/leave-summary'
-    },
-    {
-      name: 'Yearly Summary',
-      Icon: Filter,
-      href: '/leave-management/yearly-summary'
-    }
-  ]
-
   return (
     <Layout
       {...{
@@ -68,7 +50,7 @@ const LeaveManagementLayout: FC<Props> = ({ children, metaTitle }): JSX.Element 
             )}
           >
             <section className="flex shrink-0 items-center space-x-4 px-4 md:space-x-6">
-              {submenuItems.map(({ name, Icon, href }, i) => (
+              {Menus[8].submenuItems?.map(({ name, Icon, href }, i) => (
                 <TabLink
                   key={i}
                   {...{

@@ -7,14 +7,16 @@ import Pagination from './Pagination'
 
 type Props = {
   table: Table<any>
+  className?: string
 }
 
-const FooterTable: FC<Props> = ({ table }): JSX.Element => {
+const FooterTable: FC<Props> = ({ table, className }): JSX.Element => {
   return (
     <footer
       className={classNames(
         'sticky bottom-0 left-0 flex w-full bg-slate-100',
-        'items-center justify-between px-4 py-3'
+        'items-center justify-between px-4 py-3',
+        className
       )}
     >
       <div className="flex flex-wrap items-center md:space-x-2">

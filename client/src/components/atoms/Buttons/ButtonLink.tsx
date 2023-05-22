@@ -34,6 +34,8 @@ const ButtonLink: FC<Props> = (props): JSX.Element => {
     }
   }
 
+  const isActive = router.pathname === href
+
   return (
     <Link
       href={generateHref(href)}
@@ -43,17 +45,23 @@ const ButtonLink: FC<Props> = (props): JSX.Element => {
         router.pathname.includes(href) && href !== '/'
           ? 'font-medium text-slate-800'
           : 'subpixel-antialiased',
-        router.pathname === href ? 'font-medium text-slate-800' : 'subpixel-antialiased'
+        isActive ? 'font-medium text-slate-700' : 'subpixel-antialiased'
       )}
     >
       <span
         className={classNames(
           'absolute inset-y-0 border-r-[4px]',
-          router.pathname === href ? 'rounded-r-lg border-slate-600' : 'border-transparent'
+          isActive ? 'rounded-r-lg border-slate-700' : 'border-transparent'
         )}
       />
-      <div className="flex w-full items-center space-x-3 py-1.5 pr-8 pl-7">
-        <Icon className="h-5 w-5 shrink-0 stroke-0.5" />
+      <div className="flex w-full items-center space-x-3 py-2 pr-8 pl-7">
+        <Icon
+          className="shrink-0"
+          theme={isActive ? 'filled' : 'outline'}
+          size={18}
+          strokeWidth="3"
+          strokeLinecap="butt"
+        />
         <span className={`${isOpenSidebar ? 'line-clamp-1' : 'hidden'} select-none duration-300`}>
           {name}
         </span>

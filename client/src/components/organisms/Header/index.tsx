@@ -31,6 +31,7 @@ import {
   getLeaveNotificationSubQuery,
   getOvertimeNotificationSubQuery
 } from '~/graphql/subscriptions/leaveSubscription'
+import useScreenCondition from '~/hooks/useScreenCondition'
 import { getESLOffsetNotificationSubscription } from '~/graphql/subscriptions/eslOffsetSubscription'
 import { getFileOffsetNotificationSubscription } from '~/graphql/subscriptions/fileOffsetSubscription'
 
@@ -51,6 +52,9 @@ const Header: FC<Props> = (props): JSX.Element => {
   const queryClient = useQueryClient()
   const [notifications, setNotifications] = useState<INotification[]>()
   const [newNotificationCount, setNewNotificationCount] = useState(0)
+
+  // SCREEN SIZE CONDITION HOOKS
+  const isMediumScreen = useScreenCondition('(max-width: 768px)')
 
   const {
     actions: {
@@ -260,16 +264,9 @@ const Header: FC<Props> = (props): JSX.Element => {
       {/* Hamber & Title */}
       <section className="flex items-center md:space-x-3">
         {/* Hamburger Menu */}
-        <div className="hidden md:flex">
-          <Button type="button" onClick={handleToggleSidebar}>
-            <Menu className="h-5 w-5 text-slate-600" />
-          </Button>
-        </div>
-        <div className="flex md:hidden">
-          <Button type="button" onClick={handleToggleDrawer}>
-            <Menu className="h-5 w-5 text-slate-600" />
-          </Button>
-        </div>
+        <Button type="button" onClick={isMediumScreen ? handleToggleDrawer : handleToggleSidebar}>
+          <Menu className="h-5 w-5 text-slate-600" />
+        </Button>
         {/* Header Title */}
         {status !== 'loading' ? (
           <div className="hidden md:block">

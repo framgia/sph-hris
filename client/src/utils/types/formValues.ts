@@ -202,3 +202,27 @@ export type AddScheduleMemberFormValues = {
 export type ReassigneScheduleFormValues = {
   schedule: ReactSelectOption
 }
+
+export type TimeEntryWithBreak = {
+  timeIn: string
+  timeOut: string
+  breakFrom: string
+  breakTo: string
+}
+
+export type RequestNewScheduleFormData = {
+  mondaySelected: boolean
+  tuesdaySelected: boolean
+  wednesdaySelected: boolean
+  thursdaySelected: boolean
+  fridaySelected: boolean
+  saturdaySelected: boolean
+  sundaySelected: boolean
+  monday: TimeEntryWithBreak
+  tuesday: TimeEntryWithBreak
+  wednesday: TimeEntryWithBreak
+  thursday: TimeEntryWithBreak
+  friday: TimeEntryWithBreak
+  saturday: TimeEntryWithBreak
+  sunday: TimeEntryWithBreak
+}

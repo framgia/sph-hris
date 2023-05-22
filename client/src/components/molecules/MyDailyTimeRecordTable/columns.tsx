@@ -8,13 +8,13 @@ import { Menu } from '@headlessui/react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Check, MoreVertical, RefreshCw, ThumbsDown } from 'react-feather'
 
-import Chip from '~/components/atoms/Chip'
 import useUserQuery from '~/hooks/useUserQuery'
 import AddNewOffsetModal from './AddNewOffsetModal'
 import FiledOffsetModal from './../FiledOffsetModal'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
 import AddNewOvertimeModal from '../AddNewOvertimeModal'
+import WorkStatusChip from '~/components/atoms/WorkStatusChip'
 import { NO_OVERTIME } from '~/utils/constants/overtimeStatus'
 import ChangeShiftRequestModal from './ChangeShiftRequestModal'
 import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
@@ -36,7 +36,7 @@ export const columns = [
   columnHelper.accessor('status', {
     header: () => <CellHeader label="Status" />,
     footer: (info) => info.column.id,
-    cell: (props) => <Chip label={props.getValue()} />
+    cell: (props) => <WorkStatusChip label={props.getValue()} />
   }),
   columnHelper.accessor((row) => row.timeIn?.timeHour, {
     id: 'Time In',

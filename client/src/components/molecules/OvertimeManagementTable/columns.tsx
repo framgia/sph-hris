@@ -8,7 +8,6 @@ import { Check, Edit, Eye, X } from 'react-feather'
 import { Listbox, Transition } from '@headlessui/react'
 import { createColumnHelper } from '@tanstack/react-table'
 
-import Chip from './Chip'
 import Card from '~/components/atoms/Card'
 import useOvertime from '~/hooks/useOvertime'
 import Avatar from '~/components/atoms/Avatar'
@@ -22,6 +21,7 @@ import handleImageError from '~/utils/handleImageError'
 import UpdateOvertimeModal from './UpdateOvertimeModal'
 import ApproveConfirmationModal from './ApproveConfirmationModal'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
+import RequestStatusChip from '~/components/atoms/RequestStatusChip'
 import { IOvertimeManagement, IOvertimeManagementManager } from '~/utils/interfaces'
 
 const columnHelper = createColumnHelper<IOvertimeManagement | IOvertimeManagementManager>()
@@ -161,7 +161,7 @@ export const hrColumns = [
   columnHelper.accessor('status', {
     header: () => <CellHeader label="Status" />,
     footer: (info) => info.column.id,
-    cell: (props) => <Chip label={props.getValue()} />
+    cell: (props) => <RequestStatusChip label={props.getValue()} />
   }),
   columnHelper.display({
     id: 'id',
@@ -351,7 +351,7 @@ export const managerColumns = [
   columnHelper.accessor('status', {
     header: () => <CellHeader label="Status" />,
     footer: (info) => info.column.id,
-    cell: (props) => <Chip label={props.getValue()} />
+    cell: (props) => <RequestStatusChip label={props.getValue()} />
   }),
   columnHelper.display({
     id: 'empty4',

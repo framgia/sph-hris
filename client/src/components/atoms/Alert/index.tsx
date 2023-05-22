@@ -5,9 +5,10 @@ import { X, AlertCircle, Info, Check } from 'react-feather'
 type Props = {
   message?: string
   type?: 'success' | 'error' | 'warning' | 'info'
+  className?: string
 }
 
-const Alert: FC<Props> = ({ message, type }): JSX.Element => {
+const Alert: FC<Props> = ({ message, type, className }): JSX.Element => {
   let containerStyle = ''
   let textStyle = ''
 
@@ -53,20 +54,22 @@ const Alert: FC<Props> = ({ message, type }): JSX.Element => {
   return (
     <div
       className={classNames(
-        'relative flex items-center justify-center',
+        'relative flex justify-center',
         'rounded-md border py-2.5 px-4 shadow-md shadow-slate-200',
-        containerStyle
+        containerStyle,
+        className
       )}
     >
-      {IconType}
-      <p className={classNames('text-xs font-medium', textStyle)}>{message}</p>
+      <span>{IconType}</span>
+      <p className={classNames('pl-6 text-xs font-medium', textStyle)}>{message}</p>
     </div>
   )
 }
 
 Alert.defaultProps = {
   type: 'info',
-  message: 'Something went wrong'
+  message: 'Something went wrong',
+  className: ''
 }
 
 export default Alert

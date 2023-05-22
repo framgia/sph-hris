@@ -60,9 +60,9 @@ const UpdateOvertimeModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Elemen
       const tempLeaders = [...leaders]
       projects?.projects.forEach((project) => {
         if (project?.projectLeader != null || project?.projectSubLeader != null) {
-          if (!tempLeaders.some((leader) => leader.id === project.projectLeader.id))
+          if (!tempLeaders.some((leader) => leader?.id === project?.projectLeader.id))
             tempLeaders.push(project?.projectLeader)
-          if (!tempLeaders.some((leader) => leader.id === project.projectSubLeader.id))
+          if (!tempLeaders.some((leader) => leader?.id === project?.projectSubLeader?.id))
             tempLeaders.push(project?.projectSubLeader)
         }
       })

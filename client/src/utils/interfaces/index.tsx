@@ -174,3 +174,23 @@ export interface IFiledOffsetTable {
   createdAt: string
   updateAt: string
 }
+
+interface TimeEntry {
+  timeIn: string
+  timeOut: string
+}
+
+export interface IMyFiledScheduleData {
+  id: string
+  dateFiled: string
+  status: string
+  schedule: {
+    monday: TimeEntry
+    tuesday: TimeEntry
+    wednesday: TimeEntry
+    thursday: TimeEntry
+    friday: TimeEntry
+    saturday: TimeEntry
+    sunday: TimeEntry
+  }
+}

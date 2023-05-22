@@ -6,12 +6,12 @@ import { Table } from '@tanstack/react-table'
 import { Disclosure } from '@headlessui/react'
 import { ChevronRight, Eye } from 'react-feather'
 
-import Chip from './Chip'
 import ShowRemarksModal from './ShowRemarksModal'
 import Button from '~/components/atoms/Buttons/Button'
 import { IFiledOffsetTable } from '~/utils/interfaces'
 import { variants } from '~/utils/constants/animationVariants'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
+import RequestStatusChip from '~/components/atoms/RequestStatusChip'
 import DisclosureTransition from '~/components/templates/DisclosureTransition'
 
 type Props = {
@@ -63,7 +63,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                             <div className="flex items-center justify-between">
                               <div className="flex items-center space-x-2 text-slate-600">
                                 <span className="font-medium">{filedOffset.title}</span>
-                                <Chip label={filedOffset.status} />
+                                <RequestStatusChip label={filedOffset.status} />
                               </div>
                               <ChevronRight
                                 className={classNames(

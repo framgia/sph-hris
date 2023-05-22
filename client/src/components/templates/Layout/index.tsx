@@ -76,7 +76,9 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
   }
 
   const isTabPages =
-    router.pathname.includes('/my-forms') || router.pathname.includes('/leave-management')
+    router.pathname.includes('/my-schedule') ||
+    router.pathname.includes('/my-forms') ||
+    router.pathname.includes('/leave-management')
 
   return (
     <>
@@ -125,49 +127,39 @@ const Layout: FC<Props> = ({ metaTitle, children }): JSX.Element => {
             <FadeInOut className="overflow-hidden">{children}</FadeInOut>
           )}
         </main>
-        {/* Time In Drawer */}
-        {typeof isOpenTimeInDrawer !== 'undefined' && isOpenTimeInDrawer !== null ? (
-          <TimeInDrawer
-            {...{
-              isOpenTimeInDrawer,
-              actions: {
-                handleToggleTimeInDrawer
-              }
-            }}
-          />
-        ) : null}
-        {typeof isOpenWorkInterruptionDrawer !== 'undefined' &&
-        isOpenWorkInterruptionDrawer !== null ? (
-          <WorkInterruptionDrawer
-            {...{
-              isOpenWorkInterruptionDrawer,
-              actions: {
-                handleToggleWorkInterruptionDrawer
-              }
-            }}
-          />
-        ) : null}
-        {typeof isOpenTimeOutDrawer !== 'undefined' && isOpenTimeOutDrawer !== null ? (
-          <TimeOutDrawer
-            {...{
-              isOpenTimeOutDrawer,
-              workedHours,
-              actions: {
-                handleToggleTimeOutDrawer
-              }
-            }}
-          />
-        ) : null}
-        {typeof isOpenViewDetailsDrawer !== 'undefined' && isOpenViewDetailsDrawer !== null ? (
-          <ViewDetailsDrawer
-            {...{
-              isOpenViewDetailsDrawer,
-              actions: {
-                handleToggleViewDetailsDrawer
-              }
-            }}
-          />
-        ) : null}
+        <TimeInDrawer
+          {...{
+            isOpenTimeInDrawer,
+            actions: {
+              handleToggleTimeInDrawer
+            }
+          }}
+        />
+        <WorkInterruptionDrawer
+          {...{
+            isOpenWorkInterruptionDrawer,
+            actions: {
+              handleToggleWorkInterruptionDrawer
+            }
+          }}
+        />
+        <TimeOutDrawer
+          {...{
+            isOpenTimeOutDrawer,
+            workedHours,
+            actions: {
+              handleToggleTimeOutDrawer
+            }
+          }}
+        />
+        <ViewDetailsDrawer
+          {...{
+            isOpenViewDetailsDrawer,
+            actions: {
+              handleToggleViewDetailsDrawer
+            }
+          }}
+        />
       </Wrapper>
     </>
   )

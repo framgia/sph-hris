@@ -7,45 +7,40 @@ import {
   getFilteredRowModel,
   getPaginationRowModel
 } from '@tanstack/react-table'
-import classNames from 'classnames'
 import React, { Dispatch, FC, SetStateAction, useState } from 'react'
 
 import DesktopTable from './DesktopTable'
 import FooterTable from './../FooterTable'
 import MobileDisclose from './MobileDisclose'
-import useUserQuery from '~/hooks/useUserQuery'
 import { fuzzyFilter } from '~/utils/fuzzyFilter'
+import { IMyFiledScheduleData } from '~/utils/interfaces'
 import useScreenCondition from '~/hooks/useScreenCondition'
-import { USER_POSITIONS } from '~/utils/constants/userPositions'
-import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
 
 type Props = {
   query: {
-    data: IEmployeeTimeEntry[]
+    data: IMyFiledScheduleData[]
     error: unknown
   }
   table: {
-    columns: Array<ColumnDef<IEmployeeTimeEntry, any>>
+    columns: Array<ColumnDef<IMyFiledScheduleData, any>>
     globalFilter: string
     setGlobalFilter: Dispatch<SetStateAction<string>>
   }
 }
 
-const MyDTRTable: FC<Props> = (props): JSX.Element => {
+const MyFiledScheduleTable: FC<Props> = (props): JSX.Element => {
   // SCREEN SIZE CONDITION HOOKS
-  const isMediumScreen = useScreenCondition('(max-width: 768px)')
+  const isTabletSize = useScreenCondition('(max-width: 800px)')
 
   const {
-    query: { data: myDailyTimeData, error },
+    query: { data, error },
     table: { columns, globalFilter, setGlobalFilter }
   } = props
 
   const [sorting, setSorting] = useState<SortingState>([])
-  const { handleUserQuery } = useUserQuery()
-  const { data: user } = handleUserQuery()
 
   const table = useReactTable({
-    data: myDailyTimeData,
+    data,
     columns,
     // Options
     state: {
@@ -68,7 +63,8 @@ const MyDTRTable: FC<Props> = (props): JSX.Element => {
 
   return (
     <>
-      {isMediumScreen ? (
+      {/* Show only on mobile size */}
+      {isTabletSize ? (
         <MobileDisclose
           {...{
             table,
@@ -77,12 +73,7 @@ const MyDTRTable: FC<Props> = (props): JSX.Element => {
           }}
         />
       ) : (
-        <div
-          className={classNames(
-            'mx-auto w-full max-w-fit',
-            user?.userById.position.id === USER_POSITIONS.ESL_TEACHER ? ' mb-12' : 'mb-3'
-          )}
-        >
+        <div className="mx-auto w-full max-w-full bg-white">
           <DesktopTable
             {...{
               table,
@@ -92,17 +83,17 @@ const MyDTRTable: FC<Props> = (props): JSX.Element => {
           />
         </div>
       )}
-
       {/* Table Pagination & Filtering */}
       {table.getPageCount() >= 1 && (
         <FooterTable
           {...{
             table
           }}
+          className="!bg-white"
         />
       )}
     </>
   )
 }
 
-export default MyDTRTable
+export default MyFiledScheduleTable
