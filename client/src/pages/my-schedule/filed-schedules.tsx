@@ -6,12 +6,17 @@ import FadeInOut from '~/components/templates/FadeInOut'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import MyScheduleLayout from '~/components/templates/MySchedulelayout'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
+import UnderConstructionPage from '~/components/pages/UnderContructionPage'
 import { columns } from '~/components/molecules/MyFiledScheduleTable/columns'
 import MyFiledScheduleTable from '~/components/molecules/MyFiledScheduleTable'
 import { dummyMyFiledScheduleData } from '~/utils/constants/dummyMyFiledScheduleData'
 
 const FiledSchedules: NextPage = (): JSX.Element => {
   const [globalFilter, setGlobalFilter] = useState<string>('')
+
+  if (process.env.NODE_ENV === 'production') {
+    return <UnderConstructionPage />
+  }
 
   return (
     <MyScheduleLayout metaTitle="Filed Schedules">

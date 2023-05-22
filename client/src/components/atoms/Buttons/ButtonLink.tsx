@@ -29,6 +29,8 @@ const ButtonLink: FC<Props> = (props): JSX.Element => {
         return `${href}/list-of-leave`
       case href === '/my-forms':
         return `${href}/first-day-onboarding`
+      case href === '/my-schedule':
+        return `${href}/current-schedule`
       default:
         return href
     }

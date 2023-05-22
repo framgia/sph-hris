@@ -8,7 +8,6 @@ import { Controller, useForm, SubmitHandler } from 'react-hook-form'
 
 import Card from '~/components/atoms/Card'
 import Input from '~/components/atoms/Input'
-import Layout from '~/components/templates/Layout'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import TextField from '~/components/molecules/TextField'
 import FadeInOut from '~/components/templates/FadeInOut'
@@ -65,12 +64,9 @@ const LaptopMonitoring: NextPage = (): JSX.Element => {
   const laptopVideoMemoryErrors = !isEmpty(errors?.laptop_video_memory)
 
   if (process.env.NODE_ENV === 'production') {
-    return (
-      <Layout metaTitle="Home">
-        <UnderConstructionPage />
-      </Layout>
-    )
+    return <UnderConstructionPage />
   }
+
   return (
     <MyFormsLayout metaTitle="Laptop Monitoring ">
       <FadeInOut className="default-scrollbar h-full overflow-y-auto">

@@ -19,6 +19,7 @@ import { shiftSchedule } from '~/utils/constants/shiftSchedule'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import MyScheduleLayout from '~/components/templates/MySchedulelayout'
+import UnderConstructionPage from '~/components/pages/UnderContructionPage'
 import { ReactSelectOption, RequestNewScheduleFormData } from '~/utils/types/formValues'
 
 const animatedComponents = makeAnimated()
@@ -209,6 +210,10 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
         handleReset()
         break
     }
+  }
+
+  if (process.env.NODE_ENV === 'production') {
+    return <UnderConstructionPage />
   }
 
   return (

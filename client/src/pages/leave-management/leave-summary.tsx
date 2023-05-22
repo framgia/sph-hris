@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { PulseLoader } from 'react-spinners'
 import React, { useEffect, useState } from 'react'
 
+import NotFound from './../404'
 import Card from '~/components/atoms/Card'
 import {
   Series,
@@ -14,6 +15,7 @@ import {
 } from '~/utils/generateData'
 import useLeave from '~/hooks/useLeave'
 import useUserQuery from '~/hooks/useUserQuery'
+import { Roles } from '~/utils/constants/roles'
 import FadeInOut from '~/components/templates/FadeInOut'
 import { Breakdown, LeaveTable } from '~/utils/types/leaveTypes'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
@@ -111,6 +113,10 @@ const LeaveSummary: NextPage = (): JSX.Element => {
   useEffect(() => {
     if (router.isReady && isUserSuccess) void refetch()
   }, [router, isUserSuccess])
+
+  if (process.env.NODE_ENV === 'production' && user?.userById.role.name !== Roles.HR_ADMIN) {
+    return <NotFound />
+  }
 
   return (
     <LeaveManagementLayout metaTitle="Leave Summary">

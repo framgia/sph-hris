@@ -9,7 +9,6 @@ import { Controller, useForm, SubmitHandler } from 'react-hook-form'
 
 import Card from '~/components/atoms/Card'
 import Input from '~/components/atoms/Input'
-import Layout from '~/components/templates/Layout'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import FadeInOut from '~/components/templates/FadeInOut'
 import TextField from '~/components/molecules/TextField'
@@ -66,12 +65,9 @@ const PersonalInformation: NextPage = (): JSX.Element => {
   const mobileCarrierErrors = !isEmpty(errors?.mobile_carrier)
 
   if (process.env.NODE_ENV === 'production') {
-    return (
-      <Layout metaTitle="Home">
-        <UnderConstructionPage />
-      </Layout>
-    )
+    return <UnderConstructionPage />
   }
+
   return (
     <MyFormsLayout metaTitle="First day Onboarding">
       <FadeInOut className="default-scrollbar h-full overflow-y-auto">

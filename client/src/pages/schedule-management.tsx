@@ -9,10 +9,12 @@ import React, { useEffect, useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
+import NotFound from './404'
 import Input from '~/components/atoms/Input'
 import Alert from '~/components/atoms/Alert'
 import { queryClient } from '~/lib/queryClient'
 import useUserQuery from '~/hooks/useUserQuery'
+import { Roles } from '~/utils/constants/roles'
 import { ScheduleSchema } from '~/utils/validation'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import Button from '~/components/atoms/Buttons/Button'
@@ -256,6 +258,10 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
 
   const handleIsOpenViewScheduleMember = (): void =>
     setIsOpenViewScheduleMember(!isOpenViewScheduleMember)
+
+  if (process.env.NODE_ENV === 'production' && user?.userById.role.name !== Roles.HR_ADMIN) {
+    return <NotFound />
+  }
 
   return (
     <ScheduleManagementLayout metaTitle="Schedule Management">

@@ -8,11 +8,16 @@ import Input from '~/components/atoms/Input'
 import FadeInOut from '~/components/templates/FadeInOut'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import MyScheduleLayout from '~/components/templates/MySchedulelayout'
+import UnderConstructionPage from '~/components/pages/UnderContructionPage'
 
 const CurrentSchedule: NextPage = (): JSX.Element => {
   const { watch } = useForm({
     mode: 'onChange'
   })
+
+  if (process.env.NODE_ENV === 'production') {
+    return <UnderConstructionPage />
+  }
 
   return (
     <MyScheduleLayout metaTitle="Current Schedule">
