@@ -13,6 +13,7 @@ import CellHeader from '~/components/atoms/CellHeader'
 import handleImageError from '~/utils/handleImageError'
 import EditTimeEntriesModal from '../EditTimeEntryModal'
 import { ITimeEntry } from '~/utils/types/timeEntryTypes'
+import CellTimeValue from '~/components/atoms/CellTimeValue'
 import WorkStatusChip from '~/components/atoms/WorkStatusChip'
 import { getSpecificTimeEntry } from '~/hooks/useTimesheetQuery'
 import MenuTransition from '~/components/templates/MenuTransition'
@@ -157,20 +158,21 @@ export const columns = [
   }),
   columnHelper.accessor('late', {
     header: () => <CellHeader label="Late(min)" />,
-    footer: (info) => info.column.id
+    footer: (info) => info.column.id,
+    cell: (props) => <CellTimeValue initialMinutes={props.row.original.late} />
   }),
   columnHelper.accessor('undertime', {
     header: () => <CellHeader label="Undertime(min)" />,
-    footer: (info) => info.column.id
+    footer: (info) => info.column.id,
+    cell: (props) => <CellTimeValue initialMinutes={props.row.original.undertime} />
   }),
   columnHelper.display({
     id: 'approvedMinutes',
     header: () => <CellHeader label="Overtime(min)" />,
-    cell: (props) => {
-      const { original: timeEntry } = props.row
-      return <span>{timeEntry.overtime != null ? timeEntry.overtime.approvedMinutes ?? 0 : 0}</span>
-    },
-    footer: (info) => info.column.id
+    footer: (info) => info.column.id,
+    cell: (props) => (
+      <CellTimeValue initialMinutes={props.row.original.overtime?.approvedMinutes as number} />
+    )
   }),
   columnHelper.display({
     id: 'id',

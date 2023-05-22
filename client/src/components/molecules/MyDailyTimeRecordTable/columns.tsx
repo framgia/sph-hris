@@ -14,6 +14,7 @@ import FiledOffsetModal from './../FiledOffsetModal'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
 import AddNewOvertimeModal from '../AddNewOvertimeModal'
+import CellTimeValue from '~/components/atoms/CellTimeValue'
 import WorkStatusChip from '~/components/atoms/WorkStatusChip'
 import { NO_OVERTIME } from '~/utils/constants/overtimeStatus'
 import ChangeShiftRequestModal from './ChangeShiftRequestModal'
@@ -144,11 +145,13 @@ export const columns = [
   }),
   columnHelper.accessor('late', {
     header: () => <CellHeader label="Late(min)" />,
-    footer: (info) => info.column.id
+    footer: (info) => info.column.id,
+    cell: (props) => <CellTimeValue initialMinutes={props.row.original.late} />
   }),
   columnHelper.accessor('undertime', {
     header: () => <CellHeader label="Undertime(min)" />,
-    footer: (info) => info.column.id
+    footer: (info) => info.column.id,
+    cell: (props) => <CellTimeValue initialMinutes={props.row.original.undertime} />
   }),
   columnHelper.accessor('overtime', {
     header: () => <CellHeader label="Overtime(min)" />,

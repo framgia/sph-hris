@@ -4,6 +4,7 @@ import { createColumnHelper } from '@tanstack/react-table'
 import SortIcon from '~/utils/icons/SortIcon'
 import Avatar from '~/components/atoms/Avatar'
 import handleImageError from '~/utils/handleImageError'
+import CellTimeValue from '~/components/atoms/CellTimeValue'
 import { ITimesheetSummary } from '~/utils/types/timeEntryTypes'
 
 const columnHelper = createColumnHelper<ITimesheetSummary>()
@@ -57,14 +58,17 @@ export const columns = [
   }),
   columnHelper.accessor('late', {
     header: () => <CellHeader label="Late" />,
-    footer: (info) => info.column.id
+    footer: (info) => info.column.id,
+    cell: (props) => <CellTimeValue initialMinutes={props.row.original.late} />
   }),
   columnHelper.accessor('undertime', {
     header: () => <CellHeader label="Undertime(min)" />,
-    footer: (info) => info.column.id
+    footer: (info) => info.column.id,
+    cell: (props) => <CellTimeValue initialMinutes={props.row.original.undertime} />
   }),
   columnHelper.accessor('overtime', {
     header: () => <CellHeader label="Overtime(min)" />,
-    footer: (info) => info.column.id
+    footer: (info) => info.column.id,
+    cell: (props) => <CellTimeValue initialMinutes={props.row.original.overtime} />
   })
 ]
