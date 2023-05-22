@@ -12,6 +12,7 @@ import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import useTimeOutMutation from '~/hooks/useTimeOutMutation'
 import UserTimeZone from '~/components/molecules/UserTimeZone'
 import DrawerTemplate from '~/components/templates/DrawerTemplate'
+import ShowTimeOutEarlyModal from '~/components/molecules/TimeOutEarlyModal'
 
 type Props = {
   isOpenTimeOutDrawer: boolean
@@ -27,13 +28,36 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
     workedHours,
     actions: { handleToggleTimeOutDrawer }
   } = props
-
+  const [isOpenEarlyTimeOutModal, setIsOpenEarlyTimeOutModal] = useState<boolean>(false)
+  const handleShowEarlyTimeOutToggle = (): void =>
+    setIsOpenEarlyTimeOutModal(!isOpenEarlyTimeOutModal)
   const [remarks, setRemarks] = useState('')
 
   const { handleUserQuery } = useUserQuery()
   const { handleTimeOutMutation } = useTimeOutMutation()
   const { data } = handleUserQuery()
   const timeOutMutation = handleTimeOutMutation()
+
+  const handleEarlyTimeOutChecker = (): void => {
+    const time = moment().hour()
+    const day = moment().format('dddd')
+    const schedule = data?.userById?.employeeSchedule.workingDayTimes.find(
+      (item) => item.day === day
+    )
+    if (schedule !== null && schedule !== undefined) {
+      const regex = /PT(\d+)H/
+      const match = schedule.to.match(regex)
+      const hours = match !== null ? parseInt(match[1]) : 0
+      if (time < hours) {
+        setIsOpenEarlyTimeOutModal(true)
+      } else {
+        handleSaveTimeOut()
+      }
+    } else {
+      /* This is for when user times out when he/she is out of schedule. */
+      handleSaveTimeOut()
+    }
+  }
 
   const handleSaveTimeOut = (): void => {
     const time = moment(new Date())
@@ -119,7 +143,7 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
           <button
             type="button"
             disabled={timeOutMutation.isLoading}
-            onClick={handleSaveTimeOut}
+            onClick={handleEarlyTimeOutChecker}
             className={classNames(
               'flex items-center justify-center rounded-md border active:scale-95',
               'w-24 border-dark-primary bg-primary text-xs text-white outline-none hover:bg-dark-primary'
@@ -130,6 +154,14 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
           </button>
         </div>
       </section>
+      <ShowTimeOutEarlyModal
+        {...{
+          isOpen: isOpenEarlyTimeOutModal,
+          closeModal: () => handleShowEarlyTimeOutToggle(),
+          isSubmitting: timeOutMutation.isLoading,
+          isSaveTimeOut: handleSaveTimeOut
+        }}
+      />
     </DrawerTemplate>
   )
 }
