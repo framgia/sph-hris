@@ -44,30 +44,40 @@ namespace api.Services
                         EmployeeSchedule = newSchedule,
                         From = new TimeSpan(9, 30, 0),
                         To = new TimeSpan(18, 30, 0),
+                        BreakFrom = new TimeSpan(12, 0, 0),
+                        BreakTo = new TimeSpan(13, 0, 0),
                         Day = DaysOfTheWeekEnum.MONDAY
                     },
                     new WorkingDayTime {
                         EmployeeSchedule = newSchedule,
                         From = new TimeSpan(9, 30, 0),
                         To = new TimeSpan(18, 30, 0),
+                        BreakFrom = new TimeSpan(12, 0, 0),
+                        BreakTo = new TimeSpan(13, 0, 0),
                         Day = DaysOfTheWeekEnum.TUESDAY
                     },
                     new WorkingDayTime {
                         EmployeeSchedule = newSchedule,
                         From = new TimeSpan(9, 30, 0),
                         To = new TimeSpan(18, 30, 0),
+                        BreakFrom = new TimeSpan(12, 0, 0),
+                        BreakTo = new TimeSpan(13, 0, 0),
                         Day = DaysOfTheWeekEnum.WEDNESDAY
                     },
                     new WorkingDayTime {
                         EmployeeSchedule = newSchedule,
                         From = new TimeSpan(9, 30, 0),
                         To = new TimeSpan(18, 30, 0),
+                        BreakFrom = new TimeSpan(12, 0, 0),
+                        BreakTo = new TimeSpan(13, 0, 0),
                         Day = DaysOfTheWeekEnum.THURSDAY
                     },
                     new WorkingDayTime {
                         EmployeeSchedule = newSchedule,
                         From = new TimeSpan(9, 30, 0),
                         To = new TimeSpan(18, 30, 0),
+                        BreakFrom = new TimeSpan(12, 0, 0),
+                        BreakTo = new TimeSpan(13, 0, 0),
                         Day = DaysOfTheWeekEnum.FRIDAY
                     },
                 };

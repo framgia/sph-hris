@@ -98,7 +98,7 @@ export const hrColumns = [
                               selected ? 'font-medium' : 'font-normal'
                             )}
                           >
-                            {project.project_name.label.split(',').map((here, index) => {
+                            {project.project_name.label?.split(',').map((here, index) => {
                               if (here !== 'Others' && here !== '') {
                                 return (
                                   <p

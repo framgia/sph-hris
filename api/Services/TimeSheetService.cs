@@ -90,7 +90,7 @@ namespace api.Services
         {
             using HrisContext context = _contextFactory.CreateDbContext();
             return await context.TimeEntries
-        .Include(entity => entity.User)
+                .Include(entity => entity.User)
                 .FirstOrDefaultAsync(c => c.TimeInId == id || c.TimeOutId == id);
         }
 

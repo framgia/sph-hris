@@ -6,7 +6,9 @@ export const WorkStatus = {
   MATERNITY_PATERNITY_LEAVE: 'Maternity/Paternity Leave',
   UNDERTIME: 'Undertime',
   ABSENT: 'Absent',
-  ON_DUTY: 'Present'
+  ON_DUTY: 'Present',
+  REST: 'Rest day',
+  AWAITING: ''
 }
 
 export const WorkInterruptionType = {

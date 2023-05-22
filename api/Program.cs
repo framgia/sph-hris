@@ -89,6 +89,26 @@ builder.Services.AddScoped<EmployeeService>();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var dbFactory = services.GetRequiredService<IDbContextFactory<HrisContext>>();
+        using var dbContext = dbFactory.CreateDbContext();
+
+        if (dbContext.Database.CanConnect())
+        {
+            dbContext.Database.Migrate();
+        }
+    }
+    catch (Exception ex)
+    {
+        // Handle any exceptions that occur during database migration
+        Console.WriteLine("An error occurred while migrating the database: " + ex.Message);
+    }
+}
+
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto

@@ -35,6 +35,8 @@ const WorkStatusChip: FC<Props> = ({ label }): JSX.Element => {
     label === WorkStatus.UNDERTIME.toLowerCase()
       ? 'border-amber-300 bg-amber-50 text-amber-600'
       : null,
+    label === WorkStatus.REST.toLowerCase() ? 'border-sky-300 bg-sky-50 text-sky-600' : null,
+    label === WorkStatus.AWAITING.toLowerCase() ? 'invisible' : null,
     label === LeaveStatus.PENDING.toLowerCase()
       ? 'border-amber-300 bg-amber-50 text-amber-600'
       : null,

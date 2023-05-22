@@ -130,19 +130,34 @@ const Header: FC<Props> = (props): JSX.Element => {
       data.userById?.timeEntry?.timeIn !== null &&
       data.userById?.timeEntry?.timeOut === null
     ) {
-      setRunning(true)
-      const now = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-      setSeconds(0)
-      if (data.userById.timeEntry.timeIn !== null) {
-        const timeObj = parse(data?.userById.timeEntry.timeIn?.timeHour)
-        const then = `${moment(new Date(data?.userById.timeEntry.date)).format('YYYY-MM-DD')} ${
-          timeObj.hours as number
-        }:${timeObj.minutes as number}:${timeObj.seconds as number}`
-        const temp = moment.utc(moment(new Date(now)).diff(moment(new Date(then))))
-        setSeconds(moment.duration(temp as moment.DurationInputArg1).asSeconds())
+      setTimer(data)
+      const handleVisibilityChange = (): void => {
+        if (!document.hidden) {
+          setTimer(data)
+        }
+      }
+
+      document.addEventListener('visibilitychange', handleVisibilityChange)
+
+      return () => {
+        document.removeEventListener('visibilitychange', handleVisibilityChange)
       }
     }
   }, [status, data])
+
+  const setTimer = (data: any): void => {
+    setRunning(true)
+    const now = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+    setSeconds(0)
+    if (data.userById.timeEntry.timeIn !== null) {
+      const timeObj = parse(data?.userById.timeEntry.timeIn?.timeHour)
+      const then = `${moment(new Date(data?.userById.timeEntry.date)).format('YYYY-MM-DD')} ${
+        timeObj.hours as number
+      }:${timeObj.minutes as number}:${timeObj.seconds as number}`
+      const temp = moment.utc(moment(new Date(now)).diff(moment(new Date(then))))
+      setSeconds(moment.duration(temp as moment.DurationInputArg1).asSeconds())
+    }
+  }
 
   useMemo(() => {
     setTime(seconds)

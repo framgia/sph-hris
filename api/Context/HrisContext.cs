@@ -41,7 +41,7 @@ public partial class HrisContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<EmployeeSchedule>().HasData(
-            DatabaseSeeder.employeeSchedule
+            DatabaseSeeder.allEmployeeSchedules
         );
         modelBuilder.Entity<WorkingDayTime>().HasData(
             DatabaseSeeder.workingDayTime
