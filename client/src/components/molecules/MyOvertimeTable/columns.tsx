@@ -47,7 +47,7 @@ export const columns = [
               {original.projects.map((option, index) => {
                 const projectName = option.project_name.label
                 const otherProjects =
-                  option.project_name.label !== 'Others' && option.project_name.label.split(',')
+                  option.project_name.label !== 'Others' && option.project_name.label?.split(',')
 
                 return (
                   <div key={index}>

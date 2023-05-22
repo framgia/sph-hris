@@ -50,14 +50,21 @@ namespace api.Services
                 using var transaction = context.Database.BeginTransaction();
                 try
                 {
-                    var users = await context.Users.ToListAsync();
+                    string currentDay = DateTime.Now.ToString("dddd").ToLower();
+
+                    var users = await context.Users.Include(x => x.EmployeeSchedule).ThenInclude(x => x.WorkingDayTimes).ToListAsync();
                     users.ForEach(user =>
                     {
+                        WorkingDayTime? currentUserSchedule = user.EmployeeSchedule.WorkingDayTimes.Where(x => x.Day?.ToLower() == currentDay).FirstOrDefault();
+                        bool isRestDay = currentDay != currentUserSchedule?.Day?.ToLower();
+
                         context.TimeEntries.Add(new TimeEntry
                         {
                             UserId = user.Id,
-                            StartTime = TimeSpan.FromHours(0),
-                            EndTime = TimeSpan.FromHours(0),
+                            StartTime = currentUserSchedule != null && !isRestDay ? currentUserSchedule.From : TimeSpan.FromHours(0),
+                            EndTime = currentUserSchedule != null && !isRestDay ? currentUserSchedule.To : TimeSpan.FromHours(0),
+                            BreakStartTime = currentUserSchedule != null && !isRestDay ? currentUserSchedule.BreakFrom : TimeSpan.FromHours(0),
+                            BreakEndTime = currentUserSchedule != null && !isRestDay ? currentUserSchedule.BreakTo : TimeSpan.FromHours(0),
                             Date = DateTime.Now
                         });
                     });
@@ -89,10 +96,17 @@ namespace api.Services
                     await context.SaveChangesAsync();
 
                     var timeEntry = await context.TimeEntries
+                    .Include(x => x.User)
                     .Where(x => x.UserId == timeIn.UserId && x.Id == timeIn.Id).FirstAsync();
+
+                    string currentDay = DateTime.Now.ToString("dddd").ToLower();
+                    var userSchedule = await context.WorkingDayTimes.Where(x => x.EmployeeScheduleId == timeEntry.User.EmployeeScheduleId && x.Day!.ToLower() == currentDay).FirstAsync();
+
                     timeEntry.TimeInId = time.Entity.Id;
                     timeEntry.StartTime = timeIn.StartTime;
                     timeEntry.EndTime = timeIn.EndTime;
+                    timeEntry.BreakStartTime = userSchedule.BreakFrom;
+                    timeEntry.BreakEndTime = userSchedule.BreakTo;
                     timeEntry.Date = timeIn.Date;
                     context.TimeEntries.Update(timeEntry);
                     await context.SaveChangesAsync();

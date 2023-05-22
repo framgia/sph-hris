@@ -4,5 +4,7 @@ namespace api.Enums
     {
         public const string ONDUTY = "present";
         public const string ABSENT = "absent";
+        public const string REST = "rest day";
+        public const string AWAITING = "";
     }
 }

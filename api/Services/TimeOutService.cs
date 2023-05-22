@@ -1,4 +1,5 @@
 using api.Context;
+using api.DTOs;
 using api.Entities;
 using api.Requests;
 using Microsoft.EntityFrameworkCore;
@@ -27,13 +28,20 @@ namespace api.Services
 
                     await context.SaveChangesAsync();
                     var timeEntry = await context.TimeEntries
-                    .Include(i => i.TimeIn)
+                    .Include(entry => entry.TimeIn)
+                    .Include(entry => entry.TimeOut)
+                    .Include(entry => entry.Overtime)
+                    .Include(entry => entry.User)
+                        .ThenInclude(x => x.ProfileImage)
                     .Where(x => x.Id == timeout.TimeEntryId)
                     .FirstAsync();
+
                     timeEntry.TimeOutId = time.Entity.Id;
+                    timeEntry.TimeOut = time.Entity;
                     timeEntry.WorkedHours = timeout.WorkedHours;
-                    timeEntry.TrackedHours = timeEntry.EndTime.Subtract(timeEntry.StartTime);
+                    timeEntry.TrackedHours = GetTrackedHours(timeEntry, time.Entity);
                     context.TimeEntries.Update(timeEntry);
+
                     await context.SaveChangesAsync();
 
                     transaction.Commit();
@@ -44,6 +52,16 @@ namespace api.Services
                     return e.InnerException?.Message ?? "Something went wrong...";
                 }
             }
+        }
+
+        // private methods
+        private TimeSpan GetTrackedHours(TimeEntry timeEntry, Time time)
+        {
+            TimeEntryDTO timeEntryDTO = new TimeEntryDTO(timeEntry, null, "", null, null);
+            TimeSpan UndertimeTimeSpan = TimeSpan.FromMinutes(timeEntryDTO.Undertime);
+            TimeSpan LateTimeSpan = TimeSpan.FromMinutes(timeEntryDTO.Late);
+
+            return timeEntry.EndTime - timeEntry.StartTime - UndertimeTimeSpan - LateTimeSpan;
         }
     }
 }

@@ -32,6 +32,19 @@ namespace api.Seeders
             CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
             UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
         };
+
+        public static EmployeeSchedule employeeAfternoonSchedule = new EmployeeSchedule
+        {
+            Id = 2,
+            Name = "Afternoon Shift",
+            CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+            UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+        };
+
+        public static List<EmployeeSchedule> allEmployeeSchedules = new List<EmployeeSchedule>() {
+            employeeSchedule, employeeAfternoonSchedule
+        };
+
         public static List<WorkingDayTime> workingDayTime = new List<WorkingDayTime>(){
             new WorkingDayTime {
                 Id = 1,
@@ -39,6 +52,8 @@ namespace api.Seeders
                 Day = "Monday",
                 From = new TimeSpan(9, 30, 0),
                 To = new TimeSpan(18, 30, 0),
+                BreakFrom = new TimeSpan(12, 0, 0),
+                BreakTo = new TimeSpan(13, 0, 0),
                 CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                 UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
             },
@@ -48,6 +63,8 @@ namespace api.Seeders
                 Day = "Tuesday",
                 From = new TimeSpan(9, 30, 0),
                 To = new TimeSpan(18, 30, 0),
+                BreakFrom = new TimeSpan(12, 0, 0),
+                BreakTo = new TimeSpan(13, 0, 0),
                 CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                 UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
             },
@@ -57,6 +74,8 @@ namespace api.Seeders
                 Day = "Wednesday",
                 From = new TimeSpan(9, 30, 0),
                 To = new TimeSpan(18, 30, 0),
+                BreakFrom = new TimeSpan(12, 0, 0),
+                BreakTo = new TimeSpan(13, 0, 0),
                 CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                 UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
             },
@@ -66,6 +85,8 @@ namespace api.Seeders
                 Day = "Thursday",
                 From = new TimeSpan(9, 30, 0),
                 To = new TimeSpan(18, 30, 0),
+                BreakFrom = new TimeSpan(12, 0, 0),
+                BreakTo = new TimeSpan(13, 0, 0),
                 CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                 UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
             },
@@ -75,6 +96,63 @@ namespace api.Seeders
                 Day = "Friday",
                 From = new TimeSpan(9, 30, 0),
                 To = new TimeSpan(18, 30, 0),
+                BreakFrom = new TimeSpan(12, 0, 0),
+                BreakTo = new TimeSpan(13, 0, 0),
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new WorkingDayTime {
+                Id = 6,
+                EmployeeScheduleId = employeeAfternoonSchedule.Id,
+                Day = "Monday",
+                From = new TimeSpan(13, 0, 0),
+                To = new TimeSpan(22, 00, 0),
+                BreakFrom = new TimeSpan(17, 0, 0),
+                BreakTo = new TimeSpan(18, 0, 0),
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new WorkingDayTime {
+                Id = 7,
+                EmployeeScheduleId = employeeAfternoonSchedule.Id,
+                Day = "Tuesday",
+                From = new TimeSpan(13, 0, 0),
+                To = new TimeSpan(22, 00, 0),
+                BreakFrom = new TimeSpan(17, 0, 0),
+                BreakTo = new TimeSpan(18, 0, 0),
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new WorkingDayTime {
+                Id = 8,
+                EmployeeScheduleId = employeeAfternoonSchedule.Id,
+                Day = "Wednesday",
+                From = new TimeSpan(13, 0, 0),
+                To = new TimeSpan(22, 00, 0),
+                BreakFrom = new TimeSpan(17, 0, 0),
+                BreakTo = new TimeSpan(18, 0, 0),
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new WorkingDayTime {
+                Id = 9,
+                EmployeeScheduleId = employeeAfternoonSchedule.Id,
+                Day = "Thursday",
+                From = new TimeSpan(13, 0, 0),
+                To = new TimeSpan(22, 00, 0),
+                BreakFrom = new TimeSpan(17, 0, 0),
+                BreakTo = new TimeSpan(18, 0, 0),
+                CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
+                UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
+            },
+            new WorkingDayTime {
+                Id = 10,
+                EmployeeScheduleId = employeeAfternoonSchedule.Id,
+                Day = "Friday",
+                From = new TimeSpan(13, 0, 0),
+                To = new TimeSpan(22, 00, 0),
+                BreakFrom = new TimeSpan(17, 0, 0),
+                BreakTo = new TimeSpan(18, 0, 0),
                 CreatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827),
                 UpdatedAt = new DateTime(2023, 1, 27, 16, 28, 6, 79, DateTimeKind.Local).AddTicks(7827)
             },

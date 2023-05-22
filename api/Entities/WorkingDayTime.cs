@@ -12,6 +12,8 @@ namespace api.Entities
         public string? Day { get; set; }
         public TimeSpan From { get; set; }
         public TimeSpan To { get; set; }
+        public TimeSpan BreakFrom { get; set; }
+        public TimeSpan BreakTo { get; set; }
         public EmployeeSchedule EmployeeSchedule { get; set; } = default!;
     }
 }

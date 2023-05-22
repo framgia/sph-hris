@@ -13,6 +13,8 @@ namespace api.Entities
         public int? TimeOutId { get; set; }
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
+        public TimeSpan BreakStartTime { get; set; }
+        public TimeSpan BreakEndTime { get; set; }
         public DateTime Date { get; set; }
         public string? WorkedHours { get; set; }
         public TimeSpan TrackedHours { get; set; }
