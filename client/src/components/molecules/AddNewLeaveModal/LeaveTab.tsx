@@ -32,6 +32,8 @@ import useLeave from '~/hooks/useLeave'
 import { LeaveType } from '~/utils/types/leaveTypes'
 import { LeaderDetails, ProjectDetails } from '~/utils/types/projectTypes'
 import { numberOfDaysInLeaves } from '~/utils/constants/dummyAddNewLeaveFields'
+import toast from 'react-hot-toast'
+import { queryClient } from '~/lib/queryClient'
 
 type Props = {
   isOpen: boolean
@@ -144,11 +146,23 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
           })
         },
         {
-          onSuccess: () => closeModal()
+          onSuccess: () => {
+            void queryClient
+              .invalidateQueries({
+                queryKey: [
+                  'GET_MY_LEAVES_QUERY',
+                  user?.userById.id as number,
+                  parseInt(router.query.year as string)
+                ]
+              })
+              .then(() => {
+                resolve()
+                closeModal()
+                toast.success('Leave request filed successfully!')
+              })
+          }
         }
       )
-
-      resolve()
     })
   }
 

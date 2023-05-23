@@ -1,7 +1,9 @@
 import { NextPage } from 'next'
+import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import isEmpty from 'lodash/isEmpty'
 import ReactSelect from 'react-select'
+import { CheckSquare } from 'react-feather'
 import makeAnimated from 'react-select/animated'
 import React, { useEffect, useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -11,6 +13,7 @@ import Card from '~/components/atoms/Card'
 import Input from '~/components/atoms/Input'
 import Alert from '~/components/atoms/Alert'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
+import Button from '~/components/atoms/Buttons/Button'
 import FadeInOut from '~/components/templates/FadeInOut'
 import DayButton from '~/components/atoms/Buttons/DayButton'
 import { RequestNewScheduleSchema } from '~/utils/validation'
@@ -28,6 +31,13 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
   const [selectedShift, setSelectedShift] = useState<ReactSelectOption>()
 
   const [errorMessage, setErrorMessage] = useState<string>('')
+
+  const empty = {
+    timeIn: '',
+    timeOut: '',
+    breakFrom: '',
+    breakTo: ''
+  }
 
   const {
     reset,
@@ -212,7 +222,97 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
     }
   }
 
-  if (process.env.NODE_ENV === 'production') {
+  const handleApplyToAllDay = (daySelected: string): void => {
+    const selectedButton = {
+      mondaySelected: watch('mondaySelected'),
+      tuesdaySelected: watch('tuesdaySelected'),
+      wednesdaySelected: watch('wednesdaySelected'),
+      thursdaySelected: watch('thursdaySelected'),
+      fridaySelected: watch('fridaySelected'),
+      saturdaySelected: watch('saturdaySelected'),
+      sundaySelected: watch('sundaySelected')
+    }
+
+    let dayData
+
+    switch (daySelected) {
+      case 'mondaySelected':
+        dayData = {
+          timeIn: watch('monday.timeIn'),
+          timeOut: watch('monday.timeOut'),
+          breakFrom: watch('monday.breakFrom'),
+          breakTo: watch('monday.breakTo')
+        }
+        break
+      case 'tuesdaySelected':
+        dayData = {
+          timeIn: watch('tuesday.timeIn'),
+          timeOut: watch('tuesday.timeOut'),
+          breakFrom: watch('tuesday.breakFrom'),
+          breakTo: watch('tuesday.breakTo')
+        }
+        break
+      case 'wednesdaySelected':
+        dayData = {
+          timeIn: watch('wednesday.timeIn'),
+          timeOut: watch('wednesday.timeOut'),
+          breakFrom: watch('wednesday.breakFrom'),
+          breakTo: watch('wednesday.breakTo')
+        }
+        break
+      case 'thursdaySelected':
+        dayData = {
+          timeIn: watch('thursday.timeIn'),
+          timeOut: watch('thursday.timeOut'),
+          breakFrom: watch('thursday.breakFrom'),
+          breakTo: watch('thursday.breakTo')
+        }
+        break
+      case 'fridaySelected':
+        dayData = {
+          timeIn: watch('friday.timeIn'),
+          timeOut: watch('friday.timeOut'),
+          breakFrom: watch('friday.breakFrom'),
+          breakTo: watch('friday.breakTo')
+        }
+        break
+      case 'saturdaySelected':
+        dayData = {
+          timeIn: watch('saturday.timeIn'),
+          timeOut: watch('saturday.timeOut'),
+          breakFrom: watch('saturday.breakFrom'),
+          breakTo: watch('saturday.breakTo')
+        }
+        break
+      case 'sundaySelected':
+        dayData = {
+          timeIn: watch('sunday.timeIn'),
+          timeOut: watch('sunday.timeOut'),
+          breakFrom: watch('sunday.breakFrom'),
+          breakTo: watch('sunday.breakTo')
+        }
+        break
+      default:
+        break
+    }
+
+    if (dayData !== null) {
+      const newData = {
+        ...selectedButton,
+        monday: selectedButton.mondaySelected ? dayData : empty,
+        tuesday: selectedButton.tuesdaySelected ? dayData : empty,
+        wednesday: selectedButton.wednesdaySelected ? dayData : empty,
+        thursday: selectedButton.thursdaySelected ? dayData : empty,
+        friday: selectedButton.fridaySelected ? dayData : empty,
+        saturday: selectedButton.saturdaySelected ? dayData : empty,
+        sunday: selectedButton.sundaySelected ? dayData : empty
+      }
+
+      reset(newData)
+    }
+  }
+
+  if (process.env.NEXT_PUBLIC_DISPLAY_MY_SCHEDULE_PAGE === 'false') {
     return <UnderConstructionPage />
   }
 
@@ -263,7 +363,10 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                             title: 'Monday',
                             disabled: isSubmitting,
                             selected: getValues('mondaySelected'),
-                            onClick: () => setValue('mondaySelected', !watch('mondaySelected'))
+                            onClick: () => {
+                              setValue('monday', empty)
+                              setValue('mondaySelected', !watch('mondaySelected'))
+                            }
                           }}
                         />
                         <DayButton
@@ -272,7 +375,10 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                             title: 'Tuesday',
                             disabled: isSubmitting,
                             selected: getValues('tuesdaySelected'),
-                            onClick: () => setValue('tuesdaySelected', !watch('tuesdaySelected'))
+                            onClick: () => {
+                              setValue('tuesday', empty)
+                              setValue('tuesdaySelected', !watch('tuesdaySelected'))
+                            }
                           }}
                         />
                         <DayButton
@@ -281,8 +387,10 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                             title: 'Wednesday',
                             disabled: isSubmitting,
                             selected: getValues('wednesdaySelected'),
-                            onClick: () =>
+                            onClick: () => {
+                              setValue('wednesday', empty)
                               setValue('wednesdaySelected', !watch('wednesdaySelected'))
+                            }
                           }}
                         />
                         <DayButton
@@ -291,7 +399,10 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                             title: 'Thursday',
                             disabled: isSubmitting,
                             selected: getValues('thursdaySelected'),
-                            onClick: () => setValue('thursdaySelected', !watch('thursdaySelected'))
+                            onClick: () => {
+                              setValue('thursday', empty)
+                              setValue('thursdaySelected', !watch('thursdaySelected'))
+                            }
                           }}
                         />
                         <DayButton
@@ -300,7 +411,10 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                             title: 'Friday',
                             disabled: isSubmitting,
                             selected: getValues('fridaySelected'),
-                            onClick: () => setValue('fridaySelected', !watch('fridaySelected'))
+                            onClick: () => {
+                              setValue('friday', empty)
+                              setValue('fridaySelected', !watch('fridaySelected'))
+                            }
                           }}
                         />
                         <DayButton
@@ -309,7 +423,10 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                             title: 'Saturday',
                             disabled: isSubmitting,
                             selected: getValues('saturdaySelected'),
-                            onClick: () => setValue('saturdaySelected', !watch('saturdaySelected'))
+                            onClick: () => {
+                              setValue('saturday', empty)
+                              setValue('saturdaySelected', !watch('saturdaySelected'))
+                            }
                           }}
                         />
                         <DayButton
@@ -318,7 +435,10 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                             title: 'Sunday',
                             disabled: isSubmitting,
                             selected: getValues('sundaySelected'),
-                            onClick: () => setValue('sundaySelected', !watch('sundaySelected'))
+                            onClick: () => {
+                              setValue('sunday', empty)
+                              setValue('sundaySelected', !watch('sundaySelected'))
+                            }
                           }}
                         />
                       </div>
@@ -396,19 +516,37 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                                 )}
                               </div>
                               <span>to</span>
-                              <div className="relative">
-                                <Input
-                                  type="time"
-                                  rounded="lg"
-                                  color="warning"
-                                  disabled={isSubmitting}
-                                  {...register('monday.breakTo')}
-                                  iserror={!isEmpty(errors.monday?.breakTo)}
-                                  className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                                />
-                                {!isEmpty(errors.monday?.breakTo) && (
-                                  <p className="error absolute">{errors.monday?.breakTo.message}</p>
-                                )}
+                              <div className="inline-flex items-center space-x-3">
+                                <div className="relative">
+                                  <Input
+                                    type="time"
+                                    rounded="lg"
+                                    color="warning"
+                                    disabled={isSubmitting}
+                                    {...register('monday.breakTo')}
+                                    iserror={!isEmpty(errors.monday?.breakTo)}
+                                    className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                                  />
+                                  {!isEmpty(errors.monday?.breakTo) && (
+                                    <p className="error absolute">
+                                      {errors.monday?.breakTo.message}
+                                    </p>
+                                  )}
+                                </div>
+                                {/* Apply To All Day Button */}
+                                <Tippy
+                                  content="Apply To All Day"
+                                  placement="right"
+                                  className="!text-xs"
+                                >
+                                  <Button
+                                    type="button"
+                                    onClick={() => handleApplyToAllDay('mondaySelected')}
+                                    className="text-slate-600 focus:text-dark-primary hover:text-dark-primary"
+                                  >
+                                    <CheckSquare className="h-5 w-5" />
+                                  </Button>
+                                </Tippy>
                               </div>
                             </div>
                           </div>
@@ -491,21 +629,37 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                                 )}
                               </div>
                               <span>to</span>
-                              <div className="relative">
-                                <Input
-                                  type="time"
-                                  rounded="lg"
-                                  color="warning"
-                                  disabled={isSubmitting}
-                                  {...register('tuesday.breakTo')}
-                                  iserror={!isEmpty(errors.tuesday?.breakTo)}
-                                  className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                                />
-                                {!isEmpty(errors.tuesday?.breakTo) && (
-                                  <p className="error absolute">
-                                    {errors.tuesday?.breakTo.message}
-                                  </p>
-                                )}
+                              <div className="inline-flex items-center space-x-3">
+                                <div className="relative">
+                                  <Input
+                                    type="time"
+                                    rounded="lg"
+                                    color="warning"
+                                    disabled={isSubmitting}
+                                    {...register('tuesday.breakTo')}
+                                    iserror={!isEmpty(errors.tuesday?.breakTo)}
+                                    className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                                  />
+                                  {!isEmpty(errors.tuesday?.breakTo) && (
+                                    <p className="error absolute">
+                                      {errors.tuesday?.breakTo.message}
+                                    </p>
+                                  )}
+                                </div>
+                                {/* Apply To All Day Button */}
+                                <Tippy
+                                  content="Apply To All Day"
+                                  placement="right"
+                                  className="!text-xs"
+                                >
+                                  <Button
+                                    type="button"
+                                    onClick={() => handleApplyToAllDay('tuesdaySelected')}
+                                    className="text-slate-600 focus:text-dark-primary hover:text-dark-primary"
+                                  >
+                                    <CheckSquare className="h-5 w-5" />
+                                  </Button>
+                                </Tippy>
                               </div>
                             </div>
                           </div>
@@ -591,21 +745,37 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                                 )}
                               </div>
                               <span>to</span>
-                              <div className="relative">
-                                <Input
-                                  type="time"
-                                  rounded="lg"
-                                  color="warning"
-                                  disabled={isSubmitting}
-                                  {...register('wednesday.breakTo')}
-                                  iserror={!isEmpty(errors.wednesday?.breakTo)}
-                                  className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                                />
-                                {!isEmpty(errors.wednesday?.breakTo) && (
-                                  <p className="error absolute">
-                                    {errors.wednesday?.breakTo.message}
-                                  </p>
-                                )}
+                              <div className="inline-flex items-center space-x-3">
+                                <div className="relative">
+                                  <Input
+                                    type="time"
+                                    rounded="lg"
+                                    color="warning"
+                                    disabled={isSubmitting}
+                                    {...register('wednesday.breakTo')}
+                                    iserror={!isEmpty(errors.wednesday?.breakTo)}
+                                    className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                                  />
+                                  {!isEmpty(errors.wednesday?.breakTo) && (
+                                    <p className="error absolute">
+                                      {errors.wednesday?.breakTo.message}
+                                    </p>
+                                  )}
+                                </div>
+                                {/* Apply To All Day Button */}
+                                <Tippy
+                                  content="Apply To All Day"
+                                  placement="right"
+                                  className="!text-xs"
+                                >
+                                  <Button
+                                    type="button"
+                                    onClick={() => handleApplyToAllDay('wednesdaySelected')}
+                                    className="text-slate-600 focus:text-dark-primary hover:text-dark-primary"
+                                  >
+                                    <CheckSquare className="h-5 w-5" />
+                                  </Button>
+                                </Tippy>
                               </div>
                             </div>
                           </div>
@@ -689,21 +859,37 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                                 )}
                               </div>
                               <span>to</span>
-                              <div className="relative">
-                                <Input
-                                  type="time"
-                                  rounded="lg"
-                                  color="warning"
-                                  disabled={isSubmitting}
-                                  {...register('thursday.breakTo')}
-                                  iserror={!isEmpty(errors.thursday?.breakTo)}
-                                  className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                                />
-                                {!isEmpty(errors.thursday?.breakTo) && (
-                                  <p className="error absolute">
-                                    {errors.thursday?.breakTo.message}
-                                  </p>
-                                )}
+                              <div className="inline-flex items-center space-x-3">
+                                <div className="relative">
+                                  <Input
+                                    type="time"
+                                    rounded="lg"
+                                    color="warning"
+                                    disabled={isSubmitting}
+                                    {...register('thursday.breakTo')}
+                                    iserror={!isEmpty(errors.thursday?.breakTo)}
+                                    className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                                  />
+                                  {!isEmpty(errors.thursday?.breakTo) && (
+                                    <p className="error absolute">
+                                      {errors.thursday?.breakTo.message}
+                                    </p>
+                                  )}
+                                </div>
+                                {/* Apply To All Day Button */}
+                                <Tippy
+                                  content="Apply To All Day"
+                                  placement="right"
+                                  className="!text-xs"
+                                >
+                                  <Button
+                                    type="button"
+                                    onClick={() => handleApplyToAllDay('thursdaySelected')}
+                                    className="text-slate-600 focus:text-dark-primary hover:text-dark-primary"
+                                  >
+                                    <CheckSquare className="h-5 w-5" />
+                                  </Button>
+                                </Tippy>
                               </div>
                             </div>
                           </div>
@@ -785,19 +971,37 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                                 )}
                               </div>
                               <span>to</span>
-                              <div className="relative">
-                                <Input
-                                  type="time"
-                                  rounded="lg"
-                                  color="warning"
-                                  disabled={isSubmitting}
-                                  {...register('friday.breakTo')}
-                                  iserror={!isEmpty(errors.friday?.breakTo)}
-                                  className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                                />
-                                {!isEmpty(errors.friday?.breakTo) && (
-                                  <p className="error absolute">{errors.friday?.breakTo.message}</p>
-                                )}
+                              <div className="inline-flex items-center space-x-3">
+                                <div className="relative">
+                                  <Input
+                                    type="time"
+                                    rounded="lg"
+                                    color="warning"
+                                    disabled={isSubmitting}
+                                    {...register('friday.breakTo')}
+                                    iserror={!isEmpty(errors.friday?.breakTo)}
+                                    className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                                  />
+                                  {!isEmpty(errors.friday?.breakTo) && (
+                                    <p className="error absolute">
+                                      {errors.friday?.breakTo.message}
+                                    </p>
+                                  )}
+                                </div>
+                                {/* Apply To All Day Button */}
+                                <Tippy
+                                  content="Apply To All Day"
+                                  placement="right"
+                                  className="!text-xs"
+                                >
+                                  <Button
+                                    type="button"
+                                    onClick={() => handleApplyToAllDay('fridaySelected')}
+                                    className="text-slate-600 focus:text-dark-primary hover:text-dark-primary"
+                                  >
+                                    <CheckSquare className="h-5 w-5" />
+                                  </Button>
+                                </Tippy>
                               </div>
                             </div>
                           </div>
@@ -808,101 +1012,7 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                     </label>
                   </section>
 
-                  {/* Saturday Field */}
-                  <section className="py-4">
-                    <label htmlFor="sunday" className={classNames('flex flex-col space-y-2')}>
-                      <span className="shrink-0 font-medium">Sunday</span>
-                      {watch('sundaySelected') ? (
-                        <div className="flex flex-col gap-y-2 gap-x-2 lg:flex-row lg:items-start">
-                          <div
-                            className={classNames(
-                              'flex items-center gap-x-2',
-                              !isEmpty(errors.sunday?.timeIn) || !isEmpty(errors.sunday?.timeOut)
-                                ? 'mb-5'
-                                : ''
-                            )}
-                          >
-                            <div className="relative">
-                              <Input
-                                type="time"
-                                rounded="lg"
-                                color="warning"
-                                disabled={isSubmitting}
-                                {...register('sunday.timeIn')}
-                                iserror={!isEmpty(errors.sunday?.timeIn)}
-                                className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                              />
-                              {!isEmpty(errors.sunday?.timeIn) && (
-                                <p className="error absolute">{errors.sunday?.timeIn.message}</p>
-                              )}
-                            </div>
-                            <span>to</span>
-                            <div className="relative">
-                              <Input
-                                type="time"
-                                rounded="lg"
-                                color="warning"
-                                disabled={isSubmitting}
-                                {...register('sunday.timeOut')}
-                                iserror={!isEmpty(errors.sunday?.timeOut)}
-                                className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                              />
-                              {!isEmpty(errors.sunday?.timeOut) && (
-                                <p className="error absolute">{errors.sunday?.timeOut.message}</p>
-                              )}
-                            </div>
-                          </div>
-                          <div
-                            className={classNames(
-                              'flex flex-col gap-y-2 gap-x-2 lg:flex-row lg:items-center',
-                              !isEmpty(errors.sunday?.breakFrom) || !isEmpty(errors.sunday?.breakTo)
-                                ? 'mb-5'
-                                : ''
-                            )}
-                          >
-                            <span className="font-medium">Break</span>
-                            <div className="inline-flex flex-row items-center gap-x-2">
-                              <div className="relative">
-                                <Input
-                                  type="time"
-                                  rounded="lg"
-                                  color="warning"
-                                  disabled={isSubmitting}
-                                  {...register('sunday.breakFrom')}
-                                  iserror={!isEmpty(errors.sunday?.breakFrom)}
-                                  className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                                />
-                                {!isEmpty(errors.sunday?.breakFrom) && (
-                                  <p className="error absolute">
-                                    {errors.sunday?.breakFrom.message}
-                                  </p>
-                                )}
-                              </div>
-                              <span>to</span>
-                              <div className="relative">
-                                <Input
-                                  type="time"
-                                  rounded="lg"
-                                  color="warning"
-                                  disabled={isSubmitting}
-                                  {...register('sunday.breakTo')}
-                                  iserror={!isEmpty(errors.sunday?.breakTo)}
-                                  className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                                />
-                                {!isEmpty(errors.sunday?.breakTo) && (
-                                  <p className="error absolute">{errors.sunday?.breakTo.message}</p>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ) : (
-                        <span className="italic text-slate-400">Rest day</span>
-                      )}
-                    </label>
-                  </section>
-
-                  {/* Sunday Field */}
+                  {/* Saturyday Field */}
                   <section className="py-4">
                     <label htmlFor="saturday" className={classNames('flex flex-col space-y-2')}>
                       <span className="shrink-0 font-medium">Saturday</span>
@@ -975,21 +1085,149 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                                 )}
                               </div>
                               <span>to</span>
+                              <div className="inline-flex items-center space-x-3">
+                                <div className="relative">
+                                  <Input
+                                    type="time"
+                                    rounded="lg"
+                                    color="warning"
+                                    disabled={isSubmitting}
+                                    {...register('saturday.breakTo')}
+                                    iserror={!isEmpty(errors.saturday?.breakTo)}
+                                    className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                                  />
+                                  {!isEmpty(errors.saturday?.breakTo) && (
+                                    <p className="error absolute">
+                                      {errors.saturday?.breakTo.message}
+                                    </p>
+                                  )}
+                                </div>
+                                {/* Apply To All Day Button */}
+                                <Tippy
+                                  content="Apply To All Day"
+                                  placement="right"
+                                  className="!text-xs"
+                                >
+                                  <Button
+                                    type="button"
+                                    onClick={() => handleApplyToAllDay('saturdaySelected')}
+                                    className="text-slate-600 focus:text-dark-primary hover:text-dark-primary"
+                                  >
+                                    <CheckSquare className="h-5 w-5" />
+                                  </Button>
+                                </Tippy>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="italic text-slate-400">Rest day</span>
+                      )}
+                    </label>
+                  </section>
+
+                  {/* Sunday Field */}
+                  <section className="py-4">
+                    <label htmlFor="sunday" className={classNames('flex flex-col space-y-2')}>
+                      <span className="shrink-0 font-medium">Sunday</span>
+                      {watch('sundaySelected') ? (
+                        <div className="flex flex-col gap-y-2 gap-x-2 lg:flex-row lg:items-start">
+                          <div
+                            className={classNames(
+                              'flex items-center gap-x-2',
+                              !isEmpty(errors.sunday?.timeIn) || !isEmpty(errors.sunday?.timeOut)
+                                ? 'mb-5'
+                                : ''
+                            )}
+                          >
+                            <div className="relative">
+                              <Input
+                                type="time"
+                                rounded="lg"
+                                color="warning"
+                                disabled={isSubmitting}
+                                {...register('sunday.timeIn')}
+                                iserror={!isEmpty(errors.sunday?.timeIn)}
+                                className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                              />
+                              {!isEmpty(errors.sunday?.timeIn) && (
+                                <p className="error absolute">{errors.sunday?.timeIn.message}</p>
+                              )}
+                            </div>
+                            <span>to</span>
+                            <div className="relative">
+                              <Input
+                                type="time"
+                                rounded="lg"
+                                color="warning"
+                                disabled={isSubmitting}
+                                {...register('sunday.timeOut')}
+                                iserror={!isEmpty(errors.sunday?.timeOut)}
+                                className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                              />
+                              {!isEmpty(errors.sunday?.timeOut) && (
+                                <p className="error absolute">{errors.sunday?.timeOut.message}</p>
+                              )}
+                            </div>
+                          </div>
+                          <div
+                            className={classNames(
+                              'flex flex-col gap-y-2 gap-x-2 lg:flex-row lg:items-center',
+                              !isEmpty(errors.sunday?.breakFrom) || !isEmpty(errors.sunday?.breakTo)
+                                ? 'mb-5'
+                                : ''
+                            )}
+                          >
+                            <span className="font-medium">Break</span>
+                            <div className="inline-flex flex-row items-center gap-x-2">
                               <div className="relative">
                                 <Input
                                   type="time"
                                   rounded="lg"
                                   color="warning"
                                   disabled={isSubmitting}
-                                  {...register('saturday.breakTo')}
-                                  iserror={!isEmpty(errors.saturday?.breakTo)}
+                                  {...register('sunday.breakFrom')}
+                                  iserror={!isEmpty(errors.sunday?.breakFrom)}
                                   className="py-2 px-4 text-[13px] placeholder:text-slate-500"
                                 />
-                                {!isEmpty(errors.saturday?.breakTo) && (
+                                {!isEmpty(errors.sunday?.breakFrom) && (
                                   <p className="error absolute">
-                                    {errors.saturday?.breakTo.message}
+                                    {errors.sunday?.breakFrom.message}
                                   </p>
                                 )}
+                              </div>
+                              <span>to</span>
+                              <div className="inline-flex items-center space-x-3">
+                                <div className="relative">
+                                  <Input
+                                    type="time"
+                                    rounded="lg"
+                                    color="warning"
+                                    disabled={isSubmitting}
+                                    {...register('saturday.breakTo')}
+                                    iserror={!isEmpty(errors.sunday?.breakTo)}
+                                    className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                                  />
+                                  {!isEmpty(errors.sunday?.breakTo) && (
+                                    <p className="error absolute">
+                                      {errors.sunday?.breakTo.message}
+                                    </p>
+                                  )}
+                                </div>
+                                {/* Apply To All Day Button */}
+                                <Tippy
+                                  content="Apply To All Day"
+                                  placement="right"
+                                  className="!text-xs"
+                                >
+                                  <Button
+                                    type="button"
+                                    onClick={() => handleApplyToAllDay('sundaySelected')}
+                                    className="text-slate-600 focus:text-dark-primary hover:text-dark-primary"
+                                  >
+                                    <CheckSquare className="h-5 w-5" />
+                                  </Button>
+                                </Tippy>
                               </div>
                             </div>
                           </div>
@@ -1001,6 +1239,15 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                   </section>
                 </main>
                 <footer className="flex justify-center space-x-2 py-2 sm:justify-end">
+                  <ButtonAction
+                    type="button"
+                    variant="secondary"
+                    onClick={handleReset}
+                    disabled={isSubmitting || !isButtonSelected}
+                    className="flex w-24 items-center justify-center space-x-2 rounded-md py-2 text-xs"
+                  >
+                    <span>Reset</span>
+                  </ButtonAction>
                   <ButtonAction
                     type="submit"
                     variant={!isButtonSelected ? 'secondary' : 'primary'}
