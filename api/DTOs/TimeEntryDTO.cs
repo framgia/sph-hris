@@ -39,7 +39,7 @@ namespace api.DTOs
             User = new UserDTO(timeEntry.User, domain);
             TimeIn = timeEntry.TimeIn != null ? new TimeDTO(timeEntry.TimeIn) : null;
             TimeOut = timeEntry.TimeOut != null ? new TimeDTO(timeEntry.TimeOut) : null;
-            Overtime = OnlyApprovedOvertime(timeEntry);   // Overtime Entity
+            Overtime = timeEntry.Overtime;
             Undertime = 0;
             Late = 0;
             ChangeShift = changeShift != null ? new ChangeShiftDTO(changeShift) : null;
