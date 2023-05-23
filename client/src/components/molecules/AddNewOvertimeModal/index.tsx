@@ -27,7 +27,7 @@ import useUserQuery from '~/hooks/useUserQuery'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import { MyOvertimeSchema } from '~/utils/validation'
 import { User as UserType } from '~/utils/types/userTypes'
-import { ProjectDetails } from '~/utils/types/projectTypes'
+import { LeaderDetails, ProjectDetails } from '~/utils/types/projectTypes'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import ModalTemplate from '~/components/templates/ModalTemplate'
@@ -53,33 +53,23 @@ const AddNewOvertimeModal: FC<Props> = ({
   timeEntry,
   initialMinutes
 }): JSX.Element => {
-  const [leaders, setLeaders] = useState<UserType[]>([])
+  const [leaders, setLeaders] = useState<LeaderDetails[]>([])
   const [managers, setManagers] = useState<UserType[]>([])
 
-  const { handleProjectQuery } = useProject()
-  const { data: projects, isSuccess: isProjectsSuccess } = handleProjectQuery()
+  const { handleProjectQuery, getLeadersQuery } = useProject()
+  const { data: projects } = handleProjectQuery()
 
   const { handleAllUsersQuery, handleUserQuery } = useUserQuery()
   const { data: user } = handleUserQuery()
   const { data: users, isSuccess: isUsersSuccess } = handleAllUsersQuery()
+  const { data: leadersList } = getLeadersQuery(undefined)
 
   const { handleOvertimeMutation } = useOvertime()
   const overtimeMutation = handleOvertimeMutation()
 
   useEffect(() => {
-    if (isProjectsSuccess && projects.projects.length > 0) {
-      const tempLeaders = [...leaders]
-      projects?.projects.forEach((project) => {
-        if (project?.projectLeader != null || project?.projectSubLeader != null) {
-          if (!tempLeaders.some((leader) => leader.id === project.projectLeader.id))
-            tempLeaders.push(project?.projectLeader)
-          if (!tempLeaders.some((leader) => leader.id === project.projectSubLeader.id))
-            tempLeaders.push(project?.projectSubLeader)
-        }
-      })
-      setLeaders(tempLeaders)
-    }
-  }, [isProjectsSuccess, projects?.projects])
+    if (leadersList !== undefined) setLeaders(leadersList.allLeaders)
+  }, [leadersList])
 
   useEffect(() => {
     if (isUsersSuccess) {
@@ -295,7 +285,7 @@ const AddNewOvertimeModal: FC<Props> = ({
                                 : 'border-slate-300'
                           }}
                           backspaceRemovesValue={true}
-                          options={generateUserSelect(leaders)}
+                          options={generateUserSelect(leaders as UserType[])}
                           components={animatedComponents}
                           className="w-full"
                         />

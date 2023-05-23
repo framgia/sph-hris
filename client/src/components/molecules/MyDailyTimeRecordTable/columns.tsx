@@ -155,22 +155,20 @@ export const columns = [
     footer: (info) => info.column.id,
     cell: (props) => {
       const { original: timeEntry } = props.row
-      const { overtime } = timeEntry
+      const { overtime, endTime } = timeEntry
+      const threshold = moment(endTime, 'HH:mm:ss').add(1, 'hour').format('HH:mm:ss')
 
       const [isOpen, setIsOpen] = useState<boolean>(false)
 
       const handleToggle = (): void => setIsOpen(!isOpen)
 
       const minuteDifference =
-        timeEntry.timeOut !== null
+        endTime !== '00:00' && timeEntry.timeOut !== null
           ? Math.floor(
               moment
                 .duration(
                   moment(timeEntry.timeOut?.createdAt).diff(
-                    `${moment(timeEntry.date).format('YYYY-MM-DD')} ${moment(
-                      '19:30',
-                      'HH:mm:ss'
-                    ).format('HH:mm:ss')}`
+                    `${moment(timeEntry.date).format('YYYY-MM-DD')} ${threshold}`
                   )
                 )
                 .asMinutes()
