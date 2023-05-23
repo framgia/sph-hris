@@ -23,6 +23,7 @@ import ApproveConfirmationModal from './ApproveConfirmationModal'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
 import RequestStatusChip from '~/components/atoms/RequestStatusChip'
 import { IOvertimeManagement, IOvertimeManagementManager } from '~/utils/interfaces'
+import CellTimeValue from '~/components/atoms/CellTimeValue'
 
 const columnHelper = createColumnHelper<IOvertimeManagement | IOvertimeManagementManager>()
 
@@ -135,7 +136,8 @@ export const hrColumns = [
   }),
   columnHelper.accessor('approvedMinutes', {
     header: () => <CellHeader label="Approved Minutes" />,
-    footer: (info) => info.column.id
+    footer: (info) => info.column.id,
+    cell: (props) => <CellTimeValue initialMinutes={props.row.original.approvedMinutes} />
   }),
   columnHelper.display({
     id: 'empty2',

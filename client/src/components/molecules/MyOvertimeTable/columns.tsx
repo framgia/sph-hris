@@ -10,6 +10,7 @@ import ShowRemarksModal from './ShowRemarksModal'
 import { IMyOvertimeTable } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
+import CellTimeValue from '~/components/atoms/CellTimeValue'
 import { decimalFormatter } from '~/utils/myOvertimeHelpers'
 import RequestStatusChip from '~/components/atoms/RequestStatusChip'
 import { STATUS_OPTIONS } from '~/utils/constants/notificationFilter'
@@ -110,14 +111,18 @@ export const columns = [
     footer: (info) => info.column.id,
     cell: ({ row: { original } }) => {
       const { DISAPPROVED } = STATUS_OPTIONS
+      const requestStatus = original.status
+      const approvedMinutes = original.approvedMinutes
 
       return (
         <div>
-          {original.status === DISAPPROVED.toLowerCase()
-            ? 0
-            : original.approvedMinutes ?? (
-                <span className="italic text-slate-400">(pending approval)</span>
-              )}
+          {requestStatus === DISAPPROVED.toLowerCase() ? (
+            0
+          ) : approvedMinutes !== null ? (
+            <CellTimeValue initialMinutes={approvedMinutes} />
+          ) : (
+            <span className="italic text-slate-400">(pending approval)</span>
+          )}
         </div>
       )
     }

@@ -1,6 +1,4 @@
-import moment from 'moment'
 import Link from 'next/link'
-import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import React, { useState } from 'react'
 import { Menu } from '@headlessui/react'
@@ -64,33 +62,27 @@ export const columns = [
           {(timeEntry.timeIn?.remarks !== undefined && timeEntry.timeIn?.remarks !== '') ||
           getSpecificTimeEntry(Number(timeEntry.timeIn?.id)).data?.timeById?.media[0]?.fileName !==
             undefined ? (
-            <Tippy
-              content={moment(timeEntry.date).format('MMM D, YYYY')}
-              placement="left"
-              className="!text-xs"
+            <Link
+              href={`dtr-management/?time_in=${timeEntry.timeIn?.id}`}
+              className="relative flex cursor-pointer active:scale-95"
             >
-              <Link
-                href={`dtr-management/?time_in=${timeEntry.timeIn?.id}`}
-                className="relative flex cursor-pointer active:scale-95"
-              >
-                {/* Actual Time In Data */}
-                <span>{timeEntry.timeIn?.timeHour ?? EMPTY}</span>
-                {/* Status */}
-                {timeEntry.startTime > timeEntry.timeIn?.timeHour ? (
-                  <span
-                    className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500')}
-                  />
-                ) : (
-                  <>
-                    {!Number.isNaN(timeEntry.timeIn?.id) && (
-                      <span
-                        className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500')}
-                      />
-                    )}
-                  </>
-                )}
-              </Link>
-            </Tippy>
+              {/* Actual Time In Data */}
+              <span>{timeEntry.timeIn?.timeHour ?? EMPTY}</span>
+              {/* Status */}
+              {timeEntry.startTime > timeEntry.timeIn?.timeHour ? (
+                <span
+                  className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500')}
+                />
+              ) : (
+                <>
+                  {!Number.isNaN(timeEntry.timeIn?.id) && (
+                    <span
+                      className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500')}
+                    />
+                  )}
+                </>
+              )}
+            </Link>
           ) : (
             <div className="relative flex">
               {/* Actual Time In Data */}
@@ -118,25 +110,19 @@ export const columns = [
       return (
         <>
           {timeEntry.timeOut?.remarks !== undefined && timeEntry.timeOut?.remarks !== '' ? (
-            <Tippy
-              content={moment(timeEntry.date).format('MMM D, YYYY')}
-              placement="left"
-              className="!text-xs"
+            <Link
+              href={`dtr-management/?time_out=${timeEntry.timeOut?.id}`}
+              className="relative flex cursor-pointer active:scale-95"
             >
-              <Link
-                href={`dtr-management/?time_out=${timeEntry.timeOut?.id}`}
-                className="relative flex cursor-pointer active:scale-95"
-              >
-                {/* Actual Time In Data */}
-                <span>{timeEntry.timeOut?.timeHour ?? EMPTY}</span>
-                {/* Status */}
-                {!Number.isNaN(timeEntry.timeOut?.id) && (
-                  <span
-                    className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500')}
-                  />
-                )}
-              </Link>
-            </Tippy>
+              {/* Actual Time In Data */}
+              <span>{timeEntry.timeOut?.timeHour ?? EMPTY}</span>
+              {/* Status */}
+              {!Number.isNaN(timeEntry.timeOut?.id) && (
+                <span
+                  className={classNames('ml-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500')}
+                />
+              )}
+            </Link>
           ) : (
             <span>{timeEntry.timeOut?.timeHour ?? EMPTY}</span>
           )}
