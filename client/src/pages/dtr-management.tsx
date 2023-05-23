@@ -6,6 +6,9 @@ import { PulseLoader } from 'react-spinners'
 import { MoreHorizontal } from 'react-feather'
 import React, { useEffect, useState } from 'react'
 
+import NotFound from './404'
+import useUserQuery from '~/hooks/useUserQuery'
+import { Roles } from '~/utils/constants/roles'
 import FilterIcon from '~/utils/icons/FilterIcon'
 import Layout from '~/components/templates/Layout'
 import LegendTooltip from '~/components/molecules/LegendTooltip'
@@ -49,6 +52,9 @@ type URLParameterType =
 const DTRManagement: NextPage = (): JSX.Element => {
   const router = useRouter()
   const { query } = router
+
+  const { handleUserQuery } = useUserQuery()
+  const { data: currentUser } = handleUserQuery()
 
   const [isOpenSummaryTable, setIsOpenSummaryTable] = useState<boolean>(false)
   const [fetchReady, setFetchReady] = useState<boolean>(false)
@@ -211,6 +217,10 @@ const DTRManagement: NextPage = (): JSX.Element => {
   useEffect(() => {
     setFetchedData(summary, setFetchedSummaryData)
   }, [summary.data])
+
+  if (process.env.NODE_ENV === 'production' && currentUser?.userById.role.name !== Roles.HR_ADMIN) {
+    return <NotFound />
+  }
 
   return (
     <Layout metaTitle="DTR Management">

@@ -41,7 +41,7 @@ const SignIn: FC<Props> = ({ cookies }): JSX.Element => {
     if (session?.data != null) setIsVerifying(true)
     if (SignInMutation?.data?.createSignIn === true) {
       client.setHeaders({ 'nextauth-token': cookies as string })
-      void router.replace('/')
+      void router.replace('/my-daily-time-record')
       toast.success('Verification Success!', { duration: 3000 })
     } else if (session?.data != null) {
       void signOut({ callbackUrl: '/sign-in' })

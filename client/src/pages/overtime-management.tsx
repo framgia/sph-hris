@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { PulseLoader } from 'react-spinners'
 import React, { useEffect, useState } from 'react'
 
+import NotFound from './404'
 import useUserQuery from '~/hooks/useUserQuery'
 import { Roles } from '~/utils/constants/roles'
 import Layout from '~/components/templates/Layout'
@@ -143,6 +144,10 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
       (data: IOvertimeManagement) => data.managerid === user?.userById.id
     )
     return overtimeData
+  }
+
+  if (process.env.NODE_ENV === 'production' && user?.userById.role.name === Roles.EMPLOYEE) {
+    return <NotFound />
   }
 
   return (

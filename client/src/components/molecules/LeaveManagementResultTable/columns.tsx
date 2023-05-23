@@ -17,7 +17,7 @@ export const columns = [
   }),
   columnHelper.accessor('status', {
     header: () => <CellHeader label="Status" className="text-xs text-slate-500" />,
-    cell: (props) => <WorkStatusChip label={props.getValue().toLowerCase()} />,
+    cell: (props) => <WorkStatusChip label={props.getValue()?.toLowerCase()} />,
     footer: (info) => info.column.id
   }),
   columnHelper.accessor('leaveTypeId', {

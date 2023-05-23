@@ -12,8 +12,11 @@ import {
   initialSeriesData,
   initialChartOptions
 } from '~/utils/generateData'
+import NotFound from './../404'
 import useLeave from '~/hooks/useLeave'
 import Card from '~/components/atoms/Card'
+import useUserQuery from '~/hooks/useUserQuery'
+import { Roles } from '~/utils/constants/roles'
 import FadeInOut from '~/components/templates/FadeInOut'
 import { Breakdown, LeaveTable } from '~/utils/types/leaveTypes'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
@@ -31,6 +34,9 @@ type SeriesData = {
 }
 
 const YearlySummary: NextPage = (): JSX.Element => {
+  const { handleUserQuery } = useUserQuery()
+  const { data: currentUser } = handleUserQuery()
+
   const router = useRouter()
   const { getYearlyAllLeaveQuery } = useLeave()
   const {
@@ -101,6 +107,10 @@ const YearlySummary: NextPage = (): JSX.Element => {
       ])
     }
   }, [isSuccess, leaves?.yearlyAllLeaves.heatmap])
+
+  if (process.env.NODE_ENV === 'production' && currentUser?.userById.role.name !== Roles.HR_ADMIN) {
+    return <NotFound />
+  }
 
   return (
     <LeaveManagementLayout metaTitle="Yearly Summary">

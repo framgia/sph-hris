@@ -4,6 +4,9 @@ import classNames from 'classnames'
 import { PulseLoader } from 'react-spinners'
 import React, { useState, useEffect } from 'react'
 
+import NotFound from './../404'
+import useUserQuery from '~/hooks/useUserQuery'
+import { Roles } from '~/utils/constants/roles'
 import { getLeave } from '~/hooks/useLeaveQuery'
 import { IListOfLeave } from '~/utils/interfaces'
 import FadeInOut from '~/components/templates/FadeInOut'
@@ -13,6 +16,9 @@ import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import LeaveManagementLayout from '~/components/templates/LeaveManagementLayout'
 
 const ListOfLeave: NextPage = (): JSX.Element => {
+  const { handleUserQuery } = useUserQuery()
+  const { data: currentUser } = handleUserQuery()
+
   const [globalFilter, setGlobalFilter] = useState<string>('')
   const { data } = getLeave()
   const [mappedLeave, setMappedLeave] = useState<IListOfLeave[]>([])
@@ -40,6 +46,10 @@ const ListOfLeave: NextPage = (): JSX.Element => {
     })
     setMappedLeave(temp)
   }, [data])
+
+  if (process.env.NODE_ENV === 'production' && currentUser?.userById.role.name !== Roles.HR_ADMIN) {
+    return <NotFound />
+  }
 
   return (
     <LeaveManagementLayout metaTitle="List of leave">

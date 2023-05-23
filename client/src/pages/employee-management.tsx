@@ -3,6 +3,9 @@ import classNames from 'classnames'
 import { Plus } from 'react-feather'
 import React, { useState } from 'react'
 
+import NotFound from './404'
+import useUserQuery from '~/hooks/useUserQuery'
+import { Roles } from '~/utils/constants/roles'
 import Layout from '~/components/templates/Layout'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
@@ -22,10 +25,17 @@ export type QueryVariablesType = {
 }
 
 const EmployeeManagement: NextPage = (): JSX.Element => {
+  const { handleUserQuery } = useUserQuery()
+  const { data: currentUser } = handleUserQuery()
+
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [globalFilter, setGlobalFilter] = useState<string>('')
 
   const handleToggle = (): void => setIsOpen(!isOpen)
+
+  if (process.env.NODE_ENV === 'production' && currentUser?.userById.role.name !== Roles.HR_ADMIN) {
+    return <NotFound />
+  }
 
   return (
     <Layout metaTitle="Employee Management">
