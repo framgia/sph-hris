@@ -3,15 +3,18 @@ import { X } from 'react-feather'
 import classNames from 'classnames'
 import { toast } from 'react-hot-toast'
 import { serialize } from 'tinyduration'
+import { confirmAlert } from 'react-confirm-alert'
 import TextareaAutosize from 'react-textarea-autosize'
 import React, { FC, useEffect, useState } from 'react'
 
+import Card from '~/components/atoms/Card'
 import Alert from '~/components/atoms/Alert'
 import useUserQuery from '~/hooks/useUserQuery'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import useTimeOutMutation from '~/hooks/useTimeOutMutation'
 import UserTimeZone from '~/components/molecules/UserTimeZone'
 import DrawerTemplate from '~/components/templates/DrawerTemplate'
+import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
 
 type Props = {
   isOpenTimeOutDrawer: boolean
@@ -27,13 +30,65 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
     workedHours,
     actions: { handleToggleTimeOutDrawer }
   } = props
-
   const [remarks, setRemarks] = useState('')
 
   const { handleUserQuery } = useUserQuery()
   const { handleTimeOutMutation } = useTimeOutMutation()
   const { data } = handleUserQuery()
   const timeOutMutation = handleTimeOutMutation()
+
+  const handleEarlyTimeOutChecker = (): void => {
+    const time = moment().hour()
+    const day = moment().format('dddd')
+    const schedule = data?.userById?.employeeSchedule.workingDayTimes.find(
+      (item) => item.day === day
+    )
+    if (schedule !== null && schedule !== undefined) {
+      const regex = /PT(\d+)H/
+      const match = schedule.to.match(regex)
+      const hours = match !== null ? parseInt(match[1]) : 0
+      if (time < hours) {
+        handleRemoveConfirmation()
+      } else {
+        handleSaveTimeOut()
+      }
+    } else {
+      /* This is for when user times out when he/she is out of schedule. */
+      handleSaveTimeOut()
+    }
+  }
+
+  // FOR CONFIRMATION ONLY
+  const handleRemoveConfirmation = (): void => {
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <Card className="w-full max-w-xs px-8 py-6" shadow-size="xl" rounded="lg">
+            <h1 className="text-center text-xl font-bold">Confirmation</h1>
+            <p className="mt-2 text-sm font-medium">
+              You won&apos;t be able to time in again for today if you time out. Proceed?
+            </p>
+            <div className="mt-6 flex items-center justify-center space-x-2 text-white">
+              <ButtonAction
+                onClick={() => handleSaveTimeOut()}
+                variant="danger"
+                className="w-full py-1 px-4"
+              >
+                Yes
+              </ButtonAction>
+              <ButtonAction
+                onClick={onClose}
+                variant="secondary"
+                className="w-full py-1 px-4 text-slate-500"
+              >
+                No
+              </ButtonAction>
+            </div>
+          </Card>
+        )
+      }
+    })
+  }
 
   const handleSaveTimeOut = (): void => {
     const time = moment(new Date())
@@ -119,7 +174,7 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
           <button
             type="button"
             disabled={timeOutMutation.isLoading}
-            onClick={handleSaveTimeOut}
+            onClick={handleEarlyTimeOutChecker}
             className={classNames(
               'flex items-center justify-center rounded-md border active:scale-95',
               'w-24 border-dark-primary bg-primary text-xs text-white outline-none hover:bg-dark-primary'
