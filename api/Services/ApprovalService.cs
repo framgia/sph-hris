@@ -70,12 +70,14 @@ namespace api.Services
 
                     // create notification
                     if (overtime != null && overtime.IsManagerApproved == true && overtime.IsLeaderApproved == true)
-                        await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, APPROVED);
+                        await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, overtimeRequest.UserId, APPROVED);
 
                     if (overtime != null && (overtime.IsLeaderApproved == null && overtime.IsManagerApproved == false))
-                        await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, DISAPPROVED);
+                        await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, overtimeRequest.UserId, DISAPPROVED);
                     else if (overtime != null && (overtime.IsLeaderApproved == true && overtime.IsManagerApproved == false))
-                        await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, DISAPPROVED);
+                        await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, overtimeRequest.UserId, DISAPPROVED);
+                    else if (overtime != null && (overtime.IsLeaderApproved == false && overtime.IsManagerApproved == false))
+                        await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, overtimeRequest.UserId, DISAPPROVED);
 
                     await context.SaveChangesAsync();
                     return true;
@@ -110,12 +112,17 @@ namespace api.Services
 
                     // create notification
                     if (overtime != null && overtime.IsManagerApproved == true && overtime.IsLeaderApproved == true)
-                        await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, APPROVED);
-
+                        await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, overtimeRequest.UserId, APPROVED);
+                    else if (overtime != null && overtime.IsManagerApproved == null && overtime.IsLeaderApproved == true)
+                        await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, overtimeRequest.UserId, APPROVED);
                     if (overtime != null && (overtime.IsLeaderApproved == false && overtime.IsManagerApproved == null))
-                        await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, DISAPPROVED);
+                        await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, overtimeRequest.UserId, DISAPPROVED);
                     else if (overtime != null && (overtime.IsLeaderApproved == null && overtime.IsManagerApproved == false))
-                        await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, DISAPPROVED);
+                        await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, overtimeRequest.UserId, DISAPPROVED);
+                    else if (overtime != null && (overtime.IsLeaderApproved == false && overtime.IsManagerApproved == false))
+                        await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, overtimeRequest.UserId, DISAPPROVED);
+                    else if (overtime != null && (overtime.IsLeaderApproved == true && overtime.IsManagerApproved == false))
+                        await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, overtimeRequest.UserId, DISAPPROVED);
 
                     // end
                     await context.SaveChangesAsync();
@@ -187,12 +194,17 @@ namespace api.Services
 
                 // create notification
                 if (leave != null && leave.IsManagerApproved == true && leave.IsLeaderApproved == true)
-                    await _notificationService.createLeaveApproveDisapproveNotification(leave!, APPROVED);
-
+                    await _notificationService.createLeaveApproveDisapproveNotification(leave!, request.UserId, APPROVED);
+                if (leave != null && leave.IsManagerApproved == null && leave.IsLeaderApproved == true)
+                    await _notificationService.createLeaveApproveDisapproveNotification(leave!, request.UserId, APPROVED);
                 if (leave != null && (leave.IsLeaderApproved == false && leave.IsManagerApproved == null))
-                    await _notificationService.createLeaveApproveDisapproveNotification(leave!, DISAPPROVED);
+                    await _notificationService.createLeaveApproveDisapproveNotification(leave!, request.UserId, DISAPPROVED);
                 else if (leave != null && (leave.IsLeaderApproved == null && leave.IsManagerApproved == false))
-                    await _notificationService.createLeaveApproveDisapproveNotification(leave!, DISAPPROVED);
+                    await _notificationService.createLeaveApproveDisapproveNotification(leave!, request.UserId, DISAPPROVED);
+                else if (leave != null && (leave.IsLeaderApproved == false && leave.IsManagerApproved == false))
+                    await _notificationService.createLeaveApproveDisapproveNotification(leave!, request.UserId, DISAPPROVED);
+                else if (leave != null && (leave.IsLeaderApproved == true && leave.IsManagerApproved == false))
+                    await _notificationService.createLeaveApproveDisapproveNotification(leave!, request.UserId, DISAPPROVED);
 
                 await context.SaveChangesAsync();
 
@@ -255,6 +267,9 @@ namespace api.Services
                     var allApproved = true;
                     changeShiftRequest.IsLeaderApproved = request.IsApproved;
 
+                    // create notification back to requester
+                    await _notificationService.createChangeShiftApproveDisapproveNotification(context, changeShiftRequest, request.UserId, request.IsApproved);
+
                     // check if all leaders approved before notifying manager
                     changeShiftNotificationList?.ForEach(notif =>
                     {
@@ -264,7 +279,7 @@ namespace api.Services
 
                     if (request.IsApproved && allApproved && changeShiftRequest != null)
                     {
-                        await _notificationService.createChangeShiftRequestNotification(changeShiftRequest, true);
+                        await _notificationService.createChangeShiftRequestNotification(context, changeShiftRequest, changeShiftRequest.UserId, true);
                     }
 
                     await context.SaveChangesAsync();
@@ -283,7 +298,7 @@ namespace api.Services
                         timeEntry.EndTime = changeShiftRequest.TimeOut;
 
                     }
-                    await _notificationService.createChangeShiftApproveDisapproveNotification(changeShiftRequest, (bool)changeShiftRequest.IsManagerApproved);
+                    await _notificationService.createChangeShiftApproveDisapproveNotification(context, changeShiftRequest, request.UserId, (bool)changeShiftRequest.IsManagerApproved);
 
                     await context.SaveChangesAsync();
                     return true;
@@ -294,77 +309,71 @@ namespace api.Services
             throw new GraphQLException(ErrorBuilder.New().SetMessage("Something went wrong!").Build());
         }
 
-        public async Task<ESLChangeShiftRequest> ApproveDisapproveESLChangeShiftStatus(ApproveESLChangeShiftRequest request)
+        public async Task<ESLChangeShiftRequest> ApproveDisapproveESLChangeShiftStatus(ApproveESLChangeShiftRequest request, HrisContext context)
         {
-            using (HrisContext context = _contextFactory.CreateDbContext())
+            var errors = new List<IError>();
+            errors = _customInputValidation.ESLChangeShiftStatusRequestInput(request);
+            if (errors.Count > 0) throw new GraphQLException(errors);
+
+            var notification = await context.ESLChangeShiftNotifications.FindAsync(request.NotificationId);
+            var eSLChangeShiftRequest = notification != null ? await context.ESLChangeShiftRequests.FindAsync(notification.ESLChangeShiftRequestId) : null;
+            var offsets = eSLChangeShiftRequest != null ? await context.ESLOffsets.Where(x => x.ESLChangeShiftRequestId == eSLChangeShiftRequest.Id).ToListAsync() : null;
+            var notificationData = notification != null ? JsonConvert.DeserializeObject<dynamic>(notification.Data) : null;
+            var timeEntry = await context.TimeEntries.FindAsync(eSLChangeShiftRequest!.TimeEntryId);
+
+            // Update notification data
+            if (request.IsApproved && notificationData != null) notificationData!.Status = RequestStatus.APPROVED;
+            if (!request.IsApproved && notificationData != null)
             {
-                var errors = new List<IError>();
-                errors = _customInputValidation.ESLChangeShiftStatusRequestInput(request);
-                if (errors.Count > 0) throw new GraphQLException(errors);
-
-                var notification = await context.ESLChangeShiftNotifications.FindAsync(request.NotificationId);
-                var eSLChangeShiftRequest = notification != null ? await context.ESLChangeShiftRequests.FindAsync(notification.ESLChangeShiftRequestId) : null;
-                var offsets = eSLChangeShiftRequest != null ? await context.ESLOffsets.Where(x => x.ESLChangeShiftRequestId == eSLChangeShiftRequest.Id).ToListAsync() : null;
-                var notificationData = notification != null ? JsonConvert.DeserializeObject<dynamic>(notification.Data) : null;
-                var timeEntry = await context.TimeEntries.FindAsync(eSLChangeShiftRequest!.TimeEntryId);
-
-                // Update notification data
-                if (request.IsApproved && notificationData != null) notificationData!.Status = RequestStatus.APPROVED;
-                if (!request.IsApproved && notificationData != null)
+                notificationData!.Status = RequestStatus.DISAPPROVED;
+                offsets?.ForEach(offset =>
                 {
-                    notificationData!.Status = RequestStatus.DISAPPROVED;
-                    offsets?.ForEach(offset =>
-                    {
-                        offset.IsUsed = false;
-                    });
-                }
-                if (notification != null) notification.Data = JsonConvert.SerializeObject(notificationData);
-                eSLChangeShiftRequest!.IsLeaderApproved = request.IsApproved;
-                if (request.IsApproved)
-                {
-                    timeEntry!.StartTime = eSLChangeShiftRequest.TimeIn;
-                    timeEntry!.EndTime = eSLChangeShiftRequest.TimeOut;
-                };
-
-                // Send notification
-                await _notificationService.CreateESLChangeShiftStatusRequestNotification(eSLChangeShiftRequest);
-
-                await context.SaveChangesAsync();
-
-                return eSLChangeShiftRequest;
+                    offset.IsUsed = false;
+                });
             }
+            if (notification != null) notification.Data = JsonConvert.SerializeObject(notificationData);
+            eSLChangeShiftRequest!.IsLeaderApproved = request.IsApproved;
+            if (request.IsApproved)
+            {
+                timeEntry!.StartTime = eSLChangeShiftRequest.TimeIn;
+                timeEntry!.EndTime = eSLChangeShiftRequest.TimeOut;
+            };
+
+            // Send notification
+            await _notificationService.CreateESLChangeShiftStatusRequestNotification(eSLChangeShiftRequest, request.TeamLeaderId, context);
+
+            await context.SaveChangesAsync();
+
+            return eSLChangeShiftRequest;
         }
 
-        public async Task<ESLOffset> ApproveDisapproveChangeOffsetStatus(ApproveESLChangeShiftRequest request)
+        public async Task<ESLOffset> ApproveDisapproveChangeOffsetStatus(ApproveESLChangeShiftRequest request, HrisContext context)
         {
-            using (HrisContext context = _contextFactory.CreateDbContext())
+            var errors = new List<IError>();
+            errors = _customInputValidation.ChangeESLOffsetStatusRequestInput(request);
+            if (errors.Count > 0) throw new GraphQLException(errors);
+
+            var notification = await context.ESLOffsetNotifications.FindAsync(request.NotificationId);
+            var changeESLOffsetRequest = notification != null ? await context.ESLOffsets.FindAsync(notification.ESLOffsetId) : null;
+            var notificationData = notification != null ? JsonConvert.DeserializeObject<dynamic>(notification.Data) : null;
+            var timeEntry = await context.TimeEntries.FindAsync(changeESLOffsetRequest!.TimeEntryId);
+
+            // Update notification data
+            if (request.IsApproved && notificationData != null) notificationData!.Status = RequestStatus.APPROVED;
+            if (!request.IsApproved && notificationData != null) notificationData!.Status = RequestStatus.DISAPPROVED;
+            if (notification != null) notification.Data = JsonConvert.SerializeObject(notificationData);
+            changeESLOffsetRequest!.IsLeaderApproved = request.IsApproved;
+            if (request.IsApproved)
             {
-                var errors = new List<IError>();
-                errors = _customInputValidation.ChangeESLOffsetStatusRequestInput(request);
-                if (errors.Count > 0) throw new GraphQLException(errors);
-
-                var notification = await context.ESLOffsetNotifications.FindAsync(request.NotificationId);
-                var changeESLOffsetRequest = notification != null ? await context.ESLOffsets.FindAsync(notification.ESLOffsetId) : null;
-                var notificationData = notification != null ? JsonConvert.DeserializeObject<dynamic>(notification.Data) : null;
-                var timeEntry = await context.TimeEntries.FindAsync(changeESLOffsetRequest!.TimeEntryId);
-
-                // Update notification data
-                if (request.IsApproved && notificationData != null) notificationData!.Status = RequestStatus.APPROVED;
-                if (!request.IsApproved && notificationData != null) notificationData!.Status = RequestStatus.DISAPPROVED;
-                if (notification != null) notification.Data = JsonConvert.SerializeObject(notificationData);
-                changeESLOffsetRequest!.IsLeaderApproved = request.IsApproved;
-                if (request.IsApproved)
-                {
-                    timeEntry!.StartTime = changeESLOffsetRequest.TimeIn;
-                    timeEntry!.EndTime = changeESLOffsetRequest.TimeOut;
-                }
-
-                // Send notification
-                await _notificationService.CreateESLOffsetStatusRequestNotification(changeESLOffsetRequest);
-
-                await context.SaveChangesAsync();
-                return changeESLOffsetRequest;
+                timeEntry!.StartTime = changeESLOffsetRequest.TimeIn;
+                timeEntry!.EndTime = changeESLOffsetRequest.TimeOut;
             }
+
+            // Send notification
+            await _notificationService.CreateESLOffsetStatusRequestNotification(changeESLOffsetRequest, request.TeamLeaderId, context);
+
+            await context.SaveChangesAsync();
+            return changeESLOffsetRequest;
         }
     }
 }

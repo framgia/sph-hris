@@ -19,8 +19,8 @@ namespace api.Schema.Mutations
                 try
                 {
                     using var transaction = context.Database.BeginTransaction();
-                    var changeShift = await _eslChangeShiftService.Create(request);
-                    await _notificationService.createESLChangeShiftRequestNotification(changeShift);
+                    var changeShift = await _eslChangeShiftService.Create(request, context);
+                    await _notificationService.createESLChangeShiftRequestNotification(context, changeShift);
 
                     transaction.Commit();
                     return changeShift;
@@ -39,7 +39,7 @@ namespace api.Schema.Mutations
                 try
                 {
                     using var transaction = context.Database.BeginTransaction();
-                    var eSLChangeShift = await _eslChangeShiftStatusService.ApproveDisapproveESLChangeShiftStatus(request);
+                    var eSLChangeShift = await _eslChangeShiftStatusService.ApproveDisapproveESLChangeShiftStatus(request, context);
 
                     transaction.Commit();
                     return eSLChangeShift;

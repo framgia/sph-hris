@@ -58,9 +58,9 @@ namespace api.Utils
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
-                var user = await context.Projects.Where(x => x.ProjectLeaderId == id).FirstOrDefaultAsync();
+                var user = await context.Users.FindAsync(id);
 
-                return user != null;
+                return user != null && PositionEnum.ALL_LEADERS.Contains(user.PositionId);
             }
         }
 

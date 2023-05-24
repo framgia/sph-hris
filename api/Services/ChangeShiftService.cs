@@ -21,45 +21,42 @@ namespace api.Services
             _customInputValidation = new CustomInputValidation(_contextFactory);
         }
 
-        public async Task<ChangeShiftRequest> Create(CreateChangeShiftRequest request)
+        public async Task<ChangeShiftRequest> Create(CreateChangeShiftRequest request, HrisContext context)
         {
-            using (HrisContext context = _contextFactory.CreateDbContext())
+            // validate inputs
+            var errors = _customInputValidation.checkChangeShiftRequestInput(request);
+
+            if (errors.Count > 0) throw new GraphQLException(errors);
+
+            // Create MultiProjects
+            var multiProjectsList = new List<MultiProject>();
+            request.Projects.ForEach(project =>
             {
-                // validate inputs
-                var errors = _customInputValidation.checkChangeShiftRequestInput(request);
-
-                if (errors.Count > 0) throw new GraphQLException(errors);
-
-                // Create MultiProjects
-                var multiProjectsList = new List<MultiProject>();
-                request.Projects.ForEach(project =>
+                var multiProject = new MultiProject
                 {
-                    var multiProject = new MultiProject
-                    {
-                        ProjectId = project.ProjectId,
-                        ProjectLeaderId = project.ProjectLeaderId,
-                        Type = MultiProjectTypeEnum.CHANGE_SHIFT
-                    };
-                    multiProjectsList.Add(context.MultiProjects.Add(multiProject).Entity);
-                });
-
-                //  Create ChangeShiftRequest
-                var changeShiftRequest = new ChangeShiftRequest
-                {
-                    UserId = request.UserId,
-                    ManagerId = request.ManagerId,
-                    TimeEntryId = request.TimeEntryId,
-                    TimeIn = TimeSpan.ParseExact(request.TimeIn, "hh':'mm", null),
-                    TimeOut = TimeSpan.ParseExact(request.TimeOut, "hh':'mm", null),
-                    OtherProject = request.OtherProject,
-                    Description = request.Description,
-                    MultiProjects = multiProjectsList
+                    ProjectId = project.ProjectId,
+                    ProjectLeaderId = project.ProjectLeaderId,
+                    Type = MultiProjectTypeEnum.CHANGE_SHIFT
                 };
+                multiProjectsList.Add(context.MultiProjects.Add(multiProject).Entity);
+            });
 
-                context.ChangeShiftRequests.Add(changeShiftRequest);
-                await context.SaveChangesAsync();
-                return changeShiftRequest;
-            }
+            //  Create ChangeShiftRequest
+            var changeShiftRequest = new ChangeShiftRequest
+            {
+                UserId = request.UserId,
+                ManagerId = request.ManagerId,
+                TimeEntryId = request.TimeEntryId,
+                TimeIn = TimeSpan.ParseExact(request.TimeIn, "hh':'mm", null),
+                TimeOut = TimeSpan.ParseExact(request.TimeOut, "hh':'mm", null),
+                OtherProject = request.OtherProject,
+                Description = request.Description,
+                MultiProjects = multiProjectsList
+            };
+
+            context.ChangeShiftRequests.Add(changeShiftRequest);
+            await context.SaveChangesAsync();
+            return changeShiftRequest;
         }
 
         public async Task<ChangeShiftRequest> GetTimeEntryChangeShift(int timeEntryId)

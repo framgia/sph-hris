@@ -22,31 +22,28 @@ namespace api.Services
             _customInputValidation = new CustomInputValidation(_contextFactory);
         }
 
-        public async Task<ESLOffset> Create(CreateESLOffsetRequest request)
+        public async Task<ESLOffset> Create(CreateESLOffsetRequest request, HrisContext context)
         {
-            using (HrisContext context = _contextFactory.CreateDbContext())
+            // validate inputs
+            var errors = _customInputValidation.checkESLOffsetRequestInput(request);
+
+            if (errors.Count > 0) throw new GraphQLException(errors);
+
+            //  Create ESLChangeShiftRequest
+            var eslOffset = new ESLOffset
             {
-                // validate inputs
-                var errors = _customInputValidation.checkESLOffsetRequestInput(request);
+                UserId = request.UserId,
+                TeamLeaderId = request.TeamLeaderId,
+                TimeEntryId = request.TimeEntryId,
+                TimeIn = TimeSpan.ParseExact(request.TimeIn, "hh':'mm", null),
+                TimeOut = TimeSpan.ParseExact(request.TimeOut, "hh':'mm", null),
+                Description = request.Description,
+                Title = request.Title
+            };
 
-                if (errors.Count > 0) throw new GraphQLException(errors);
-
-                //  Create ESLChangeShiftRequest
-                var eslOffset = new ESLOffset
-                {
-                    UserId = request.UserId,
-                    TeamLeaderId = request.TeamLeaderId,
-                    TimeEntryId = request.TimeEntryId,
-                    TimeIn = TimeSpan.ParseExact(request.TimeIn, "hh':'mm", null),
-                    TimeOut = TimeSpan.ParseExact(request.TimeOut, "hh':'mm", null),
-                    Description = request.Description,
-                    Title = request.Title
-                };
-
-                context.ESLOffsets.Add(eslOffset);
-                await context.SaveChangesAsync();
-                return eslOffset;
-            }
+            context.ESLOffsets.Add(eslOffset);
+            await context.SaveChangesAsync();
+            return eslOffset;
         }
 
         public async Task<List<ESLOffsetDTO>> GetTimeEntryOffsets(int timeEntryId, bool onlyUnused)
