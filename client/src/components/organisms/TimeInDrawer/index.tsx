@@ -76,25 +76,14 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
     confirmAlert({
       customUI: ({ onClose }) => {
         return (
-          <Card className="w-full max-w-[350px] px-8 py-6" shadow-size="xl" rounded="lg">
-            <h1 className="text-center text-xl font-bold text-rose-500">Confirmation</h1>
+          <Card className="w-full max-w-[350px] px-8 py-6 shadow-none" rounded="lg">
+            <h1 className="text-center text-xl font-bold text-amber-500">Warning!</h1>
             <p className="mt-4 text-sm font-normal text-slate-600">
-              Today is your rest day. Proceed time in?
+              Important: Time-in is not allowed on the designated rest day.
             </p>
             <div className="mt-6 flex items-center justify-center space-x-2 text-white">
-              <ButtonAction
-                onClick={() => handleSaveTimeIn()}
-                variant="danger"
-                className="w-full py-1 px-4"
-              >
-                Yes
-              </ButtonAction>
-              <ButtonAction
-                onClick={onClose}
-                variant="secondary"
-                className="w-full py-1 px-4 text-slate-500"
-              >
-                No
+              <ButtonAction onClick={onClose} variant="warning" className="w-full py-1 px-4">
+                Close
               </ButtonAction>
             </div>
           </Card>

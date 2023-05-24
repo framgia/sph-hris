@@ -38,7 +38,8 @@ const UserTimeZone: FC<Props> = ({ user }): JSX.Element => {
           {moment(new Date()).format('dddd, MMMM Do YYYY')}
         </p>
         <p className="text-[11px] leading-tight text-slate-500">
-          Schedule: {user?.employeeSchedule.name}
+          Schedule:{' '}
+          {user?.employeeSchedule.name === 'NoDay' ? 'Rest Day' : user?.employeeSchedule.name}
         </p>
       </div>
     </div>
