@@ -4,15 +4,18 @@ import classNames from 'classnames'
 import { toast } from 'react-hot-toast'
 import { parse } from 'iso8601-duration'
 import { serialize } from 'tinyduration'
+import { confirmAlert } from 'react-confirm-alert'
 import React, { FC, useEffect, useState } from 'react'
 import TextareaAutosize from 'react-textarea-autosize'
 
+import Card from '~/components/atoms/Card'
 import Alert from '~/components/atoms/Alert'
 import useUserQuery from '~/hooks/useUserQuery'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import useTimeInMutation from '~/hooks/useTimeInMutation'
 import UserTimeZone from '~/components/molecules/UserTimeZone'
 import DrawerTemplate from '~/components/templates/DrawerTemplate'
+import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
 
 type Props = {
   isOpenTimeInDrawer: boolean
@@ -54,6 +57,51 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
       setAfterStartTime(status)
     }
   }, [data])
+
+  const handleRestdayTimeInChecker = (): void => {
+    const day = moment().format('dddd')
+    const schedule = data?.userById?.employeeSchedule.workingDayTimes.find(
+      (item) => item.day === day
+    )
+    if (schedule !== null && schedule !== undefined) {
+      handleSaveTimeIn()
+    } else {
+      /* This is for when user times in when he/she rest day. */
+      handleRestdayTimeInConfirmation()
+    }
+  }
+
+  // FOR CONFIRMATION ONLY
+  const handleRestdayTimeInConfirmation = (): void => {
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <Card className="w-full max-w-[350px] px-8 py-6" shadow-size="xl" rounded="lg">
+            <h1 className="text-center text-xl font-bold text-rose-500">Confirmation</h1>
+            <p className="mt-4 text-sm font-normal text-slate-600">
+              Today is your rest day. Proceed time in?
+            </p>
+            <div className="mt-6 flex items-center justify-center space-x-2 text-white">
+              <ButtonAction
+                onClick={() => handleSaveTimeIn()}
+                variant="danger"
+                className="w-full py-1 px-4"
+              >
+                Yes
+              </ButtonAction>
+              <ButtonAction
+                onClick={onClose}
+                variant="secondary"
+                className="w-full py-1 px-4 text-slate-500"
+              >
+                No
+              </ButtonAction>
+            </div>
+          </Card>
+        )
+      }
+    })
+  }
 
   const handleSaveTimeIn = (): void => {
     const time = moment(new Date())
@@ -165,7 +213,7 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
           <button
             type="button"
             disabled={timeInMutation.isLoading}
-            onClick={handleSaveTimeIn}
+            onClick={handleRestdayTimeInChecker}
             className={classNames(
               'flex items-center justify-center rounded-md border active:scale-95',
               `w-24 border-dark-primary ${
