@@ -19,17 +19,17 @@ import { Roles } from '~/utils/constants/roles'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import { UndertimeLeaveSchema } from '~/utils/validation'
 import { LeaveTypes } from '~/utils/constants/leaveTypes'
-import { LeaderDetails, ProjectDetails } from '~/utils/types/projectTypes'
 import { User as UserType } from '~/utils/types/userTypes'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import { UndertimeFormValues } from '~/utils/types/formValues'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
+import { LeaderDetails, ProjectDetails } from '~/utils/types/projectTypes'
 import { numberOfDaysInLeavesByUndertime } from '~/utils/constants/dummyAddNewLeaveFields'
 import {
+  generateUserSelect,
   generateNumberOfDaysSelect,
-  generateProjectsMultiSelect,
-  generateUserSelect
+  generateProjectsMultiSelect
 } from '~/utils/createLeaveHelpers'
 
 type Props = {
