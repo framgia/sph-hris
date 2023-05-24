@@ -28,7 +28,7 @@ namespace api.Services
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
-                var ids = new List<int> { PositionEnum.ADMIN, PositionEnum.WEB_DEVELOPER_TEAM_LEADER, PositionEnum.WEB_DEVELOPER_TRAINER };
+                var ids = PositionEnum.ALL_LEADERS;
 
                 if (projectId == ProjectId.OJT)
                 {

@@ -83,6 +83,7 @@ namespace api.Services
                     .Include(x => x.Manager)
                         .ThenInclude(x => x.Role)
                     .Where(w => w.UserId == UserId)
+                    .OrderByDescending(x => x.CreatedAt)
                     .Select(x => new MyOvertimeDTO(x))
                     .ToListAsync();
             }
@@ -107,6 +108,7 @@ namespace api.Services
                     .ThenInclude(x => x.TimeIn)
                 .Include(x => x.TimeEntry)
                     .ThenInclude(x => x.TimeOut)
+                .OrderByDescending(x => x.CreatedAt)
                 .Select(x => new OvertimeDTO(x, domain))
                 .ToListAsync();
             }

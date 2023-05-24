@@ -21,39 +21,36 @@ namespace api.Services
             _customInputValidation = new CustomInputValidation(_contextFactory);
         }
 
-        public async Task<ESLChangeShiftRequest> Create(CreateESLChangeShiftRequest request)
+        public async Task<ESLChangeShiftRequest> Create(CreateESLChangeShiftRequest request, HrisContext context)
         {
-            using (HrisContext context = _contextFactory.CreateDbContext())
+            // validate inputs
+            var errors = _customInputValidation.checkESLChangeShiftRequestInput(request);
+
+            if (errors.Count > 0) throw new GraphQLException(errors);
+
+            // Get all offsets to be used
+            var offsets = await context.ESLOffsets.Where(x => request.ESLOffsetIDs.Contains(x.Id)).ToListAsync();
+
+            offsets.ForEach(offset =>
             {
-                // validate inputs
-                var errors = _customInputValidation.checkESLChangeShiftRequestInput(request);
+                offset.IsUsed = true;
+            });
 
-                if (errors.Count > 0) throw new GraphQLException(errors);
+            //  Create ESLChangeShiftRequest
+            var eslChangeShiftRequest = new ESLChangeShiftRequest
+            {
+                UserId = request.UserId,
+                TeamLeaderId = request.TeamLeaderId,
+                TimeEntryId = request.TimeEntryId,
+                TimeIn = TimeSpan.ParseExact(request.TimeIn, "hh':'mm", null),
+                TimeOut = TimeSpan.ParseExact(request.TimeOut, "hh':'mm", null),
+                Description = request.Description,
+                ESLOffsets = offsets
+            };
 
-                // Get all offsets to be used
-                var offsets = await context.ESLOffsets.Where(x => request.ESLOffsetIDs.Contains(x.Id)).ToListAsync();
-
-                offsets.ForEach(offset =>
-                {
-                    offset.IsUsed = true;
-                });
-
-                //  Create ESLChangeShiftRequest
-                var eslChangeShiftRequest = new ESLChangeShiftRequest
-                {
-                    UserId = request.UserId,
-                    TeamLeaderId = request.TeamLeaderId,
-                    TimeEntryId = request.TimeEntryId,
-                    TimeIn = TimeSpan.ParseExact(request.TimeIn, "hh':'mm", null),
-                    TimeOut = TimeSpan.ParseExact(request.TimeOut, "hh':'mm", null),
-                    Description = request.Description,
-                    ESLOffsets = offsets
-                };
-
-                context.ESLChangeShiftRequests.Add(eslChangeShiftRequest);
-                await context.SaveChangesAsync();
-                return eslChangeShiftRequest;
-            }
+            context.ESLChangeShiftRequests.Add(eslChangeShiftRequest);
+            await context.SaveChangesAsync();
+            return eslChangeShiftRequest;
         }
 
         public async Task<ESLChangeShiftRequest> GetTimeEntryChangeShift(int timeEntryId)

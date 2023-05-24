@@ -196,18 +196,51 @@ namespace api.Services
             }
         }
 
-        public async Task<List<ChangeShiftNotification>> createChangeShiftRequestNotification(ChangeShiftRequest request, bool isManager = false)
+        public async Task<List<ChangeShiftNotification>> createChangeShiftRequestNotification(HrisContext context, ChangeShiftRequest request, int fromUserId, bool isManager = false)
         {
-            using (HrisContext context = _contextFactory.CreateDbContext())
-            {
-                var notifications = new List<ChangeShiftNotification>();
-                var user = await context.Users.FindAsync(request.UserId);
-                var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
-                var projectNames = context.MultiProjects.Where(x => x.ChangeShiftRequestId == request.Id && x.Type == MultiProjectTypeEnum.CHANGE_SHIFT).Select(x => x.ProjectId == ProjectId.OTHER_PROJECT ? request.OtherProject : x.Project.Name);
+            var notifications = new List<ChangeShiftNotification>();
+            var user = await context.Users.FindAsync(fromUserId);
+            var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
+            var projectNames = context.MultiProjects.Where(x => x.ChangeShiftRequestId == request.Id && x.Type == MultiProjectTypeEnum.CHANGE_SHIFT).Select(x => x.ProjectId == ProjectId.OTHER_PROJECT ? request.OtherProject : x.Project.Name);
 
-                if (isManager)
+            if (isManager)
+            {
+                var dataToManager = JsonSerializer.Serialize(new ChangeShiftManagerData
                 {
-                    var dataToManager = JsonSerializer.Serialize(new ChangeShiftManagerData
+                    User = new NotificationUser
+                    {
+                        Id = (int)user?.Id!,
+                        Name = user?.Name!,
+                        AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
+                    },
+                    Projects = projectNames,
+                    RequestedTimeIn = request.TimeIn,
+                    RequestedTimeOut = request.TimeOut,
+                    DateRequested = timeEntry!.Date,
+                    DateFiled = (DateTime)request.CreatedAt!,
+                    Type = NotificationDataTypeEnum.REQUEST,
+                    Description = request.Description,
+                    Status = _changeShiftService.GetRequestStatus(request),
+                }
+                );
+
+                // Notification to Manager
+                var notificationToManager = new ChangeShiftNotification
+                {
+                    RecipientId = request.ManagerId,
+                    ChangeShiftRequestId = request.Id,
+                    Type = NotificationTypeEnum.CHANGE_SHIFT,
+                    Data = dataToManager
+                };
+                notifications.Add(notificationToManager);
+            }
+            else
+            {
+                // Notification per project
+                request.MultiProjects.ToList().ForEach(requestProject =>
+                {
+                    var project = context.Projects.FindAsync(requestProject.ProjectId);
+                    var dataToProjectLeader = JsonSerializer.Serialize(new ChangeShiftLeaderData
                     {
                         User = new NotificationUser
                         {
@@ -215,7 +248,7 @@ namespace api.Services
                             Name = user?.Name!,
                             AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
                         },
-                        Projects = projectNames,
+                        Projects = new List<string> { project.Result!.Name == "Others" ? request.OtherProject! : project.Result.Name! },
                         RequestedTimeIn = request.TimeIn,
                         RequestedTimeOut = request.TimeOut,
                         DateRequested = timeEntry!.Date,
@@ -226,145 +259,103 @@ namespace api.Services
                     }
                     );
 
-                    // Notification to Manager
-                    var notificationToManager = new ChangeShiftNotification
+                    var notificationToProjectLeader = new ChangeShiftNotification
                     {
-                        RecipientId = request.ManagerId,
+                        RecipientId = requestProject.ProjectLeaderId,
                         ChangeShiftRequestId = request.Id,
                         Type = NotificationTypeEnum.CHANGE_SHIFT,
-                        Data = dataToManager
+                        Data = dataToProjectLeader
                     };
-                    notifications.Add(notificationToManager);
-                }
-                else
-                {
-                    // Notification per project
-                    request.MultiProjects.ToList().ForEach(requestProject =>
-                    {
-                        var project = context.Projects.FindAsync(requestProject.ProjectId);
-                        var dataToProjectLeader = JsonSerializer.Serialize(new ChangeShiftLeaderData
-                        {
-                            User = new NotificationUser
-                            {
-                                Id = (int)user?.Id!,
-                                Name = user?.Name!,
-                                AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
-                            },
-                            Projects = new List<string> { project.Result!.Name == "Others" ? request.OtherProject! : project.Result.Name! },
-                            RequestedTimeIn = request.TimeIn,
-                            RequestedTimeOut = request.TimeOut,
-                            DateRequested = timeEntry!.Date,
-                            DateFiled = (DateTime)request.CreatedAt!,
-                            Type = NotificationDataTypeEnum.REQUEST,
-                            Description = request.Description,
-                            Status = _changeShiftService.GetRequestStatus(request),
-                        }
-                        );
-
-                        var notificationToProjectLeader = new ChangeShiftNotification
-                        {
-                            RecipientId = requestProject.ProjectLeaderId,
-                            ChangeShiftRequestId = request.Id,
-                            Type = NotificationTypeEnum.CHANGE_SHIFT,
-                            Data = dataToProjectLeader
-                        };
-                        notifications.Add(notificationToProjectLeader);
-                    });
-                }
-
-                notifications.ForEach(notif =>
-                {
-                    context.ChangeShiftNotifications.Add(notif);
-                    sendChangeShiftNotificationEvent(notif);
+                    notifications.Add(notificationToProjectLeader);
                 });
-
-                await context.SaveChangesAsync();
-                return notifications;
             }
+
+            notifications.ForEach(notif =>
+            {
+                context.ChangeShiftNotifications.Add(notif);
+                sendChangeShiftNotificationEvent(notif);
+            });
+
+            await context.SaveChangesAsync();
+            return notifications;
         }
 
-        public async Task<ESLChangeShiftNotification> createESLChangeShiftRequestNotification(ESLChangeShiftRequest request)
+        public async Task<ESLChangeShiftNotification> createESLChangeShiftRequestNotification(HrisContext context, ESLChangeShiftRequest request)
         {
-            using (HrisContext context = _contextFactory.CreateDbContext())
+            var user = await context.Users.FindAsync(request.UserId);
+            var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
+            var offsets = await context.ESLOffsets.Where(x => x.ESLChangeShiftRequestId == request.Id).Select(x => new ESLOffsetNotificationDTO(x)).ToListAsync();
+
+            var data = JsonSerializer.Serialize(new ESLChangeShiftData
             {
-                var user = await context.Users.FindAsync(request.UserId);
-                var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
-                var offsets = await context.ESLOffsets.Where(x => x.ESLChangeShiftRequestId == request.Id).Select(x => new ESLOffsetNotificationDTO(x)).ToListAsync();
-
-                var data = JsonSerializer.Serialize(new ESLChangeShiftData
+                User = new NotificationUser
                 {
-                    User = new NotificationUser
-                    {
-                        Id = (int)user?.Id!,
-                        Name = user?.Name!,
-                        AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
-                    },
-                    RequestedTimeIn = request.TimeIn,
-                    RequestedTimeOut = request.TimeOut,
-                    DateFiled = (DateTime)request.CreatedAt!,
-                    DateRequested = timeEntry!.Date,
-                    Type = NotificationDataTypeEnum.REQUEST,
-                    Description = request.Description,
-                    Status = _eslChangeShiftService.GetRequestStatus(request),
-                    Offsets = offsets
-                }
-                );
-
-                var newNotification = new ESLChangeShiftNotification
-                {
-                    RecipientId = request.TeamLeaderId,
-                    ESLChangeShiftRequestId = request.Id,
-                    Type = NotificationTypeEnum.ESL_OFFSET_SCHEDULE,
-                    Data = data
-                };
-
-                context.ESLChangeShiftNotifications.Add(newNotification);
-                sendESLChangeShiftNotificationEvent(newNotification);
-
-                await context.SaveChangesAsync();
-                return newNotification;
+                    Id = (int)user?.Id!,
+                    Name = user?.Name!,
+                    AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
+                },
+                RequestedTimeIn = request.TimeIn,
+                RequestedTimeOut = request.TimeOut,
+                DateFiled = (DateTime)request.CreatedAt!,
+                DateRequested = timeEntry!.Date,
+                Type = NotificationDataTypeEnum.REQUEST,
+                Description = request.Description,
+                Status = _eslChangeShiftService.GetRequestStatus(request),
+                Offsets = offsets
             }
+            );
+
+            var newNotification = new ESLChangeShiftNotification
+            {
+                RecipientId = request.TeamLeaderId,
+                ESLChangeShiftRequestId = request.Id,
+                Type = NotificationTypeEnum.ESL_OFFSET_SCHEDULE,
+                Data = data
+            };
+
+            context.ESLChangeShiftNotifications.Add(newNotification);
+            sendESLChangeShiftNotificationEvent(newNotification);
+
+            await context.SaveChangesAsync();
+            return newNotification;
         }
 
-        public async Task<ESLOffsetNotification> createESLOffsetRequestNotification(ESLOffset request)
+        public async Task<ESLOffsetNotification> createESLOffsetRequestNotification(ESLOffset request, HrisContext context)
         {
-            using (HrisContext context = _contextFactory.CreateDbContext())
+            var user = await context.Users.FindAsync(request.UserId);
+            var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
+
+            var data = JsonSerializer.Serialize(new ChangeShiftData
             {
-                var user = await context.Users.FindAsync(request.UserId);
-                var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
-
-                var data = JsonSerializer.Serialize(new ChangeShiftData
+                User = new NotificationUser
                 {
-                    User = new NotificationUser
-                    {
-                        Id = (int)user?.Id!,
-                        Name = user?.Name!,
-                        AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
-                    },
-                    RequestedTimeIn = request.TimeIn,
-                    RequestedTimeOut = request.TimeOut,
-                    DateFiled = (DateTime)request.CreatedAt!,
-                    DateRequested = timeEntry!.Date,
-                    Type = NotificationDataTypeEnum.REQUEST,
-                    Description = request.Description,
-                    Status = _eslOffsetService.GetRequestStatus(request),
-                }
-                );
-
-                var newNotification = new ESLOffsetNotification
-                {
-                    RecipientId = request.TeamLeaderId,
-                    ESLOffsetId = request.Id,
-                    Type = NotificationTypeEnum.ESL_OFFSET,
-                    Data = data
-                };
-
-                context.ESLOffsetNotifications.Add(newNotification);
-                sendESLOffsetNotificationEvent(newNotification);
-
-                await context.SaveChangesAsync();
-                return newNotification;
+                    Id = (int)user?.Id!,
+                    Name = user?.Name!,
+                    AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
+                },
+                RequestedTimeIn = request.TimeIn,
+                RequestedTimeOut = request.TimeOut,
+                DateFiled = (DateTime)request.CreatedAt!,
+                DateRequested = timeEntry!.Date,
+                Type = NotificationDataTypeEnum.REQUEST,
+                Description = request.Description,
+                Status = _eslOffsetService.GetRequestStatus(request),
             }
+            );
+
+            var newNotification = new ESLOffsetNotification
+            {
+                RecipientId = request.TeamLeaderId,
+                ESLOffsetId = request.Id,
+                Type = NotificationTypeEnum.ESL_OFFSET,
+                Data = data
+            };
+
+            context.ESLOffsetNotifications.Add(newNotification);
+            sendESLOffsetNotificationEvent(newNotification);
+
+            await context.SaveChangesAsync();
+            return newNotification;
         }
 
         public async Task<List<Notification>> getByRecipientId(int id)
@@ -375,11 +366,11 @@ namespace api.Services
             }
         }
 
-        public async Task<LeaveNotification> createLeaveApproveDisapproveNotification(Leave leave, bool IsApproved)
+        public async Task<LeaveNotification> createLeaveApproveDisapproveNotification(Leave leave, int fromUserId, bool IsApproved)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
-                var user = context.Users.Find(leave.UserId);
+                var user = context.Users.Find(fromUserId);
                 var undertimeLeave = await context.LeaveTypes.Where(x => x.Name != null && x.Name.ToLower() == "undertime").FirstOrDefaultAsync();
                 var projectNames = await context.MultiProjects.Where(x => x.LeaveId == leave.Id && x.Type == MultiProjectTypeEnum.LEAVE).Select(x => x.ProjectId == ProjectId.OTHER_PROJECT ? leave.OtherProject : x.Project.Name).ToListAsync();
 
@@ -418,11 +409,11 @@ namespace api.Services
             }
         }
 
-        public async Task<OvertimeNotification> createOvertimeApproveDisapproveNotification(Overtime overtime, bool IsApproved)
+        public async Task<OvertimeNotification> createOvertimeApproveDisapproveNotification(Overtime overtime, int fromUserId, bool IsApproved)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
-                var user = context.Users.Find(overtime.UserId);
+                var user = context.Users.Find(fromUserId);
                 var projectNames = context.MultiProjects.Where(x => x.OvertimeId == overtime.Id && x.Type == MultiProjectTypeEnum.OVERTIME).Select(x => x.ProjectId == ProjectId.OTHER_PROJECT ? overtime.OtherProject : x.Project.Name);
 
                 var dataToUser = JsonSerializer.Serialize(new
@@ -461,48 +452,45 @@ namespace api.Services
             }
         }
 
-        public async Task<ChangeShiftNotification> createChangeShiftApproveDisapproveNotification(ChangeShiftRequest changeShift, bool IsApproved)
+        public async Task<ChangeShiftNotification> createChangeShiftApproveDisapproveNotification(HrisContext context, ChangeShiftRequest changeShift, int fromUserId, bool IsApproved)
         {
-            using (HrisContext context = _contextFactory.CreateDbContext())
+            var user = await context.Users.FindAsync(fromUserId);
+            var timeEntry = await context.TimeEntries.FindAsync(changeShift.TimeEntryId);
+            var projectNames = context.MultiProjects.Where(x => x.ChangeShiftRequestId == changeShift.Id && x.Type == MultiProjectTypeEnum.CHANGE_SHIFT).Select(x => x.ProjectId == ProjectId.OTHER_PROJECT ? changeShift.OtherProject : x.Project.Name);
+
+            var dataToUser = JsonSerializer.Serialize(new ChangeShiftManagerData
             {
-                var user = await context.Users.FindAsync(changeShift.UserId);
-                var timeEntry = await context.TimeEntries.FindAsync(changeShift.TimeEntryId);
-                var projectNames = context.MultiProjects.Where(x => x.ChangeShiftRequestId == changeShift.Id && x.Type == MultiProjectTypeEnum.CHANGE_SHIFT).Select(x => x.ProjectId == ProjectId.OTHER_PROJECT ? changeShift.OtherProject : x.Project.Name);
-
-                var dataToUser = JsonSerializer.Serialize(new ChangeShiftManagerData
+                User = new NotificationUser
                 {
-                    User = new NotificationUser
-                    {
-                        Id = (int)user?.Id!,
-                        Name = user.Name!,
-                        AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
-                    },
-                    Projects = projectNames,
+                    Id = (int)user?.Id!,
+                    Name = user.Name!,
+                    AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
+                },
+                Projects = projectNames,
 
-                    RequestedTimeIn = changeShift.TimeIn,
-                    RequestedTimeOut = changeShift.TimeOut,
-                    DateRequested = timeEntry!.Date,
-                    DateFiled = (DateTime)changeShift.CreatedAt!,
-                    Type = IsApproved ? NotificationDataTypeEnum.APPROVE : NotificationDataTypeEnum.DISAPPROVE,
-                    Description = changeShift.Description,
-                    Status = IsApproved ? RequestStatus.APPROVED : RequestStatus.DISAPPROVED,
-                }
-                );
-
-                var notificationToUser = new ChangeShiftNotification
-                {
-                    RecipientId = changeShift.UserId,
-                    ChangeShiftRequestId = changeShift.Id,
-                    Type = NotificationTypeEnum.CHANGE_SHIFT_RESOLVED,
-                    Data = dataToUser
-                };
-
-                context.Notifications.Add(notificationToUser);
-                await context.SaveChangesAsync();
-
-                sendChangeShiftNotificationEvent(notificationToUser);
-                return notificationToUser;
+                RequestedTimeIn = changeShift.TimeIn,
+                RequestedTimeOut = changeShift.TimeOut,
+                DateRequested = timeEntry!.Date,
+                DateFiled = (DateTime)changeShift.CreatedAt!,
+                Type = IsApproved ? NotificationDataTypeEnum.APPROVE : NotificationDataTypeEnum.DISAPPROVE,
+                Description = changeShift.Description,
+                Status = IsApproved ? RequestStatus.APPROVED : RequestStatus.DISAPPROVED,
             }
+            );
+
+            var notificationToUser = new ChangeShiftNotification
+            {
+                RecipientId = changeShift.UserId,
+                ChangeShiftRequestId = changeShift.Id,
+                Type = NotificationTypeEnum.CHANGE_SHIFT_RESOLVED,
+                Data = dataToUser
+            };
+
+            context.Notifications.Add(notificationToUser);
+            await context.SaveChangesAsync();
+
+            sendChangeShiftNotificationEvent(notificationToUser);
+            return notificationToUser;
         }
 
         public async void sendLeaveNotificationEvent(LeaveNotification notif)
@@ -601,92 +589,86 @@ namespace api.Services
             }
         }
 
-        public async Task<ESLChangeShiftNotification> CreateESLChangeShiftStatusRequestNotification(ESLChangeShiftRequest request)
+        public async Task<ESLChangeShiftNotification> CreateESLChangeShiftStatusRequestNotification(ESLChangeShiftRequest request, int fromUserId, HrisContext context)
         {
-            using (HrisContext context = _contextFactory.CreateDbContext())
+            var user = await context.Users.FindAsync(fromUserId);
+            var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
+            var offsets = await context.ESLOffsets.Where(x => x.ESLChangeShiftRequestId == request.Id).Select(x => new ESLOffsetNotificationDTO(x)).ToListAsync();
+
+
+            var dataToUser = JsonSerializer.Serialize(new ESLChangeShiftData
             {
-                var user = await context.Users.FindAsync(request.UserId);
-                var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
-                var offsets = await context.ESLOffsets.Where(x => x.ESLChangeShiftRequestId == request.Id).Select(x => new ESLOffsetNotificationDTO(x)).ToListAsync();
-
-
-                var dataToUser = JsonSerializer.Serialize(new ESLChangeShiftData
+                User = new NotificationUser
                 {
-                    User = new NotificationUser
-                    {
-                        Id = (int)user?.Id!,
-                        Name = user?.Name!,
-                        AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default)
-                    },
-                    RequestedTimeIn = request.TimeIn,
-                    RequestedTimeOut = request.TimeOut,
-                    DateRequested = timeEntry!.Date,
-                    DateFiled = (DateTime)request.CreatedAt!,
-                    Type = request.IsLeaderApproved == true ? NotificationDataTypeEnum.APPROVE : NotificationDataTypeEnum.DISAPPROVE,
-                    Description = request.Description,
-                    Status = _eslChangeShiftService.GetRequestStatus(request),
-                    Offsets = offsets
-                }
-                );
-
-                // Notification to User
-                var notificationToUser = new ESLChangeShiftNotification
-                {
-                    RecipientId = request.UserId,
-                    ESLChangeShiftRequestId = request.Id,
-                    Type = NotificationTypeEnum.ESL_OFFSET_SCHEDULE_RESOLVED,
-                    Data = dataToUser
-                };
-
-                context.ESLChangeShiftNotifications.Add(notificationToUser);
-                sendESLChangeShiftNotificationEvent(notificationToUser);
-
-                await context.SaveChangesAsync();
-                return notificationToUser;
+                    Id = (int)user?.Id!,
+                    Name = user?.Name!,
+                    AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default)
+                },
+                RequestedTimeIn = request.TimeIn,
+                RequestedTimeOut = request.TimeOut,
+                DateRequested = timeEntry!.Date,
+                DateFiled = (DateTime)request.CreatedAt!,
+                Type = request.IsLeaderApproved == true ? NotificationDataTypeEnum.APPROVE : NotificationDataTypeEnum.DISAPPROVE,
+                Description = request.Description,
+                Status = _eslChangeShiftService.GetRequestStatus(request),
+                Offsets = offsets
             }
+            );
+
+            // Notification to User
+            var notificationToUser = new ESLChangeShiftNotification
+            {
+                RecipientId = request.UserId,
+                ESLChangeShiftRequestId = request.Id,
+                Type = NotificationTypeEnum.ESL_OFFSET_SCHEDULE_RESOLVED,
+                Data = dataToUser
+            };
+
+            context.ESLChangeShiftNotifications.Add(notificationToUser);
+            sendESLChangeShiftNotificationEvent(notificationToUser);
+
+            await context.SaveChangesAsync();
+            return notificationToUser;
         }
 
-        public async Task<ESLOffsetNotification> CreateESLOffsetStatusRequestNotification(ESLOffset request)
+        public async Task<ESLOffsetNotification> CreateESLOffsetStatusRequestNotification(ESLOffset request, int fromUserId, HrisContext context)
         {
-            using (HrisContext context = _contextFactory.CreateDbContext())
+            var user = await context.Users.FindAsync(fromUserId);
+            var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
+
+
+            var dataToUser = JsonSerializer.Serialize(new ChangeShiftData
             {
-                var user = await context.Users.FindAsync(request.UserId);
-                var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
-
-
-                var dataToUser = JsonSerializer.Serialize(new ChangeShiftData
+                User = new NotificationUser
                 {
-                    User = new NotificationUser
-                    {
-                        Id = (int)user?.Id!,
-                        Name = user?.Name!,
-                        AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default)
-                    },
-                    RequestedTimeIn = request.TimeIn,
-                    RequestedTimeOut = request.TimeOut,
-                    DateRequested = timeEntry!.Date,
-                    DateFiled = (DateTime)request.CreatedAt!,
-                    Type = request.IsLeaderApproved == true ? NotificationDataTypeEnum.APPROVE : NotificationDataTypeEnum.DISAPPROVE,
-                    Description = request.Description,
-                    Status = _eslChangeShiftService.GetOffsetRequestStatus(request),
-                }
-                );
-
-                // Notification to User
-                var notificationToUser = new ESLOffsetNotification
-                {
-                    RecipientId = request.UserId,
-                    ESLOffsetId = request.Id,
-                    Type = NotificationTypeEnum.ESL_OFFSET_RESOLVED,
-                    Data = dataToUser
-                };
-
-                context.ESLOffsetNotifications.Add(notificationToUser);
-                sendESLOffsetNotificationEvent(notificationToUser);
-
-                await context.SaveChangesAsync();
-                return notificationToUser;
+                    Id = (int)user?.Id!,
+                    Name = user?.Name!,
+                    AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default)
+                },
+                RequestedTimeIn = request.TimeIn,
+                RequestedTimeOut = request.TimeOut,
+                DateRequested = timeEntry!.Date,
+                DateFiled = (DateTime)request.CreatedAt!,
+                Type = request.IsLeaderApproved == true ? NotificationDataTypeEnum.APPROVE : NotificationDataTypeEnum.DISAPPROVE,
+                Description = request.Description,
+                Status = _eslChangeShiftService.GetOffsetRequestStatus(request),
             }
+            );
+
+            // Notification to User
+            var notificationToUser = new ESLOffsetNotification
+            {
+                RecipientId = request.UserId,
+                ESLOffsetId = request.Id,
+                Type = NotificationTypeEnum.ESL_OFFSET_RESOLVED,
+                Data = dataToUser
+            };
+
+            context.ESLOffsetNotifications.Add(notificationToUser);
+            sendESLOffsetNotificationEvent(notificationToUser);
+
+            await context.SaveChangesAsync();
+            return notificationToUser;
         }
     }
 }

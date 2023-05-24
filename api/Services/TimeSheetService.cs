@@ -62,6 +62,7 @@ namespace api.Services
                     .Include(entry => entry.User)
                         .ThenInclude(x => x.ProfileImage)
                     .Include(entry => entry.Overtime)
+                    .Include(x => x.WorkInterruptions)
                     .Where(c => c.UserId == id)
                     .OrderByDescending(entry => entry.Date)
                     .Select(x => ToTimeEntryDTO(x, leaves, domain, changeShift, eslChangeShift))
@@ -81,6 +82,7 @@ namespace api.Services
 
                 return await context.TimeEntries
                     .Include(entity => entity.TimeIn)
+                    .Include(x => x.WorkInterruptions)
                     .Select(x => ToTimeEntryDTO(x, leaves, domain, null, null))
                     .FirstOrDefaultAsync(c => c.UserId == id);
             }

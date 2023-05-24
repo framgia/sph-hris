@@ -43,6 +43,7 @@ namespace api.Services
                 return await context.WorkInterruptions
                             .Include(i => i.WorkInterruptionType)
                             .Where(i => i.TimeEntryId == interruption.TimeEntryId)
+                            .OrderByDescending(x => x.CreatedAt)
                             .Select(x => ToWorkInterruptionDTO(x))
                             .ToListAsync();
             }

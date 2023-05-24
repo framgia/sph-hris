@@ -9,5 +9,9 @@ namespace api.Enums
         public const int ESL_TEACHER = 5;
         public const int WEB_DEVELOPER_TRAINER = 6;
         public const int WEB_DEVELOPER_TEAM_LEADER = 7;
+        public List<int> LEADERS = new List<int> { ADMIN, WEB_DEVELOPER_TEAM_LEADER, WEB_DEVELOPER_TRAINER };
+
+        // static property
+        public static List<int> ALL_LEADERS => new PositionEnum().LEADERS;
     }
 }

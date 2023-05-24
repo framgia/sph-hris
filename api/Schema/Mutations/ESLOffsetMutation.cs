@@ -19,8 +19,8 @@ namespace api.Schema.Mutations
                 try
                 {
                     using var transaction = context.Database.BeginTransaction();
-                    var offset = await _eslOffsetService.Create(request);
-                    await _notificationService.createESLOffsetRequestNotification(offset);
+                    var offset = await _eslOffsetService.Create(request, context);
+                    await _notificationService.createESLOffsetRequestNotification(offset, context);
 
                     transaction.Commit();
                     return offset;
@@ -39,7 +39,7 @@ namespace api.Schema.Mutations
                 try
                 {
                     using var transaction = context.Database.BeginTransaction();
-                    var changeShift = await _changeESLOffsetStatusService.ApproveDisapproveChangeOffsetStatus(request);
+                    var changeShift = await _changeESLOffsetStatusService.ApproveDisapproveChangeOffsetStatus(request, context);
 
                     transaction.Commit();
                     return changeShift;
