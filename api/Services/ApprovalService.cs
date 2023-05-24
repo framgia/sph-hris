@@ -14,7 +14,7 @@ namespace api.Services
     {
         private readonly IDbContextFactory<HrisContext> _contextFactory = default!;
         private readonly ITopicEventSender _eventSender;
-        private readonly CustomInputValidation _customInputValidation;
+        private readonly ApprovalServiceInputValidation _customInputValidation;
         private readonly NotificationService _notificationService;
         private readonly bool APPROVED = true;
         private readonly bool DISAPPROVED = false;
@@ -23,7 +23,7 @@ namespace api.Services
         {
             _contextFactory = contextFactory;
             _eventSender = eventSender;
-            _customInputValidation = new CustomInputValidation(_contextFactory);
+            _customInputValidation = new ApprovalServiceInputValidation(_contextFactory);
             _notificationService = notificationService;
         }
 
