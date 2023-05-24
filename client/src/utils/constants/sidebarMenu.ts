@@ -187,8 +187,32 @@ export const productionMenu: IMenu[] = [
     name: 'My Overtime',
     href: '/my-overtime',
     Icon: Sleep,
-    spacing: true,
     role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
+  },
+  {
+    name: 'My Schedule',
+    Icon: Schedule,
+    href: '/my-schedule',
+    role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER],
+    spacing: true,
+    submenu: true,
+    submenuItems: [
+      {
+        name: 'Current Schedule',
+        Icon: CalendarThirtyTwo,
+        href: '/my-schedule/current-schedule'
+      },
+      {
+        name: 'Request New Schedule',
+        Icon: SendToBack,
+        href: '/my-schedule/request-new-schedule'
+      },
+      {
+        name: 'Filed Schedules',
+        Icon: ViewList,
+        href: '/my-schedule/filed-schedules'
+      }
+    ]
   },
   {
     name: 'Schedule Management',

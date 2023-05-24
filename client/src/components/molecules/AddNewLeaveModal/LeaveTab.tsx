@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast'
 import classNames from 'classnames'
 import ReactSelect from 'react-select'
 import { useRouter } from 'next/router'
@@ -11,27 +12,28 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { X, Plus, Save, User, Minus, Coffee, FileText, Calendar, RefreshCcw } from 'react-feather'
 
 import TextField from './../TextField'
+import useLeave from '~/hooks/useLeave'
 import useProject from '~/hooks/useProject'
 import Input from '~/components/atoms/Input'
 import useUserQuery from '~/hooks/useUserQuery'
 import { Roles } from '~/utils/constants/roles'
+import { queryClient } from '~/lib/queryClient'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import { NewLeaveSchema } from '~/utils/validation'
+import { LeaveType } from '~/utils/types/leaveTypes'
 import { User as UserType } from '~/utils/types/userTypes'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { NewLeaveFormValues } from '~/utils/types/formValues'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
-import {
-  generateUserSelect,
-  generateProjectsMultiSelect,
-  generateLeaveTypeSelect,
-  generateNumberOfDaysSelect
-} from '~/utils/createLeaveHelpers'
-import useLeave from '~/hooks/useLeave'
-import { LeaveType } from '~/utils/types/leaveTypes'
 import { LeaderDetails, ProjectDetails } from '~/utils/types/projectTypes'
 import { numberOfDaysInLeaves } from '~/utils/constants/dummyAddNewLeaveFields'
+import {
+  generateUserSelect,
+  generateLeaveTypeSelect,
+  generateNumberOfDaysSelect,
+  generateProjectsMultiSelect
+} from '~/utils/createLeaveHelpers'
 
 type Props = {
   isOpen: boolean
@@ -144,11 +146,23 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
           })
         },
         {
-          onSuccess: () => closeModal()
+          onSuccess: () => {
+            void queryClient
+              .invalidateQueries({
+                queryKey: [
+                  'GET_MY_LEAVES_QUERY',
+                  user?.userById.id as number,
+                  parseInt(router.query.year as string)
+                ]
+              })
+              .then(() => {
+                resolve()
+                closeModal()
+                toast.success('Leave request filed successfully!')
+              })
+          }
         }
       )
-
-      resolve()
     })
   }
 

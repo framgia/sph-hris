@@ -1,10 +1,4 @@
-import {
-  useMutation,
-  UseMutationResult,
-  useQuery,
-  useQueryClient,
-  UseQueryResult
-} from '@tanstack/react-query'
+import { useMutation, UseMutationResult, useQuery, UseQueryResult } from '@tanstack/react-query'
 import { toast } from 'react-hot-toast'
 
 import { client } from '~/utils/shared/client'
@@ -47,7 +41,6 @@ type returnType = {
 }
 
 const useLeave = (): returnType => {
-  const queryClient = useQueryClient()
   const getLeaveQuery = (userId: number, year: number): getLeaveQueryType =>
     useQuery({
       queryKey: ['GET_MY_LEAVES_QUERY', userId, year],
@@ -69,17 +62,11 @@ const useLeave = (): returnType => {
       queryFn: async () => await client.request(GET_LEAVE_TYPES_QUERY),
       select: (data: LeaveTypes) => data
     })
-  const handleLeaveMutation = (userId: number, year: number): handleLeaveMutationType =>
+  const handleLeaveMutation = (): handleLeaveMutationType =>
     useMutation({
       mutationFn: async (leave: LeaveRequest) => {
         return await client.request(CREATE_LEAVE_MUTATION, {
           leave
-        })
-      },
-      onSuccess: async () => {
-        toast.success('Leave request filed successfully!')
-        await queryClient.invalidateQueries({
-          queryKey: ['GET_MY_LEAVES_QUERY', userId, year]
         })
       },
       onError: async () => {

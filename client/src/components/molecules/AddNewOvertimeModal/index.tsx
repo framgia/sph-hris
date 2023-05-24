@@ -22,21 +22,21 @@ import {
 import TextField from './../TextField'
 import useProject from '~/hooks/useProject'
 import Input from '~/components/atoms/Input'
+import useOvertime from '~/hooks/useOvertime'
 import { Roles } from '~/utils/constants/roles'
 import useUserQuery from '~/hooks/useUserQuery'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import { MyOvertimeSchema } from '~/utils/validation'
 import { User as UserType } from '~/utils/types/userTypes'
-import { LeaderDetails, ProjectDetails } from '~/utils/types/projectTypes'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import { NewOvertimeFormValues } from '~/utils/types/formValues'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
+import { LeaderDetails, ProjectDetails } from '~/utils/types/projectTypes'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
 import { generateProjectsMultiSelect, generateUserSelect } from '~/utils/createLeaveHelpers'
-import useOvertime from '~/hooks/useOvertime'
 
 type Props = {
   isOpen: boolean

@@ -14,7 +14,7 @@ import { dummyMyFiledScheduleData } from '~/utils/constants/dummyMyFiledSchedule
 const FiledSchedules: NextPage = (): JSX.Element => {
   const [globalFilter, setGlobalFilter] = useState<string>('')
 
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NEXT_PUBLIC_DISPLAY_MY_SCHEDULE_PAGE === 'false') {
     return <UnderConstructionPage />
   }
 
