@@ -35,9 +35,9 @@ export const columns = [
     cell: (props) => <RequestStatusChip label={props.getValue()} />
   }),
   columnHelper.accessor('isUsed', {
-    header: () => <CellHeader label="Is used" className="w-max !font-medium" />,
+    header: () => <CellHeader label="Is Used?" className="!font-medium" />,
     footer: (info) => info.column.id,
-    cell: (props) => <IsUsedChip label={props.getValue() ? 'true' : 'false'} />
+    cell: (props) => <IsUsedChip label={props.getValue() ? 'yes' : 'no'} />
   }),
   columnHelper.display({
     id: 'action',

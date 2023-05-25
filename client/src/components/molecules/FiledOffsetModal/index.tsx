@@ -108,7 +108,7 @@ const FiledOffsetModal: FC<Props> = (props): JSX.Element => {
         isOpen,
         closeModal
       }}
-      className="w-full max-w-[720px]"
+      className="w-full max-w-[750px]"
     >
       {/* Custom Modal Header */}
       <ModalHeader

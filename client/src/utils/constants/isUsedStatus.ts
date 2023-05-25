@@ -1,4 +1,4 @@
 export const isUsedStatus = {
-  FALSE: 'False',
-  TRUE: 'True'
+  NO: 'No',
+  YES: 'Yes'
 }

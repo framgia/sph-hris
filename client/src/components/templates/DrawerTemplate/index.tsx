@@ -44,7 +44,7 @@ const DrawerTemplate: FC<Props> = (props): JSX.Element => {
         {!isOpen && (
           <div
             onClick={() => handleTimeIdExists()}
-            className="fixed inset-0 z-40 cursor-default bg-slate-900/10"
+            className="fixed inset-0 z-40 cursor-default bg-slate-900/10 backdrop-blur-sm"
           ></div>
         )}
       </>

@@ -109,7 +109,7 @@ namespace api.Utils
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
-                return context.ESLChangeShiftRequests.Where(x => x.TimeEntryId == timeEntryId).Count() > 0;
+                return context.ESLChangeShiftRequests.Where(x => x.TimeEntryId == timeEntryId && x.IsLeaderApproved == true).Any();
             }
         }
 

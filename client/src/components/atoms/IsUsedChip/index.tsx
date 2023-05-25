@@ -6,10 +6,10 @@ import { isUsedStatus } from '~/utils/constants/isUsedStatus'
 const IsUsedStatusChip = ({ label }: { label: string }): JSX.Element => {
   const styles = classNames(
     'border rounded-full px-1 font-normal select-none capitalize',
-    label.toLocaleLowerCase() === isUsedStatus.FALSE.toLowerCase()
+    label.toLocaleLowerCase() === isUsedStatus.NO.toLowerCase()
       ? 'border-red-300 bg-red-50 text-red-600'
       : null,
-    label.toLocaleLowerCase() === isUsedStatus.TRUE.toLowerCase()
+    label.toLocaleLowerCase() === isUsedStatus.YES.toLowerCase()
       ? 'border-green-300 bg-green-50 text-green-600'
       : null
   )
@@ -17,7 +17,7 @@ const IsUsedStatusChip = ({ label }: { label: string }): JSX.Element => {
 }
 
 IsUsedStatusChip.defaultProps = {
-  label: isUsedStatus.FALSE
+  label: isUsedStatus.NO
 }
 
 export default IsUsedStatusChip

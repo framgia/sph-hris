@@ -33,7 +33,7 @@ namespace api.Services
         {
             var leave = leaves.Where(x => DateOnly.FromDateTime(x.LeaveDate) == DateOnly.FromDateTime(timeEntry.Date) && x.UserId == timeEntry.UserId).FirstOrDefault();
             var changeShift = changeShifts?.Where(x => x.TimeEntryId == timeEntry.Id).FirstOrDefault();
-            var eslChangeShift = eslChangeShifts?.Where(x => x.TimeEntryId == timeEntry.Id).FirstOrDefault();
+            var eslChangeShift = eslChangeShifts?.Where(x => x.TimeEntryId == timeEntry.Id).OrderByDescending(x => x.CreatedAt).FirstOrDefault();
 
             return new TimeEntryDTO(timeEntry, leave, domain, changeShift, eslChangeShift);
         }

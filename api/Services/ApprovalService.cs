@@ -322,14 +322,15 @@ namespace api.Services
             var timeEntry = await context.TimeEntries.FindAsync(eSLChangeShiftRequest!.TimeEntryId);
 
             // Update notification data
-            if (request.IsApproved && notificationData != null) notificationData!.Status = RequestStatus.APPROVED;
+            if (request.IsApproved && notificationData != null)
+            {
+                notificationData!.Status = RequestStatus.APPROVED;
+                offsets?.ForEach(offset => offset.IsUsed = true);
+            }
             if (!request.IsApproved && notificationData != null)
             {
                 notificationData!.Status = RequestStatus.DISAPPROVED;
-                offsets?.ForEach(offset =>
-                {
-                    offset.IsUsed = false;
-                });
+                offsets?.ForEach(offset => offset.IsUsed = false);
             }
             if (notification != null) notification.Data = JsonConvert.SerializeObject(notificationData);
             eSLChangeShiftRequest!.IsLeaderApproved = request.IsApproved;

@@ -43,6 +43,7 @@ export interface IESLChangeShift {
   timeIn: string
   timeOut: string
   description: string
+  isLeaderApproved: boolean | null
 }
 
 export type ITimeEntryOvertime = {
