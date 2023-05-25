@@ -284,7 +284,7 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
             <>
               <Button
                 variant="success"
-                className="flex items-center space-x-1 py-0.5 px-4 text-slate-500"
+                className="flex items-center space-x-1 py-0.5 px-4"
                 onClick={() => handleApproveDisapprove(true)}
               >
                 <Check className="h-4 w-4" />

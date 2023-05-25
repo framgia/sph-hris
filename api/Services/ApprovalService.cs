@@ -322,14 +322,15 @@ namespace api.Services
             var timeEntry = await context.TimeEntries.FindAsync(eSLChangeShiftRequest!.TimeEntryId);
 
             // Update notification data
-            if (request.IsApproved && notificationData != null) notificationData!.Status = RequestStatus.APPROVED;
+            if (request.IsApproved && notificationData != null)
+            {
+                notificationData!.Status = RequestStatus.APPROVED;
+                offsets?.ForEach(offset => offset.IsUsed = true);
+            }
             if (!request.IsApproved && notificationData != null)
             {
                 notificationData!.Status = RequestStatus.DISAPPROVED;
-                offsets?.ForEach(offset =>
-                {
-                    offset.IsUsed = false;
-                });
+                offsets?.ForEach(offset => offset.IsUsed = false);
             }
             if (notification != null) notification.Data = JsonConvert.SerializeObject(notificationData);
             eSLChangeShiftRequest!.IsLeaderApproved = request.IsApproved;
@@ -356,18 +357,12 @@ namespace api.Services
             var notification = await context.ESLOffsetNotifications.FindAsync(request.NotificationId);
             var changeESLOffsetRequest = notification != null ? await context.ESLOffsets.FindAsync(notification.ESLOffsetId) : null;
             var notificationData = notification != null ? JsonConvert.DeserializeObject<dynamic>(notification.Data) : null;
-            var timeEntry = await context.TimeEntries.FindAsync(changeESLOffsetRequest!.TimeEntryId);
 
             // Update notification data
             if (request.IsApproved && notificationData != null) notificationData!.Status = RequestStatus.APPROVED;
             if (!request.IsApproved && notificationData != null) notificationData!.Status = RequestStatus.DISAPPROVED;
             if (notification != null) notification.Data = JsonConvert.SerializeObject(notificationData);
             changeESLOffsetRequest!.IsLeaderApproved = request.IsApproved;
-            if (request.IsApproved)
-            {
-                timeEntry!.StartTime = changeESLOffsetRequest.TimeIn;
-                timeEntry!.EndTime = changeESLOffsetRequest.TimeOut;
-            }
 
             // Send notification
             await _notificationService.CreateESLOffsetStatusRequestNotification(changeESLOffsetRequest, request.TeamLeaderId, context);

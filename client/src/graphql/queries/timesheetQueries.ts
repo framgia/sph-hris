@@ -86,6 +86,7 @@ export const GET_EMPLOYEE_TIMESHEET = gql`
         timeIn
         timeOut
         description
+        isLeaderApproved
       }
     }
   }

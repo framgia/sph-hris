@@ -21,6 +21,7 @@ namespace api.DTOs
         public int Undertime { get; set; }
 
         public string Status { get; set; }
+        public bool? IsLeaderApproved { get; set; }
         public ChangeShiftDTO? ChangeShift { get; set; }
         public ESLChangeShiftDTO? ESLChangeShift { get; set; }
 

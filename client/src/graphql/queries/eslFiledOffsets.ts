@@ -15,6 +15,7 @@ export const GET_ALL_ESL_FILED_OFFSETS = gql`
       }
       description
       isLeaderApproved
+      isUsed
     }
   }
 `

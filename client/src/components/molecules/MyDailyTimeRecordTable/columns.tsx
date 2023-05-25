@@ -263,7 +263,10 @@ export const columns = [
         setIsOpenTimeEntry(!isOpenTimeEntry)
 
       const handleIsOpenNewOffsetToggle = (): void => {
-        if (timeEntry.eslChangeShift === null) {
+        if (
+          timeEntry.eslChangeShift === null ||
+          timeEntry?.eslChangeShift?.isLeaderApproved === false
+        ) {
           setIsOpenNewOffset(!isOpenNewOffset)
         } else {
           handleIsOpenViewFiledOffset()
