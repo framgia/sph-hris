@@ -333,8 +333,8 @@ const Header: FC<Props> = (props): JSX.Element => {
             >
               <Button
                 disabled={
-                  data?.userById.timeEntry?.timeIn !== null ||
-                  data.userById.employeeSchedule.workingDayTimes.length < 1
+                  data?.userById.timeEntry?.timeIn !== null
+                  // TODO: || data.userById.employeeSchedule.workingDayTimes.length < 1
                 }
                 onClick={handleToggleTimeInDrawer}
               >

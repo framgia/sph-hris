@@ -49,15 +49,15 @@ export const Menus: IMenu[] = [
     role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
   },
   {
-    name: 'My Leaves',
-    Icon: FileStaff,
-    href: '/my-leaves',
-    role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
-  },
-  {
     name: 'My Daily Time Record',
     Icon: Timer,
     href: '/my-daily-time-record',
+    role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
+  },
+  {
+    name: 'My Leaves',
+    Icon: FileStaff,
+    href: '/my-leaves',
     role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
   },
   {
@@ -172,15 +172,15 @@ export const Menus: IMenu[] = [
 
 export const productionMenu: IMenu[] = [
   {
-    name: 'My Leaves',
-    Icon: FileStaff,
-    href: '/my-leaves',
-    role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
-  },
-  {
     name: 'My Daily Time Record',
     Icon: Timer,
     href: '/my-daily-time-record',
+    role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
+  },
+  {
+    name: 'My Leaves',
+    Icon: FileStaff,
+    href: '/my-leaves',
     role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
   },
   {

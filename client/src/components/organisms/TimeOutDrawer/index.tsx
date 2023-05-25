@@ -63,17 +63,22 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
     confirmAlert({
       customUI: ({ onClose }) => {
         return (
-          <Card className="w-full max-w-xs px-8 py-6" shadow-size="xl" rounded="lg">
-            <h1 className="text-center text-xl font-bold">Confirmation</h1>
-            <p className="mt-2 text-sm font-medium">
+          <Card className="w-full max-w-[350px] px-8 py-6 shadow-none" rounded="lg">
+            <h1 className="text-center text-xl font-bold text-rose-500">Confirmation</h1>
+            <p className="mt-4 text-sm font-normal text-slate-600">
               You won&apos;t be able to time in again for today if you time out. Proceed?
             </p>
             <div className="mt-6 flex items-center justify-center space-x-2 text-white">
               <ButtonAction
-                onClick={() => handleSaveTimeOut()}
+                disabled={timeOutMutation.isLoading}
+                onClick={() => {
+                  handleSaveTimeOut()
+                  return onClose()
+                }}
                 variant="danger"
                 className="w-full py-1 px-4"
               >
+                {timeOutMutation.isLoading && <SpinnerIcon className=" mr-2 fill-gray-500" />}
                 Yes
               </ButtonAction>
               <ButtonAction
