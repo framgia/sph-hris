@@ -21,4 +21,5 @@ export interface IFiledOffsetData {
   }
   description: string
   isLeaderApproved: boolean | null
+  isUsed: boolean
 }

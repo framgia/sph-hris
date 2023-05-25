@@ -6,6 +6,7 @@ import { createColumnHelper } from '@tanstack/react-table'
 import ShowRemarksModal from './ShowRemarksModal'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
+import IsUsedChip from '~/components/atoms/IsUsedChip'
 import { IFiledOffsetTable } from '~/utils/interfaces'
 import RequestStatusChip from '~/components/atoms/RequestStatusChip'
 
@@ -32,6 +33,11 @@ export const columns = [
     header: () => <CellHeader label="Status" className="!font-medium" />,
     footer: (info) => info.column.id,
     cell: (props) => <RequestStatusChip label={props.getValue()} />
+  }),
+  columnHelper.accessor('isUsed', {
+    header: () => <CellHeader label="Is used" className="w-max !font-medium" />,
+    footer: (info) => info.column.id,
+    cell: (props) => <IsUsedChip label={props.getValue() ? 'true' : 'false'} />
   }),
   columnHelper.display({
     id: 'action',

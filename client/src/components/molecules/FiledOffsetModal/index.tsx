@@ -69,7 +69,8 @@ const FiledOffsetModal: FC<Props> = (props): JSX.Element => {
         status: getApprovalStatus(item.isLeaderApproved),
         remarks: item.description,
         createdAt: item.createdAt,
-        updateAt: item.updatedAt
+        updateAt: item.updatedAt,
+        isUsed: item.isUsed
       }
       return mapped
     })

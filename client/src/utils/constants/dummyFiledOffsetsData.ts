@@ -1,6 +1,4 @@
-import { IFiledOffsetTable } from '../interfaces'
-
-export const dummyFiledOffsetData: IFiledOffsetTable[] = [
+export const dummyFiledOffsetData = [
   {
     id: 1,
     title: 'Class Observation',

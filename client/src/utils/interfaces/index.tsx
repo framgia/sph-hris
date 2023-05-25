@@ -173,6 +173,7 @@ export interface IFiledOffsetTable {
   remarks: string
   createdAt: string
   updateAt: string
+  isUsed: boolean
 }
 
 interface TimeEntry {
