@@ -148,7 +148,7 @@ const Header: FC<Props> = (props): JSX.Element => {
 
   const setTimer = (data: any): void => {
     setRunning(true)
-    const now = moment(serverTime()).format('YYYY-MM-DD HH:mm:ss')
+    const now = serverTime()
     setSeconds(0)
     if (data.userById.timeEntry.timeIn !== null) {
       const timeObj = parse(data?.userById.timeEntry.timeIn?.timeHour)
