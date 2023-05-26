@@ -33,6 +33,7 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
   const [remarks, setRemarks] = useState('')
   const [files, setFiles] = useState<FileList | null>(null)
   const [afterStartTime, setAfterStartTime] = useState(false)
+  const [errorRemark, setErrorRemark] = useState('')
 
   const { handleUserQuery } = useUserQuery()
   const { handleTimeInMutation } = useTimeInMutation()
@@ -76,7 +77,7 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
     confirmAlert({
       customUI: ({ onClose }) => {
         return (
-          <Card className="w-full max-w-[350px] px-8 py-6 shadow-none" rounded="lg">
+          <Card className="w-full max-w-[350px] px-8 py-6 !shadow-none" rounded="lg">
             <h1 className="text-center text-xl font-bold text-amber-500">Warning!</h1>
             <p className="mt-4 text-sm font-normal text-slate-600">
               Important: Time-in is not allowed on the designated rest day.
@@ -94,6 +95,7 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
 
   const handleSaveTimeIn = (): void => {
     const time = moment(new Date())
+    if (afterStartTime && remarks === '') return setErrorRemark('Remarks is required')
     timeInMutation.mutate({
       id: data?.userById.timeEntry.id as number,
       userId: data?.userById.id as number,
@@ -150,18 +152,27 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
             <label htmlFor="remarks" className="space-y-0.5">
               <span className="text-xs text-slate-500">Remarks</span>
               <TextareaAutosize
+                required={afterStartTime}
                 value={remarks}
                 id="remarks"
                 disabled={timeInMutation.isLoading}
                 onChange={(e) => setRemarks(e.target.value)}
                 className={classNames(
                   'm-0 block min-h-[20vh] w-full rounded placeholder:text-slate-400',
-                  'border border-solid border-slate-300 bg-white bg-clip-padding focus:ring-primary',
+                  'bg-white bg-clip-padding focus:ring-primary',
                   'resize-none px-3 py-1.5 text-sm font-normal text-slate-700 transition focus:border-primary',
-                  'ease-in-out focus:border-primary focus:bg-white focus:text-slate-700 focus:outline-none'
+                  'ease-in-out focus:border-primary focus:bg-white focus:text-slate-700 focus:outline-none',
+                  errorRemark !== ''
+                    ? '!border-rose-500 !ring-rose-500'
+                    : 'border border-solid border-slate-300'
                 )}
+                onBlur={() => setErrorRemark('')}
+                onFocus={() => setErrorRemark('')}
                 placeholder="Message..."
               />
+              {errorRemark !== null && errorRemark !== undefined && (
+                <span className="error text-[10px]">{errorRemark}</span>
+              )}
             </label>
           </div>
           {afterStartTime && (

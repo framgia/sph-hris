@@ -43,19 +43,17 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
     const schedule = data?.userById?.employeeSchedule.workingDayTimes.find(
       (item) => item.day === day
     )
-    if (schedule !== null && schedule !== undefined) {
+    if (
+      data?.userById.timeEntry.date.split('T')[0] === moment().format('YYYY-MM-DD') &&
+      schedule !== null &&
+      schedule !== undefined
+    ) {
       const regex = /PT(\d+)H/
       const match = schedule.to.match(regex)
       const hours = match !== null ? parseInt(match[1]) : 0
-      if (time < hours) {
-        handleRemoveConfirmation()
-      } else {
-        handleSaveTimeOut()
-      }
-    } else {
-      /* This is for when user times out when he/she is out of schedule. */
-      handleSaveTimeOut()
+      if (time < hours) return handleRemoveConfirmation()
     }
+    handleSaveTimeOut()
   }
 
   // FOR CONFIRMATION ONLY

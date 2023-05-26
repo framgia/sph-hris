@@ -41,5 +41,6 @@ namespace api.Enums
         public const string MISSING_LEAVE_DATES = "Leave Date/s is required";
         public const string NOT_HR_ADMIN = "User is not an HR Admin";
         public const string NOT_MANAGER_PROJECT_LEADER = "User is not Manager or Project Leader";
+        public const string REQUIRED_TIME_IN_REMARKS = "Remarks is required";
     }
 }

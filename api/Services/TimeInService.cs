@@ -11,6 +11,7 @@ namespace api.Services
 {
     public class TimeInService
     {
+        private readonly TimeInServiceInputValidation _customInputValidation;
         private readonly IDbContextFactory<HrisContext> _contextFactory = default!;
         private readonly FileUpload _fileUpload;
         private readonly HttpContextService _httpService;
@@ -19,6 +20,7 @@ namespace api.Services
             _contextFactory = contextFactory;
             _fileUpload = new FileUpload(blobService);
             _httpService = new HttpContextService(accessor);
+            _customInputValidation = new TimeInServiceInputValidation(_contextFactory);
         }
         public async Task<UserDTO?> GetByIdSchedule(string token, string schedule)
         {
@@ -86,6 +88,11 @@ namespace api.Services
                 using var transaction = context.Database.BeginTransaction();
                 try
                 {
+                    var timeEntry = await context.TimeEntries
+                    .Include(x => x.User)
+                    .Where(x => x.UserId == timeIn.UserId && x.Id == timeIn.Id).FirstAsync();
+                    var errors = _customInputValidation.checkTimeInRequestInput(timeIn, timeEntry);
+                    if (errors.Count > 0) throw new GraphQLException(errors);
                     var files = _fileUpload.UploadBlob(timeIn.files, this.GetType().Name.ToLower());
                     var time = context.Times.Add(new Time
                     {
@@ -94,10 +101,6 @@ namespace api.Services
                         Media = files
                     });
                     await context.SaveChangesAsync();
-
-                    var timeEntry = await context.TimeEntries
-                    .Include(x => x.User)
-                    .Where(x => x.UserId == timeIn.UserId && x.Id == timeIn.Id).FirstAsync();
 
                     string currentDay = DateTime.Now.ToString("dddd").ToLower();
                     var userSchedule = await context.WorkingDayTimes.Where(x => x.EmployeeScheduleId == timeEntry.User.EmployeeScheduleId && x.Day!.ToLower() == currentDay).FirstAsync();
@@ -113,6 +116,10 @@ namespace api.Services
 
                     transaction.Commit();
                     return "Successful Time In!";
+                }
+                catch (GraphQLException e)
+                {
+                    throw e;
                 }
                 catch (Exception e)
                 {
