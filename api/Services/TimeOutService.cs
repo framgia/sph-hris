@@ -22,7 +22,7 @@ namespace api.Services
                 {
                     var time = context.Times.Add(new Time
                     {
-                        TimeHour = timeout.TimeHour,
+                        TimeHour = TimeSpan.FromSeconds(Math.Round(DateTime.Now.TimeOfDay.TotalSeconds)),
                         Remarks = timeout.Remarks
                     });
 
@@ -47,9 +47,9 @@ namespace api.Services
                     transaction.Commit();
                     return "Successful Time Out!";
                 }
-                catch (Exception e)
+                catch
                 {
-                    return e.InnerException?.Message ?? "Something went wrong...";
+                    throw new Exception("Something went wrong...");
                 }
             }
         }
@@ -60,8 +60,12 @@ namespace api.Services
             TimeEntryDTO timeEntryDTO = new TimeEntryDTO(timeEntry, null, "", null, null);
             TimeSpan UndertimeTimeSpan = TimeSpan.FromMinutes(timeEntryDTO.Undertime);
             TimeSpan LateTimeSpan = TimeSpan.FromMinutes(timeEntryDTO.Late);
+            TimeSpan ScheduledHours = timeEntry.EndTime - timeEntry.StartTime;
 
-            return timeEntry.EndTime - timeEntry.StartTime - UndertimeTimeSpan - LateTimeSpan;
+            // check if logged in after work schedule
+            if ((ScheduledHours - LateTimeSpan).TotalMinutes < 0) LateTimeSpan = ScheduledHours - UndertimeTimeSpan;
+
+            return ScheduledHours - UndertimeTimeSpan - LateTimeSpan;
         }
     }
 }
