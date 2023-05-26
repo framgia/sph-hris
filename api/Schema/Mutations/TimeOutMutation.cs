@@ -13,7 +13,16 @@ namespace api.Schema.Mutations
         }
         public async Task<string> UpdateTimeOut(TimeOutRequest timeOut)
         {
-            return await _timeOutService.Update(timeOut);
+            try
+            {
+                return await _timeOutService.Update(timeOut);
+            }
+            catch (Exception e)
+            {
+                throw new GraphQLException(ErrorBuilder.New()
+                .SetMessage(e.Message)
+                .Build());
+            }
         }
     }
 }

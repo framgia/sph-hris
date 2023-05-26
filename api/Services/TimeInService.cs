@@ -89,7 +89,7 @@ namespace api.Services
                     var files = _fileUpload.UploadBlob(timeIn.files, this.GetType().Name.ToLower());
                     var time = context.Times.Add(new Time
                     {
-                        TimeHour = timeIn.TimeHour,
+                        TimeHour = TimeSpan.FromSeconds(Math.Round(DateTime.Now.TimeOfDay.TotalSeconds)),
                         Remarks = timeIn.Remarks,
                         Media = files
                     });

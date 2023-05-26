@@ -16,6 +16,7 @@ import { INotification } from '~/utils/interfaces'
 import ClockInIcon from '~/utils/icons/ClockInIcon'
 import ClockOutIcon from '~/utils/icons/ClockOutIcon'
 import { Menus } from '~/utils/constants/sidebarMenu'
+import { serverTime } from '~/utils/shared/serverTime'
 import Button from '~/components/atoms/Buttons/Button'
 import handleImageError from '~/utils/handleImageError'
 import { getDuration } from '~/utils/notificationHelpers'
@@ -147,7 +148,7 @@ const Header: FC<Props> = (props): JSX.Element => {
 
   const setTimer = (data: any): void => {
     setRunning(true)
-    const now = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+    const now = moment(serverTime()).format('YYYY-MM-DD HH:mm:ss')
     setSeconds(0)
     if (data.userById.timeEntry.timeIn !== null) {
       const timeObj = parse(data?.userById.timeEntry.timeIn?.timeHour)
