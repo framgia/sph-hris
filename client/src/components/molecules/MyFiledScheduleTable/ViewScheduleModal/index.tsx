@@ -1,13 +1,12 @@
-import classNames from 'classnames'
+import React, { FC } from 'react'
 import { Calendar } from 'react-feather'
-import React, { FC, ReactNode } from 'react'
 
 import { IMyFiledScheduleData } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/ButtonAction'
-import CustomTimeEntryDetails from './CustomTimeEntryDetails'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
+import CustomDayCard from '~/components/templates/MySchedulelayout/CustomDayCard'
 
 type Props = {
   isOpen: boolean
@@ -16,13 +15,20 @@ type Props = {
 }
 
 const ViewScheduleModal: FC<Props> = ({ isOpen, closeModal, schedule }): JSX.Element => {
+  const empty = {
+    timeIn: '',
+    timeOut: '',
+    breakFrom: '',
+    breakTo: ''
+  }
+
   return (
     <ModalTemplate
       {...{
         isOpen,
         closeModal
       }}
-      className="w-full max-w-2xl"
+      className="w-full max-w-3xl"
     >
       {/* Custom Modal Header */}
       <ModalHeader
@@ -33,85 +39,50 @@ const ViewScheduleModal: FC<Props> = ({ isOpen, closeModal, schedule }): JSX.Ele
         }}
       />
       {/* Actual Remarks data */}
-      <main className="py-7 px-6 text-sm leading-relaxed tracking-wide text-slate-700">
+      <main className="py-7 px-6 text-xs leading-relaxed tracking-wide text-slate-700">
         <ul className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2 md:grid-cols-3">
-          <CustomCard>
-            <span className="font-medium">Monday</span>
-            <CustomTimeEntryDetails
-              {...{
-                schedule: {
-                  timeIn: schedule?.schedule.monday.timeIn ?? '',
-                  timeOut: schedule?.schedule.monday.timeOut ?? ''
-                }
-              }}
-            />
-          </CustomCard>
-          <CustomCard>
-            <span className="font-medium">Tuesday</span>
-            <CustomTimeEntryDetails
-              {...{
-                schedule: {
-                  timeIn: schedule?.schedule.tuesday.timeIn ?? '',
-                  timeOut: schedule?.schedule.tuesday.timeOut ?? ''
-                }
-              }}
-            />
-          </CustomCard>
-          <CustomCard>
-            <span className="font-medium">Wednesday</span>
-            <CustomTimeEntryDetails
-              {...{
-                schedule: {
-                  timeIn: schedule?.schedule.wednesday.timeIn ?? '',
-                  timeOut: schedule?.schedule.wednesday.timeOut ?? ''
-                }
-              }}
-            />
-          </CustomCard>
-          <CustomCard>
-            <span className="font-medium">Thursday</span>
-            <CustomTimeEntryDetails
-              {...{
-                schedule: {
-                  timeIn: schedule?.schedule.thursday.timeIn ?? '',
-                  timeOut: schedule?.schedule.thursday.timeOut ?? ''
-                }
-              }}
-            />
-          </CustomCard>
-          <CustomCard>
-            <span className="font-medium">Friday</span>
-            <CustomTimeEntryDetails
-              {...{
-                schedule: {
-                  timeIn: schedule?.schedule.friday.timeIn ?? '',
-                  timeOut: schedule?.schedule.friday.timeOut ?? ''
-                }
-              }}
-            />
-          </CustomCard>
-          <CustomCard>
-            <span className="font-medium">Saturday</span>
-            <CustomTimeEntryDetails
-              {...{
-                schedule: {
-                  timeIn: schedule?.schedule.saturday.timeIn ?? '',
-                  timeOut: schedule?.schedule.saturday.timeOut ?? ''
-                }
-              }}
-            />
-          </CustomCard>
-          <CustomCard>
-            <span className="font-medium">Sunday</span>
-            <CustomTimeEntryDetails
-              {...{
-                schedule: {
-                  timeIn: schedule?.schedule.sunday.timeIn ?? '',
-                  timeOut: schedule?.schedule.sunday.timeOut ?? ''
-                }
-              }}
-            />
-          </CustomCard>
+          <CustomDayCard
+            {...{
+              day: 'Monday',
+              schedule: schedule?.schedule?.monday ?? empty
+            }}
+          />
+          <CustomDayCard
+            {...{
+              day: 'Tuesday',
+              schedule: schedule?.schedule?.tuesday ?? empty
+            }}
+          />
+          <CustomDayCard
+            {...{
+              day: 'Wednesday',
+              schedule: schedule?.schedule?.wednesday ?? empty
+            }}
+          />
+          <CustomDayCard
+            {...{
+              day: 'Thursday',
+              schedule: schedule?.schedule?.thursday ?? empty
+            }}
+          />
+          <CustomDayCard
+            {...{
+              day: 'Friday',
+              schedule: schedule?.schedule?.friday ?? empty
+            }}
+          />
+          <CustomDayCard
+            {...{
+              day: 'Saturday',
+              schedule: schedule?.schedule?.saturday ?? empty
+            }}
+          />
+          <CustomDayCard
+            {...{
+              day: 'Sunday',
+              schedule: schedule?.schedule?.sunday ?? empty
+            }}
+          />
         </ul>
       </main>
 
@@ -124,17 +95,5 @@ const ViewScheduleModal: FC<Props> = ({ isOpen, closeModal, schedule }): JSX.Ele
     </ModalTemplate>
   )
 }
-
-const CustomCard = ({ children }: { children: ReactNode }): JSX.Element => (
-  <li
-    className={classNames(
-      'inline-flex flex-col rounded-lg border border-slate-300 px-3 py-2',
-      'transition duration-150 ease-in-out hover:border-amber-200',
-      'hover:shadow-md hover:shadow-amber-200'
-    )}
-  >
-    {children}
-  </li>
-)
 
 export default ViewScheduleModal

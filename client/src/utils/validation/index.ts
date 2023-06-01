@@ -476,3 +476,10 @@ export const RequestNewScheduleSchema = yup.object().shape({
     })
   })
 })
+
+export const ApplyToAllSchema = yup.object().shape({
+  timeIn: yup.string().required('Time In is required'),
+  timeOut: yup.string().required('Time Out is required'),
+  breakFrom: yup.string().required('Break From is required'),
+  breakTo: yup.string().required('Break To is required')
+})

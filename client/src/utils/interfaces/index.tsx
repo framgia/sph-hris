@@ -1,5 +1,7 @@
 import * as Icons from 'react-feather'
+
 import { IESLOffset } from './eslOffsetInterface'
+import { TimeEntryWithBreak } from '../types/formValues'
 
 export type IconName = keyof typeof Icons
 
@@ -176,22 +178,17 @@ export interface IFiledOffsetTable {
   isUsed: boolean
 }
 
-interface TimeEntry {
-  timeIn: string
-  timeOut: string
-}
-
 export interface IMyFiledScheduleData {
   id: string
   dateFiled: string
   status: string
   schedule: {
-    monday: TimeEntry
-    tuesday: TimeEntry
-    wednesday: TimeEntry
-    thursday: TimeEntry
-    friday: TimeEntry
-    saturday: TimeEntry
-    sunday: TimeEntry
+    monday: TimeEntryWithBreak
+    tuesday: TimeEntryWithBreak
+    wednesday: TimeEntryWithBreak
+    thursday: TimeEntryWithBreak
+    friday: TimeEntryWithBreak
+    saturday: TimeEntryWithBreak
+    sunday: TimeEntryWithBreak
   }
 }
