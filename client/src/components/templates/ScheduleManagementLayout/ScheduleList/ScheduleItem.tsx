@@ -39,16 +39,18 @@ const ScheduleItem: FC<Props> = (props): JSX.Element => {
     confirmAlert({
       customUI: ({ onClose }) => {
         return (
-          <Card className="w-full max-w-xs px-8 py-6" shadow-size="xl" rounded="lg">
-            <h1 className="text-center text-xl font-bold">Confirmation</h1>
-            <p className="mt-2 text-sm font-medium">
-              Are you sure you want to delete{' '}
-              <b className="text-amber-500 underline">{item.scheduleName}</b> schedule?
+          <Card className="w-full max-w-[350px] px-8 py-6 shadow-none" rounded="lg">
+            <h1 className="text-center text-xl font-bold text-rose-500">Confirmation</h1>
+            <p className="mt-4 text-sm font-normal text-slate-600">
+              Are you sure you want to delete <b className="font-semibold">{item.scheduleName}?</b>
             </p>
             <div className="mt-6 flex items-center justify-center space-x-2 text-white">
               <ButtonAction
+                onClick={() => {
+                  handleDeleteSchedule(onClose, item.id)
+                  return onClose()
+                }}
                 variant="danger"
-                onClick={() => handleDeleteSchedule(onClose, item.id)}
                 className="w-full py-1 px-4"
               >
                 Yes

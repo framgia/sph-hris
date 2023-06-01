@@ -10,6 +10,8 @@ export interface IGetEmployeeSchedule {
     workingDay: string
     timeIn: string
     timeOut: string
+    breakFrom: string
+    breakTo: string
   }>
   scheduleName: string
   memberCount: number

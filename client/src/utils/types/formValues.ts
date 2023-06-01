@@ -124,13 +124,13 @@ export type ScheduleFormData = {
   fridaySelected: boolean
   saturdaySelected: boolean
   sundaySelected: boolean
-  monday: TimeEntry
-  tuesday: TimeEntry
-  wednesday: TimeEntry
-  thursday: TimeEntry
-  friday: TimeEntry
-  saturday: TimeEntry
-  sunday: TimeEntry
+  monday: TimeEntryWithBreak
+  tuesday: TimeEntryWithBreak
+  wednesday: TimeEntryWithBreak
+  thursday: TimeEntryWithBreak
+  friday: TimeEntryWithBreak
+  saturday: TimeEntryWithBreak
+  sunday: TimeEntryWithBreak
 }
 
 export type ATMApplicationFormValues = {
