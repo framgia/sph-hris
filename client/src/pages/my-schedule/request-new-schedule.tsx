@@ -2,7 +2,7 @@ import { NextPage } from 'next'
 import classNames from 'classnames'
 import isEmpty from 'lodash/isEmpty'
 import ReactSelect from 'react-select'
-import { CheckSquare, X } from 'react-feather'
+import { CheckSquare } from 'react-feather'
 import makeAnimated from 'react-select/animated'
 import React, { useEffect, useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -17,6 +17,7 @@ import DayButton from '~/components/atoms/Buttons/DayButton'
 import { RequestNewScheduleSchema } from '~/utils/validation'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import { shiftSchedule } from '~/utils/constants/shiftSchedule'
+import ClearButton from '~/components/atoms/Buttons/ClearButton'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import ApplyToAllModal from '~/components/molecules/ApplyToAllModal'
@@ -226,43 +227,6 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
       sunday: dayData
     })
     setIsOpenApplyToAll(false)
-  }
-
-  const handleClear = (
-    dayClear:
-      | 'mondayClear'
-      | 'tuesdayClear'
-      | 'wednesdayClear'
-      | 'thursdayClear'
-      | 'fridayClear'
-      | 'saturdayClear'
-      | 'sundayClear'
-  ): void => {
-    switch (dayClear) {
-      case 'mondayClear':
-        setValue('monday', empty)
-        break
-      case 'tuesdayClear':
-        setValue('tuesday', empty)
-        break
-      case 'wednesdayClear':
-        setValue('wednesday', empty)
-        break
-      case 'thursdayClear':
-        setValue('thursday', empty)
-        break
-      case 'fridayClear':
-        setValue('friday', empty)
-        break
-      case 'saturdayClear':
-        setValue('saturday', empty)
-        break
-      case 'sundayClear':
-        setValue('sunday', empty)
-        break
-      default:
-        break
-    }
   }
 
   if (process.env.NEXT_PUBLIC_DISPLAY_MY_SCHEDULE_PAGE === 'false') {
@@ -508,15 +472,13 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                               </div>
                             </div>
                           </div>
-                          <ButtonAction
-                            type="button"
-                            variant="secondary-outline"
-                            onClick={() => handleClear('mondayClear')}
-                            className="mt-2 inline-flex w-20 items-center space-x-1 px-1.5 py-0.5"
-                          >
-                            <X className="h-[18px] w-[18px]" />
-                            <span className="text-[13px]">Clear</span>
-                          </ButtonAction>
+                          {/* To Clear Field */}
+                          <ClearButton
+                            {...{
+                              day: 'mondayClear',
+                              setValue
+                            }}
+                          />
                         </div>
                       ) : (
                         <span className="italic text-slate-400">Rest day</span>
@@ -614,15 +576,13 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                               </div>
                             </div>
                           </div>
-                          <ButtonAction
-                            type="button"
-                            variant="secondary-outline"
-                            onClick={() => handleClear('tuesdayClear')}
-                            className="mt-2 inline-flex w-20 items-center space-x-1 px-1.5 py-0.5"
-                          >
-                            <X className="h-[18px] w-[18px]" />
-                            <span className="text-[13px]">Clear</span>
-                          </ButtonAction>
+                          {/* To Clear Field */}
+                          <ClearButton
+                            {...{
+                              day: 'tuesdayClear',
+                              setValue
+                            }}
+                          />
                         </div>
                       ) : (
                         <span className="italic text-slate-400">Rest day</span>
@@ -723,15 +683,13 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                               </div>
                             </div>
                           </div>
-                          <ButtonAction
-                            type="button"
-                            variant="secondary-outline"
-                            onClick={() => handleClear('wednesdayClear')}
-                            className="mt-2 inline-flex w-20 items-center space-x-1 px-1.5 py-0.5"
-                          >
-                            <X className="h-[18px] w-[18px]" />
-                            <span className="text-[13px]">Clear</span>
-                          </ButtonAction>
+                          {/* To Clear Field */}
+                          <ClearButton
+                            {...{
+                              day: 'wednesdayClear',
+                              setValue
+                            }}
+                          />
                         </div>
                       ) : (
                         <span className="italic text-slate-400">Rest day</span>
@@ -830,15 +788,13 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                               </div>
                             </div>
                           </div>
-                          <ButtonAction
-                            type="button"
-                            variant="secondary-outline"
-                            onClick={() => handleClear('thursdayClear')}
-                            className="mt-2 inline-flex w-20 items-center space-x-1 px-1.5 py-0.5"
-                          >
-                            <X className="h-[18px] w-[18px]" />
-                            <span className="text-[13px]">Clear</span>
-                          </ButtonAction>
+                          {/* To Clear Field */}
+                          <ClearButton
+                            {...{
+                              day: 'thursdayClear',
+                              setValue
+                            }}
+                          />
                         </div>
                       ) : (
                         <span className="italic text-slate-400">Rest day</span>
@@ -933,15 +889,13 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                               </div>
                             </div>
                           </div>
-                          <ButtonAction
-                            type="button"
-                            variant="secondary-outline"
-                            onClick={() => handleClear('fridayClear')}
-                            className="mt-2 inline-flex w-20 items-center space-x-1 px-1.5 py-0.5"
-                          >
-                            <X className="h-[18px] w-[18px]" />
-                            <span className="text-[13px]">Clear</span>
-                          </ButtonAction>
+                          {/* To Clear Field */}
+                          <ClearButton
+                            {...{
+                              day: 'fridayClear',
+                              setValue
+                            }}
+                          />
                         </div>
                       ) : (
                         <span className="italic text-slate-400">Rest day</span>
@@ -1040,15 +994,13 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                               </div>
                             </div>
                           </div>
-                          <ButtonAction
-                            type="button"
-                            variant="secondary-outline"
-                            onClick={() => handleClear('saturdayClear')}
-                            className="mt-2 inline-flex w-20 items-center space-x-1 px-1.5 py-0.5"
-                          >
-                            <X className="h-[18px] w-[18px]" />
-                            <span className="text-[13px]">Clear</span>
-                          </ButtonAction>
+                          {/* To Clear Field */}
+                          <ClearButton
+                            {...{
+                              day: 'saturdayClear',
+                              setValue
+                            }}
+                          />
                         </div>
                       ) : (
                         <span className="italic text-slate-400">Rest day</span>
@@ -1143,15 +1095,13 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                               </div>
                             </div>
                           </div>
-                          <ButtonAction
-                            type="button"
-                            variant="secondary-outline"
-                            onClick={() => handleClear('sundayClear')}
-                            className="mt-2 inline-flex w-20 items-center space-x-1 px-1.5 py-0.5"
-                          >
-                            <X className="h-[18px] w-[18px]" />
-                            <span className="text-[13px]">Clear</span>
-                          </ButtonAction>
+                          {/* To Clear Field */}
+                          <ClearButton
+                            {...{
+                              day: 'sundayClear',
+                              setValue
+                            }}
+                          />
                         </div>
                       ) : (
                         <span className="italic text-slate-400">Rest day</span>

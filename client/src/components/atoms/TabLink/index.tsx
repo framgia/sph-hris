@@ -37,7 +37,7 @@ const TabLink: FC<Props> = ({ href, name, Icon }): JSX.Element => {
       {isActive && (
         <motion.span
           layoutId="bubble"
-          className="absolute inset-0 -bottom-1 z-10 border-b-[3px] border-amber-500"
+          className="absolute inset-0 -bottom-[0.17rem] z-30 border-b-[3px] border-amber-500"
           transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
         />
       )}
