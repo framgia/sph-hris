@@ -12,3 +12,16 @@ export const GET_ALL_UNUSED_ESL_OFFSETS_BY_TIME_ENTRY = gql`
     }
   }
 `
+
+export const GET_ALL_UNUSED_ESL_OFFSETS = gql`
+  query () {
+    allESLOffsets(isUsed: false) {
+      id
+      title
+      timeIn
+      timeOut
+      createdAt
+      isUsed
+    }
+  }
+`

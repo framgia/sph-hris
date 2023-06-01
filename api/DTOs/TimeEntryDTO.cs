@@ -105,7 +105,7 @@ namespace api.DTOs
                 }
             }
 
-            if (leave != null)
+            if (leave != null && leave.IsLeaderApproved == true && leave.IsManagerApproved == true)
             {
                 Status = (leave.LeaveType.Name!).ToLower();
             }

@@ -2,22 +2,27 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query'
 
 import { client } from '~/utils/shared/client'
 import { IUnusedESLOffset } from '~/utils/interfaces/unusedELSOffsetInterface'
-import { GET_ALL_UNUSED_ESL_OFFSETS_BY_TIME_ENTRY } from '~/graphql/queries/unusedESLOffsets'
+import {
+  GET_ALL_UNUSED_ESL_OFFSETS_BY_TIME_ENTRY,
+  GET_ALL_UNUSED_ESL_OFFSETS
+} from '~/graphql/queries/unusedESLOffsets'
 
 type UnusedOffsetFuncReturnType = UseQueryResult<
   { eslOffsetsByTimeEntry: IUnusedESLOffset[] },
   unknown
 >
+type AllOffsetFuncReturnType = UseQueryResult<{ allESLOffsets: IUnusedESLOffset[] }, unknown>
 
 type HookReturnType = {
-  getAllUnusedESLOffsetQuery: (
+  getAllUnusedESLOffsetQueryByTimeEntry: (
     timeEntryId: number,
     onlyUnused: boolean
   ) => UnusedOffsetFuncReturnType
+  getAllESLOffsetQuery: () => AllOffsetFuncReturnType
 }
 
 const useUnusedESLOffset = (): HookReturnType => {
-  const getAllUnusedESLOffsetQuery = (
+  const getAllUnusedESLOffsetQueryByTimeEntry = (
     timeEntryId: number,
     onlyUnused: boolean
   ): UnusedOffsetFuncReturnType =>
@@ -28,8 +33,16 @@ const useUnusedESLOffset = (): HookReturnType => {
       select: (data: { eslOffsetsByTimeEntry: IUnusedESLOffset[] }) => data
     })
 
+  const getAllESLOffsetQuery = (): AllOffsetFuncReturnType =>
+    useQuery({
+      queryKey: ['GET_ALL_UNUSED_ESL_OFFSETS'],
+      queryFn: async () => await client.request(GET_ALL_UNUSED_ESL_OFFSETS),
+      select: (data: { allESLOffsets: IUnusedESLOffset[] }) => data
+    })
+
   return {
-    getAllUnusedESLOffsetQuery
+    getAllUnusedESLOffsetQueryByTimeEntry,
+    getAllESLOffsetQuery
   }
 }
 
