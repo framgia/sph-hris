@@ -46,9 +46,8 @@ const AddNewOffsetModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Element 
   const { data: eslUsers, isSuccess: isESLUsersSuccess } = getESLUserQuery()
 
   // UNUSED ESL OFFSETS HOOKS
-  const { getAllUnusedESLOffsetQuery } = useUnusedESLOffset()
-  const { data: unusedESLOffsetData, isLoading: isLoadingUnusedESLOffset } =
-    getAllUnusedESLOffsetQuery(row.id, true)
+  const { getAllESLOffsetQuery } = useUnusedESLOffset()
+  const { data: unusedESLOffsetData, isLoading: isLoadingUnusedESLOffset } = getAllESLOffsetQuery()
 
   const {
     reset,
@@ -256,7 +255,7 @@ const AddNewOffsetModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Element 
                     backspaceRemovesValue={true}
                     isLoading={isLoadingUnusedESLOffset}
                     options={generateUnusedESLDateSelect(
-                      unusedESLOffsetData?.eslOffsetsByTimeEntry as IUnusedESLOffset[]
+                      unusedESLOffsetData?.allESLOffsets as IUnusedESLOffset[]
                     )}
                   />
                 )}
