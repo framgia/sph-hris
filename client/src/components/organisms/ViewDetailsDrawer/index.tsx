@@ -10,7 +10,6 @@ import UploadedFiles from './UploadFiles'
 import Avatar from '~/components/atoms/Avatar'
 import { IMedia } from '~/utils/types/timeEntryTypes'
 import handleImageError from '~/utils/handleImageError'
-import ReactTextareaAutosize from 'react-textarea-autosize'
 import DrawerTemplate from '~/components/templates/DrawerTemplate'
 import {
   getUserProfileLink,
@@ -41,6 +40,59 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
 
   const handleToggleDrawer = (): void => {
     void router.replace(router.pathname, undefined, { shallow: false })
+  }
+
+  const renderTextWithLinks = (text: string): React.ReactNode[] => {
+    const words = text.split(' ')
+
+    return words.map((word, index) => {
+      let linkComponent = null
+
+      switch (true) {
+        case isValidUrl(word):
+          linkComponent = (
+            <a
+              key={index}
+              href={word}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 underline hover:text-blue-700"
+            >
+              {word}
+            </a>
+          )
+          break
+        case isValidEmail(word):
+          linkComponent = (
+            <a
+              key={index}
+              href={`mailto:${word}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 underline hover:text-blue-700"
+            >
+              {word}
+            </a>
+          )
+          break
+        default:
+          linkComponent = <span key={index}>{word} </span>
+          break
+      }
+
+      return linkComponent
+    })
+  }
+
+  const isValidUrl = (url: string): boolean => {
+    const urlRegex =
+      /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/
+    return urlRegex.test(url)
+  }
+
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
   }
 
   return (
@@ -139,21 +191,16 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
               </div>
             </label>
           </div>
+
           {/* Remarks */}
           <div>
             <label htmlFor="remarks" className="space-y-0.5">
               <span className="text-xs text-slate-500">Remarks</span>
-              <ReactTextareaAutosize
-                id="remarks"
-                disabled={true}
-                placeholder="Your Remarks"
-                className={classNames(
-                  'm-0 block min-h-[20vh] w-full rounded border border-slate-300 text-[13px]',
-                  'disable:border-slate-300 bg-white bg-clip-padding',
-                  'resize-none px-3 py-1.5 text-sm font-normal text-amber-700'
-                )}
-                value={res.data?.timeById?.remarks}
-              />
+              <div className="default-scrollbar min-h-[20vh] rounded border border-slate-300 bg-white text-[13px]">
+                <h3 className="break-words px-3 py-1.5 font-normal text-amber-700">
+                  {renderTextWithLinks(res.data?.timeById?.remarks ?? '')}
+                </h3>
+              </div>
             </label>
           </div>
           {/* Downloaded Files */}
