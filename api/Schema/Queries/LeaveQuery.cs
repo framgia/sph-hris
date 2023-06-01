@@ -38,5 +38,10 @@ namespace api.Schema.Queries
         {
             return await _leaveService.GetPaidLeaves(id);
         }
+
+        public async Task<List<LeaveDTO>> GetUserLeave(int leaveId)
+        {
+            return await _leaveService.GetUserLeave(leaveId);
+        }
     }
 }

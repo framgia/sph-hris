@@ -52,7 +52,7 @@ const LeaveManagementResultTable: FC<Props> = (props): JSX.Element => {
   return (
     <div className="flex flex-1 flex-col space-y-1">
       {/* Show on Desktop */}
-      <Card className="hidden overflow-hidden md:block" shadow-size="sm">
+      <Card className="hidden overflow-visible md:block" shadow-size="sm">
         <LeaveManagementTable
           {...{
             query: {

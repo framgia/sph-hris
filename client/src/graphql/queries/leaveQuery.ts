@@ -77,6 +77,7 @@ export const GET_MY_LEAVES_QUERY = gql`
         }
       }
       table {
+        leaveId
         date
         leaveTypeId
         isWithPay
@@ -84,6 +85,7 @@ export const GET_MY_LEAVES_QUERY = gql`
         numLeaves
         status
         userName
+        createdAt
       }
       breakdown {
         sickLeave
@@ -173,6 +175,7 @@ export const GET_YEARLY_ALL_LEAVES_QUERY = gql`
         numLeaves
         status
         userName
+        createdAt
       }
       breakdown {
         sickLeave
@@ -184,6 +187,39 @@ export const GET_YEARLY_ALL_LEAVES_QUERY = gql`
         withoutPayTotal
         withPayTotal
       }
+    }
+  }
+`
+export const GET_SPECIFIC_USER_LEAVE_QUERY = gql`
+  query ($leaveId: Int!) {
+    userLeave(leaveId: $leaveId) {
+      id
+      userId
+      userName
+      userRole
+      leaveProjects {
+        projectId
+        project {
+          name
+        }
+        projectLeaderId
+        projectLeader {
+          name
+        }
+      }
+      leaveType
+      leaveTypeId
+      managerId
+      manager
+      otherProject
+      reason
+      leaveDate
+      isWithPay
+      isLeaderApproved
+      isManagerApproved
+      days
+      createdAt
+      avatar
     }
   }
 `

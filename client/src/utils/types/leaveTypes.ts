@@ -49,6 +49,8 @@ export type LeaveTable = {
   numLeaves: number
   status: string
   userName: string
+  leaveId: number
+  createdAt: string
 }
 export type Breakdown = {
   sickLeave: number
@@ -89,6 +91,16 @@ export type LeaveRequest = {
   leaveDates: LeaveDateRequest[]
   leaveProjects: LeaveProjectsRequest[]
 }
+export type UpdateLeaveRequest = {
+  userId: number
+  leaveTypeId: number
+  leaveId: number
+  managerId: number
+  otherProject: string
+  reason: string
+  leaveDates: LeaveDateRequest[]
+  leaveProjects: LeaveProjectsRequest[]
+}
 export type LeaveDateRequest = {
   leaveDate: string
   isWithPay: boolean
@@ -111,4 +123,38 @@ export interface IApproveLeaveUndertimeRequestInput {
   userId: number
   notificationId: number
   isApproved: boolean
+}
+
+export type LeaveProject = {
+  projectId: number
+  project: {
+    name: string
+  }
+  projectLeaderId: number
+  projectLeader: {
+    name: string
+  }
+}
+
+export type IUserLeave = {
+  userLeave: Array<{
+    id: number
+    userId: number
+    userName: string
+    userRole: string
+    leaveProjects: LeaveProject[]
+    leaveType: string
+    leaveTypeId: number
+    managerId: number
+    manager: string
+    otherProject: string
+    reason: string
+    leaveDate: string
+    isWithPay: boolean
+    isLeaderApproved: boolean
+    isManagerApproved: boolean
+    days: number
+    createdAt: string
+    avatar: string
+  }>
 }
