@@ -128,6 +128,8 @@ namespace api.Services
                     .Include(entry => entry.TimeOut)
                     .Include(entry => entry.User)
                         .ThenInclude(x => x.ProfileImage)
+                    .Include(entry => entry.User)
+                        .ThenInclude(x => x.Position)
                     .Include(entry => entry.Overtime)
                     .Include(entry => entry.WorkInterruptions)
                     .OrderByDescending(entry => entry.Date)

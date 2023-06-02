@@ -19,7 +19,6 @@ namespace api.DTOs
             Position = user.Position;
             TimeEntry = user.TimeEntries != null ? checkLatestTimeEntry(user) : null;
             AvatarLink = $"{domain}/media/{user.ProfileImage?.CollectionName}/{user.ProfileImage?.FileName}";
-            Position = user.Position;
             PaidLeaves = user.PaidLeaves;
         }
         private TimeEntry? checkLatestTimeEntry(User user)

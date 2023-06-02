@@ -21,7 +21,7 @@ const columnHelper = createColumnHelper<ITimeEntry>()
 const EMPTY = 'N/A'
 
 export const columns = [
-  columnHelper.accessor('user.name', {
+  columnHelper.accessor('user', {
     header: () => <CellHeader label="Name" />,
     footer: (info) => info.column.id,
     cell: (props) => {
@@ -38,8 +38,8 @@ export const columns = [
             rounded="full"
           />
           <div className="flex flex-col items-start">
-            <h1 className="font-semibold">{props.getValue()}</h1>
-            <small className="text-slate-500">Web Developer</small>
+            <h1 className="font-semibold">{props.row.original.user.name}</h1>
+            <small className="text-slate-500">{props.row.original.user.position.name}</small>
           </div>
         </div>
       )
