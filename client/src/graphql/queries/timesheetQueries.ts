@@ -10,6 +10,9 @@ export const GET_ALL_EMPLOYEE_TIMESHEET = (input: string, argument: string): str
           id
           name
           avatarLink
+          position {
+            name
+          }
         }
         timeIn {
           id

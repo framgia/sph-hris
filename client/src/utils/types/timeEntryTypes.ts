@@ -60,6 +60,9 @@ export interface ITimeEntry {
     id: number
     name: string
     avatarLink: string
+    position: {
+      name: string
+    }
   }
   timeIn: {
     id: number
