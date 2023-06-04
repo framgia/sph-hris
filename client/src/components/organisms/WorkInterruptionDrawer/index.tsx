@@ -3,12 +3,13 @@ import classNames from 'classnames'
 import toast from 'react-hot-toast'
 import { X, Info } from 'react-feather'
 import React, { FC, useEffect } from 'react'
+import { PulseLoader } from 'react-spinners'
 import { FieldError, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import TextareaAutosize from 'react-textarea-autosize'
 
 import useUserQuery from '~/hooks/useUserQuery'
-import SpinnerIcon from '~/utils/icons/SpinnerIcon'
+import Button from '~/components/atoms/Buttons/Button'
 import useInterruptionType from '~/hooks/useInterruptionType'
 import { ConfirmInterruptionSchema } from '~/utils/validation'
 import UserTimeZone from '~/components/molecules/UserTimeZone'
@@ -67,7 +68,7 @@ const WorkInterruptionDrawer: FC<Props> = (props): JSX.Element => {
   useEffect(() => {
     if (interruptionMutation.isSuccess) {
       handleToggleWorkInterruptionDrawer()
-      toast.success('Work interruption submitted!')
+      toast.success('Work interruption submitted! ⚡')
     }
   }, [interruptionMutation.status])
 
@@ -293,7 +294,7 @@ const WorkInterruptionDrawer: FC<Props> = (props): JSX.Element => {
         {/* Footer Options */}
         <footer className="border-t border-slate-200">
           <div className="flex justify-end py-2 px-6">
-            <button
+            <Button
               type="button"
               disabled={isSubmitting}
               onClick={handleToggleWorkInterruptionDrawer}
@@ -304,8 +305,8 @@ const WorkInterruptionDrawer: FC<Props> = (props): JSX.Element => {
               )}
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={isSubmitting || !watch('power_checkbox')}
               className={classNames(
@@ -314,8 +315,8 @@ const WorkInterruptionDrawer: FC<Props> = (props): JSX.Element => {
                 'w-24 border-dark-primary bg-primary text-xs text-white outline-none hover:bg-dark-primary'
               )}
             >
-              {isSubmitting ? <SpinnerIcon className="h-4 w-4 !fill-amber-500" /> : 'Save'}
-            </button>
+              {isSubmitting ? <PulseLoader color="#fff" size={6} /> : 'Save'}
+            </Button>
           </div>
         </footer>
       </form>

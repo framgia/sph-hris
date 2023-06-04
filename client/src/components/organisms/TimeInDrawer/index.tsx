@@ -3,15 +3,16 @@ import { X } from 'react-feather'
 import classNames from 'classnames'
 import { toast } from 'react-hot-toast'
 import { parse } from 'iso8601-duration'
-import { serialize } from 'tinyduration'
+import { PulseLoader } from 'react-spinners'
 import { confirmAlert } from 'react-confirm-alert'
 import React, { FC, useEffect, useState } from 'react'
 import TextareaAutosize from 'react-textarea-autosize'
 
 import Card from '~/components/atoms/Card'
 import Alert from '~/components/atoms/Alert'
+import { queryClient } from '~/lib/queryClient'
 import useUserQuery from '~/hooks/useUserQuery'
-import SpinnerIcon from '~/utils/icons/SpinnerIcon'
+import Button from '~/components/atoms/Buttons/Button'
 import useTimeInMutation from '~/hooks/useTimeInMutation'
 import UserTimeZone from '~/components/molecules/UserTimeZone'
 import DrawerTemplate from '~/components/templates/DrawerTemplate'
@@ -59,13 +60,13 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
     }
   }, [data])
 
-  const handleRestdayTimeInChecker = (): void => {
+  const handleRestdayTimeInChecker = async (): Promise<void> => {
     const day = moment().format('dddd')
     const schedule = data?.userById?.employeeSchedule.workingDayTimes.find(
       (item) => item.day === day
     )
     if (schedule !== null && schedule !== undefined) {
-      handleSaveTimeIn()
+      await handleSaveTimeIn()
     } else {
       /* This is for when user times in when he/she rest day. */
       handleRestdayTimeInConfirmation()
@@ -93,32 +94,40 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
     })
   }
 
-  const handleSaveTimeIn = (): void => {
-    const time = moment(new Date())
-    if (afterStartTime && remarks === '') return setErrorRemark('Remarks is required')
-    timeInMutation.mutate({
-      id: data?.userById.timeEntry.id as number,
-      userId: data?.userById.id as number,
-      startTime: (data?.userById.employeeSchedule?.workingDayTimes[0]?.from as string) ?? '',
-      endTime: (data?.userById.employeeSchedule?.workingDayTimes[0]?.to as string) ?? '',
-      date: moment(new Date()).format(),
-      timeHour: serialize({
-        hours: time.hours(),
-        minutes: time.minutes(),
-        seconds: time.seconds()
-      }),
+  const handleSaveTimeIn = async (): Promise<void> => {
+    if (afterStartTime && remarks === '') {
+      setErrorRemark('Remarks is required')
+      return
+    }
+
+    const { userById } = data ?? {}
+    const { timeEntry, id, employeeSchedule } = userById ?? {}
+    const workingDayTimes = employeeSchedule?.workingDayTimes ?? []
+    const { from = '', to = '' } = workingDayTimes[0] ?? {}
+
+    const time = moment()
+    const timeHour = time.format('PTHH[H]mm[M]ss[S]')
+
+    await timeInMutation.mutateAsync({
+      id: timeEntry?.id ?? 0,
+      userId: id ?? 0,
+      startTime: from,
+      endTime: to,
+      date: moment().format(),
+      timeHour,
       remarks,
       files: files as FileList
     })
-  }
 
-  useEffect(() => {
-    if (timeInMutation.isSuccess) {
-      setRemarks('')
-      handleToggleTimeInDrawer()
-      toast.success('Time In Successful')
-    }
-  }, [timeInMutation.status])
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['GET_USER_QUERY'] }),
+      queryClient.invalidateQueries({ queryKey: ['GET_EMPLOYEE_TIMESHEET'] })
+    ])
+
+    setRemarks('')
+    handleToggleTimeInDrawer()
+    toast.success('Time In Successful ⏱️')
+  }
 
   return (
     <DrawerTemplate
@@ -200,8 +209,9 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
       {/* Footer Options */}
       <section className="mt-auto border-t border-slate-200">
         <div className="flex justify-end py-2 px-6">
-          <button
+          <Button
             type="button"
+            disabled={timeInMutation.isLoading}
             onClick={handleToggleTimeInDrawer}
             className={classNames(
               'flex items-center justify-center border-slate-200 text-xs active:scale-95',
@@ -209,10 +219,11 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
             )}
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             disabled={timeInMutation.isLoading}
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onClick={handleRestdayTimeInChecker}
             className={classNames(
               'flex items-center justify-center rounded-md border active:scale-95',
@@ -221,9 +232,8 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
               } text-xs text-white outline-none `
             )}
           >
-            {timeInMutation.isLoading && <SpinnerIcon className=" mr-2 fill-gray-500" />}
-            Save
-          </button>
+            {timeInMutation.isLoading ? <PulseLoader color="#fff" size={6} /> : 'Save'}
+          </Button>
         </div>
       </section>
     </DrawerTemplate>

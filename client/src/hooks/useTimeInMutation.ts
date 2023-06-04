@@ -1,5 +1,5 @@
 import toast from 'react-hot-toast'
-import { useMutation, UseMutationResult, useQueryClient } from '@tanstack/react-query'
+import { useMutation, UseMutationResult } from '@tanstack/react-query'
 
 import { UPDATE_TIME_IN_MUTATION } from '~/graphql/mutations/TimeInMutation'
 import { client } from '~/utils/shared/client'
@@ -20,19 +20,12 @@ type returnType = {
 type handleTimeInMutationReturnType = UseMutationResult<any, unknown, TimeInRequest, unknown>
 
 const useTimeInMutation = (): returnType => {
-  const queryClient = useQueryClient()
   const handleTimeInMutation = (): handleTimeInMutationReturnType =>
     useMutation({
       mutationFn: async (timeIn: TimeInRequest) => {
         return await client.request(UPDATE_TIME_IN_MUTATION, {
           timeIn
         })
-      },
-      onSuccess: async () => {
-        await Promise.all([
-          queryClient.invalidateQueries({ queryKey: ['GET_USER_QUERY'] }),
-          queryClient.invalidateQueries({ queryKey: ['GET_EMPLOYEE_TIMESHEET'] })
-        ])
       },
       onError: (error) => {
         const data = JSON.parse(JSON.stringify(error))
