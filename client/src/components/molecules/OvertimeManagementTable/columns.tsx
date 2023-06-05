@@ -19,18 +19,18 @@ import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
 import handleImageError from '~/utils/handleImageError'
 import UpdateOvertimeModal from './UpdateOvertimeModal'
+import CellTimeValue from '~/components/atoms/CellTimeValue'
 import ApproveConfirmationModal from './ApproveConfirmationModal'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
 import RequestStatusChip from '~/components/atoms/RequestStatusChip'
 import { IOvertimeManagement, IOvertimeManagementManager } from '~/utils/interfaces'
-import CellTimeValue from '~/components/atoms/CellTimeValue'
 
 const columnHelper = createColumnHelper<IOvertimeManagement | IOvertimeManagementManager>()
 
 // =====  FOR HR COLUMNS ======
 export const hrColumns = [
   columnHelper.accessor('user.name', {
-    header: () => <CellHeader label="Name" />,
+    header: () => <CellHeader label="Requester" />,
     footer: (info) => info.column.id,
     cell: (props) => {
       const { original: overtimeManagement } = props.row
@@ -224,7 +224,7 @@ export const hrColumns = [
 // =====  FOR MANAGER COLUMNS =====
 export const managerColumns = [
   columnHelper.accessor('user.name', {
-    header: () => <CellHeader label="Name" />,
+    header: () => <CellHeader label="Requester" />,
     footer: (info) => info.column.id,
     cell: (props) => {
       const { original: overtimeManagement } = props.row
