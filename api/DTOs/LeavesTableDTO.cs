@@ -6,26 +6,28 @@ namespace api.DTOs
     public class LeavesTableDTO
     {
         public DateTime? Date { get; set; }
-        public int LeaveTypeId { get; set; }
         public bool IsWithPay { get; set; }
         public string? Reason { get; set; }
-        public float NumLeaves { get; set; }
         public string? Status { get; set; }
+        public int LeaveTypeId { get; set; }
+        public float NumLeaves { get; set; }
+        public string? UserName { get; set; }
+        public string? LeaveName { get; set; }
         public bool? IsLeaderApproved { get; set; }
         public bool? IsManagerApproved { get; set; }
-        public string? LeaveName { get; set; }
 
         public LeavesTableDTO(Leave data)
         {
-            Date = data.LeaveDate;
-            LeaveTypeId = data.LeaveTypeId;
-            IsWithPay = data.IsWithPay;
-            NumLeaves = data.Days;
             Reason = data.Reason;
+            Date = data.LeaveDate;
+            NumLeaves = data.Days;
+            UserName = data.User.Name;
+            IsWithPay = data.IsWithPay;
+            LeaveTypeId = data.LeaveTypeId;
+            LeaveName = data.LeaveType.Name;
             IsLeaderApproved = data.IsLeaderApproved;
             IsManagerApproved = data.IsManagerApproved;
             Status = RStatus(data.IsLeaderApproved, data.IsManagerApproved);
-            LeaveName = data.LeaveType.Name;
         }
 
         public static string? RStatus(bool? isLeaderApproved, bool? isManagerApproved)

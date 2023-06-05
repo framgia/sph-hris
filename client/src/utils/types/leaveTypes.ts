@@ -48,6 +48,7 @@ export type LeaveTable = {
   reason: string
   numLeaves: number
   status: string
+  userName: string
 }
 export type Breakdown = {
   sickLeave: number

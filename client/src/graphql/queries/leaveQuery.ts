@@ -83,6 +83,7 @@ export const GET_MY_LEAVES_QUERY = gql`
         reason
         numLeaves
         status
+        userName
       }
       breakdown {
         sickLeave
@@ -171,6 +172,7 @@ export const GET_YEARLY_ALL_LEAVES_QUERY = gql`
         reason
         numLeaves
         status
+        userName
       }
       breakdown {
         sickLeave

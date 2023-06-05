@@ -2,13 +2,16 @@ import moment from 'moment'
 import React, { FC } from 'react'
 import classNames from 'classnames'
 import { motion } from 'framer-motion'
+import { useRouter } from 'next/router'
 import { Table } from '@tanstack/react-table'
 import { Disclosure } from '@headlessui/react'
 import { Calendar, ChevronRight } from 'react-feather'
 
 import { getLeaveType } from '~/utils/getLeaveType'
 import { LeaveTable } from '~/utils/types/leaveTypes'
+import { Pathname } from '~/utils/constants/pathnames'
 import { variants } from '~/utils/constants/animationVariants'
+import WorkStatusChip from '~/components/atoms/WorkStatusChip'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import DisclosureTransition from '~/components/templates/DisclosureTransition'
 
@@ -21,6 +24,10 @@ type Props = {
 }
 
 const MobileDisclose: FC<Props> = ({ table, query: { isLoading, isError } }): JSX.Element => {
+  const router = useRouter()
+  const { pathname } = router
+  const isYearlyPage = pathname === Pathname.YearlySummaryLeavesPath
+
   return (
     <>
       {isError === null || !isError ? (
@@ -79,6 +86,17 @@ const MobileDisclose: FC<Props> = ({ table, query: { isLoading, isError } }): JS
                                 'transition duration-150 ease-in-out'
                               )}
                             >
+                              <li className="px-4 py-2 font-normal hover:bg-slate-50">
+                                Status:{' '}
+                                <span className="font-medium">
+                                  {<WorkStatusChip label={row.original.status} />}
+                                </span>
+                              </li>
+                              {isYearlyPage && (
+                                <li className="px-4 py-2 font-normal hover:bg-slate-50">
+                                  Name: <span className="font-medium">{row.original.userName}</span>
+                                </li>
+                              )}
                               <li className="px-4 py-2 font-normal hover:bg-slate-50">
                                 Type of leave:{' '}
                                 <span className="font-medium">
