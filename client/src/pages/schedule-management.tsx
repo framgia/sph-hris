@@ -2,10 +2,12 @@ import { NextPage } from 'next'
 import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import isEmpty from 'lodash/isEmpty'
-import { Users } from 'react-feather'
-import { useRouter } from 'next/router'
+import ReactSelect from 'react-select'
 import { toast } from 'react-hot-toast'
+import { useRouter } from 'next/router'
+import makeAnimated from 'react-select/animated'
 import React, { useEffect, useState } from 'react'
+import { CheckSquare, Users } from 'react-feather'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
@@ -19,29 +21,44 @@ import { ScheduleSchema } from '~/utils/validation'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import Button from '~/components/atoms/Buttons/Button'
 import FadeInOut from '~/components/templates/FadeInOut'
-import { ScheduleFormData } from '~/utils/types/formValues'
 import DayButton from '~/components/atoms/Buttons/DayButton'
 import useEmployeeSchedule from '~/hooks/useEmployeeSchedule'
+import { customStyles } from '~/utils/customReactSelectStyles'
+import { shiftSchedule } from '~/utils/constants/shiftSchedule'
+import ClearButton from '~/components/atoms/Buttons/ClearButton'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
+import ApplyToAllModal from '~/components/molecules/ApplyToAllModal'
 import ScheduleManagementLayout from '~/components/templates/ScheduleManagementLayout'
 import ViewScheduleMembersModal from '~/components/molecules/ViewScheduleMembersModal'
+import { ReactSelectOption, ScheduleFormData, TimeEntryWithBreak } from '~/utils/types/formValues'
+
+const animatedComponents = makeAnimated()
 
 const ScheduleManagement: NextPage = (): JSX.Element => {
   const router = useRouter()
   const { id } = router.query
+
+  const [errorMessage, setErrorMessage] = useState<string>('')
+  const [selectedShift, setSelectedShift] = useState<ReactSelectOption>()
+  const [isOpenApplyToAll, setIsOpenApplyToAll] = useState<boolean>(false)
+  const [isOpenViewScheduleMember, setIsOpenViewScheduleMember] = useState<boolean>(false)
+
+  // USE EMPLOYEE SCHEDULE HOOKS
   const {
     getEmployeeScheduleQuery,
-    handleCreateEmployeeScheduleMutation,
-    handleEditEmployeeScheduleMutation
+    handleEditEmployeeScheduleMutation,
+    handleCreateEmployeeScheduleMutation
   } = useEmployeeSchedule()
-  const [isOpenViewScheduleMember, setIsOpenViewScheduleMember] = useState<boolean>(false)
   const { data, isLoading } = getEmployeeScheduleQuery(Number(id))
   const EmployeeSchedule = data?.employeeScheduleDetails[0]
-  const { handleUserQuery } = useUserQuery()
-  const { data: user } = handleUserQuery()
+
   const createEmployeeScheduleMutation = handleCreateEmployeeScheduleMutation()
   const editEmployeeScheduleMutation = handleEditEmployeeScheduleMutation()
-  const [errorMessage, setErrorMessage] = useState<string>('')
+
+  // USE USER QUERY HOOK
+  const { handleUserQuery } = useUserQuery()
+  const { data: user } = handleUserQuery()
+
   const {
     reset,
     watch,
@@ -162,38 +179,72 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
   const assignDay = (): void => {
     setValue('scheduleName', EmployeeSchedule?.scheduleName as string)
     const dayProperties: any = {
-      Monday: { selected: 'mondaySelected', timeIn: 'monday.timeIn', timeOut: 'monday.timeOut' },
+      Monday: {
+        selected: 'mondaySelected',
+        timeIn: 'monday.timeIn',
+        timeOut: 'monday.timeOut',
+        breakFrom: 'monday.breakFrom',
+        breakTo: 'monday.breakTo'
+      },
       Tuesday: {
         selected: 'tuesdaySelected',
         timeIn: 'tuesday.timeIn',
-        timeOut: 'tuesday.timeOut'
+        timeOut: 'tuesday.timeOut',
+        breakFrom: 'tuesday.breakFrom',
+        breakTo: 'tuesday.breakTo'
       },
       Wednesday: {
         selected: 'wednesdaySelected',
         timeIn: 'wednesday.timeIn',
-        timeOut: 'wednesday.timeOut'
+        timeOut: 'wednesday.timeOut',
+        breakFrom: 'wednesday.breakFrom',
+        breakTo: 'wednesday.breakTo'
       },
       Thursday: {
         selected: 'thursdaySelected',
         timeIn: 'thursday.timeIn',
-        timeOut: 'thursday.timeOut'
+        timeOut: 'thursday.timeOut',
+        breakFrom: 'thursday.breakFrom',
+        breakTo: 'thursday.breakTo'
       },
-      Friday: { selected: 'fridaySelected', timeIn: 'friday.timeIn', timeOut: 'friday.timeOut' },
+      Friday: {
+        selected: 'fridaySelected',
+        timeIn: 'friday.timeIn',
+        timeOut: 'friday.timeOut',
+        breakFrom: 'friday.breakFrom',
+        breakTo: 'friday.breakTo'
+      },
       Saturday: {
         selected: 'saturdaySelected',
         timeIn: 'saturday.timeIn',
-        timeOut: 'saturday.timeOut'
+        timeOut: 'saturday.timeOut',
+        breakFrom: 'saturday.breakFrom',
+        breakTo: 'saturday.breakTo'
       },
-      Sunday: { selected: 'sundaySelected', timeIn: 'sunday.timeIn', timeOut: 'sunday.timeOut' }
+      Sunday: {
+        selected: 'sundaySelected',
+        timeIn: 'sunday.timeIn',
+        timeOut: 'sunday.timeOut',
+        breakFrom: 'sunday.breakFrom',
+        breakTo: 'sunday.breakTo'
+      }
     }
     if (EmployeeSchedule?.days !== undefined) {
       for (const day of EmployeeSchedule?.days) {
-        const { workingDay, isDaySelected, timeIn, timeOut } = day
+        const { workingDay, isDaySelected, timeIn, timeOut, breakFrom, breakTo } = day
         if (workingDay in dayProperties) {
-          const { selected, timeIn: dayTimeIn, timeOut: dayTimeOut } = dayProperties[workingDay]
+          const {
+            selected,
+            timeIn: dayTimeIn,
+            timeOut: dayTimeOut,
+            breakFrom: dayBreakFrom,
+            breakTo: dayBreakTo
+          } = dayProperties[workingDay]
           setValue(selected, isDaySelected)
           setValue(dayTimeIn, timeIn)
           setValue(dayTimeOut, timeOut)
+          setValue(dayBreakFrom, breakFrom)
+          setValue(dayBreakTo, breakTo)
         }
       }
     }
@@ -210,11 +261,20 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
     }
   }, [isButtonSelected])
 
+  const empty = {
+    timeIn: '',
+    timeOut: '',
+    breakFrom: '',
+    breakTo: ''
+  }
+
   const handleReset = (): void => {
+    setErrorMessage('')
+    setSelectedShift(shiftSchedule[0])
+
     if (!isEmpty(id)) {
       assignDay()
     } else {
-      setErrorMessage('')
       reset({
         scheduleName: '',
         mondaySelected: false,
@@ -224,40 +284,142 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
         fridaySelected: false,
         saturdaySelected: false,
         sundaySelected: false,
-        monday: {
-          timeIn: '',
-          timeOut: ''
-        },
-        tuesday: {
-          timeIn: '',
-          timeOut: ''
-        },
-        wednesday: {
-          timeIn: '',
-          timeOut: ''
-        },
-        thursday: {
-          timeIn: '',
-          timeOut: ''
-        },
-        friday: {
-          timeIn: '',
-          timeOut: ''
-        },
-        saturday: {
-          timeIn: '',
-          timeOut: ''
-        },
-        sunday: {
-          timeIn: '',
-          timeOut: ''
-        }
+        monday: empty,
+        tuesday: empty,
+        wednesday: empty,
+        thursday: empty,
+        friday: empty,
+        saturday: empty,
+        sunday: empty
       })
     }
   }
 
   const handleIsOpenViewScheduleMember = (): void =>
     setIsOpenViewScheduleMember(!isOpenViewScheduleMember)
+
+  useEffect(() => {
+    if (selectedShift !== undefined) {
+      getScheduleShiftData(selectedShift)
+    }
+  }, [selectedShift])
+
+  const getScheduleShiftData = (selectedShift: ReactSelectOption): void => {
+    const shiftSelect = {
+      mondaySelected: true,
+      tuesdaySelected: true,
+      wednesdaySelected: true,
+      thursdaySelected: true,
+      fridaySelected: true,
+      saturdaySelected: false,
+      sundaySelected: false
+    }
+    const morningShiftData = {
+      ...shiftSelect,
+      monday: {
+        timeIn: '09:30',
+        timeOut: '06:30',
+        breakFrom: '12:00',
+        breakTo: '13:00'
+      },
+      tuesday: {
+        timeIn: '09:30',
+        timeOut: '06:30',
+        breakFrom: '12:00',
+        breakTo: '03:00'
+      },
+      wednesday: {
+        timeIn: '09:30',
+        timeOut: '06:30',
+        breakFrom: '12:00',
+        breakTo: '03:00'
+      },
+      thursday: {
+        timeIn: '09:30',
+        timeOut: '06:30',
+        breakFrom: '12:00',
+        breakTo: '03:00'
+      },
+      friday: {
+        timeIn: '09:30',
+        timeOut: '06:30',
+        breakFrom: '12:00',
+        breakTo: '03:00'
+      }
+    }
+    const afternoonShiftData = {
+      ...shiftSelect,
+      monday: {
+        timeIn: '01:00',
+        timeOut: '10:00',
+        breakFrom: '05:00',
+        breakTo: '01:00'
+      },
+      tuesday: {
+        timeIn: '01:00',
+        timeOut: '10:00',
+        breakFrom: '05:00',
+        breakTo: '06:00'
+      },
+      wednesday: {
+        timeIn: '06:00',
+        timeOut: '10:00',
+        breakFrom: '05:00',
+        breakTo: '06:00'
+      },
+      thursday: {
+        timeIn: '06:00',
+        timeOut: '10:00',
+        breakFrom: '05:00',
+        breakTo: '06:00'
+      },
+      friday: {
+        timeIn: '06:00',
+        timeOut: '10:00',
+        breakFrom: '05:00',
+        breakTo: '06:00'
+      }
+    }
+    switch (selectedShift.value) {
+      case '1':
+        handleReset()
+        break
+      case '2':
+        reset(morningShiftData)
+        break
+      case '3':
+        reset(afternoonShiftData)
+        break
+      default:
+        handleReset()
+        break
+    }
+  }
+
+  const handleOpenApplyToAllToggle = (): void => setIsOpenApplyToAll(!isOpenApplyToAll)
+
+  const handleShiftChange = (selectedOption: ReactSelectOption): void =>
+    setSelectedShift(selectedOption)
+
+  const handleApplyToAll: SubmitHandler<TimeEntryWithBreak> = (dayData): void => {
+    reset({
+      mondaySelected: true,
+      tuesdaySelected: true,
+      wednesdaySelected: true,
+      thursdaySelected: true,
+      fridaySelected: true,
+      saturdaySelected: true,
+      sundaySelected: true,
+      monday: dayData,
+      tuesday: dayData,
+      wednesday: dayData,
+      thursday: dayData,
+      friday: dayData,
+      saturday: dayData,
+      sunday: dayData
+    })
+    setIsOpenApplyToAll(false)
+  }
 
   if (process.env.NODE_ENV === 'production' && user?.userById.role.name !== Roles.HR_ADMIN) {
     return <NotFound />
@@ -299,6 +461,46 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
               </>
             )}
           </header>
+          <header className="flex items-center justify-between px-4 pt-6 sm:px-8">
+            <section className="space-y-1 ">
+              <h3 className="text-xs font-medium">Schedule Shift:</h3>
+              <div className="w-full sm:w-56">
+                <ReactSelect
+                  className="text-xs"
+                  value={selectedShift}
+                  styles={customStyles}
+                  options={shiftSchedule}
+                  closeMenuOnSelect={true}
+                  isDisabled={isSubmitting}
+                  instanceId="scheduleShift"
+                  defaultValue={shiftSchedule[0]}
+                  components={animatedComponents}
+                  onChange={(option) => handleShiftChange(option as ReactSelectOption)}
+                />
+              </div>
+            </section>
+            <section className="mt-2">
+              <ButtonAction
+                variant="secondary"
+                onClick={handleOpenApplyToAllToggle}
+                className="inline-flex items-center space-x-1.5 px-1.5 py-1 text-xs"
+              >
+                <CheckSquare className="h-4 w-4" />
+                <span>Apply to All</span>
+              </ButtonAction>
+
+              {/* Show the Apply To All Modal */}
+              <ApplyToAllModal
+                {...{
+                  isOpen: isOpenApplyToAll,
+                  closeModal: handleOpenApplyToAllToggle,
+                  actions: {
+                    handleApplyToAll
+                  }
+                }}
+              />
+            </section>
+          </header>
           <form
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSubmit={handleSubmit(handleSaveSchedule)}
@@ -333,12 +535,12 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
               </section>
 
               {/* Days of Week Buttons */}
-              <section className="lg:-mx-2">
+              <section className="py-4">
                 <label
                   htmlFor="schedule-name"
-                  className="flex flex-1 flex-col space-y-2 overflow-x-auto lg:flex-row lg:items-center lg:space-x-2 lg:space-y-0"
+                  className="flex flex-1 flex-col items-center space-y-2 overflow-x-auto"
                 >
-                  <span className="shrink-0">Days of the week</span>
+                  <span className="shrink-0 font-medium">Days of the week</span>
                   <div className="flex flex-wrap items-center gap-2 rounded-lg">
                     <DayButton
                       {...{
@@ -346,7 +548,10 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
                         title: 'Monday',
                         disabled: isSubmitting,
                         selected: getValues('mondaySelected'),
-                        onClick: () => setValue('mondaySelected', !watch('mondaySelected'))
+                        onClick: () => {
+                          setValue('monday', empty)
+                          setValue('mondaySelected', !watch('mondaySelected'))
+                        }
                       }}
                     />
                     <DayButton
@@ -355,7 +560,10 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
                         title: 'Tuesday',
                         disabled: isSubmitting,
                         selected: getValues('tuesdaySelected'),
-                        onClick: () => setValue('tuesdaySelected', !watch('tuesdaySelected'))
+                        onClick: () => {
+                          setValue('tuesday', empty)
+                          setValue('tuesdaySelected', !watch('tuesdaySelected'))
+                        }
                       }}
                     />
                     <DayButton
@@ -364,7 +572,10 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
                         title: 'Wednesday',
                         disabled: isSubmitting,
                         selected: getValues('wednesdaySelected'),
-                        onClick: () => setValue('wednesdaySelected', !watch('wednesdaySelected'))
+                        onClick: () => {
+                          setValue('wednesday', empty)
+                          setValue('wednesdaySelected', !watch('wednesdaySelected'))
+                        }
                       }}
                     />
                     <DayButton
@@ -373,7 +584,10 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
                         title: 'Thursday',
                         disabled: isSubmitting,
                         selected: getValues('thursdaySelected'),
-                        onClick: () => setValue('thursdaySelected', !watch('thursdaySelected'))
+                        onClick: () => {
+                          setValue('thursday', empty)
+                          setValue('thursdaySelected', !watch('thursdaySelected'))
+                        }
                       }}
                     />
                     <DayButton
@@ -382,7 +596,10 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
                         title: 'Friday',
                         disabled: isSubmitting,
                         selected: getValues('fridaySelected'),
-                        onClick: () => setValue('fridaySelected', !watch('fridaySelected'))
+                        onClick: () => {
+                          setValue('friday', empty)
+                          setValue('fridaySelected', !watch('fridaySelected'))
+                        }
                       }}
                     />
                     <DayButton
@@ -391,7 +608,10 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
                         title: 'Saturday',
                         disabled: isSubmitting,
                         selected: getValues('saturdaySelected'),
-                        onClick: () => setValue('saturdaySelected', !watch('saturdaySelected'))
+                        onClick: () => {
+                          setValue('saturday', empty)
+                          setValue('saturdaySelected', !watch('saturdaySelected'))
+                        }
                       }}
                     />
                     <DayButton
@@ -400,7 +620,10 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
                         title: 'Sunday',
                         disabled: isSubmitting,
                         selected: getValues('sundaySelected'),
-                        onClick: () => setValue('sundaySelected', !watch('sundaySelected'))
+                        onClick: () => {
+                          setValue('sunday', empty)
+                          setValue('sundaySelected', !watch('sundaySelected'))
+                        }
                       }}
                     />
                   </div>
@@ -408,46 +631,97 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
               </section>
 
               {/* Monday Field */}
-              <section className="lg:mx-12">
-                <label
-                  htmlFor="schedule-name"
-                  className={classNames(
-                    'flex flex-col space-y-2 lg:flex-row lg:items-center lg:space-y-0 lg:space-x-2',
-                    !isEmpty(errors.monday?.timeIn) || !isEmpty(errors.monday?.timeOut)
-                      ? 'mb-5'
-                      : ''
-                  )}
-                >
-                  <span className="shrink-0">Monday</span>
+              <section className="py-4">
+                <label htmlFor="monday" className={classNames('flex flex-col space-y-2')}>
+                  <span className="shrink-0 font-medium">Monday</span>
                   {watch('mondaySelected') ? (
-                    <div className="relative inline-flex items-center space-x-2">
-                      <div>
-                        <Input
-                          type="time"
-                          rounded="lg"
-                          color="warning"
-                          disabled={isSubmitting}
-                          {...register('monday.timeIn')}
-                          className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                        />
-                        {!isEmpty(errors.monday?.timeIn) && (
-                          <p className="error absolute">{errors.monday?.timeIn.message}</p>
+                    <div className="flex flex-col gap-y-2 gap-x-2 lg:flex-row lg:items-start">
+                      <div
+                        className={classNames(
+                          'flex items-center gap-x-2',
+                          !isEmpty(errors.monday?.timeIn) || !isEmpty(errors.monday?.timeOut)
+                            ? 'mb-5'
+                            : ''
                         )}
+                      >
+                        <div className="relative">
+                          <Input
+                            type="time"
+                            rounded="lg"
+                            color="warning"
+                            disabled={isSubmitting}
+                            {...register('monday.timeIn')}
+                            iserror={!isEmpty(errors.monday?.timeIn)}
+                            className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                          />
+                          {!isEmpty(errors.monday?.timeIn) && (
+                            <p className="error absolute">{errors.monday?.timeIn.message}</p>
+                          )}
+                        </div>
+                        <span>to</span>
+                        <div className="relative">
+                          <Input
+                            type="time"
+                            rounded="lg"
+                            color="warning"
+                            disabled={isSubmitting}
+                            {...register('monday.timeOut')}
+                            iserror={!isEmpty(errors.monday?.timeOut)}
+                            className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                          />
+                          {!isEmpty(errors.monday?.timeOut) && (
+                            <p className="error absolute">{errors.monday?.timeOut.message}</p>
+                          )}
+                        </div>
                       </div>
-                      <span>to</span>
-                      <div>
-                        <Input
-                          type="time"
-                          rounded="lg"
-                          color="warning"
-                          disabled={isSubmitting}
-                          {...register('monday.timeOut')}
-                          className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                        />
-                        {!isEmpty(errors.monday?.timeOut) && (
-                          <p className="error absolute">{errors.monday?.timeOut.message}</p>
+                      <div
+                        className={classNames(
+                          'flex flex-col gap-y-2 gap-x-2 lg:flex-row lg:items-center',
+                          !isEmpty(errors.monday?.breakFrom) || !isEmpty(errors.monday?.breakTo)
+                            ? 'mb-5'
+                            : ''
                         )}
+                      >
+                        <span className="font-medium">Break</span>
+                        <div className="inline-flex flex-row items-center gap-x-2">
+                          <div className="relative">
+                            <Input
+                              type="time"
+                              rounded="lg"
+                              color="warning"
+                              disabled={isSubmitting}
+                              {...register('monday.breakFrom')}
+                              iserror={!isEmpty(errors.monday?.breakFrom)}
+                              className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                            />
+                            {!isEmpty(errors.monday?.breakFrom) && (
+                              <p className="error absolute">{errors.monday?.breakFrom.message}</p>
+                            )}
+                          </div>
+                          <span>to</span>
+                          <div className="relative">
+                            <Input
+                              type="time"
+                              rounded="lg"
+                              color="warning"
+                              disabled={isSubmitting}
+                              {...register('monday.breakTo')}
+                              iserror={!isEmpty(errors.monday?.breakTo)}
+                              className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                            />
+                            {!isEmpty(errors.monday?.breakTo) && (
+                              <p className="error absolute">{errors.monday?.breakTo.message}</p>
+                            )}
+                          </div>
+                        </div>
                       </div>
+                      {/* To Clear Field */}
+                      <ClearButton
+                        {...{
+                          day: 'mondayClear',
+                          setValue
+                        }}
+                      />
                     </div>
                   ) : (
                     <span className="italic text-slate-400">Rest day</span>
@@ -456,46 +730,97 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
               </section>
 
               {/* Tuesday Field */}
-              <section className="lg:mx-12">
-                <label
-                  htmlFor="schedule-name"
-                  className={classNames(
-                    'flex flex-col space-y-2 lg:flex-row lg:items-center lg:space-y-0 lg:space-x-2',
-                    !isEmpty(errors.tuesday?.timeIn) || !isEmpty(errors.tuesday?.timeOut)
-                      ? 'mb-5'
-                      : ''
-                  )}
-                >
-                  <span className="shrink-0">Tuesday</span>
+              <section className="py-4">
+                <label htmlFor="tuesday" className={classNames('flex flex-col space-y-2')}>
+                  <span className="shrink-0 font-medium">Tuesday</span>
                   {watch('tuesdaySelected') ? (
-                    <div className="relative inline-flex items-center space-x-2">
-                      <div>
-                        <Input
-                          type="time"
-                          rounded="lg"
-                          color="warning"
-                          disabled={isSubmitting}
-                          {...register('tuesday.timeIn')}
-                          className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                        />
-                        {!isEmpty(errors.tuesday?.timeIn) && (
-                          <p className="error absolute">{errors.tuesday?.timeIn.message}</p>
+                    <div className="flex flex-col gap-y-2 gap-x-2 lg:flex-row lg:items-start">
+                      <div
+                        className={classNames(
+                          'flex items-center gap-x-2',
+                          !isEmpty(errors.tuesday?.timeIn) || !isEmpty(errors.tuesday?.timeOut)
+                            ? 'mb-5'
+                            : ''
                         )}
+                      >
+                        <div className="relative">
+                          <Input
+                            type="time"
+                            rounded="lg"
+                            color="warning"
+                            disabled={isSubmitting}
+                            {...register('tuesday.timeIn')}
+                            iserror={!isEmpty(errors.tuesday?.timeIn)}
+                            className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                          />
+                          {!isEmpty(errors.tuesday?.timeIn) && (
+                            <p className="error absolute">{errors.tuesday?.timeIn.message}</p>
+                          )}
+                        </div>
+                        <span>to</span>
+                        <div className="relative">
+                          <Input
+                            type="time"
+                            rounded="lg"
+                            color="warning"
+                            disabled={isSubmitting}
+                            {...register('tuesday.timeOut')}
+                            iserror={!isEmpty(errors.tuesday?.timeOut)}
+                            className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                          />
+                          {!isEmpty(errors.tuesday?.timeOut) && (
+                            <p className="error absolute">{errors.tuesday?.timeOut.message}</p>
+                          )}
+                        </div>
                       </div>
-                      <span>to</span>
-                      <div>
-                        <Input
-                          type="time"
-                          rounded="lg"
-                          color="warning"
-                          disabled={isSubmitting}
-                          {...register('tuesday.timeOut')}
-                          className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                        />
-                        {!isEmpty(errors.tuesday?.timeOut) && (
-                          <p className="error absolute">{errors.tuesday?.timeOut.message}</p>
+                      <div
+                        className={classNames(
+                          'flex flex-col gap-y-2 gap-x-2 lg:flex-row lg:items-center',
+                          !isEmpty(errors.tuesday?.breakFrom) || !isEmpty(errors.tuesday?.breakTo)
+                            ? 'mb-5'
+                            : ''
                         )}
+                      >
+                        <span className="font-medium">Break</span>
+                        <div className="inline-flex flex-row items-center gap-x-2">
+                          <div className="relative">
+                            <Input
+                              type="time"
+                              rounded="lg"
+                              color="warning"
+                              disabled={isSubmitting}
+                              {...register('tuesday.breakFrom')}
+                              iserror={!isEmpty(errors.tuesday?.breakFrom)}
+                              className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                            />
+                            {!isEmpty(errors.tuesday?.breakFrom) && (
+                              <p className="error absolute">{errors.tuesday?.breakFrom.message}</p>
+                            )}
+                          </div>
+                          <span>to</span>
+                          <div className="relative">
+                            <Input
+                              type="time"
+                              rounded="lg"
+                              color="warning"
+                              disabled={isSubmitting}
+                              {...register('tuesday.breakTo')}
+                              iserror={!isEmpty(errors.tuesday?.breakTo)}
+                              className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                            />
+                            {!isEmpty(errors.tuesday?.breakTo) && (
+                              <p className="error absolute">{errors.tuesday?.breakTo.message}</p>
+                            )}
+                          </div>
+                        </div>
                       </div>
+                      {/* To Clear Field */}
+                      <ClearButton
+                        {...{
+                          day: 'tuesdayClear',
+                          setValue
+                        }}
+                      />
                     </div>
                   ) : (
                     <span className="italic text-slate-400">Rest day</span>
@@ -504,46 +829,100 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
               </section>
 
               {/* Wednesday Field */}
-              <section className="lg:mx-7">
-                <label
-                  htmlFor="schedule-name"
-                  className={classNames(
-                    'flex flex-col space-y-2 lg:flex-row lg:items-center lg:space-y-0 lg:space-x-2',
-                    !isEmpty(errors.wednesday?.timeIn) || !isEmpty(errors.wednesday?.timeOut)
-                      ? 'mb-5'
-                      : ''
-                  )}
-                >
-                  <span className="shrink-0">Wednesday</span>
+              <section className="py-4">
+                <label htmlFor="wednesday" className={classNames('flex flex-col space-y-2')}>
+                  <span className="shrink-0 font-medium">Wednesday</span>
                   {watch('wednesdaySelected') ? (
-                    <div className="relative inline-flex items-center space-x-2">
-                      <div>
-                        <Input
-                          type="time"
-                          rounded="lg"
-                          color="warning"
-                          disabled={isSubmitting}
-                          {...register('wednesday.timeIn')}
-                          className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                        />
-                        {!isEmpty(errors.wednesday?.timeIn) && (
-                          <p className="error absolute">{errors.wednesday?.timeIn.message}</p>
+                    <div className="flex flex-col gap-y-2 gap-x-2 lg:flex-row lg:items-start">
+                      <div
+                        className={classNames(
+                          'flex items-center gap-x-2',
+                          !isEmpty(errors.wednesday?.timeIn) || !isEmpty(errors.wednesday?.timeOut)
+                            ? 'mb-5'
+                            : ''
                         )}
+                      >
+                        <div className="relative">
+                          <Input
+                            type="time"
+                            rounded="lg"
+                            color="warning"
+                            disabled={isSubmitting}
+                            {...register('wednesday.timeIn')}
+                            iserror={!isEmpty(errors.wednesday?.timeIn)}
+                            className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                          />
+                          {!isEmpty(errors.wednesday?.timeIn) && (
+                            <p className="error absolute">{errors.wednesday?.timeIn.message}</p>
+                          )}
+                        </div>
+                        <span>to</span>
+                        <div className="relative">
+                          <Input
+                            type="time"
+                            rounded="lg"
+                            color="warning"
+                            disabled={isSubmitting}
+                            {...register('wednesday.timeOut')}
+                            iserror={!isEmpty(errors.wednesday?.timeOut)}
+                            className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                          />
+                          {!isEmpty(errors.wednesday?.timeOut) && (
+                            <p className="error absolute">{errors.wednesday?.timeOut.message}</p>
+                          )}
+                        </div>
                       </div>
-                      <span>to</span>
-                      <div>
-                        <Input
-                          type="time"
-                          rounded="lg"
-                          color="warning"
-                          disabled={isSubmitting}
-                          {...register('wednesday.timeOut')}
-                          className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                        />
-                        {!isEmpty(errors.wednesday?.timeOut) && (
-                          <p className="error absolute">{errors.wednesday?.timeOut.message}</p>
+                      <div
+                        className={classNames(
+                          'flex flex-col gap-y-2 gap-x-2 lg:flex-row lg:items-center',
+                          !isEmpty(errors.wednesday?.breakFrom) ||
+                            !isEmpty(errors.wednesday?.breakTo)
+                            ? 'mb-5'
+                            : ''
                         )}
+                      >
+                        <span className="font-medium">Break</span>
+                        <div className="inline-flex flex-row items-center gap-x-2">
+                          <div className="relative">
+                            <Input
+                              type="time"
+                              rounded="lg"
+                              color="warning"
+                              disabled={isSubmitting}
+                              {...register('wednesday.breakFrom')}
+                              iserror={!isEmpty(errors.wednesday?.breakFrom)}
+                              className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                            />
+                            {!isEmpty(errors.wednesday?.breakFrom) && (
+                              <p className="error absolute">
+                                {errors.wednesday?.breakFrom.message}
+                              </p>
+                            )}
+                          </div>
+                          <span>to</span>
+                          <div className="relative">
+                            <Input
+                              type="time"
+                              rounded="lg"
+                              color="warning"
+                              disabled={isSubmitting}
+                              {...register('wednesday.breakTo')}
+                              iserror={!isEmpty(errors.wednesday?.breakTo)}
+                              className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                            />
+                            {!isEmpty(errors.wednesday?.breakTo) && (
+                              <p className="error absolute">{errors.wednesday?.breakTo.message}</p>
+                            )}
+                          </div>
+                        </div>
                       </div>
+                      {/* To Clear Field */}
+                      <ClearButton
+                        {...{
+                          day: 'wednesdayClear',
+                          setValue
+                        }}
+                      />
                     </div>
                   ) : (
                     <span className="italic text-slate-400">Rest day</span>
@@ -552,46 +931,97 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
               </section>
 
               {/* Thursday Field */}
-              <section className="lg:ml-11">
-                <label
-                  htmlFor="schedule-name"
-                  className={classNames(
-                    'flex flex-col space-y-2 lg:flex-row lg:items-center lg:space-y-0 lg:space-x-2',
-                    !isEmpty(errors.thursday?.timeIn) || !isEmpty(errors.thursday?.timeOut)
-                      ? 'mb-5'
-                      : ''
-                  )}
-                >
-                  <span className="shrink-0">Thrusday</span>
+              <section className="py-4">
+                <label htmlFor="thursday" className={classNames('flex flex-col space-y-2')}>
+                  <span className="shrink-0 font-medium">Thursday</span>
                   {watch('thursdaySelected') ? (
-                    <div className="relative inline-flex items-center space-x-2">
-                      <div>
-                        <Input
-                          type="time"
-                          rounded="lg"
-                          color="warning"
-                          disabled={isSubmitting}
-                          {...register('thursday.timeIn')}
-                          className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                        />
-                        {!isEmpty(errors.thursday?.timeIn) && (
-                          <p className="error absolute">{errors.thursday?.timeIn.message}</p>
+                    <div className="flex flex-col gap-y-2 gap-x-2 lg:flex-row lg:items-start">
+                      <div
+                        className={classNames(
+                          'flex items-center gap-x-2',
+                          !isEmpty(errors.thursday?.timeIn) || !isEmpty(errors.thursday?.timeOut)
+                            ? 'mb-5'
+                            : ''
                         )}
+                      >
+                        <div className="relative">
+                          <Input
+                            type="time"
+                            rounded="lg"
+                            color="warning"
+                            disabled={isSubmitting}
+                            {...register('thursday.timeIn')}
+                            iserror={!isEmpty(errors.thursday?.timeIn)}
+                            className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                          />
+                          {!isEmpty(errors.thursday?.timeIn) && (
+                            <p className="error absolute">{errors.thursday?.timeIn.message}</p>
+                          )}
+                        </div>
+                        <span>to</span>
+                        <div className="relative">
+                          <Input
+                            type="time"
+                            rounded="lg"
+                            color="warning"
+                            disabled={isSubmitting}
+                            {...register('thursday.timeOut')}
+                            iserror={!isEmpty(errors.thursday?.timeOut)}
+                            className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                          />
+                          {!isEmpty(errors.thursday?.timeOut) && (
+                            <p className="error absolute">{errors.thursday?.timeOut.message}</p>
+                          )}
+                        </div>
                       </div>
-                      <span>to</span>
-                      <div>
-                        <Input
-                          type="time"
-                          rounded="lg"
-                          color="warning"
-                          disabled={isSubmitting}
-                          {...register('thursday.timeOut')}
-                          className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                        />
-                        {!isEmpty(errors.thursday?.timeOut) && (
-                          <p className="error absolute">{errors.thursday?.timeOut.message}</p>
+                      <div
+                        className={classNames(
+                          'flex flex-col gap-y-2 gap-x-2 lg:flex-row lg:items-center',
+                          !isEmpty(errors.thursday?.breakFrom) || !isEmpty(errors.thursday?.breakTo)
+                            ? 'mb-5'
+                            : ''
                         )}
+                      >
+                        <span className="font-medium">Break</span>
+                        <div className="inline-flex flex-row items-center gap-x-2">
+                          <div className="relative">
+                            <Input
+                              type="time"
+                              rounded="lg"
+                              color="warning"
+                              disabled={isSubmitting}
+                              {...register('thursday.breakFrom')}
+                              iserror={!isEmpty(errors.thursday?.breakFrom)}
+                              className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                            />
+                            {!isEmpty(errors.thursday?.breakFrom) && (
+                              <p className="error absolute">{errors.thursday?.breakFrom.message}</p>
+                            )}
+                          </div>
+                          <span>to</span>
+                          <div className="relative">
+                            <Input
+                              type="time"
+                              rounded="lg"
+                              color="warning"
+                              disabled={isSubmitting}
+                              {...register('thursday.breakTo')}
+                              iserror={!isEmpty(errors.thursday?.breakTo)}
+                              className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                            />
+                            {!isEmpty(errors.thursday?.breakTo) && (
+                              <p className="error absolute">{errors.thursday?.breakTo.message}</p>
+                            )}
+                          </div>
+                        </div>
                       </div>
+                      {/* To Clear Field */}
+                      <ClearButton
+                        {...{
+                          day: 'thursdayClear',
+                          setValue
+                        }}
+                      />
                     </div>
                   ) : (
                     <span className="italic text-slate-400">Rest day</span>
@@ -600,46 +1030,97 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
               </section>
 
               {/* Friday Field */}
-              <section className="lg:ml-[65px]">
-                <label
-                  htmlFor="schedule-name"
-                  className={classNames(
-                    'flex flex-col space-y-2 lg:flex-row lg:items-center lg:space-y-0 lg:space-x-2',
-                    !isEmpty(errors.friday?.timeIn) || !isEmpty(errors.friday?.timeOut)
-                      ? 'mb-5'
-                      : ''
-                  )}
-                >
-                  <span className="shrink-0">Friday</span>
+              <section className="py-4">
+                <label htmlFor="friday" className={classNames('flex flex-col space-y-2')}>
+                  <span className="shrink-0 font-medium">Friday</span>
                   {watch('fridaySelected') ? (
-                    <div className="relative inline-flex items-center space-x-2">
-                      <div>
-                        <Input
-                          type="time"
-                          rounded="lg"
-                          color="warning"
-                          disabled={isSubmitting}
-                          {...register('friday.timeIn')}
-                          className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                        />
-                        {!isEmpty(errors.friday?.timeIn) && (
-                          <p className="error absolute">{errors.friday?.timeIn.message}</p>
+                    <div className="flex flex-col gap-y-2 gap-x-2 lg:flex-row lg:items-start">
+                      <div
+                        className={classNames(
+                          'flex items-center gap-x-2',
+                          !isEmpty(errors.friday?.timeIn) || !isEmpty(errors.friday?.timeOut)
+                            ? 'mb-5'
+                            : ''
                         )}
+                      >
+                        <div className="relative">
+                          <Input
+                            type="time"
+                            rounded="lg"
+                            color="warning"
+                            disabled={isSubmitting}
+                            {...register('friday.timeIn')}
+                            iserror={!isEmpty(errors.friday?.timeIn)}
+                            className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                          />
+                          {!isEmpty(errors.friday?.timeIn) && (
+                            <p className="error absolute">{errors.friday?.timeIn.message}</p>
+                          )}
+                        </div>
+                        <span>to</span>
+                        <div className="relative">
+                          <Input
+                            type="time"
+                            rounded="lg"
+                            color="warning"
+                            disabled={isSubmitting}
+                            {...register('friday.timeOut')}
+                            iserror={!isEmpty(errors.friday?.timeOut)}
+                            className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                          />
+                          {!isEmpty(errors.friday?.timeOut) && (
+                            <p className="error absolute">{errors.friday?.timeOut.message}</p>
+                          )}
+                        </div>
                       </div>
-                      <span>to</span>
-                      <div>
-                        <Input
-                          type="time"
-                          rounded="lg"
-                          color="warning"
-                          disabled={isSubmitting}
-                          {...register('friday.timeOut')}
-                          className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                        />
-                        {!isEmpty(errors.friday?.timeOut) && (
-                          <p className="error absolute">{errors.friday?.timeOut.message}</p>
+                      <div
+                        className={classNames(
+                          'flex flex-col gap-y-2 gap-x-2 lg:flex-row lg:items-center',
+                          !isEmpty(errors.friday?.breakFrom) || !isEmpty(errors.friday?.breakTo)
+                            ? 'mb-5'
+                            : ''
                         )}
+                      >
+                        <span className="font-medium">Break</span>
+                        <div className="inline-flex flex-row items-center gap-x-2">
+                          <div className="relative">
+                            <Input
+                              type="time"
+                              rounded="lg"
+                              color="warning"
+                              disabled={isSubmitting}
+                              {...register('friday.breakFrom')}
+                              iserror={!isEmpty(errors.friday?.breakFrom)}
+                              className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                            />
+                            {!isEmpty(errors.friday?.breakFrom) && (
+                              <p className="error absolute">{errors.friday?.breakFrom.message}</p>
+                            )}
+                          </div>
+                          <span>to</span>
+                          <div className="relative">
+                            <Input
+                              type="time"
+                              rounded="lg"
+                              color="warning"
+                              disabled={isSubmitting}
+                              {...register('friday.breakTo')}
+                              iserror={!isEmpty(errors.friday?.breakTo)}
+                              className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                            />
+                            {!isEmpty(errors.friday?.breakTo) && (
+                              <p className="error absolute">{errors.friday?.breakTo.message}</p>
+                            )}
+                          </div>
+                        </div>
                       </div>
+                      {/* To Clear Field */}
+                      <ClearButton
+                        {...{
+                          day: 'fridayClear',
+                          setValue
+                        }}
+                      />
                     </div>
                   ) : (
                     <span className="italic text-slate-400">Rest day</span>
@@ -647,47 +1128,98 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
                 </label>
               </section>
 
-              {/* Saturday Field */}
-              <section className="lg:ml-11">
-                <label
-                  htmlFor="schedule-name"
-                  className={classNames(
-                    'flex flex-col space-y-2 lg:flex-row lg:items-center lg:space-y-0 lg:space-x-2',
-                    !isEmpty(errors.saturday?.timeIn) || !isEmpty(errors.saturday?.timeOut)
-                      ? 'mb-5'
-                      : ''
-                  )}
-                >
-                  <span className="shrink-0">Saturday</span>
+              {/* Saturyday Field */}
+              <section className="py-4">
+                <label htmlFor="saturday" className={classNames('flex flex-col space-y-2')}>
+                  <span className="shrink-0 font-medium">Saturday</span>
                   {watch('saturdaySelected') ? (
-                    <div className="relative inline-flex items-center space-x-2">
-                      <div>
-                        <Input
-                          type="time"
-                          rounded="lg"
-                          color="warning"
-                          disabled={isSubmitting}
-                          {...register('saturday.timeIn')}
-                          className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                        />
-                        {!isEmpty(errors.saturday?.timeIn) && (
-                          <p className="error absolute">{errors.saturday?.timeIn.message}</p>
+                    <div className="flex flex-col gap-y-2 gap-x-2 lg:flex-row lg:items-start">
+                      <div
+                        className={classNames(
+                          'flex items-center gap-x-2',
+                          !isEmpty(errors.saturday?.timeIn) || !isEmpty(errors.saturday?.timeOut)
+                            ? 'mb-5'
+                            : ''
                         )}
+                      >
+                        <div className="relative">
+                          <Input
+                            type="time"
+                            rounded="lg"
+                            color="warning"
+                            disabled={isSubmitting}
+                            {...register('saturday.timeIn')}
+                            iserror={!isEmpty(errors.saturday?.timeIn)}
+                            className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                          />
+                          {!isEmpty(errors.saturday?.timeIn) && (
+                            <p className="error absolute">{errors.saturday?.timeIn.message}</p>
+                          )}
+                        </div>
+                        <span>to</span>
+                        <div className="relative">
+                          <Input
+                            type="time"
+                            rounded="lg"
+                            color="warning"
+                            disabled={isSubmitting}
+                            {...register('saturday.timeOut')}
+                            iserror={!isEmpty(errors.saturday?.timeOut)}
+                            className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                          />
+                          {!isEmpty(errors.saturday?.timeOut) && (
+                            <p className="error absolute">{errors.saturday?.timeOut.message}</p>
+                          )}
+                        </div>
                       </div>
-                      <span>to</span>
-                      <div>
-                        <Input
-                          type="time"
-                          rounded="lg"
-                          color="warning"
-                          disabled={isSubmitting}
-                          {...register('saturday.timeOut')}
-                          className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                        />
-                        {!isEmpty(errors.saturday?.timeOut) && (
-                          <p className="error absolute">{errors.saturday?.timeOut.message}</p>
+                      <div
+                        className={classNames(
+                          'flex flex-col gap-y-2 gap-x-2 lg:flex-row lg:items-center',
+                          !isEmpty(errors.saturday?.breakFrom) || !isEmpty(errors.saturday?.breakTo)
+                            ? 'mb-5'
+                            : ''
                         )}
+                      >
+                        <span className="font-medium">Break</span>
+                        <div className="inline-flex flex-row items-center gap-x-2">
+                          <div className="relative">
+                            <Input
+                              type="time"
+                              rounded="lg"
+                              color="warning"
+                              disabled={isSubmitting}
+                              {...register('saturday.breakFrom')}
+                              iserror={!isEmpty(errors.saturday?.breakFrom)}
+                              className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                            />
+                            {!isEmpty(errors.saturday?.breakFrom) && (
+                              <p className="error absolute">{errors.saturday?.breakFrom.message}</p>
+                            )}
+                          </div>
+                          <span>to</span>
+                          <div className="relative">
+                            <Input
+                              type="time"
+                              rounded="lg"
+                              color="warning"
+                              disabled={isSubmitting}
+                              {...register('saturday.breakTo')}
+                              iserror={!isEmpty(errors.saturday?.breakTo)}
+                              className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                            />
+                            {!isEmpty(errors.saturday?.breakTo) && (
+                              <p className="error absolute">{errors.saturday?.breakTo.message}</p>
+                            )}
+                          </div>
+                        </div>
                       </div>
+                      {/* To Clear Field */}
+                      <ClearButton
+                        {...{
+                          day: 'saturdayClear',
+                          setValue
+                        }}
+                      />
                     </div>
                   ) : (
                     <span className="italic text-slate-400">Rest day</span>
@@ -696,46 +1228,97 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
               </section>
 
               {/* Sunday Field */}
-              <section className="lg:ml-14">
-                <label
-                  htmlFor="schedule-name"
-                  className={classNames(
-                    'flex flex-col space-y-2 lg:flex-row lg:items-center lg:space-y-0 lg:space-x-2',
-                    !isEmpty(errors.sunday?.timeIn) || !isEmpty(errors.sunday?.timeOut)
-                      ? 'mb-5'
-                      : ''
-                  )}
-                >
-                  <span className="shrink-0">Sunday</span>
+              <section className="py-4">
+                <label htmlFor="sunday" className={classNames('flex flex-col space-y-2')}>
+                  <span className="shrink-0 font-medium">Sunday</span>
                   {watch('sundaySelected') ? (
-                    <div className="relative inline-flex items-center space-x-2">
-                      <div>
-                        <Input
-                          type="time"
-                          rounded="lg"
-                          color="warning"
-                          disabled={isSubmitting}
-                          {...register('sunday.timeIn')}
-                          className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                        />
-                        {!isEmpty(errors.sunday?.timeIn) && (
-                          <p className="error absolute">{errors.sunday?.timeIn.message}</p>
+                    <div className="flex flex-col gap-y-2 gap-x-2 lg:flex-row lg:items-start">
+                      <div
+                        className={classNames(
+                          'flex items-center gap-x-2',
+                          !isEmpty(errors.sunday?.timeIn) || !isEmpty(errors.sunday?.timeOut)
+                            ? 'mb-5'
+                            : ''
                         )}
+                      >
+                        <div className="relative">
+                          <Input
+                            type="time"
+                            rounded="lg"
+                            color="warning"
+                            disabled={isSubmitting}
+                            {...register('sunday.timeIn')}
+                            iserror={!isEmpty(errors.sunday?.timeIn)}
+                            className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                          />
+                          {!isEmpty(errors.sunday?.timeIn) && (
+                            <p className="error absolute">{errors.sunday?.timeIn.message}</p>
+                          )}
+                        </div>
+                        <span>to</span>
+                        <div className="relative">
+                          <Input
+                            type="time"
+                            rounded="lg"
+                            color="warning"
+                            disabled={isSubmitting}
+                            {...register('sunday.timeOut')}
+                            iserror={!isEmpty(errors.sunday?.timeOut)}
+                            className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                          />
+                          {!isEmpty(errors.sunday?.timeOut) && (
+                            <p className="error absolute">{errors.sunday?.timeOut.message}</p>
+                          )}
+                        </div>
                       </div>
-                      <span>to</span>
-                      <div>
-                        <Input
-                          type="time"
-                          rounded="lg"
-                          color="warning"
-                          disabled={isSubmitting}
-                          {...register('sunday.timeOut')}
-                          className="py-2 px-4 text-[13px] placeholder:text-slate-500"
-                        />
-                        {!isEmpty(errors.sunday?.timeOut) && (
-                          <p className="error absolute">{errors.sunday?.timeOut.message}</p>
+                      <div
+                        className={classNames(
+                          'flex flex-col gap-y-2 gap-x-2 lg:flex-row lg:items-center',
+                          !isEmpty(errors.sunday?.breakFrom) || !isEmpty(errors.sunday?.breakTo)
+                            ? 'mb-5'
+                            : ''
                         )}
+                      >
+                        <span className="font-medium">Break</span>
+                        <div className="inline-flex flex-row items-center gap-x-2">
+                          <div className="relative">
+                            <Input
+                              type="time"
+                              rounded="lg"
+                              color="warning"
+                              disabled={isSubmitting}
+                              {...register('sunday.breakFrom')}
+                              iserror={!isEmpty(errors.sunday?.breakFrom)}
+                              className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                            />
+                            {!isEmpty(errors.sunday?.breakFrom) && (
+                              <p className="error absolute">{errors.sunday?.breakFrom.message}</p>
+                            )}
+                          </div>
+                          <span>to</span>
+                          <div className="relative">
+                            <Input
+                              type="time"
+                              rounded="lg"
+                              color="warning"
+                              disabled={isSubmitting}
+                              {...register('sunday.breakTo')}
+                              iserror={!isEmpty(errors.sunday?.breakTo)}
+                              className="py-2 px-4 text-[13px] placeholder:text-slate-500"
+                            />
+                            {!isEmpty(errors.sunday?.breakTo) && (
+                              <p className="error absolute">{errors.sunday?.breakTo.message}</p>
+                            )}
+                          </div>
+                        </div>
                       </div>
+                      {/* To Clear Field */}
+                      <ClearButton
+                        {...{
+                          day: 'sundayClear',
+                          setValue
+                        }}
+                      />
                     </div>
                   ) : (
                     <span className="italic text-slate-400">Rest day</span>

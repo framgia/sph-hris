@@ -1,91 +1,27 @@
 import moment from 'moment'
 import React, { FC } from 'react'
-import toast from 'react-hot-toast'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import { parse } from 'iso8601-duration'
-import { Calendar, Clock, Download, X } from 'react-feather'
-import { DefaultExtensionType, FileIcon, defaultStyles } from 'react-file-icon'
+import { Calendar, Clock, X } from 'react-feather'
 
 import Text from '~/components/atoms/Text'
+import UploadedFiles from './UploadFiles'
 import Avatar from '~/components/atoms/Avatar'
-import {
-  getSpecificTimeEntry,
-  getSpecificTimeEntryById,
-  getUserProfileLink
-} from '~/hooks/useTimesheetQuery'
 import { IMedia } from '~/utils/types/timeEntryTypes'
 import handleImageError from '~/utils/handleImageError'
 import DrawerTemplate from '~/components/templates/DrawerTemplate'
+import {
+  getUserProfileLink,
+  getSpecificTimeEntry,
+  getSpecificTimeEntryById
+} from '~/hooks/useTimesheetQuery'
 
 type Props = {
   isOpenViewDetailsDrawer: boolean
   actions: {
     handleToggleViewDetailsDrawer: () => void
   }
-}
-
-type UploadFileProps = {
-  file: IMedia
-  index: number
-}
-
-const UploadedFiles = ({ file, index }: UploadFileProps): JSX.Element => {
-  const fileExtension = file.fileName.split('.').pop()
-  const styles = defaultStyles[fileExtension as DefaultExtensionType]
-
-  const LinkChecker = (link: string): void => {
-    void fetch(link).then(async (resp) => {
-      if (resp.ok) {
-        return window.open(link)
-      } else {
-        toast.error('Sorry, cannot open file')
-      }
-    })
-  }
-
-  const handleDownloadFile = (link: string, fileName: string): void => {
-    void fetch(link)
-      .then(async (resp) => {
-        if (!resp.ok) {
-          throw Error(resp.statusText)
-        }
-        return await resp.blob()
-      })
-      .then((blobobject) => {
-        const blob = window.URL.createObjectURL(blobobject)
-        const anchor = document.createElement('a')
-        anchor.style.display = 'none'
-        anchor.href = blob
-        anchor.download = fileName
-        document.body.appendChild(anchor)
-        anchor.click()
-        window.URL.revokeObjectURL(blob)
-      })
-      .catch(() => toast.error('File does not exist'))
-  }
-
-  return (
-    <div
-      key={index}
-      className="group flex w-full justify-between rounded px-2 py-2 text-xs font-medium text-slate-700 transition duration-150 ease-in-out focus:outline-none focus:ring-0 hover:bg-slate-700 hover:bg-opacity-5"
-    >
-      <div className="mr-1">
-        <div className="h-4 w-4">
-          <FileIcon extension={fileExtension} {...styles} />
-        </div>
-      </div>
-      <div className="flex w-full truncate" onClick={() => LinkChecker(file.link)}>
-        <div>{file.fileName}</div>
-      </div>
-      <button
-        className="rounded bg-white p-0.5 opacity-0 focus:outline-slate-400 group-hover:opacity-100"
-        onClick={() => handleDownloadFile(file.link, file.fileName)}
-      >
-        <Download className="h-4 w-4 text-slate-500" />
-      </button>
-    </div>
-  )
 }
 
 const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
@@ -104,6 +40,59 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
 
   const handleToggleDrawer = (): void => {
     void router.replace(router.pathname, undefined, { shallow: false })
+  }
+
+  const renderTextWithLinks = (text: string): React.ReactNode[] => {
+    const words = text.split(' ')
+
+    return words.map((word, index) => {
+      let linkComponent = null
+
+      switch (true) {
+        case isValidUrl(word):
+          linkComponent = (
+            <a
+              key={index}
+              href={word}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 underline hover:text-blue-700"
+            >
+              {word}
+            </a>
+          )
+          break
+        case isValidEmail(word):
+          linkComponent = (
+            <a
+              key={index}
+              href={`mailto:${word}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 underline hover:text-blue-700"
+            >
+              {word}
+            </a>
+          )
+          break
+        default:
+          linkComponent = <span key={index}>{word} </span>
+          break
+      }
+
+      return linkComponent
+    })
+  }
+
+  const isValidUrl = (url: string): boolean => {
+    const urlRegex =
+      /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/
+    return urlRegex.test(url)
+  }
+
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
   }
 
   return (
@@ -163,8 +152,8 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
                 id="remarks"
                 className={classNames(
                   'm-0 block w-full items-center rounded placeholder:text-slate-400',
-                  'border border-solid border-slate-300 bg-slate-100 bg-clip-padding',
-                  'resize-none text-sm font-normal text-slate-700 transition'
+                  'border border-solid border-slate-300 bg-clip-padding',
+                  'resize-none text-sm font-normal text-amber-700 transition'
                 )}
               >
                 <div className="flex items-center">
@@ -188,8 +177,8 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
                 id="remarks"
                 className={classNames(
                   'm-0 block w-full items-center rounded placeholder:text-slate-400',
-                  'border border-solid border-slate-300 bg-slate-100 bg-clip-padding',
-                  'resize-none text-sm font-normal text-slate-700 transition'
+                  'border border-solid border-slate-300 bg-clip-padding',
+                  'resize-none text-sm font-normal text-amber-700 transition'
                 )}
               >
                 <div className="flex items-center">
@@ -202,40 +191,42 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
               </div>
             </label>
           </div>
+
           {/* Remarks */}
           <div>
             <label htmlFor="remarks" className="space-y-0.5">
               <span className="text-xs text-slate-500">Remarks</span>
-              <div
-                id="remarks"
-                className={classNames(
-                  'm-0 block min-h-[20vh] w-full rounded placeholder:text-slate-400',
-                  'border border-solid border-slate-300 bg-white bg-clip-padding',
-                  'resize-none px-3 py-1.5 text-sm font-normal text-slate-700 transition'
-                )}
-              >
-                <p>{res.data?.timeById?.remarks}</p>
+              <div className="default-scrollbar min-h-[20vh] rounded border border-slate-300 bg-white text-[13px]">
+                <h3 className="break-words px-3 py-1.5 font-normal text-amber-700">
+                  {renderTextWithLinks(res.data?.timeById?.remarks ?? '')}
+                </h3>
               </div>
             </label>
           </div>
           {/* Downloaded Files */}
           {!(router.query.time_out !== undefined) && (
-            <div>
-              <label htmlFor="remarks" className="space-y-0.5">
-                <span className="text-xs text-slate-500">Proofs Provided</span>
-                <div
-                  className={classNames(
-                    'm-0 block h-[200px] w-full rounded placeholder:text-slate-400',
-                    'border border-solid border-slate-300 bg-white bg-clip-padding',
-                    'default-scrollbar '
-                  )}
-                >
-                  {res.data?.timeById?.media?.map((file: IMedia, index: number) => {
-                    return <UploadedFiles file={file} index={index} key={index} />
-                  })}
+            <>
+              {res.data?.timeById?.media.length !== 0 ? (
+                <div>
+                  <label htmlFor="remarks" className="space-y-0.5">
+                    <span className="text-xs text-slate-500">Proofs Provided</span>
+                    <div
+                      className={classNames(
+                        'm-0 block h-[200px] w-full rounded placeholder:text-slate-400',
+                        'border border-solid border-slate-300 bg-white bg-clip-padding',
+                        'default-scrollbar '
+                      )}
+                    >
+                      {res.data?.timeById?.media?.map((file: IMedia, index: number) => {
+                        return <UploadedFiles file={file} index={index} key={index} />
+                      })}
+                    </div>
+                  </label>
                 </div>
-              </label>
-            </div>
+              ) : (
+                <div className="pt-4 text-xs italic text-slate-500">No Proofs Provided</div>
+              )}
+            </>
           )}
         </div>
       </div>

@@ -4,7 +4,7 @@ import Tippy from '@tippyjs/react'
 import { UseFormSetValue } from 'react-hook-form'
 
 import Button from './Button'
-import { RequestNewScheduleFormData } from '~/utils/types/formValues'
+import { RequestNewScheduleFormData, ScheduleFormData } from '~/utils/types/formValues'
 
 type Week =
   | 'mondayClear'
@@ -15,9 +15,11 @@ type Week =
   | 'saturdayClear'
   | 'sundayClear'
 
+type NewSetValueType = UseFormSetValue<RequestNewScheduleFormData | ScheduleFormData>
+
 type Props = {
   day: Week
-  setValue: UseFormSetValue<RequestNewScheduleFormData>
+  setValue: NewSetValueType
 }
 
 const ClearButton: FC<Props> = ({ day, setValue }): JSX.Element => {
@@ -59,7 +61,11 @@ const ClearButton: FC<Props> = ({ day, setValue }): JSX.Element => {
   return (
     <div>
       <Tippy placement="right" content="Clear" className="!text-xs">
-        <Button type="button" onClick={() => handleClear(day)} className="mt-3.5">
+        <Button
+          type="button"
+          onClick={() => handleClear(day)}
+          className="mt-3.5 text-slate-500 hover:text-slate-700"
+        >
           <X className="h-4 w-4" />
         </Button>
       </Tippy>
