@@ -1,16 +1,18 @@
 import moment from 'moment'
 import { X } from 'react-feather'
 import classNames from 'classnames'
-import { toast } from 'react-hot-toast'
-import { serialize } from 'tinyduration'
+import toast from 'react-hot-toast'
+import React, { FC, useState } from 'react'
+import { PulseLoader } from 'react-spinners'
 import { confirmAlert } from 'react-confirm-alert'
 import TextareaAutosize from 'react-textarea-autosize'
-import React, { FC, useEffect, useState } from 'react'
 
 import Card from '~/components/atoms/Card'
 import Alert from '~/components/atoms/Alert'
+import { queryClient } from '~/lib/queryClient'
 import useUserQuery from '~/hooks/useUserQuery'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
+import Button from '~/components/atoms/Buttons/Button'
 import useTimeOutMutation from '~/hooks/useTimeOutMutation'
 import UserTimeZone from '~/components/molecules/UserTimeZone'
 import DrawerTemplate from '~/components/templates/DrawerTemplate'
@@ -37,7 +39,7 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
   const { data } = handleUserQuery()
   const timeOutMutation = handleTimeOutMutation()
 
-  const handleEarlyTimeOutChecker = (): void => {
+  const handleEarlyTimeOutChecker = async (): Promise<void> => {
     const time = moment().hour()
     const day = moment().format('dddd')
     const schedule = data?.userById?.employeeSchedule.workingDayTimes.find(
@@ -53,7 +55,7 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
       const hours = match !== null ? parseInt(match[1]) : 0
       if (time < hours) return handleRemoveConfirmation()
     }
-    handleSaveTimeOut()
+    await handleSaveTimeOut()
   }
 
   // FOR CONFIRMATION ONLY
@@ -70,7 +72,7 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
               <ButtonAction
                 disabled={timeOutMutation.isLoading}
                 onClick={() => {
-                  handleSaveTimeOut()
+                  void handleSaveTimeOut()
                   return onClose()
                 }}
                 variant="danger"
@@ -93,28 +95,27 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
     })
   }
 
-  const handleSaveTimeOut = (): void => {
-    const time = moment(new Date())
-    timeOutMutation.mutate({
-      userId: data?.userById.id as number,
-      timeEntryId: data?.userById.timeEntry.id as number,
+  const handleSaveTimeOut = async (): Promise<void> => {
+    const time = moment()
+    const timeHour = `PT${time.hours()}H${time.minutes()}M${time.seconds()}S`
+
+    await timeOutMutation.mutateAsync({
+      userId: data?.userById?.id ?? 0,
+      timeEntryId: data?.userById?.timeEntry?.id ?? 0,
       workedHours,
-      timeHour: serialize({
-        hours: time.hours(),
-        minutes: time.minutes(),
-        seconds: time.seconds()
-      }),
+      timeHour,
       remarks
     })
-  }
 
-  useEffect(() => {
-    if (timeOutMutation.isSuccess) {
-      setRemarks('')
-      handleToggleTimeOutDrawer()
-      toast.success('Time Out Successful')
-    }
-  }, [timeOutMutation.status])
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['GET_USER_QUERY'] }),
+      queryClient.invalidateQueries({ queryKey: ['GET_EMPLOYEE_TIMESHEET'] })
+    ])
+
+    setRemarks('')
+    handleToggleTimeOutDrawer()
+    toast.success('Time Out Successful ⌛')
+  }
 
   return (
     <DrawerTemplate
@@ -164,8 +165,9 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
       {/* Footer Options */}
       <section className="mt-auto border-t border-slate-200">
         <div className="flex justify-end py-2 px-6">
-          <button
+          <Button
             type="button"
+            disabled={timeOutMutation.isLoading}
             onClick={handleToggleTimeOutDrawer}
             className={classNames(
               'flex items-center justify-center border-slate-200 text-xs active:scale-95',
@@ -173,19 +175,19 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
             )}
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             disabled={timeOutMutation.isLoading}
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onClick={handleEarlyTimeOutChecker}
             className={classNames(
               'flex items-center justify-center rounded-md border active:scale-95',
               'w-24 border-dark-primary bg-primary text-xs text-white outline-none hover:bg-dark-primary'
             )}
           >
-            {timeOutMutation.isLoading && <SpinnerIcon className=" mr-2 fill-gray-500" />}
-            Save
-          </button>
+            {timeOutMutation.isLoading ? <PulseLoader color="#fff" size={6} /> : 'Save'}
+          </Button>
         </div>
       </section>
     </DrawerTemplate>

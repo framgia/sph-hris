@@ -1,8 +1,8 @@
 import toast from 'react-hot-toast'
-import { useMutation, UseMutationResult, useQueryClient } from '@tanstack/react-query'
+import { useMutation, UseMutationResult } from '@tanstack/react-query'
 
-import { UPDATE_TIME_OUT_MUTATION } from '~/graphql/mutations/TimeOutMutation'
 import { client } from '~/utils/shared/client'
+import { UPDATE_TIME_OUT_MUTATION } from '~/graphql/mutations/TimeOutMutation'
 
 type TimeOutRequest = {
   userId: number
@@ -17,19 +17,12 @@ type returnType = {
 type handleTimeOutMutationReturnType = UseMutationResult<any, unknown, TimeOutRequest, unknown>
 
 const useTimeOutMutation = (): returnType => {
-  const queryClient = useQueryClient()
   const handleTimeOutMutation = (): handleTimeOutMutationReturnType =>
     useMutation({
       mutationFn: async (timeOut: TimeOutRequest) => {
         return await client.request(UPDATE_TIME_OUT_MUTATION, {
           timeOut
         })
-      },
-      onSuccess: async () => {
-        await Promise.all([
-          queryClient.invalidateQueries({ queryKey: ['GET_USER_QUERY'] }),
-          queryClient.invalidateQueries({ queryKey: ['GET_EMPLOYEE_TIMESHEET'] })
-        ])
       },
       onError: (error) => {
         const data = JSON.parse(JSON.stringify(error))
