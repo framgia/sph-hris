@@ -1,9 +1,11 @@
 import React from 'react'
 import moment from 'moment'
+import { useRouter } from 'next/router'
 import { createColumnHelper } from '@tanstack/react-table'
 
 import { getLeaveType } from '~/utils/getLeaveType'
 import { LeaveTable } from '~/utils/types/leaveTypes'
+import { Pathname } from '~/utils/constants/pathnames'
 import CellHeader from '~/components/atoms/CellHeader'
 import WorkStatusChip from '~/components/atoms/WorkStatusChip'
 
@@ -18,6 +20,31 @@ export const columns = [
   columnHelper.accessor('status', {
     header: () => <CellHeader label="Status" className="text-xs text-slate-500" />,
     cell: (props) => <WorkStatusChip label={props.getValue()?.toLowerCase()} />,
+    footer: (info) => info.column.id
+  }),
+  columnHelper.accessor('userName', {
+    header: () => {
+      const router = useRouter()
+      const { pathname } = router
+      const isYearlyPage = pathname === Pathname.YearlySummaryLeavesPath
+
+      if (isYearlyPage) {
+        return <CellHeader label="Name" className="text-xs text-slate-500" />
+      }
+
+      return null
+    },
+    cell: (props) => {
+      const router = useRouter()
+      const { pathname } = router
+      const isYearlyPage = pathname === Pathname.YearlySummaryLeavesPath
+
+      if (isYearlyPage) {
+        return props.getValue()
+      }
+
+      return null
+    },
     footer: (info) => info.column.id
   }),
   columnHelper.accessor('leaveTypeId', {

@@ -35,6 +35,7 @@ namespace api.Services
             {
                 var leaves = await context.Leaves
                             .Include(i => i.LeaveType)
+                            .Include(i => i.User)
                             .Where(u => u.UserId == userId && u.LeaveDate.Year == year)
                             .OrderBy(o => o.LeaveDate.Day)
                             .Select(s => new LeavesTableDTO(s))
@@ -44,7 +45,7 @@ namespace api.Services
                             .Where(u => u.Id == userId)
                             .FirstAsync();
 
-                LeaveHeatMapDTO heatmap = new LeaveHeatMapDTO(leaves);
+                LeaveHeatMapDTO heatmap = new(leaves);
                 return new LeavesDTO(new LeaveHeatMapDTO(leaves), leaves, user);
             }
         }
@@ -53,14 +54,14 @@ namespace api.Services
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
-
                 var leaves = await context.Leaves
                             .Include(i => i.LeaveType)
+                            .Include(i => i.User)
                             .Where(u => u.LeaveDate.Year == year)
                             .OrderBy(o => o.LeaveDate.Day)
                             .Select(s => new LeavesTableDTO(s))
                             .ToListAsync();
-                LeaveHeatMapDTO heatmap = new LeaveHeatMapDTO(leaves);
+                LeaveHeatMapDTO heatmap = new(leaves);
                 heatmap.summarizeMonth();
                 return new LeavesDTO(heatmap, leaves);
             }
