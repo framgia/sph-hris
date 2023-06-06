@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import React, { Fragment, useState } from 'react'
 import { confirmAlert } from 'react-confirm-alert'
 import { AiOutlineCaretDown } from 'react-icons/ai'
-import { Check, Edit, Eye, X } from 'react-feather'
+import { Check, Eye, X } from 'react-feather'
 import { Listbox, Transition } from '@headlessui/react'
 import { createColumnHelper } from '@tanstack/react-table'
 
@@ -178,6 +178,7 @@ export const hrColumns = [
 
       return (
         <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
+          {/* This will be used in the future
           <Tippy placement="left" content="Edit" className="!text-xs">
             <Button
               onClick={handleUpdateToggle}
@@ -186,7 +187,7 @@ export const hrColumns = [
             >
               <Edit className="h-4 w-4" />
             </Button>
-          </Tippy>
+          </Tippy> */}
           <Tippy placement="left" content="View Remarks" className="!text-xs">
             <Button
               onClick={handleShowRemarksToggle}
@@ -492,6 +493,7 @@ export const managerColumns = [
             )
           )}
 
+          {/* This will be used in the future
           {!isManager() && isManagerApproved && (
             <>
               <Tippy placement="left" content="Edit" className="!text-xs">
@@ -504,7 +506,7 @@ export const managerColumns = [
                 </Button>
               </Tippy>
             </>
-          )}
+          )} */}
 
           <Tippy placement="left" content="View Remarks" className="!text-xs">
             <Button
