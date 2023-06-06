@@ -263,6 +263,45 @@ namespace api.Utils
             return errors;
         }
 
+        public List<IError> CheckUpdateLeaveRequestInput(UpdateLeaveRequest leave)
+        {
+            var errors = new List<IError>();
+            int index = 0;
+
+            if (!checkUserExist(leave.UserId))
+                errors.Add(buildError(nameof(leave.UserId), InputValidationMessageEnum.INVALID_USER));
+
+            if (!CheckManagerUser(leave.ManagerId).Result)
+                errors.Add(buildError(nameof(leave.ManagerId), InputValidationMessageEnum.INVALID_MANAGER));
+
+
+            if (!checkLeaveType(leave.LeaveTypeId))
+                errors.Add(buildError(nameof(leave.LeaveTypeId), InputValidationMessageEnum.INVALID_LEAVE_TYPE));
+
+            index = 0;
+            leave.LeaveProjects?.ForEach(project =>
+            {
+                if (!checkProjectExist(project.ProjectId))
+                    errors.Add(buildError(nameof(project.ProjectId), InputValidationMessageEnum.INVALID_PROJECT, index));
+
+                if (!checkUserExist(project.ProjectLeaderId))
+                    errors.Add(buildError(nameof(project.ProjectLeaderId), InputValidationMessageEnum.INVALID_PROJECT_LEADER, index));
+
+                index++;
+            });
+
+            index = 0;
+            leave.LeaveDates?.ForEach(date =>
+            {
+                if (!checkDateFormat(date.LeaveDate))
+                    errors.Add(buildError(nameof(date.LeaveDate), InputValidationMessageEnum.INVALID_DATE, index));
+
+                index++;
+            });
+
+            return errors;
+        }
+
         public List<IError> checkOvertimeRequestInput(CreateOvertimeRequest overtime)
         {
             var errors = new List<IError>();

@@ -61,23 +61,30 @@ const LeaveManagementTable: FC<Props> = (props) => {
               <TableMesagge message="No Data Available" />
             ) : (
               <>
-                {table.getRowModel().rows.map((row) => (
-                  <Tr
-                    key={row.id}
-                    className={classNames(
-                      'group hover:bg-slate-50 hover:shadow-md hover:shadow-slate-200'
-                    )}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <td
-                        key={cell.id}
-                        className="z-20 flex-wrap px-4 py-2 text-xs capitalize text-slate-500"
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </td>
-                    ))}
-                  </Tr>
-                ))}
+                {table
+                  .getRowModel()
+                  .rows.sort((a, b) => {
+                    const dateA = new Date(a.original.createdAt)
+                    const dateB = new Date(b.original.createdAt)
+                    return dateB.getTime() - dateA.getTime()
+                  })
+                  .map((row) => (
+                    <Tr
+                      key={row.id}
+                      className={classNames(
+                        'group hover:bg-slate-50 hover:shadow-md hover:shadow-slate-200'
+                      )}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <td
+                          key={cell.id}
+                          className="z-20 flex-wrap px-4 py-2 text-xs capitalize text-slate-500"
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </td>
+                      ))}
+                    </Tr>
+                  ))}
               </>
             )
           ) : (

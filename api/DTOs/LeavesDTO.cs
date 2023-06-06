@@ -13,7 +13,7 @@ namespace api.DTOs
         {
             Heatmap = heatmapLeaves;
             User = user;
-            Table = table.OrderByDescending(table => table.Date).ToList();
+            Table = table.OrderByDescending(table => table.CreatedAt).ToList();
             Breakdown = new LeaveBreakdownDTO(table);
         }
     }

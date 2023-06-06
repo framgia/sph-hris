@@ -41,5 +41,25 @@ namespace api.Schema.Mutations
                 }
             }
         }
+
+        public async Task<string?> UpdateLeave(UpdateLeaveRequest leave, [Service] LeaveService _leaveService, [Service] NotificationService _notificationService, [Service] IDbContextFactory<HrisContext> contextFactory)
+        {
+            using (HrisContext context = contextFactory.CreateDbContext())
+            {
+                try
+                {
+                    List<LeaveNotification> updatedNotifications = await _leaveService.UpdateLeave(leave);
+
+                    // Send Notifications
+                    updatedNotifications.ForEach(notif => _notificationService.sendLeaveNotificationEvent(notif));
+
+                    return SuccessMessageEnum.LEAVE_UPDATED;
+                }
+                catch (GraphQLException)
+                {
+                    throw;
+                }
+            }
+        }
     }
 }

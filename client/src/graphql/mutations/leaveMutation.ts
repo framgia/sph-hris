@@ -17,3 +17,9 @@ export const APROVE_DISAPPROVE_UNDERTIME_MUTATION = gql`
     approveDisapproveUndertime(approvingData: $approval)
   }
 `
+
+export const UPDATE_LEAVE_MUTATION = gql`
+  mutation ($updateLeave: UpdateLeaveRequestInput!) {
+    updateLeave(leave: $updateLeave)
+  }
+`

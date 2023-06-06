@@ -11,7 +11,9 @@ namespace api.DTOs
             UserName = leave.User.Name;
             UserRole = leave.User.Role.Name;
             LeaveProjects = leave.LeaveProjects;
+            LeaveTypeId = leave.LeaveTypeId;
             LeaveType = leave.LeaveType.Name;
+            ManagerId = leave.Manager.Id;
             Manager = leave.Manager.Name;
             OtherProject = leave.OtherProject;
             Reason = leave.Reason;
