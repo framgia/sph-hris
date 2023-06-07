@@ -431,7 +431,8 @@ namespace api.Services
                     DateFiled = overtime.CreatedAt,
                     Type = IsApproved ? NotificationDataTypeEnum.APPROVE : NotificationDataTypeEnum.DISAPPROVE,
                     Status = IsApproved ? RequestStatus.APPROVED : RequestStatus.DISAPPROVED,
-                    Remarks = overtime.Remarks
+                    Remarks = overtime.Remarks,
+                    ManagerRemarks = overtime.ManagerRemarks
                 }
                 );
 

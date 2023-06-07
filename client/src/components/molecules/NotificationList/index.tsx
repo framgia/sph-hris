@@ -27,14 +27,14 @@ type Props = {
 
 const NotificationList: FC<Props> = (props): JSX.Element => {
   const {
-    query: { data: dummyNotificationData },
+    query: { data },
     table: { columns, globalFilter, setGlobalFilter }
   } = props
 
   const [sorting, setSorting] = useState<SortingState>([])
 
   const table = useReactTable({
-    data: dummyNotificationData,
+    data,
     columns,
     // Options
     state: {

@@ -91,8 +91,11 @@ export const ApproveConfirmationSchema = yup.object().shape({
     .number()
     .required('Minutes is required')
     .label('Minutes')
-    .typeError('Minutes must be a number')
+    .typeError('Minutes must be a number'),
+  managerRemarks: yup.string().required('Remarks is required').label('Remarks')
 })
+
+export const DisapproveConfirmationSchema = ApproveConfirmationSchema.omit(['requested_minutes'])
 
 const fileSchema = yup
   .mixed()

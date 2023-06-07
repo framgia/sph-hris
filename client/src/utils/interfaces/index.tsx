@@ -60,6 +60,7 @@ export interface INotification {
   userAvatarLink: string
   createdAt: string
   offsets: IESLOffset[]
+  managerRemarks: string | null
 }
 
 export interface IEmployeeManagement {
@@ -108,6 +109,7 @@ export interface IOvertimeManagement {
   remarks: string
   status: string
   isManagerApproved: boolean
+  managerRemarks: string | null
 }
 
 export type IOvertimeManagementManager = Required<

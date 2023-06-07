@@ -93,7 +93,8 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
             value: ''
           },
           managerid: notif.manager.id,
-          isManagerApproved: notif.isManagerApproved
+          isManagerApproved: notif.isManagerApproved,
+          managerRemarks: notif.managerRemarks ?? ''
         }
         return mapped
       })

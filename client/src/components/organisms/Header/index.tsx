@@ -107,7 +107,8 @@ const Header: FC<Props> = (props): JSX.Element => {
           description: parsedData.Description,
           userAvatarLink: parsedData.User.AvatarLink,
           createdAt: notif.createdAt,
-          offsets: parsedData.Offsets
+          offsets: parsedData.Offsets,
+          managerRemarks: parsedData.ManagerRemarks
         }
         return mapped
       })

@@ -19,6 +19,7 @@ namespace api.DTOs
             RequestedMinutes = overtimes.RequestedMinutes;
             IsLeaderApproved = overtimes.IsLeaderApproved;
             IsManagerApproved = overtimes.IsManagerApproved!;
+            ManagerRemarks = overtimes.ManagerRemarks;
         }
         new public Over? User { get; set; }
         new public int Id { get; set; }
@@ -31,6 +32,7 @@ namespace api.DTOs
         new public int? ApprovedMinutes { get; set; }
         new public bool? IsLeaderApproved { get; set; }
         new public bool? IsManagerApproved { get; set; }
+        new public string? ManagerRemarks { get; set; }
 
     }
     public class Over

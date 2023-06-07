@@ -7,5 +7,6 @@ namespace api.Requests
         public int? NotificationId { get; set; }
         public int? ApprovedMinutes { get; set; }
         public bool IsApproved { get; set; }
+        public string? ManagerRemarks { get; set; }
     }
 }
