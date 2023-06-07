@@ -25,7 +25,7 @@ const ShowRemarksModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Element =
       {/* Custom Modal Header */}
       <ModalHeader
         {...{
-          title: 'View Remarks',
+          title: "View Requester's Remarks",
           Icon: Eye,
           closeModal
         }}

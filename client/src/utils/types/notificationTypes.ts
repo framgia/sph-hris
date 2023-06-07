@@ -34,6 +34,7 @@ export type NotificationData = {
   RequestedTimeIn: string | null
   RequestedTimeOut: string | null
   Description: string | null
+  ManagerRemarks: string | null
 }
 
 export type NotificationRequestInput = {

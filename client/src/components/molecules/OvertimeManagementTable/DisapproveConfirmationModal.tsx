@@ -1,19 +1,18 @@
 import classNames from 'classnames'
-import React, { FC, useEffect } from 'react'
 import { PulseLoader } from 'react-spinners'
+import React, { FC, useEffect } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { Clock, MessageCircle, ThumbsUp, X } from 'react-feather'
+import ReactTextareaAutosize from 'react-textarea-autosize'
+import { MessageCircle, ThumbsDown, X } from 'react-feather'
 
 import TextField from './../TextField'
-import Input from '~/components/atoms/Input'
 import useOvertime from '~/hooks/useOvertime'
 import useUserQuery from '~/hooks/useUserQuery'
 import Button from '~/components/atoms/Buttons/Button'
-import ReactTextareaAutosize from 'react-textarea-autosize'
-import { ApproveConfirmationSchema } from '~/utils/validation'
 import { IOvertimeManagementManager } from '~/utils/interfaces'
 import ModalTemplate from '~/components/templates/ModalTemplate'
+import { DisapproveConfirmationSchema } from '~/utils/validation'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
 
 type Props = {
@@ -22,36 +21,35 @@ type Props = {
   row: IOvertimeManagementManager
 }
 
-type ApproveFormValues = {
-  requested_minutes: number
+type DisapproveFormValues = {
   managerRemarks: string
 }
 
-const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Element => {
+const DisapproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Element => {
   const {
     reset,
     register,
     handleSubmit,
     formState: { errors, isSubmitting }
-  } = useForm<ApproveFormValues>({
+  } = useForm<DisapproveFormValues>({
     mode: 'onTouched',
-    resolver: yupResolver(ApproveConfirmationSchema)
+    resolver: yupResolver(DisapproveConfirmationSchema)
   })
 
   const { handleUserQuery } = useUserQuery()
   const { data: user, isLoading: userLoading } = handleUserQuery()
 
   const { handleManagerApproveOvertimeMutation } = useOvertime()
-  const approveOvertimeMutation = handleManagerApproveOvertimeMutation()
+  const disapproveOvertimeMutation = handleManagerApproveOvertimeMutation()
 
   // This will handle Submit and Save New Overtime
-  const handleSave: SubmitHandler<ApproveFormValues> = async (data): Promise<void> => {
-    await approveOvertimeMutation.mutateAsync(
+  const handleSave: SubmitHandler<DisapproveFormValues> = async (data): Promise<void> => {
+    await disapproveOvertimeMutation.mutateAsync(
       {
         userId: user?.userById.id as number,
         overtimeId: row.id,
-        approvedMinutes: data.requested_minutes,
-        isApproved: true,
+        approvedMinutes: 0,
+        isApproved: false,
         managerRemarks: data.managerRemarks
       },
       {
@@ -64,7 +62,6 @@ const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.E
   useEffect(() => {
     if (isOpen) {
       reset({
-        requested_minutes: row.requestedMinutes,
         managerRemarks: row.managerRemarks ?? ''
       })
     }
@@ -76,7 +73,7 @@ const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.E
 
   const projectNamesString = projectNames.join(', ')
 
-  const statement = `Do you want approve the requested overtime for the Project ${projectNamesString} of this person?`
+  const statement = `Do you want disapprove the requested overtime for the Project ${projectNamesString} of this person?`
 
   return (
     <ModalTemplate
@@ -108,24 +105,6 @@ const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.E
 
           <h3 className="text-sm font-normal text-slate-600">{statement}</h3>
 
-          {/* Requested minutes */}
-          <section className="col-span-2 mt-4 md:col-span-1">
-            <TextField title="Minutes to approve" Icon={Clock} isRequired className="flex-1">
-              <Input
-                type="text"
-                disabled={isSubmitting}
-                placeholder=""
-                {...register('requested_minutes')}
-                className="py-2.5 pl-11 text-xs"
-                iserror={
-                  errors.requested_minutes !== null && errors?.requested_minutes !== undefined
-                }
-              />
-            </TextField>
-            {errors?.requested_minutes !== null && errors?.requested_minutes !== undefined && (
-              <span className="error text-[10px]">{errors.requested_minutes?.message}</span>
-            )}
-          </section>
           {/* Remarks */}
           <section className="col-span-2 mt-4">
             <TextField title="Remarks" Icon={MessageCircle} isRequired>
@@ -138,7 +117,7 @@ const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.E
                     ? 'border-rose-500 ring-rose-500'
                     : ''
                 )}
-                disabled={isSubmitting}
+                disabled={isSubmitting || disapproveOvertimeMutation.isLoading}
               />
             </TextField>
             {errors.managerRemarks !== null && errors.managerRemarks !== undefined && (
@@ -147,16 +126,16 @@ const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.E
           </section>
           <ButtonAction
             type="submit"
-            variant="success"
-            disabled={isSubmitting || userLoading}
+            variant="danger"
+            disabled={isSubmitting || userLoading || disapproveOvertimeMutation.isLoading}
             className="relative mt-4 flex w-full items-center justify-center space-x-2 px-5 py-2 text-sm"
           >
-            {isSubmitting ? (
+            {isSubmitting || disapproveOvertimeMutation.isLoading ? (
               <PulseLoader color="#fff" size={8} className="py-1" />
             ) : (
               <>
-                <ThumbsUp className="absolute left-4 h-5 w-5" />
-                <span>Approve</span>
+                <ThumbsDown className="absolute left-4 h-5 w-5" />
+                <span>Disapprove</span>
               </>
             )}
           </ButtonAction>
@@ -166,6 +145,6 @@ const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.E
   )
 }
 
-ApproveConfirmationModal.defaultProps = {}
+DisapproveConfirmationModal.defaultProps = {}
 
-export default ApproveConfirmationModal
+export default DisapproveConfirmationModal

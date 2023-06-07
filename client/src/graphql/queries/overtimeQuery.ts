@@ -33,6 +33,7 @@ export const GET_ALL_OVERTIME = gql`
       isLeaderApproved
       isManagerApproved
       remarks
+      managerRemarks
     }
   }
 `

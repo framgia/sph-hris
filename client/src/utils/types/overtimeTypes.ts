@@ -61,6 +61,7 @@ export interface IAllOvertime {
   isManagerApproved: boolean
   remarks: string
   createdAt: string
+  managerRemarks?: string | null
 }
 
 export interface IUser {
@@ -97,6 +98,7 @@ export interface IManagerApproveOvertimeRequestInput {
   overtimeId: number
   isApproved: boolean
   approvedMinutes: number | null
+  managerRemarks?: string | null
 }
 
 export interface ILeaderApproveOvertimeRequestInput {

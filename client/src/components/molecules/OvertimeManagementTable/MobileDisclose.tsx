@@ -5,11 +5,8 @@ import { motion } from 'framer-motion'
 import React, { FC, useState } from 'react'
 import { Table } from '@tanstack/react-table'
 import { Disclosure } from '@headlessui/react'
-import { confirmAlert } from 'react-confirm-alert'
-import { Check, ChevronRight, Edit, Eye, X } from 'react-feather'
+import { ChevronRight, Edit, Eye, ThumbsDown, ThumbsUp } from 'react-feather'
 
-import Card from '~/components/atoms/Card'
-import useOvertime from '~/hooks/useOvertime'
 import Avatar from '~/components/atoms/Avatar'
 import { Roles } from '~/utils/constants/roles'
 import useUserQuery from '~/hooks/useUserQuery'
@@ -20,9 +17,9 @@ import handleImageError from '~/utils/handleImageError'
 import { IOvertimeManagement } from '~/utils/interfaces'
 import { variants } from '~/utils/constants/animationVariants'
 import ApproveConfirmationModal from './ApproveConfirmationModal'
-import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import RequestStatusChip from '~/components/atoms/RequestStatusChip'
+import DisapproveConfirmationModal from './DisapproveConfirmationModal'
 import DisclosureTransition from '~/components/templates/DisclosureTransition'
 
 type Props = {
@@ -35,68 +32,22 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
   const { handleUserQuery } = useUserQuery()
   const { data: user } = handleUserQuery()
 
-  const { handleManagerApproveOvertimeMutation } = useOvertime()
-  const approveOvertimeMutation = handleManagerApproveOvertimeMutation()
-
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [isOpenUpdateModal, setIsOpenUpdateModal] = useState<boolean>(false)
   const [isOpenRemarksModal, setIsOpenRemarksModal] = useState<boolean>(false)
   const [isOpenConfirmationModal, setIsOpenConfirmationModal] = useState<boolean>(false)
+  const [isOpenDisapproveConfirmationModal, setIsOpenDisapproveConfirmationModal] =
+    useState<boolean>(false)
 
   const handleToggle = (): void => setIsOpen(!isOpen)
   const handleUpdateToggle = (): void => setIsOpenUpdateModal(!isOpenUpdateModal)
   const handleShowRemarksToggle = (): void => setIsOpenRemarksModal(!isOpenRemarksModal)
   const handleConfirmationToggle = (): void => setIsOpenConfirmationModal(!isOpenConfirmationModal)
+  const handleDisapproveConfirmationToggle = (): void =>
+    setIsOpenDisapproveConfirmationModal(!isOpenDisapproveConfirmationModal)
 
   const isManagerRole = user?.userById.role.name === Roles.MANAGER
   const isHrRole = user?.userById.role.name === Roles.HR_ADMIN
-
-  const handleDisapprove = (onClose: () => void, overtimeId: number): void => {
-    approveOvertimeMutation.mutate(
-      {
-        userId: user?.userById.id as number,
-        overtimeId,
-        approvedMinutes: 0,
-        isApproved: false
-      },
-      {
-        onSuccess: () => onClose()
-      }
-    )
-  }
-
-  const handleDisapproveConfirmationToggle = (overtimeId: number): void => {
-    confirmAlert({
-      customUI: ({ onClose }) => {
-        return (
-          <Card className="w-full max-w-xs px-8 py-6" shadow-size="xl" rounded="lg">
-            <h1 className="text-center text-xl font-bold">Confirmation</h1>
-            <p className="mt-2 text-sm font-medium">
-              Are you sure you want to disapprove the request?
-            </p>
-            <div className="mt-6 flex items-center justify-center space-x-2 text-white">
-              <>
-                <ButtonAction
-                  variant="danger"
-                  onClick={() => handleDisapprove(onClose, overtimeId)}
-                  className="disabled w-full py-1 px-4"
-                >
-                  Yes
-                </ButtonAction>
-                <ButtonAction
-                  onClick={onClose}
-                  variant="secondary"
-                  className="w-full py-1 px-4 text-slate-500"
-                >
-                  No
-                </ButtonAction>
-              </>
-            </div>
-          </Card>
-        )
-      }
-    })
-  }
 
   return (
     <>
@@ -286,7 +237,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                             onClick={handleConfirmationToggle}
                                             className="py-0.5 px-1 text-slate-500"
                                           >
-                                            <Check className="h-4 w-4 stroke-[3px]" />
+                                            <ThumbsUp className="h-4 w-4" />
                                             {/* This will show the Approve Confirmation Modal */}
                                             {isOpenConfirmationModal ? (
                                               <ApproveConfirmationModal
@@ -307,13 +258,18 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                           <Button
                                             rounded="none"
                                             className="py-0.5 px-1 text-slate-500"
-                                            onClick={() =>
-                                              handleDisapproveConfirmationToggle(
-                                                overtimeManagement.id
-                                              )
-                                            }
+                                            onClick={handleDisapproveConfirmationToggle}
                                           >
-                                            <X className="h-4 w-4 stroke-[3px]" />
+                                            <ThumbsDown className="h-4 w-4" />
+                                            {/* This will show the Disapprove Confirmation Modal */}
+                                            <DisapproveConfirmationModal
+                                              {...{
+                                                isOpen: isOpenDisapproveConfirmationModal,
+                                                closeModal: () =>
+                                                  handleDisapproveConfirmationToggle(),
+                                                row: overtimeManagement
+                                              }}
+                                            />
                                           </Button>
                                         </Tippy>
                                         <Tippy

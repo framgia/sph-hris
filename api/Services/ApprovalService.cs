@@ -64,6 +64,8 @@ namespace api.Services
                                 notificationData!.Status = RequestStatus.DISAPPROVED;
                             overtime.ApprovedMinutes = 0;
                         }
+
+                        overtime.ManagerRemarks = overtimeRequest.ManagerRemarks;
                     }
 
                     if (notification != null) notification.Data = JsonConvert.SerializeObject(notificationData);

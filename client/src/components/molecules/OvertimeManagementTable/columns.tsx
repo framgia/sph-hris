@@ -2,18 +2,14 @@ import moment from 'moment'
 import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import React, { Fragment, useState } from 'react'
-import { confirmAlert } from 'react-confirm-alert'
 import { AiOutlineCaretDown } from 'react-icons/ai'
-import { Check, Eye, X } from 'react-feather'
 import { Listbox, Transition } from '@headlessui/react'
+import { Eye, ThumbsDown, ThumbsUp } from 'react-feather'
 import { createColumnHelper } from '@tanstack/react-table'
 
-import Card from '~/components/atoms/Card'
-import useOvertime from '~/hooks/useOvertime'
 import Avatar from '~/components/atoms/Avatar'
 import useUserQuery from '~/hooks/useUserQuery'
 import ShowRemarksModal from './ShowRemarksModal'
-import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import { Position } from '~/utils/constants/position'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
@@ -21,8 +17,8 @@ import handleImageError from '~/utils/handleImageError'
 import UpdateOvertimeModal from './UpdateOvertimeModal'
 import CellTimeValue from '~/components/atoms/CellTimeValue'
 import ApproveConfirmationModal from './ApproveConfirmationModal'
-import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
 import RequestStatusChip from '~/components/atoms/RequestStatusChip'
+import DisapproveConfirmationModal from './DisapproveConfirmationModal'
 import { IOvertimeManagement, IOvertimeManagementManager } from '~/utils/interfaces'
 
 const columnHelper = createColumnHelper<IOvertimeManagement | IOvertimeManagementManager>()
@@ -368,86 +364,30 @@ export const managerColumns = [
       const { original: overtimeManagement } = props.row
       const [isOpenRemarksModal, setIsOpenRemarksModal] = useState<boolean>(false)
       const [isOpenConfirmationModal, setIsOpenConfirmationModal] = useState<boolean>(false)
+      const [isOpenDisapproveConfirmationModal, setIsOpenDisapproveConfirmationModal] =
+        useState<boolean>(false)
       const [isOpenUpdateModal, setIsOpenUpdateModal] = useState<boolean>(false)
-      const [loading, setLoading] = useState<boolean>(false)
       const { isManagerApproved } = props.row.original
 
       const handleUpdateToggle = (): void => setIsOpenUpdateModal(!isOpenUpdateModal)
       const handleShowRemarksToggle = (): void => setIsOpenRemarksModal(!isOpenRemarksModal)
       const handleConfirmationToggle = (): void =>
         setIsOpenConfirmationModal(!isOpenConfirmationModal)
+      const handleDisapproveConfirmationToggle = (): void =>
+        setIsOpenDisapproveConfirmationModal(!isOpenDisapproveConfirmationModal)
 
       const { handleUserQuery } = useUserQuery()
       const { data: user } = handleUserQuery()
 
       const positionId = user?.userById.position.id as number
 
-      const { handleManagerApproveOvertimeMutation } = useOvertime()
-      const approveOvertimeMutation = handleManagerApproveOvertimeMutation()
+      const isManager = positionId === Position.MANAGER
 
-      const handleDisapprove = (onClose: () => void): void => {
-        setLoading(true)
-        approveOvertimeMutation.mutate(
-          {
-            userId: user?.userById.id as number,
-            overtimeId: overtimeManagement.id,
-            approvedMinutes: 0,
-            isApproved: false
-          },
-          {
-            onSuccess: () => onClose(),
-            onSettled: () => setLoading(false)
-          }
-        )
-      }
-
-      const handleDisapproveConfirmationToggle = (): void => {
-        confirmAlert({
-          customUI: ({ onClose }) => {
-            return (
-              <Card className="w-full max-w-xs px-8 py-6" shadow-size="xl" rounded="lg">
-                <h1 className="text-center text-xl font-bold">Confirmation</h1>
-                <p className="mt-2 text-sm font-medium">
-                  Are you sure you want to disapprove the request?
-                </p>
-                <div className="mt-6 flex items-center justify-center space-x-2 text-white">
-                  {!loading ? (
-                    <>
-                      <ButtonAction
-                        variant="danger"
-                        onClick={() => handleDisapprove(onClose)}
-                        className="w-full py-1 px-4"
-                      >
-                        Yes
-                      </ButtonAction>
-                      <ButtonAction
-                        onClick={onClose}
-                        variant="secondary"
-                        className="w-full py-1 px-4 text-slate-500"
-                      >
-                        No
-                      </ButtonAction>
-                    </>
-                  ) : (
-                    <>
-                      <SpinnerIcon className="h-3 w-3 fill-white" />
-                      <span>Saving..</span>
-                    </>
-                  )}
-                </div>
-              </Card>
-            )
-          }
-        })
-      }
-
-      const isManager = (): boolean => {
-        return positionId === Position.MANAGER
-      }
+      const isAssistantManager = positionId === Position.ASSISTANT_MANAGER
 
       return (
         <div className="inline-flex items-center divide-x divide-slate-300 rounded border border-slate-300">
-          {isManager() ? (
+          {isManager && (
             <>
               <Tippy placement="left" content="Approve" className="!text-xs">
                 <Button
@@ -455,7 +395,7 @@ export const managerColumns = [
                   onClick={handleConfirmationToggle}
                   className="py-0.5 px-1 text-slate-500"
                 >
-                  <Check className="h-4 w-4 stroke-[3px]" />
+                  <ThumbsUp className="h-4 w-4" />
                 </Button>
               </Tippy>
               <Tippy placement="left" content="Disapprove" className="!text-xs">
@@ -464,34 +404,44 @@ export const managerColumns = [
                   onClick={handleDisapproveConfirmationToggle}
                   className="py-0.5 px-1 text-slate-500"
                 >
-                  <X className="h-4 w-4 stroke-[3px]" />
+                  <ThumbsDown className="h-4 w-4" />
                 </Button>
               </Tippy>
             </>
-          ) : (
-            isManagerApproved == null && (
-              <>
-                <Tippy placement="left" content="Approve" className="!text-xs">
-                  <Button
-                    rounded="none"
-                    onClick={handleConfirmationToggle}
-                    className="py-0.5 px-1 text-slate-500"
-                  >
-                    <Check className="h-4 w-4 stroke-[3px]" />
-                  </Button>
-                </Tippy>
-                <Tippy placement="left" content="Disapprove" className="!text-xs">
-                  <Button
-                    rounded="none"
-                    onClick={handleDisapproveConfirmationToggle}
-                    className="py-0.5 px-1 text-slate-500"
-                  >
-                    <X className="h-4 w-4 stroke-[3px]" />
-                  </Button>
-                </Tippy>
-              </>
-            )
           )}
+
+          {isAssistantManager && isManagerApproved === null && (
+            <>
+              <Tippy placement="left" content="Approve" className="!text-xs">
+                <Button
+                  rounded="none"
+                  onClick={handleConfirmationToggle}
+                  className="py-0.5 px-1 text-slate-500"
+                >
+                  <ThumbsUp className="h-4 w-4" />
+                </Button>
+              </Tippy>
+              <Tippy placement="left" content="Disapprove" className="!text-xs">
+                <Button
+                  rounded="none"
+                  onClick={handleDisapproveConfirmationToggle}
+                  className="py-0.5 px-1 text-slate-500"
+                >
+                  <ThumbsDown className="h-4 w-4" />
+                </Button>
+              </Tippy>
+            </>
+          )}
+
+          <Tippy placement="left" content="View Remarks" className="!text-xs">
+            <Button
+              rounded="none"
+              onClick={handleShowRemarksToggle}
+              className="py-0.5 px-1 text-slate-500"
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
+          </Tippy>
 
           {/* This will be used in the future
           {!isManager() && isManagerApproved && (
@@ -508,21 +458,19 @@ export const managerColumns = [
             </>
           )} */}
 
-          <Tippy placement="left" content="View Remarks" className="!text-xs">
-            <Button
-              rounded="none"
-              onClick={handleShowRemarksToggle}
-              className="py-0.5 px-1 text-slate-500"
-            >
-              <Eye className="h-4 w-4" />
-            </Button>
-          </Tippy>
-
           {/* This will show the Approve Confirmation Modal */}
           <ApproveConfirmationModal
             {...{
               isOpen: isOpenConfirmationModal,
               closeModal: () => handleConfirmationToggle(),
+              row: overtimeManagement
+            }}
+          />
+          {/* This will show the Disapprove Confirmation Modal */}
+          <DisapproveConfirmationModal
+            {...{
+              isOpen: isOpenDisapproveConfirmationModal,
+              closeModal: () => handleDisapproveConfirmationToggle(),
               row: overtimeManagement
             }}
           />

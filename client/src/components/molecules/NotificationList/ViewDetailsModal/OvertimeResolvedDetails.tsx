@@ -8,8 +8,17 @@ type Props = {
 }
 
 const OvertimeResolvedDetails: FC<Props> = ({ notification }): JSX.Element => {
-  const { project, date, duration, requestedTimeIn, requestedTimeOut, dateFiled, status, remarks } =
-    notification
+  const {
+    date,
+    status,
+    project,
+    remarks,
+    duration,
+    dateFiled,
+    managerRemarks,
+    requestedTimeIn,
+    requestedTimeOut
+  } = notification
 
   return (
     <>
@@ -45,7 +54,11 @@ const OvertimeResolvedDetails: FC<Props> = ({ notification }): JSX.Element => {
         <span className="flex items-center font-medium">{status}</span>
       </li>
       <li className="inline-flex flex-col space-y-2 pt-2">
-        <span className="text-slate-600">Remarks: </span>
+        <span className="text-slate-600">Manager Remarks: </span>
+        <span className="font-medium">{managerRemarks}</span>
+      </li>
+      <li className="inline-flex flex-col space-y-2 pt-2">
+        <span className="text-slate-600">Requester&apos;s Remarks: </span>
         <span className="font-medium">{remarks}</span>
       </li>
     </>

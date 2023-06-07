@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useRouter } from 'next/router'
-import { Check, X } from 'react-feather'
+import { Check, Eye, X } from 'react-feather'
 
 import useLeave from '~/hooks/useLeave'
 import LeaveDetails from './LeaveDetails'
@@ -270,14 +270,15 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
           {user.role.name === Roles.MANAGER &&
           row.type.toLowerCase() === NOTIFICATION_TYPE.OVERTIME ? (
             <Button
-              variant="success"
-              className="flex items-center space-x-1 py-0.5 px-4 text-slate-500"
+              variant="secondary"
+              className="flex items-center space-x-2 py-0.5 px-4"
               onClick={() => {
                 void router.push({
                   pathname: '/overtime-management'
                 })
               }}
             >
+              <Eye className="h-5 w-5" />
               <span>View In Overtime Management</span>
             </Button>
           ) : (
@@ -292,7 +293,7 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
               </Button>
               <Button
                 variant="danger-outline"
-                className="flex items-center space-x-1 py-0.5 px-2 text-slate-500"
+                className="flex items-center space-x-1 py-0.5 px-2"
                 onClick={() => handleApproveDisapprove(false)}
               >
                 <X className="h-4 w-4" />

@@ -18,6 +18,7 @@ namespace api.Entities
         public int? ApprovedMinutes { get; set; }
         public bool? IsLeaderApproved { get; set; }
         public bool? IsManagerApproved { get; set; }
+        public string? ManagerRemarks { get; set; }
         public ICollection<MultiProject> MultiProjects { get; set; } = default!;
         public User Manager { get; set; } = default!;
         public User User { get; set; } = default!;
