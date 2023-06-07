@@ -2,9 +2,10 @@ import moment from 'moment'
 import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
 import React, { Fragment, useState } from 'react'
+import { BsFileEarmarkText } from 'react-icons/bs'
 import { AiOutlineCaretDown } from 'react-icons/ai'
+import { ThumbsDown, ThumbsUp } from 'react-feather'
 import { Listbox, Transition } from '@headlessui/react'
-import { Eye, ThumbsDown, ThumbsUp } from 'react-feather'
 import { createColumnHelper } from '@tanstack/react-table'
 
 import Avatar from '~/components/atoms/Avatar'
@@ -190,7 +191,7 @@ export const hrColumns = [
               rounded="none"
               className="py-0.5 px-1 text-slate-500"
             >
-              <Eye className="h-4 w-4" />
+              <BsFileEarmarkText className="h-4 w-4" />
             </Button>
           </Tippy>
 
@@ -439,7 +440,7 @@ export const managerColumns = [
               onClick={handleShowRemarksToggle}
               className="py-0.5 px-1 text-slate-500"
             >
-              <Eye className="h-4 w-4" />
+              <BsFileEarmarkText className="h-4 w-4" />
             </Button>
           </Tippy>
 

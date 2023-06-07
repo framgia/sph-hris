@@ -1,6 +1,7 @@
 import Tippy from '@tippyjs/react'
+import { Edit } from 'react-feather'
 import React, { useState } from 'react'
-import { Edit, Eye } from 'react-feather'
+import { BsFileEarmarkText } from 'react-icons/bs'
 import { createColumnHelper } from '@tanstack/react-table'
 
 import Avatar from '~/components/atoms/Avatar'
@@ -93,7 +94,7 @@ export const columns = [
               rounded="none"
               className="py-0.5 px-1 text-slate-500"
             >
-              <Eye className="h-4 w-4" />
+              <BsFileEarmarkText className="h-4 w-4" />
               {/* This will show the Remarks Modal */}
               {isOpenListOfLeave ? (
                 <ShowReasonModal

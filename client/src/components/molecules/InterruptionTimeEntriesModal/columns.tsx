@@ -1,9 +1,10 @@
 import moment from 'moment'
 import Tippy from '@tippyjs/react'
 import { useRouter } from 'next/router'
+import { Edit, Trash } from 'react-feather'
 import React, { useRef, useState } from 'react'
-import { Edit, Eye, Trash } from 'react-feather'
 import { confirmAlert } from 'react-confirm-alert'
+import { BsFileEarmarkText } from 'react-icons/bs'
 import { createColumnHelper } from '@tanstack/react-table'
 
 import { Roles } from '~/utils/constants/roles'
@@ -106,7 +107,7 @@ export const columns = [
               className="py-0.5 px-1 text-slate-500"
               onClick={() => handleOpenRemark(interruptionTimeEntry.remarks)}
             >
-              <Eye className="h-4 w-4" />
+              <BsFileEarmarkText className="h-4 w-4" />
               {/* This will show the Remarks Modal */}
               {isOpenRemark ? (
                 <ShowRemarksModal

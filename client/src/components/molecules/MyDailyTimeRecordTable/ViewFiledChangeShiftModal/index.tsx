@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
-import { Eye, X } from 'react-feather'
+import { X } from 'react-feather'
+import { BsFileEarmarkText } from 'react-icons/bs'
 
 import useUserQuery from '~/hooks/useUserQuery'
 import { Position } from '~/utils/constants/position'
@@ -60,7 +61,7 @@ const ViewFiledChangeShiftModal: FC<Props> = (props): JSX.Element => {
         {...{
           title: 'Filed Change Shift',
           closeModal,
-          Icon: Eye
+          Icon: BsFileEarmarkText
         }}
       />
       <main className="px-8 py-4 text-sm  text-slate-700">

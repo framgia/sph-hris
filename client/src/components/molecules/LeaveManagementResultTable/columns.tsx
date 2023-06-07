@@ -151,13 +151,19 @@ export const columns = [
                   )}
                 >
                   <Menu.Item>
-                    <button className={menuItemButton} onClick={() => handleEdit()}>
+                    <button
+                      className={`${menuItemButton} space-x-2.5 pl-4`}
+                      onClick={() => handleEdit()}
+                    >
                       <Edit className="mr-0.5 h-3.5 w-3.5" />
                       <span>Edit</span>
                     </button>
                   </Menu.Item>
                   <Menu.Item>
-                    <button className={menuItemButton} onClick={() => alert('Cancel')}>
+                    <button
+                      className={`${menuItemButton} space-x-2.5 pl-4`}
+                      onClick={() => alert('Cancel')}
+                    >
                       <X className="mr-1 h-4 w-4" />
                       <span>Cancel</span>
                     </button>
