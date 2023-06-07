@@ -75,12 +75,25 @@ export const columns = [
   }),
   columnHelper.display({
     id: 'id',
-    header: () => <span className="text-xs font-normal text-slate-500">Actions</span>,
+    header: () => {
+      const router = useRouter()
+      const { pathname } = router
+      const isMyLeavePage = pathname === Pathname.MyLeavesPath
+
+      if (isMyLeavePage) {
+        return <span className="text-xs font-normal text-slate-500">Actions</span>
+      }
+
+      return null
+    },
     cell: (props) => {
       const menuItemButton = 'flex px-3 py-2 text-left text-xs hover:text-slate-700 text-slate-500'
       const [isOpen, setIsOpen] = useState<boolean>(false)
       const leaveId = props.row.original.leaveId
       const router = useRouter()
+      const { pathname } = router
+      const isMyLeavePage = pathname === Pathname.MyLeavesPath
+
       const isPending =
         props.row.original.status.toLowerCase() === LeaveStatus.PENDING.toLowerCase()
 
@@ -110,49 +123,53 @@ export const columns = [
         void router.push({ pathname, query })
       }
 
-      return (
-        <div
-          className={classNames(
-            'inline-flex divide-x divide-slate-300 rounded border',
-            'border-transparent group-hover:border-slate-300'
-          )}
-        >
-          <EditLeaveModal
-            {...{
-              isOpen,
-              closeModal: handleToggle
-            }}
-          />
-          <Menu as="div" className="relative w-full">
-            {isPending && (
-              <Menu.Button className="p-0.5 text-slate-500 outline-none">
-                <MoreVertical className="h-4" />
-              </Menu.Button>
+      if (isMyLeavePage) {
+        return (
+          <div
+            className={classNames(
+              'inline-flex divide-x divide-slate-300 rounded border',
+              'border-transparent group-hover:border-slate-300'
             )}
-            <MenuTransition>
-              <Menu.Items
-                className={classNames(
-                  'absolute top-7 right-0 z-50 flex w-44 flex-col divide-y divide-slate-200 overflow-hidden rounded-md',
-                  'bg-white py-0.5 shadow-xl shadow-slate-200 ring-1 ring-black ring-opacity-5 focus:outline-none'
-                )}
-              >
-                <Menu.Item>
-                  <button className={menuItemButton} onClick={() => handleEdit()}>
-                    <Edit className="mr-0.5 h-3.5 w-3.5" />
-                    <span>Edit</span>
-                  </button>
-                </Menu.Item>
-                <Menu.Item>
-                  <button className={menuItemButton} onClick={() => alert('Cancel')}>
-                    <X className="mr-1 h-4 w-4" />
-                    <span>Cancel</span>
-                  </button>
-                </Menu.Item>
-              </Menu.Items>
-            </MenuTransition>
-          </Menu>
-        </div>
-      )
+          >
+            <EditLeaveModal
+              {...{
+                isOpen,
+                closeModal: handleToggle
+              }}
+            />
+            <Menu as="div" className="relative w-full">
+              {isPending && (
+                <Menu.Button className="p-0.5 text-slate-500 outline-none">
+                  <MoreVertical className="h-4" />
+                </Menu.Button>
+              )}
+              <MenuTransition>
+                <Menu.Items
+                  className={classNames(
+                    'absolute top-7 right-0 z-50 flex w-44 flex-col divide-y divide-slate-200 overflow-hidden rounded-md',
+                    'bg-white py-0.5 shadow-xl shadow-slate-200 ring-1 ring-black ring-opacity-5 focus:outline-none'
+                  )}
+                >
+                  <Menu.Item>
+                    <button className={menuItemButton} onClick={() => handleEdit()}>
+                      <Edit className="mr-0.5 h-3.5 w-3.5" />
+                      <span>Edit</span>
+                    </button>
+                  </Menu.Item>
+                  <Menu.Item>
+                    <button className={menuItemButton} onClick={() => alert('Cancel')}>
+                      <X className="mr-1 h-4 w-4" />
+                      <span>Cancel</span>
+                    </button>
+                  </Menu.Item>
+                </Menu.Items>
+              </MenuTransition>
+            </Menu>
+          </div>
+        )
+      }
+
+      return null
     },
     footer: (info) => info.column.id
   })
