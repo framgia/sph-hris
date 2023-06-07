@@ -58,7 +58,7 @@ const OvertimeResolvedDetails: FC<Props> = ({ notification }): JSX.Element => {
         <span className="font-medium">{managerRemarks}</span>
       </li>
       <li className="inline-flex flex-col space-y-2 pt-2">
-        <span className="text-slate-600">Remarks: </span>
+        <span className="text-slate-600">Requester&apos;s Remarks: </span>
         <span className="font-medium">{remarks}</span>
       </li>
     </>
