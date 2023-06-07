@@ -43,12 +43,12 @@ namespace api.Services
                     if (errors.Count > 0) throw new GraphQLException(errors);
 
                     // approve/disapprove operation
-                    var headManager = await context.Users.Where(x => x.PositionId == PositionEnum.MANAGER).FirstOrDefaultAsync();
+                    var headManager = await context.Users.Where(x => x.PositionId == PositionEnum.MANAGER || (x.PositionId == PositionEnum.ASSISTANT_MANAGER && x.Id == overtimeRequest.UserId)).ToListAsync();
                     var notification = await context.OvertimeNotifications.Where(x => x.OvertimeId == overtimeRequest.OvertimeId && x.RecipientId == overtimeRequest.UserId && x.Type == NotificationTypeEnum.OVERTIME).FirstOrDefaultAsync();
                     var overtime = await context.Overtimes.FindAsync(overtimeRequest.OvertimeId);
                     var notificationData = notification != null ? JsonConvert.DeserializeObject<dynamic>(notification.Data) : null;
 
-                    if ((overtime != null && notificationData != null) || headManager?.Id == overtimeRequest.UserId)
+                    if ((overtime != null && notificationData != null) || headManager.Count > 0)
                     {
                         overtime!.IsManagerApproved = overtimeRequest.IsApproved;
 
