@@ -187,45 +187,48 @@ export const productionMenu: IMenu[] = [
     name: 'My Overtime',
     href: '/my-overtime',
     Icon: Sleep,
-    role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER]
-  },
-  {
-    name: 'My Schedule',
-    Icon: Schedule,
-    href: '/my-schedule',
     role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER],
-    spacing: true,
-    submenu: true,
-    submenuItems: [
-      {
-        name: 'Current Schedule',
-        Icon: CalendarThirtyTwo,
-        href: '/my-schedule/current-schedule'
-      },
-      {
-        name: 'Request New Schedule',
-        Icon: SendToBack,
-        href: '/my-schedule/request-new-schedule'
-      },
-      {
-        name: 'Filed Schedules',
-        Icon: ViewList,
-        href: '/my-schedule/filed-schedules'
-      }
-    ]
+    spacing: true
   },
+  // Temporarily hidden
+  // {
+  //   name: 'My Schedule',
+  //   Icon: Schedule,
+  //   href: '/my-schedule',
+  //   role: [Roles.EMPLOYEE, Roles.HR_ADMIN, Roles.MANAGER],
+  //   spacing: true,
+  //   submenu: true,
+  //   submenuItems: [
+  //     {
+  //       name: 'Current Schedule',
+  //       Icon: CalendarThirtyTwo,
+  //       href: '/my-schedule/current-schedule'
+  //     },
+  //     {
+  //       name: 'Request New Schedule',
+  //       Icon: SendToBack,
+  //       href: '/my-schedule/request-new-schedule'
+  //     },
+  //     {
+  //       name: 'Filed Schedules',
+  //       Icon: ViewList,
+  //       href: '/my-schedule/filed-schedules'
+  //     }
+  //   ]
+  // },
   {
     name: 'Schedule Management',
     Icon: Calendar,
     href: '/schedule-management',
     role: [Roles.HR_ADMIN]
   },
-  {
-    name: 'Employee Management',
-    Icon: EveryUser,
-    href: '/employee-management',
-    role: [Roles.HR_ADMIN]
-  },
+  // Temporarily hidden
+  // {
+  //   name: 'Employee Management',
+  //   Icon: EveryUser,
+  //   href: '/employee-management',
+  //   role: [Roles.HR_ADMIN]
+  // },
   {
     name: 'Leave Management',
     Icon: FileEditingOne,
