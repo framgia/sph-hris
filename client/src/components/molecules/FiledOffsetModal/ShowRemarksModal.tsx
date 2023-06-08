@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Eye } from 'react-feather'
+import { BsFileEarmarkText } from 'react-icons/bs'
 
 import { IFiledOffsetTable } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/ButtonAction'
@@ -26,7 +26,7 @@ const ShowRemarksModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Element =
       <ModalHeader
         {...{
           title: 'View Remarks',
-          Icon: Eye,
+          Icon: BsFileEarmarkText,
           closeModal
         }}
       />

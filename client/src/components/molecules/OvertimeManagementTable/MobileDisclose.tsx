@@ -5,7 +5,8 @@ import { motion } from 'framer-motion'
 import React, { FC, useState } from 'react'
 import { Table } from '@tanstack/react-table'
 import { Disclosure } from '@headlessui/react'
-import { ChevronRight, Edit, Eye, ThumbsDown, ThumbsUp } from 'react-feather'
+import { BsFileEarmarkText } from 'react-icons/bs'
+import { ChevronRight, Edit, ThumbsDown, ThumbsUp } from 'react-feather'
 
 import Avatar from '~/components/atoms/Avatar'
 import { Roles } from '~/utils/constants/roles'
@@ -207,7 +208,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                             rounded="none"
                                             className="py-0.5 px-1 text-slate-500"
                                           >
-                                            <Eye className="h-4 w-4" />
+                                            <BsFileEarmarkText className="h-4 w-4" />
 
                                             {/* This will show the remarks modal */}
                                             {isOpen ? (
@@ -282,7 +283,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                             onClick={handleShowRemarksToggle}
                                             className="py-0.5 px-1 text-slate-500"
                                           >
-                                            <Eye className="h-4 w-4" />
+                                            <BsFileEarmarkText className="h-4 w-4" />
 
                                             {/* This will show the remarks modal */}
                                             {isOpenRemarksModal ? (

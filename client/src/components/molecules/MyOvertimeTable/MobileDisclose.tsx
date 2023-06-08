@@ -5,7 +5,8 @@ import { motion } from 'framer-motion'
 import React, { FC, useState } from 'react'
 import { Table } from '@tanstack/react-table'
 import { Disclosure } from '@headlessui/react'
-import { Calendar, ChevronRight, Eye } from 'react-feather'
+import { BsFileEarmarkText } from 'react-icons/bs'
+import { Calendar, ChevronRight } from 'react-feather'
 
 import ShowRemarksModal from './ShowRemarksModal'
 import { IMyOvertimeTable } from '~/utils/interfaces'
@@ -159,7 +160,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                       rounded="none"
                                       className="py-0.5 px-1 text-slate-500"
                                     >
-                                      <Eye className="h-4 w-4" />
+                                      <BsFileEarmarkText className="h-4 w-4" />
 
                                       {/* This will show the remarks modal */}
                                       {isOpen ? (

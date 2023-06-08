@@ -1,7 +1,7 @@
 import moment from 'moment'
 import Tippy from '@tippyjs/react'
-import { Eye } from 'react-feather'
 import React, { useState } from 'react'
+import { BsFileEarmarkText } from 'react-icons/bs'
 import { createColumnHelper } from '@tanstack/react-table'
 
 import ViewScheduleModal from './ViewScheduleModal'
@@ -38,7 +38,7 @@ export const columns = [
         <div className="inline-flex rounded border border-slate-300">
           <Tippy placement="left" content="View Schedule Modal" className="!text-xs">
             <Button onClick={handleToggle} rounded="none" className="py-0.5 px-1 text-slate-500">
-              <Eye className="h-4 w-4" />
+              <BsFileEarmarkText className="h-4 w-4" />
             </Button>
           </Tippy>
 

@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Eye } from 'react-feather'
+import { BsFileEarmarkText } from 'react-icons/bs'
 
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import ModalTemplate from '~/components/templates/ModalTemplate'
@@ -25,7 +25,7 @@ const ShowRemarksModal: FC<Props> = ({ isOpen, closeModal, remarks }): JSX.Eleme
       <ModalHeader
         {...{
           title: 'View Remarks',
-          Icon: Eye,
+          Icon: BsFileEarmarkText,
           closeModal
         }}
       />

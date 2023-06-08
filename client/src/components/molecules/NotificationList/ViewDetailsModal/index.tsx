@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { useRouter } from 'next/router'
-import { Check, Eye, X } from 'react-feather'
+import { Check, X } from 'react-feather'
+import { BsFileEarmarkText } from 'react-icons/bs'
 
 import useLeave from '~/hooks/useLeave'
 import LeaveDetails from './LeaveDetails'
@@ -278,7 +279,7 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
                 })
               }}
             >
-              <Eye className="h-5 w-5" />
+              <BsFileEarmarkText className="h-5 w-5" />
               <span>View In Overtime Management</span>
             </Button>
           ) : (

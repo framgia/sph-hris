@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Eye } from 'react-feather'
+import { BsFileEarmarkText } from 'react-icons/bs'
 
 import { IListOfLeave } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/ButtonAction'
@@ -26,7 +26,7 @@ const ShowReasonModal: FC<Props> = ({ isOpen, closeModal, remarks }): JSX.Elemen
       <ModalHeader
         {...{
           title: 'View Reason',
-          Icon: Eye,
+          Icon: BsFileEarmarkText,
           closeModal
         }}
       />

@@ -4,7 +4,8 @@ import { motion } from 'framer-motion'
 import React, { FC, useState } from 'react'
 import { Table } from '@tanstack/react-table'
 import { Disclosure } from '@headlessui/react'
-import { ChevronRight, Edit, Eye } from 'react-feather'
+import { ChevronRight, Edit } from 'react-feather'
+import { BsFileEarmarkText } from 'react-icons/bs'
 
 import Avatar from '~/components/atoms/Avatar'
 import ShowReasonModal from './ShowReasonModal'
@@ -152,7 +153,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                                         rounded="none"
                                         className="py-0.5 px-1 text-slate-500"
                                       >
-                                        <Eye className="h-4 w-4" />
+                                        <BsFileEarmarkText className="h-4 w-4" />
                                       </Button>
                                     </Tippy>
                                     <Tippy placement="left" content="Edit" className="!text-xs">

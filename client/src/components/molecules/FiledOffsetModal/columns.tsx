@@ -1,6 +1,6 @@
 import Tippy from '@tippyjs/react'
-import { Eye } from 'react-feather'
 import React, { useState } from 'react'
+import { BsFileEarmarkText } from 'react-icons/bs'
 import { createColumnHelper } from '@tanstack/react-table'
 
 import ShowRemarksModal from './ShowRemarksModal'
@@ -51,7 +51,7 @@ export const columns = [
         <div className="inline-flex items-center space-x-1 rounded">
           <Tippy content="View" placement="left" className="!text-xs">
             <Button rounded="none" className="py-0.5 px-1 text-slate-500" onClick={handleToggle}>
-              <Eye className="h-4 w-4" />
+              <BsFileEarmarkText className="h-4 w-4" />
 
               {/* This will show the remarks modal */}
               {isOpen ? (

@@ -1,13 +1,14 @@
 import moment from 'moment'
 import Tippy from '@tippyjs/react'
 import classNames from 'classnames'
-import { Eye } from 'react-feather'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
 import React, { FC, useEffect } from 'react'
 import { Table } from '@tanstack/react-table'
+import { BsFileEarmarkText } from 'react-icons/bs'
 
 import Avatar from '~/components/atoms/Avatar'
+import { User } from '~/utils/types/userTypes'
 import useUserQuery from '~/hooks/useUserQuery'
 import ViewDetailsModal from './ViewDetailsModal'
 import { INotification } from '~/utils/interfaces'
@@ -15,10 +16,9 @@ import Button from '~/components/atoms/Buttons/Button'
 import handleImageError from '~/utils/handleImageError'
 import useNotification from '~/hooks/useNotificationQuery'
 import { switchMessage } from '~/utils/notificationHelpers'
-import { NOTIFICATION_TYPE } from '~/utils/constants/notificationTypes'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import useNotificationMutation from '~/hooks/useNotificationMutation'
-import { User } from '~/utils/types/userTypes'
+import { NOTIFICATION_TYPE } from '~/utils/constants/notificationTypes'
 
 type Props = {
   table: Table<INotification>
@@ -166,7 +166,7 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
                               handleViewDetails(row.original)
                             }}
                           >
-                            <Eye className="h-4 w-4" />
+                            <BsFileEarmarkText className="h-4 w-4" />
                           </Button>
                         </Tippy>
 
