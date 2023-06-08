@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using api.Interfaces;
 
 namespace api.Entities
 {
-    public class Leave : BaseEntity
+    public class Leave : BaseEntity, ISoftDeletable
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -18,9 +19,11 @@ namespace api.Entities
         public bool IsWithPay { get; set; }
         public bool? IsLeaderApproved { get; set; }
         public bool? IsManagerApproved { get; set; }
+        public bool IsDeleted { get; set; }
         public ICollection<MultiProject> LeaveProjects { get; set; } = default!;
         public LeaveType LeaveType { get; set; } = default!;
         public User Manager { get; set; } = default!;
         public User User { get; set; } = default!;
+        public ICollection<LeaveNotification> LeaveNotifications { get; set; } = default!;
     }
 }

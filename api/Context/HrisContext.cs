@@ -64,6 +64,11 @@ public partial class HrisContext : DbContext
         modelBuilder.Entity<Role>().HasData(
             DatabaseSeeder.roles
         );
+        modelBuilder.Entity<Leave>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<LeaveNotification>()
+            .HasOne(l => l.Leave)
+            .WithMany(ln => ln.LeaveNotifications)
+            .IsRequired(false);
         modelBuilder.Entity<LeaveType>().HasData(
             DatabaseSeeder.leaveTypes
         );

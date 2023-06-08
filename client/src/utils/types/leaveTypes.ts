@@ -49,6 +49,7 @@ export type LeaveTable = {
   numLeaves: number
   status: string
   userName: string
+  userId: number
   leaveId: number
   createdAt: string
 }
@@ -157,4 +158,9 @@ export type IUserLeave = {
     createdAt: string
     avatar: string
   }>
+}
+
+export type CancelLeaveRequest = {
+  userId: number
+  leaveId: number
 }

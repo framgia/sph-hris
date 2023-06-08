@@ -23,3 +23,8 @@ export const UPDATE_LEAVE_MUTATION = gql`
     updateLeave(leave: $updateLeave)
   }
 `
+export const CANCEL_LEAVE_MUTATION = gql`
+  mutation ($request: CancelLeaveRequestInput!) {
+    cancelLeave(request: $request)
+  }
+`

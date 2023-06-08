@@ -15,21 +15,24 @@ import {
   LeaveTypes,
   IUserLeave,
   UpdateLeaveRequest,
-  IApproveLeaveUndertimeRequestInput
+  IApproveLeaveUndertimeRequestInput,
+  CancelLeaveRequest
 } from '~/utils/types/leaveTypes'
 import {
   CREATE_LEAVE_MUTATION,
   APROVE_DISAPPROVE_LEAVE_MUTATION,
   APROVE_DISAPPROVE_UNDERTIME_MUTATION,
-  UPDATE_LEAVE_MUTATION
+  UPDATE_LEAVE_MUTATION,
+  CANCEL_LEAVE_MUTATION
 } from '~/graphql/mutations/leaveMutation'
 
 type getLeaveQueryType = UseQueryResult<Leaves, unknown>
-type getYearlyLeaveQueryType = UseQueryResult<YearlyLeaves, unknown>
 type getSpecificLeaveQuery = UseQueryResult<IUserLeave, unknown>
 type getLeaveTypeQueryType = UseQueryResult<LeaveTypes, unknown>
+type getYearlyLeaveQueryType = UseQueryResult<YearlyLeaves, unknown>
 type handleLeaveMutationType = UseMutationResult<any, unknown, LeaveRequest, unknown>
 type handleUpdateLeaveMutationType = UseMutationResult<any, unknown, UpdateLeaveRequest, unknown>
+type handleCancelLeaveMutationType = UseMutationResult<any, unknown, CancelLeaveRequest, unknown>
 type handleApproveLeaveUndertimeMutationType = UseMutationResult<
   any,
   unknown,
@@ -38,14 +41,15 @@ type handleApproveLeaveUndertimeMutationType = UseMutationResult<
 >
 
 type returnType = {
-  getLeaveQuery: (userId: number, year: number) => getLeaveQueryType
-  getSpecificLeaveQuery: (userId: number) => getSpecificLeaveQuery
-  handleLeaveMutation: (userId: number, year: number) => handleLeaveMutationType
-  handleUpdateLeaveMutation: (userId: number, year: number) => handleUpdateLeaveMutationType
   handleLeaveTypeQuery: () => getLeaveTypeQueryType
-  getYearlyAllLeaveQuery: (year: number, ready: boolean) => getYearlyLeaveQueryType
+  getSpecificLeaveQuery: (userId: number) => getSpecificLeaveQuery
+  getLeaveQuery: (userId: number, year: number) => getLeaveQueryType
   handleApproveLeaveMutation: () => handleApproveLeaveUndertimeMutationType
   handleApproveUndertimeMutation: () => handleApproveLeaveUndertimeMutationType
+  handleLeaveMutation: (userId: number, year: number) => handleLeaveMutationType
+  getYearlyAllLeaveQuery: (year: number, ready: boolean) => getYearlyLeaveQueryType
+  handleUpdateLeaveMutation: (userId: number, year: number) => handleUpdateLeaveMutationType
+  handleCancelLeaveMutation: (userId: number, leaveIds: number) => handleCancelLeaveMutationType
 }
 
 const useLeave = (): returnType => {
@@ -134,13 +138,27 @@ const useLeave = (): returnType => {
       }
     })
 
+  const handleCancelLeaveMutation = (): handleCancelLeaveMutationType =>
+    useMutation({
+      mutationFn: async (request: CancelLeaveRequest) => {
+        return await client.request(CANCEL_LEAVE_MUTATION, {
+          request
+        })
+      },
+      onError: async (err: Error) => {
+        const [errorMessage] = err.message.split(/:\s/, 2)
+        toast.error(errorMessage)
+      }
+    })
+
   return {
     getLeaveQuery,
-    getYearlyAllLeaveQuery,
-    getSpecificLeaveQuery,
-    handleUpdateLeaveMutation,
     handleLeaveMutation,
     handleLeaveTypeQuery,
+    getSpecificLeaveQuery,
+    getYearlyAllLeaveQuery,
+    handleUpdateLeaveMutation,
+    handleCancelLeaveMutation,
     handleApproveLeaveMutation,
     handleApproveUndertimeMutation
   }

@@ -6,15 +6,22 @@ import { useRouter } from 'next/router'
 import { Menu } from '@headlessui/react'
 import { createColumnHelper } from '@tanstack/react-table'
 
-import { Edit, MoreVertical, X } from 'react-feather'
+import toast from 'react-hot-toast'
+import useLeave from '~/hooks/useLeave'
+import Card from '~/components/atoms/Card'
+import { queryClient } from '~/lib/queryClient'
+import { confirmAlert } from 'react-confirm-alert'
 import { getLeaveType } from '~/utils/getLeaveType'
+import SpinnerIcon from '~/utils/icons/SpinnerIcon'
+import { Edit, MoreVertical, X } from 'react-feather'
 import { LeaveTable } from '~/utils/types/leaveTypes'
 import { Pathname } from '~/utils/constants/pathnames'
 import CellHeader from '~/components/atoms/CellHeader'
+import { LeaveStatus } from '~/utils/constants/leaveStatus'
 import WorkStatusChip from '~/components/atoms/WorkStatusChip'
 import MenuTransition from '~/components/templates/MenuTransition'
 import EditLeaveModal from '~/components/molecules/EditLeaveModal'
-import { LeaveStatus } from '~/utils/constants/leaveStatus'
+import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
 
 const columnHelper = createColumnHelper<LeaveTable>()
 
@@ -87,12 +94,16 @@ export const columns = [
       return null
     },
     cell: (props) => {
-      const menuItemButton = 'flex px-3 py-2 text-left text-xs hover:text-slate-700 text-slate-500'
-      const [isOpen, setIsOpen] = useState<boolean>(false)
-      const leaveId = props.row.original.leaveId
       const router = useRouter()
       const { pathname } = router
+      const { year } = router.query
+      const { userId } = props.row.original
+      const leaveId = props.row.original.leaveId
+      const { handleCancelLeaveMutation } = useLeave()
+      const [isOpen, setIsOpen] = useState<boolean>(false)
       const isMyLeavePage = pathname === Pathname.MyLeavesPath
+      const useCancelLeaveMutation = handleCancelLeaveMutation(userId, leaveId)
+      const menuItemButton = 'flex px-3 py-2 text-left text-xs hover:text-slate-700 text-slate-500'
 
       const isPending =
         props.row.original.status.toLowerCase() === LeaveStatus.PENDING.toLowerCase()
@@ -114,6 +125,57 @@ export const columns = [
         const { pathname, query } = router
         const updatedQuery = omit(query, key)
         void router.push({ pathname, query: updatedQuery })
+      }
+
+      const handleConfirmCancelLeave = (userId: number, leaveId: number): void => {
+        confirmAlert({
+          customUI: ({ onClose }) => {
+            return (
+              <Card className="w-full max-w-[350px] px-8 py-6 shadow-none" rounded="lg">
+                <h1 className="text-center text-xl font-bold text-rose-500">Confirmation</h1>
+                <p className="mt-4 text-sm font-normal text-slate-600">
+                  Are you sure you want to cancel this leave request?
+                </p>
+                <div className="mt-6 flex items-center justify-center space-x-2 text-white">
+                  <ButtonAction
+                    disabled={useCancelLeaveMutation.isLoading}
+                    onClick={() => {
+                      void useCancelLeaveMutation.mutate(
+                        { userId, leaveId },
+                        {
+                          onSuccess: ({ cancelLeave }) => {
+                            void queryClient
+                              .invalidateQueries({
+                                queryKey: ['GET_MY_LEAVES_QUERY', userId, Number(year)]
+                              })
+                              .then(() => {
+                                toast.success(cancelLeave)
+                              })
+                          }
+                        }
+                      )
+                      return onClose()
+                    }}
+                    variant="danger"
+                    className="w-full py-1 px-4"
+                  >
+                    {useCancelLeaveMutation.isLoading && (
+                      <SpinnerIcon className=" mr-2 fill-gray-500" />
+                    )}
+                    Yes
+                  </ButtonAction>
+                  <ButtonAction
+                    onClick={onClose}
+                    variant="secondary"
+                    className="w-full py-1 px-4 text-slate-500"
+                  >
+                    No
+                  </ButtonAction>
+                </div>
+              </Card>
+            )
+          }
+        })
       }
 
       // Function to update query parameter
@@ -155,14 +217,14 @@ export const columns = [
                       className={`${menuItemButton} space-x-2.5 pl-4`}
                       onClick={() => handleEdit()}
                     >
-                      <Edit className="mr-0.5 h-3.5 w-3.5" />
+                      <Edit className="jw-3.5 mr-0.5 h-3.5" />
                       <span>Edit</span>
                     </button>
                   </Menu.Item>
                   <Menu.Item>
                     <button
                       className={`${menuItemButton} space-x-2.5 pl-4`}
-                      onClick={() => alert('Cancel')}
+                      onClick={() => handleConfirmCancelLeave(userId, leaveId)}
                     >
                       <X className="mr-1 h-4 w-4" />
                       <span>Cancel</span>

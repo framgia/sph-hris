@@ -17,6 +17,7 @@ namespace api.DTOs
         public bool? IsLeaderApproved { get; set; }
         public bool? IsManagerApproved { get; set; }
         public int LeaveId { get; set; }
+        public int UserId { get; set; }
 
         public LeavesTableDTO(Leave data)
         {
@@ -26,6 +27,7 @@ namespace api.DTOs
             Reason = data.Reason;
             NumLeaves = data.Days;
             UserName = data.User.Name;
+            UserId = data.UserId;
             IsWithPay = data.IsWithPay;
             LeaveTypeId = data.LeaveTypeId;
             LeaveName = data.LeaveType.Name;
