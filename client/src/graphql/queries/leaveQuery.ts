@@ -85,6 +85,7 @@ export const GET_MY_LEAVES_QUERY = gql`
         numLeaves
         status
         userName
+        userId
         createdAt
       }
       breakdown {
@@ -175,6 +176,7 @@ export const GET_YEARLY_ALL_LEAVES_QUERY = gql`
         numLeaves
         status
         userName
+        userId
         createdAt
       }
       breakdown {
