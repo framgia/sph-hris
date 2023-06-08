@@ -16,6 +16,7 @@ import Button from '~/components/atoms/Buttons/Button'
 import UpdateOvertimeModal from './UpdateOvertimeModal'
 import handleImageError from '~/utils/handleImageError'
 import { IOvertimeManagement } from '~/utils/interfaces'
+import ProjectChip from '~/components/atoms/ProjectChip'
 import { variants } from '~/utils/constants/animationVariants'
 import ApproveConfirmationModal from './ApproveConfirmationModal'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
@@ -123,18 +124,9 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                               )}
                             >
                               <ul className="flex flex-col divide-y divide-slate-200">
-                                <li className="flex items-center px-4 py-2.5">
-                                  Projects:{' '}
-                                  <div className="ml-2 flex flex-wrap items-center space-x-2">
-                                    {overtimeManagement.projects.map((project, index) => (
-                                      <span
-                                        key={index}
-                                        className="rounded border border-slate-300 bg-slate-50 px-1.5 font-medium"
-                                      >
-                                        {project.project_name.label}
-                                      </span>
-                                    ))}
-                                  </div>
+                                <li className="flex flex-col space-y-2 px-4 py-2.5">
+                                  <span>Projects:</span>
+                                  <ProjectChip projects={row.original.projects} />
                                 </li>
                                 <li className="px-4 py-2.5">
                                   Date:{' '}

@@ -1,7 +1,7 @@
 import * as Icons from 'react-feather'
 
 import { IESLOffset } from './eslOffsetInterface'
-import { TimeEntryWithBreak } from '../types/formValues'
+import { ReactSelectOption, TimeEntryWithBreak } from './../types/formValues'
 
 export type IconName = keyof typeof Icons
 
@@ -28,7 +28,10 @@ export interface IListOfLeave {
   id: number
   userId: number
   name: string
-  project: string
+  projects: Array<{
+    project_name: ReactSelectOption
+    project_leader: ReactSelectOption
+  }>
   leaveDate: string
   type: string
   isWithPay: boolean

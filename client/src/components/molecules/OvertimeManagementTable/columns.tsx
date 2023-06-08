@@ -1,11 +1,8 @@
 import moment from 'moment'
 import Tippy from '@tippyjs/react'
-import classNames from 'classnames'
-import React, { Fragment, useState } from 'react'
+import React, { useState } from 'react'
 import { BsFileEarmarkText } from 'react-icons/bs'
-import { AiOutlineCaretDown } from 'react-icons/ai'
 import { ThumbsDown, ThumbsUp } from 'react-feather'
-import { Listbox, Transition } from '@headlessui/react'
 import { createColumnHelper } from '@tanstack/react-table'
 
 import Avatar from '~/components/atoms/Avatar'
@@ -16,6 +13,7 @@ import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
 import handleImageError from '~/utils/handleImageError'
 import UpdateOvertimeModal from './UpdateOvertimeModal'
+import ProjectChip from '~/components/atoms/ProjectChip'
 import CellTimeValue from '~/components/atoms/CellTimeValue'
 import ApproveConfirmationModal from './ApproveConfirmationModal'
 import RequestStatusChip from '~/components/atoms/RequestStatusChip'
@@ -49,80 +47,10 @@ export const hrColumns = [
       )
     }
   }),
-  columnHelper.display({
-    id: 'empty1',
-    header: () => '',
-    footer: (info) => info.column.id
-  }),
   columnHelper.accessor('projects', {
     header: () => <CellHeader label="Project" />,
     footer: (info) => info.column.id,
-    cell: (props) => {
-      const { original: overtimeManagement } = props.row
-      return (
-        <Listbox value={overtimeManagement.projects[0]}>
-          <div className="relative mt-1">
-            <>
-              <Listbox.Button
-                className={classNames(
-                  'flex items-center space-x-2',
-                  'text-xs outline-none focus:scale-95'
-                )}
-              >
-                <span className="block truncate">
-                  {overtimeManagement.projects[0].project_name.label}
-                </span>
-                <AiOutlineCaretDown className="h-3 w-3 text-gray-400" aria-hidden="true" />
-              </Listbox.Button>
-              <Transition
-                as={Fragment}
-                leave="transition ease-in duration-100"
-                leaveFrom="opacity-100"
-                leaveTo="opacity-0"
-              >
-                <Listbox.Options
-                  className={classNames(
-                    'absolute z-50 mt-1 max-h-40 w-full overflow-auto rounded-md bg-white',
-                    'py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'
-                  )}
-                >
-                  {overtimeManagement.projects.map((project, index) => (
-                    <Listbox.Option key={index} value={project.project_name.value}>
-                      {({ selected }) => (
-                        <>
-                          <span
-                            className={classNames(
-                              'block',
-                              selected ? 'font-medium' : 'font-normal'
-                            )}
-                          >
-                            {project.project_name.label?.split(',').map((here, index) => {
-                              if (here !== 'Others' && here !== '') {
-                                return (
-                                  <p
-                                    key={index}
-                                    className={classNames(
-                                      'relative cursor-default select-none py-2 pl-5 pr-4 hover:bg-amber-100 hover:text-amber-900'
-                                    )}
-                                  >
-                                    {here}
-                                  </p>
-                                )
-                              }
-                              return null
-                            })}
-                          </span>
-                        </>
-                      )}
-                    </Listbox.Option>
-                  ))}
-                </Listbox.Options>
-              </Transition>
-            </>
-          </div>
-        </Listbox>
-      )
-    }
+    cell: ({ row: { original } }) => <ProjectChip projects={original.projects} />
   }),
   columnHelper.accessor('date', {
     header: () => <CellHeader label="Date" />,
@@ -248,72 +176,7 @@ export const managerColumns = [
   columnHelper.accessor('projects', {
     header: () => <CellHeader label="Project" />,
     footer: (info) => info.column.id,
-    cell: (props) => {
-      const { original: overtimeManagement } = props.row
-      return (
-        <Listbox value={overtimeManagement.projects[0]}>
-          <div className="relative mt-1">
-            <>
-              <Listbox.Button
-                className={classNames(
-                  'flex items-center space-x-2',
-                  'text-xs outline-none focus:scale-95'
-                )}
-              >
-                <span className="block truncate">
-                  {overtimeManagement.projects[0].project_name.label}
-                </span>
-                <AiOutlineCaretDown className="h-3 w-3 text-gray-400" aria-hidden="true" />
-              </Listbox.Button>
-              <Transition
-                as={Fragment}
-                leave="transition ease-in duration-100"
-                leaveFrom="opacity-100"
-                leaveTo="opacity-0"
-              >
-                <Listbox.Options
-                  className={classNames(
-                    'absolute z-50 mt-1 max-h-40 w-full overflow-auto rounded-md bg-white',
-                    'py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'
-                  )}
-                >
-                  {overtimeManagement.projects.map((project, index) => (
-                    <Listbox.Option key={index} value={project.project_name.value}>
-                      {({ selected }) => (
-                        <>
-                          <span
-                            className={classNames(
-                              'block',
-                              selected ? 'font-medium' : 'font-normal'
-                            )}
-                          >
-                            {project.project_name.label.split(',').map((here, index) => {
-                              if (here !== 'Others' && here !== '') {
-                                return (
-                                  <p
-                                    key={index}
-                                    className={classNames(
-                                      'relative cursor-default select-none py-2 pl-5 pr-4 hover:bg-amber-100 hover:text-amber-900'
-                                    )}
-                                  >
-                                    {here}
-                                  </p>
-                                )
-                              }
-                              return null
-                            })}
-                          </span>
-                        </>
-                      )}
-                    </Listbox.Option>
-                  ))}
-                </Listbox.Options>
-              </Transition>
-            </>
-          </div>
-        </Listbox>
-      )
-    }
+    cell: ({ row: { original } }) => <ProjectChip projects={original.projects} />
   }),
   columnHelper.display({
     id: 'empty1',
