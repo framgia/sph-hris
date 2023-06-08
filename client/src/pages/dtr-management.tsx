@@ -314,7 +314,7 @@ const DTRManagement: NextPage = (): JSX.Element => {
               )
             )}
           </>
-        ) : allEmployee.error == null ? (
+        ) : allEmployee.error === null ? (
           <div className="flex min-h-[50vh] items-center justify-center">
             <PulseLoader color="#ffb40b" size={10} />
           </div>
