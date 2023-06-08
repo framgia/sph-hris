@@ -16,6 +16,7 @@ namespace api.Enums
         public const string INVALID_FIRST_NAME = "Invalid First Name";
         public const string INVALID_LAST_NAME = "Invalid Last Name";
         public const string INVALID_LEAVE = "Leave doesn't exist";
+        public const string INVALID_LEAVE_ID = "Invalid Leave ID";
         public const string INVALID_LEAVE_TYPE = "Invalid leave type";
         public const string INVALID_MANAGER = "Manager doesn't exist";
         public const string INVALID_MIDDLE_NAME = "Invalid Middle Name";
@@ -34,6 +35,7 @@ namespace api.Enums
         public const string INVALID_TIME_ENTRY = "Time entry doesn't exist";
         public const string INVALID_USER = "User doesn't exist";
         public const string INVALID_USER_ID = "Invalid user ID";
+        public const string LEAVE_NOT_PENDING = "Leave is not pending anymore";
         public const string MISSING_APPROVED_MINUTES = "Approved minutes is required";
         public const string MISSING_PROJECTS = "Project/s is required";
         public const string MISMATCH_MANAGER = "Manager doesn't match";

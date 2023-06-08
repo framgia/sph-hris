@@ -16,12 +16,12 @@ namespace api.Services
         private readonly IDbContextFactory<HrisContext> _contextFactory = default!;
         private readonly HttpContextService _httpService;
         private readonly ITopicEventSender _eventSender;
-        private readonly CustomInputValidation _customInputValidation;
+        private readonly LeaveServiceInputValidation _customInputValidation;
         public LeaveService(IDbContextFactory<HrisContext> contextFactory, ITopicEventSender eventSender, IHttpContextAccessor accessor)
         {
             _contextFactory = contextFactory;
             _eventSender = eventSender;
-            _customInputValidation = new CustomInputValidation(_contextFactory);
+            _customInputValidation = new LeaveServiceInputValidation(_contextFactory);
             _httpService = new HttpContextService(accessor);
         }
         public async Task<List<LeaveType>> GetLeaveTypes()
@@ -135,6 +135,34 @@ namespace api.Services
                 .ToListAsync();
             }
         }
+
+        public async Task<string> CancelLeave(CancelLeaveRequest request, HrisContext context)
+        {
+            // validate inputs
+            var errors = _customInputValidation.CheckCancelLeaveRequestInput(request);
+
+            if (errors.Count > 0) throw new GraphQLException(errors);
+
+            var leave = await context.Leaves.FindAsync(request.LeaveId);
+            if(leave != null) leave.IsDeleted = true;
+            
+            try
+            {
+                // modify notifications too
+                LeaveNotificationToCancel(request);
+                
+                // save to database
+                await context.SaveChangesAsync();
+            }
+            catch
+            {
+                throw new Exception(ErrorMessageEnum.FAILED_LEAVE_CANCEL);
+            }
+
+            return SuccessMessageEnum.LEAVE_CANCELLED;
+        }
+
+        // public methods
         public async Task<double> GetPaidLeaves(int id)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
@@ -360,6 +388,29 @@ namespace api.Services
             existingLeave.IsManagerApproved = null;
             existingLeave.IsLeaderApproved = null;
             existingLeave.LeaveDate = DateTime.Parse(date.LeaveDate);
+        }
+
+        // private
+        private async void LeaveNotificationToCancel (CancelLeaveRequest request)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var notificationsList = await context.LeaveNotifications.Where(
+                                        x => x.LeaveId == request.LeaveId && 
+                                        (x.Type == NotificationTypeEnum.LEAVE || x.Type == NotificationTypeEnum.LEAVE_RESOLVED)).ToListAsync();
+                
+                foreach (var notification in notificationsList)
+                {
+                    var notificationData = notification != null ? JsonConvert.DeserializeObject<dynamic>(notification.Data) : null;
+
+                    if (notification != null && notificationData != null && notificationData?.Status == RequestStatus.PENDING)
+                    {
+                        notificationData!.Status = RequestStatus.CANCELLED;
+                        notification!.Data = JsonConvert.SerializeObject(notificationData);
+                    }
+                }
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

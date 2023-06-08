@@ -8,5 +8,6 @@ namespace api.Enums
         public const string EMPLOYEE_ADDED = "Employee(s) sccessfully added to the schedule!";
         public const string EMPLOYEE_SCHEDULE_UPDATED = "Employee schedule sccessfully updated!";
         public const string LEAVE_UPDATED = "Leave successfully updated!";
+        public const string LEAVE_CANCELLED = "Leave successfully cancelled";
     }
 }

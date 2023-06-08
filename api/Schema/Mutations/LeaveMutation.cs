@@ -61,5 +61,33 @@ namespace api.Schema.Mutations
                 }
             }
         }
+
+        public async Task<string> CancelLeave(CancelLeaveRequest request, [Service] LeaveService _leaveService, [Service] NotificationService _notificationService, [Service] ITopicEventSender eventSender, [Service] IDbContextFactory<HrisContext> contextFactory)
+        {
+            using (HrisContext context = contextFactory.CreateDbContext())
+            {
+                try
+                {
+                    using var transaction = context.Database.BeginTransaction();
+                    
+                    var cancel = await _leaveService.CancelLeave(request, context);
+
+                    transaction.Commit();
+
+                    return cancel;
+                }
+                catch (GraphQLException e)
+                {
+                    throw e;
+                }
+
+                catch (Exception e)
+                {
+                    throw new GraphQLException(ErrorBuilder.New()
+                    .SetMessage(e.Message)
+                    .Build());
+                }
+            }
+        }
     }
 }
