@@ -314,9 +314,15 @@ const DTRManagement: NextPage = (): JSX.Element => {
               )
             )}
           </>
-        ) : (
+        ) : allEmployee.error === null ? (
           <div className="flex min-h-[50vh] items-center justify-center">
             <PulseLoader color="#ffb40b" size={10} />
+          </div>
+        ) : (
+          <div className="bg-rose-50">
+            <p className="w-full py-2 text-center font-medium  text-rose-500">
+              Something went wrong
+            </p>
           </div>
         )}
       </section>
