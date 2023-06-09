@@ -16,4 +16,13 @@
     @apply ease-in-out focus:bg-white focus:text-slate-700 focus:outline-none;
     @apply disabled:cursor-not-allowed disabled:opacity-50;
   }
+  .menu-items {
+    @apply absolute right-0 top-10 w-60 origin-top-right rounded-md border border-slate-200 bg-white py-1 text-xs shadow-lg shadow-slate-200 focus:outline-none;
+  }
+  .menu-item {
+    @apply flex w-full items-center space-x-2.5 px-4 py-2.5 hover:bg-amber-50 hover:text-amber-600;
+  }
+  .online {
+    @apply absolute bottom-1 right-1 h-2 w-2 rounded-full bg-primary ring-2 ring-white;
+  }
 }

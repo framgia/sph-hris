@@ -1,64 +1,63 @@
-import classNames from 'classnames'
 import { Menu } from '@headlessui/react'
 import { signOut } from 'next-auth/react'
-import { LogOut, User } from 'react-feather'
 import React, { FC, ReactNode } from 'react'
+import { LogOut, Settings } from 'react-feather'
 
+import handleImageError from '~/utils/handleImageError'
 import useLogoutMutation from '~/hooks/useLogOutMutation'
+import { User as CurrentUser } from '~/utils/types/userTypes'
 import MenuTransition from '~/components/templates/MenuTransition'
 
 type Props = {
-  position: string
-  className?: string
+  currentUser: CurrentUser | undefined
   children: ReactNode
 }
 
-const UserMenuDropDown: FC<Props> = (props): JSX.Element => {
-  const {
-    position = 'right',
-    children,
-    className = 'shrink-0 outline-none active:scale-95'
-  } = props
-
-  const menu = 'relative z-30 flex w-full text-left'
-  const menuItems = classNames(
-    'absolute flex w-48 flex-col divide-y divide-slate-200 overflow-hidden rounded-md',
-    'bg-white py-1 shadow-xl shadow-slate-200 ring-1 ring-black ring-opacity-5 focus:outline-none',
-    position === 'bottom' && 'top-10 right-0',
-    position === 'right' && 'bottom-0 -right-48 origin-bottom-right',
-    position === 'top' && '-top-20 right-8 origin-top'
-  )
-  const menuItemButton = 'flex items-center space-x-2 px-3 py-2 text-xs hover:text-slate-700'
-  const menuItemButtonIcon = 'h-4 w-4 stroke-0.5'
-
+const UserMenuDropDown: FC<Props> = ({ currentUser, children }): JSX.Element => {
   const { handleLogoutMutation } = useLogoutMutation()
   const LogoutMutation = handleLogoutMutation()
 
+  const handleSignOut = async (): Promise<void> => {
+    await signOut({ callbackUrl: '/sign-in' })
+    LogoutMutation.mutate({ token: localStorage.getItem('cookies') as string })
+    localStorage.removeItem('cookies')
+  }
+
+  const handleClickSignOut = (): void => {
+    void handleSignOut()
+  }
+
   return (
-    <Menu as="div" className={menu}>
-      <Menu.Button className={className}>{children}</Menu.Button>
+    <Menu as="div" className="relative z-30 flex w-full text-left">
+      <Menu.Button className="shrink-0 outline-none active:scale-95">{children}</Menu.Button>
       <MenuTransition>
-        <Menu.Items className={menuItems}>
+        <Menu.Items className="menu-items">
+          <header className="flex items-center space-x-3 px-4 py-2">
+            <section className="relative shrink-0 rounded-full shadow shadow-slate-200">
+              <div className="rounded-full bg-gradient-to-tr from-yellow-400 to-fuchsia-500 p-1">
+                <img
+                  src={currentUser?.avatarLink}
+                  onError={(e) => handleImageError(e, '/images/default.png')}
+                  className="block h-9 w-9 rounded-full bg-white p-0.5 shadow-sm ring-1 ring-white"
+                />
+              </div>
+              <span className="online"></span>
+            </section>
+            <section>
+              <h2 className="text-sm font-medium line-clamp-1">{currentUser?.name}</h2>
+              <span className="font-light">{currentUser?.position.name}</span>
+            </section>
+          </header>
+          <hr className="mx-4 border-slate-100" />
           <Menu.Item>
-            <button className={menuItemButton}>
-              <User className={menuItemButtonIcon} aria-hidden="true" />
-              <span>Your account settings</span>
+            <button type="button" className="menu-item mt-1">
+              <Settings className="h-4 w-4" aria-hidden="true" />
+              <span>Settings & Security</span>
             </button>
           </Menu.Item>
           <Menu.Item>
-            <button
-              className={menuItemButton}
-              onClick={() => {
-                try {
-                  signOut({ callbackUrl: '/sign-in' })
-                    .then()
-                    .catch((error) => error.message)
-                } catch (error) {}
-                LogoutMutation.mutate({ token: localStorage.getItem('cookies') as string })
-                localStorage.removeItem('cookies')
-              }}
-            >
-              <LogOut className={menuItemButtonIcon} aria-hidden="true" />
+            <button type="button" className="menu-item mb-1" onClick={handleClickSignOut}>
+              <LogOut className="h-4 w-4" aria-hidden="true" />
               <span>Logout</span>
             </button>
           </Menu.Item>
