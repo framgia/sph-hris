@@ -208,25 +208,25 @@ export const columns = [
               <MenuTransition>
                 <Menu.Items
                   className={classNames(
-                    'absolute top-7 right-0 z-50 flex w-44 flex-col divide-y divide-slate-200 overflow-hidden rounded-md',
+                    'absolute top-7 right-0 z-50 flex w-fit flex-col divide-y divide-slate-200 overflow-hidden rounded-md',
                     'bg-white py-0.5 shadow-xl shadow-slate-200 ring-1 ring-black ring-opacity-5 focus:outline-none'
                   )}
                 >
                   <Menu.Item>
                     <button
-                      className={`${menuItemButton} space-x-2.5 pl-4`}
+                      className={`${menuItemButton} space-x-1 pl-2`}
                       onClick={() => handleEdit()}
                     >
-                      <Edit className="jw-3.5 mr-0.5 h-3.5" />
+                      <Edit className="jw-3.5 h-3.5 w-3.5" />
                       <span>Edit</span>
                     </button>
                   </Menu.Item>
                   <Menu.Item>
                     <button
-                      className={`${menuItemButton} space-x-2.5 pl-4`}
+                      className={`${menuItemButton} space-x-1 pl-2`}
                       onClick={() => handleConfirmCancelLeave(userId, leaveId)}
                     >
-                      <X className="mr-1 h-4 w-4" />
+                      <X className=" h-3.5 w-3.5" />
                       <span>Cancel</span>
                     </button>
                   </Menu.Item>
