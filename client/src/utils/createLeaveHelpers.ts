@@ -11,7 +11,9 @@ export type SelectOptionType = {
 }
 
 export const generateProjectsMultiSelect = (projects: ProjectDetails[]): SelectOptionType[] =>
-  projects?.map((project) => ({ label: project.name, value: project.id.toString() }))
+  projects
+    ?.filter((item) => item.name !== 'Others')
+    .map((project) => ({ label: project.name, value: project.id.toString() }))
 
 export const generateUserSelect = (users: User[]): SelectOptionType[] =>
   users?.map((user) => ({ label: user?.name, value: user?.id.toString() }))

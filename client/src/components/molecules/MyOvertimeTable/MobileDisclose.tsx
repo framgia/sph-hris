@@ -11,6 +11,7 @@ import { Calendar, ChevronRight } from 'react-feather'
 import ShowRemarksModal from './ShowRemarksModal'
 import { IMyOvertimeTable } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/Button'
+import ProjectChip from '~/components/atoms/ProjectChip'
 import { decimalFormatter } from '~/utils/myOvertimeHelpers'
 import { variants } from '~/utils/constants/animationVariants'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
@@ -86,34 +87,7 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                             <ul className="flex flex-col divide-y divide-slate-200">
                               <li className="flex flex-col space-y-2 px-4 py-2.5">
                                 <span>Projects:</span>
-                                <div className="flex flex-wrap items-center space-x-2">
-                                  {row?.original?.projects.map((option, index) => {
-                                    const projectName = option.project_name.label
-                                    const otherProjects =
-                                      option.project_name.label !== 'Others' &&
-                                      option.project_name.label?.split(',')
-
-                                    return (
-                                      <div key={index}>
-                                        <>
-                                          {typeof otherProjects === 'object' &&
-                                          projectName !== '' ? (
-                                            <>
-                                              {otherProjects.map((val, index) => (
-                                                <span
-                                                  key={index}
-                                                  className="rounded border border-slate-300 bg-slate-50 px-1.5 font-medium"
-                                                >
-                                                  {val}
-                                                </span>
-                                              ))}
-                                            </>
-                                          ) : null}
-                                        </>
-                                      </div>
-                                    )
-                                  })}
-                                </div>
+                                <ProjectChip projects={row.original.projects} />
                               </li>
                               <li className="px-4 py-2.5">
                                 Date:{' '}

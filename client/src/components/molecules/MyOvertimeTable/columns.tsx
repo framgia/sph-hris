@@ -1,15 +1,13 @@
 import Tippy from '@tippyjs/react'
-import classNames from 'classnames'
+import React, { useState } from 'react'
 import { BsFileEarmarkText } from 'react-icons/bs'
-import React, { Fragment, useState } from 'react'
-import { AiOutlineCaretDown } from 'react-icons/ai'
-import { Listbox, Transition } from '@headlessui/react'
 import { createColumnHelper } from '@tanstack/react-table'
 
 import ShowRemarksModal from './ShowRemarksModal'
 import { IMyOvertimeTable } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/Button'
 import CellHeader from '~/components/atoms/CellHeader'
+import ProjectChip from '~/components/atoms/ProjectChip'
 import CellTimeValue from '~/components/atoms/CellTimeValue'
 import { decimalFormatter } from '~/utils/myOvertimeHelpers'
 import RequestStatusChip from '~/components/atoms/RequestStatusChip'
@@ -21,77 +19,7 @@ export const columns = [
   columnHelper.accessor('projects', {
     header: () => <CellHeader label="Projects" />,
     footer: (info) => info.column.id,
-    cell: ({ row: { original } }) => (
-      <Listbox>
-        <div className="relative mt-1">
-          <Listbox.Button
-            className={classNames(
-              'flex items-center space-x-2',
-              'text-xs outline-none focus:scale-95'
-            )}
-          >
-            <span className="block truncate">{original.projects[0].project_name?.label}</span>
-            <AiOutlineCaretDown className="h-3 w-3 text-gray-400" aria-hidden="true" />
-          </Listbox.Button>
-          <Transition
-            as={Fragment}
-            leave="transition ease-in duration-100"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <Listbox.Options
-              className={classNames(
-                'absolute z-50 mt-1 max-h-40 w-full overflow-auto rounded-md bg-white',
-                'py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'
-              )}
-            >
-              {original.projects.map((option, index) => {
-                const projectName = option.project_name.label
-                const otherProjects =
-                  option.project_name.label !== 'Others' && option.project_name.label?.split(',')
-
-                return (
-                  <div key={index}>
-                    {typeof otherProjects === 'object' && projectName !== '' ? (
-                      <>
-                        {otherProjects.map((val, index) => (
-                          <Listbox.Option
-                            key={index}
-                            className={({ active }) =>
-                              classNames(
-                                'relative cursor-default select-none py-2 pl-5 pr-4',
-                                active ? 'bg-amber-100 text-amber-900' : 'text-slate-800'
-                              )
-                            }
-                            value={option.project_name.value}
-                          >
-                            {({ selected }) => (
-                              <span
-                                className={classNames(
-                                  'block',
-                                  selected ? 'font-medium' : 'font-normal'
-                                )}
-                              >
-                                {val}
-                              </span>
-                            )}
-                          </Listbox.Option>
-                        ))}
-                      </>
-                    ) : null}
-                  </div>
-                )
-              })}
-            </Listbox.Options>
-          </Transition>
-        </div>
-      </Listbox>
-    )
-  }),
-  columnHelper.display({
-    id: 'empty1',
-    header: () => '',
-    footer: (info) => info.column.id
+    cell: ({ row: { original } }) => <ProjectChip projects={original.projects} />
   }),
   columnHelper.accessor('date', {
     header: () => <CellHeader label="Date" />,

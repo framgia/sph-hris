@@ -10,6 +10,7 @@ import { IListOfLeave } from '~/utils/interfaces'
 import CellHeader from '~/components/atoms/CellHeader'
 import Button from '~/components/atoms/Buttons/Button'
 import handleImageError from '~/utils/handleImageError'
+import ProjectChip from '~/components/atoms/ProjectChip'
 
 const columnHelper = createColumnHelper<IListOfLeave>()
 
@@ -38,10 +39,11 @@ export const columns = [
       )
     }
   }),
-  columnHelper.accessor('project', {
+  columnHelper.accessor('projects', {
     id: 'Project',
     header: () => <CellHeader label="Project" />,
-    footer: (info) => info.column.id
+    footer: (info) => info.column.id,
+    cell: ({ row: { original } }) => <ProjectChip projects={original.projects} />
   }),
   columnHelper.accessor('leaveDate', {
     header: () => <CellHeader label="Leave Date(s)" />,

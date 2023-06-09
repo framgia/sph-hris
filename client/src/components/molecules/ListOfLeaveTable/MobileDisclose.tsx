@@ -12,6 +12,7 @@ import ShowReasonModal from './ShowReasonModal'
 import { IListOfLeave } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/Button'
 import handleImageError from '~/utils/handleImageError'
+import ProjectChip from '~/components/atoms/ProjectChip'
 import { variants } from '~/utils/constants/animationVariants'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import DisclosureTransition from '~/components/templates/DisclosureTransition'
@@ -50,18 +51,18 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
               <>
                 {table.getRowModel().rows.map((row) => {
                   const {
-                    avatar,
+                    id,
                     name,
-                    project,
-                    leaveDate,
                     type,
-                    isWithPay,
+                    avatar,
                     manager,
-                    projectLeader,
-                    totalUndertime,
-                    totalLeaves,
+                    projects,
                     dateFiled,
-                    id
+                    leaveDate,
+                    isWithPay,
+                    totalLeaves,
+                    projectLeader,
+                    totalUndertime
                   } = row.original
                   return (
                     <Disclosure key={row.id}>
@@ -109,8 +110,9 @@ const MobileDisclose: FC<Props> = ({ table, isLoading, error }): JSX.Element => 
                               )}
                             >
                               <ul className="flex flex-col divide-y divide-slate-200">
-                                <li className="px-4 py-2">
-                                  Project: <span className="font-semibold">{project}</span>
+                                <li className="flex flex-col space-y-2 px-4 py-2.5">
+                                  <span>Projects:</span>
+                                  <ProjectChip {...{ projects }} />
                                 </li>
                                 <li className="px-4 py-2">
                                   Leave Date: <span className="font-semibold">{leaveDate}</span>

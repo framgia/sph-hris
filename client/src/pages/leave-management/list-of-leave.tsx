@@ -30,7 +30,16 @@ const ListOfLeave: NextPage = (): JSX.Element => {
         id: i?.id,
         name: i?.userName,
         userId: i?.userId,
-        project: i?.leaveProjects[0]?.project?.name,
+        projects: i?.leaveProjects.map((item) => ({
+          project_name: {
+            label: item.project.name,
+            value: item.project.name
+          },
+          project_leader: {
+            label: item.projectLeader.name,
+            value: item.projectLeader.name
+          }
+        })),
         leaveDate: moment(i?.leaveDate).format('MM/DD/YYYY'),
         type: i?.leaveType,
         isWithPay: i?.isWithPay,
@@ -66,6 +75,7 @@ const ListOfLeave: NextPage = (): JSX.Element => {
             placeholder="Search"
           />
         </header>
+
         {mappedLeave !== undefined && data !== undefined ? (
           <ListOfLeaveTable
             {...{
