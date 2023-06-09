@@ -10,6 +10,7 @@ import Input from '~/components/atoms/Input'
 import useOvertime from '~/hooks/useOvertime'
 import useUserQuery from '~/hooks/useUserQuery'
 import Button from '~/components/atoms/Buttons/Button'
+import handleImageError from '~/utils/handleImageError'
 import ReactTextareaAutosize from 'react-textarea-autosize'
 import { ApproveConfirmationSchema } from '~/utils/validation'
 import { IOvertimeManagementManager } from '~/utils/interfaces'
@@ -93,7 +94,12 @@ const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.E
         <main className="py-6 px-7 text-xs">
           <section className="flex items-start justify-between">
             <div className="inline-flex flex-col space-y-1">
-              <img src={row.user.link} className="h-14 w-14 rounded-full" alt="" />
+              <img
+                onError={(e) => handleImageError(e, '/images/default.png')}
+                src={row.user.link}
+                className="h-14 w-14 rounded-full"
+                alt=""
+              />
               <h1 className="text-lg font-semibold text-slate-700">{row.user.name}</h1>
             </div>
             <Button
