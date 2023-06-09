@@ -424,7 +424,7 @@ const Header: FC<Props> = (props): JSX.Element => {
               </div>
               {/* User Avatar */}
               <span className="hidden text-slate-500 sm:block">
-                <UserMenuDropDown position="bottom">
+                <UserMenuDropDown currentUser={data?.userById}>
                   <Avatar
                     onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) =>
                       handleImageError(e, '/images/default.png')
