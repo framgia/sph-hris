@@ -1,21 +1,17 @@
-import React, { FC, useEffect, useState } from 'react'
-import classNames from 'classnames'
-import { useRouter } from 'next/router'
 import Select from 'react-select'
+import { useRouter } from 'next/router'
+import React, { FC, useEffect, useState } from 'react'
 
-import Text from '~/components/atoms/Text'
 import useUserQuery from '~/hooks/useUserQuery'
-import CheckBox from '~/components/atoms/CheckBox'
-import { WorkStatus } from '~/utils/constants/work-status'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { customStyles } from '~/utils/customReactSelectStyles'
-import FilterDropdownTemplate from '~/components/templates/FilterDropdownTemplate'
 import { optionType, usersSelectOptions, yearSelectOptions } from '~/utils/maps/filterOptions'
 
 type Props = {}
 
 const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
   const router = useRouter()
+
   const currentYear = new Date().getFullYear()
   const { handleAllUsersQuery } = useUserQuery()
 
@@ -112,94 +108,62 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
   }, [router])
 
   return (
-    <div>
-      <FilterDropdownTemplate btnText="Filters" cardClassName="overflow-visible">
-        <main className="flex flex-col space-y-3 px-5 py-4">
-          <Text theme="sm" weight="semibold" className="text-slate-500">
-            {isListOfLeaveTabPage ? 'Leave Filters' : 'Summary Filters'}
-          </Text>
-          {!isListOfLeaveTabPage && (
-            <>
-              {router.pathname === '/leave-management/leave-summary' ? (
-                <>
-                  <label htmlFor="filterName" className="flex flex-col space-y-1">
-                    <span className="text-xs text-slate-500">Name</span>
-                    <Select
-                      id="filterName"
-                      styles={customStyles}
-                      defaultValue={handleDefaultValues(NAME_FIELD)}
-                      isLoading={isLoading}
-                      name={NAME_FIELD}
-                      onChange={(e) => (e !== null ? setSelectedUser(e.value) : null)}
-                      options={nameOptions}
-                    />
-                  </label>
-                  <label htmlFor="filterYear" className="flex flex-col space-y-1">
-                    <span className="text-xs text-slate-500">Year</span>
-                    <Select
-                      id="filterYear"
-                      styles={customStyles}
-                      defaultValue={handleDefaultValues(YEAR_FIELD)}
-                      isLoading={isLoading}
-                      name={YEAR_FIELD}
-                      onChange={(e) => (e !== null ? setYear(e.value) : null)}
-                      options={yearOptions}
-                    />
-                  </label>
-                </>
-              ) : (
-                <label htmlFor="filterYear" className="flex flex-col space-y-1">
-                  <span className="text-xs text-slate-500">Year</span>
-                  <Select
-                    id="filterYear"
-                    styles={customStyles}
-                    defaultValue={handleDefaultValues('year')}
-                    name="year"
-                    onChange={(e) => (e !== null ? setYear(e.value) : null)}
-                    options={yearOptions}
-                  />
-                </label>
-              )}
-            </>
-          )}
-          {isListOfLeaveTabPage && (
-            <div className="space-y-4">
-              <label htmlFor="filterName" className="flex flex-col space-y-1">
-                <span className="text-xs text-slate-500">Filter Type</span>
-                <select
-                  className={classNames(
-                    'w-full rounded-md border border-slate-300 text-xs shadow-sm',
-                    'focus:border-primary focus:ring-1 focus:ring-primary'
-                  )}
-                  id="filterName"
-                >
-                  <option value="">All</option>
-                  <option value="">{WorkStatus.VACATION_LEAVE}</option>
-                  <option value="">{WorkStatus.ABSENT}</option>
-                  <option value="">{WorkStatus.ON_DUTY}</option>
-                  <option value="">{WorkStatus.SICK_LEAVE}</option>
-                </select>
+    <div className="flex flex-col items-center gap-y-4 space-x-2 text-xs sm:flex-row sm:items-end">
+      {!isListOfLeaveTabPage && (
+        <div className="flex w-full flex-col items-center sm:w-auto sm:flex-row sm:space-x-2">
+          {/* ===== PAGE FOR: LEAVE SUMMARY ===== */}
+          {router.pathname === '/leave-management/leave-summary' && (
+            <div className="mt-4 w-full sm:w-64">
+              <label htmlFor="leaveSummaryFilterName" className="flex flex-col space-y-1">
+                <span className="text-xs text-slate-500">Name</span>
+                <Select
+                  id="leaveSummaryFilterName"
+                  styles={customStyles}
+                  defaultValue={handleDefaultValues(NAME_FIELD)}
+                  isLoading={isLoading}
+                  name={NAME_FIELD}
+                  className="w-full"
+                  classNames={{
+                    control: (state) => (state.isFocused ? 'border-primary' : 'border-slate-300')
+                  }}
+                  onChange={(e) => (e !== null ? setSelectedUser(e.value) : null)}
+                  options={nameOptions}
+                />
               </label>
-              <hr />
-              <div className="flex items-center justify-between">
-                <CheckBox label="With Pay" />
-                <CheckBox label="Without Pay" />
-              </div>
             </div>
           )}
-        </main>
-        <footer className="bg-slate-100 px-5 py-3">
-          <Button
-            onClick={handleUpdateResult}
-            type="button"
-            variant="primary"
-            rounded="md"
-            className="w-full py-2"
-          >
-            Update Results
-          </Button>
-        </footer>
-      </FilterDropdownTemplate>
+
+          {/* ===== PAGE FOR: MY LEAVE PAGE AND YEARLY SUMMARY ===== */}
+          <div className="mt-4 w-full sm:w-64">
+            <label htmlFor="myleaveFilterYear" className="flex flex-col space-y-1">
+              <span className="text-xs text-slate-500">Filter By Year</span>
+              <Select
+                id="myleaveFilterYear"
+                styles={customStyles}
+                defaultValue={handleDefaultValues(YEAR_FIELD)}
+                name={YEAR_FIELD}
+                classNames={{
+                  control: (state) => (state.isFocused ? 'border-primary' : 'border-slate-300')
+                }}
+                className="w-full text-xs"
+                onChange={(e) => (e !== null ? setYear(e.value) : null)}
+                options={yearOptions}
+              />
+            </label>
+          </div>
+        </div>
+      )}
+
+      <div className="mb-0.5 w-full">
+        <Button
+          onClick={handleUpdateResult}
+          type="button"
+          variant="primary"
+          className="w-full py-2 px-4 sm:w-auto"
+        >
+          Filter
+        </Button>
+      </div>
     </div>
   )
 }

@@ -3,28 +3,31 @@ import dynamic from 'next/dynamic'
 import classNames from 'classnames'
 import { Plus } from 'react-feather'
 import { useRouter } from 'next/router'
+import { Filter } from '@icon-park/react'
 import { PulseLoader } from 'react-spinners'
 import React, { useEffect, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import useLocalStorageState from 'use-local-storage-state'
 
-import Card from '~/components/atoms/Card'
-import Layout from '~/components/templates/Layout'
-import {
-  getHeatmapData,
-  initialChartOptions,
-  initialSeriesData,
-  Series
-} from '~/utils/generateData'
 import useLeave from '~/hooks/useLeave'
+import Card from '~/components/atoms/Card'
 import useUserQuery from '~/hooks/useUserQuery'
+import Layout from '~/components/templates/Layout'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { getRemainingPaidLeaves } from '~/hooks/useLeaveQuery'
 import { Chip } from '~/components/templates/LeaveManagementLayout'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import AddNewLeaveModal from '~/components/molecules/AddNewLeaveModal'
 import BreakdownOfLeaveCard from '~/components/molecules/BreakdownOfLeavesCard'
-import SummaryFilterDropdown from '~/components/molecules/SummaryFilterDropdown'
 import { Breakdown, HeatmapDetails, LeaveTable } from '~/utils/types/leaveTypes'
+import SummaryFilterDropdown from '~/components/molecules/SummaryFilterDropdown'
 import LeaveManagementResultTable from '~/components/molecules/LeaveManagementResultTable'
+import {
+  Series,
+  getHeatmapData,
+  initialSeriesData,
+  initialChartOptions
+} from '~/utils/generateData'
 
 const ReactApexChart = dynamic(async () => await import('react-apexcharts'), {
   ssr: false
@@ -37,9 +40,19 @@ type SeriesData = {
 
 const MyLeaves: NextPage = (): JSX.Element => {
   const router = useRouter()
-  const { handleUserQuery } = useUserQuery()
   const [isOpen, setIsOpen] = useState<boolean>(false)
+
+  const [isHideFilter, setHideFilter] = useLocalStorageState('hideFilter', {
+    defaultValue: false
+  })
+
+  const handleHideFilterToggle = (): void => setHideFilter(!isHideFilter)
+
+  // CURRENT USER HOOKS
+  const { handleUserQuery } = useUserQuery()
   const { data: user, isSuccess: isUserSuccess, isLoading: isUserLoading } = handleUserQuery()
+
+  // GET MY LEAVE HOOKS
   const { getLeaveQuery } = useLeave()
   const {
     data: leaves,
@@ -61,11 +74,13 @@ const MyLeaves: NextPage = (): JSX.Element => {
       })
     }
   }, [router])
+
   useEffect(() => {
     if (isUserSuccess && user?.userById.id !== undefined && router.query.year !== undefined) {
       void refetch()
     }
   }, [isUserSuccess, user, router])
+
   useEffect(() => {
     if (isSuccess || isUserSuccess) {
       setSeries([
@@ -125,19 +140,26 @@ const MyLeaves: NextPage = (): JSX.Element => {
 
   return (
     <Layout metaTitle="My Leaves">
-      <main className="h-full">
-        <header
-          className={classNames(
-            'flex flex-wrap justify-between space-x-2 border-b',
-            'border-slate-200 px-4 py-[7px] text-xs'
-          )}
-        >
+      <main className="default-scrollbar h-full overflow-y-auto">
+        <header className="mt-4 flex flex-wrap justify-between space-x-2 px-4 text-xs">
           <div className="flex items-center space-x-1">
-            <p className="text-slate-500">Remaining Paid Leaves:</p>
+            <p className="text-sm text-slate-500">Available Paid Leaves:</p>
             <Chip count={paidLeaves?.paidLeaves} />
           </div>
           {/* FOR INTEGRATOR: Filter it by shallow route */}
           <div className="flex items-center space-x-2">
+            <Button
+              type="button"
+              rounded="full"
+              variant="secondary"
+              onClick={handleHideFilterToggle}
+              className="flex items-center space-x-0.5 !bg-white px-2 py-[3px]"
+            >
+              <Filter size={14} theme="outline" />
+              <span className="hidden sm:block">
+                {isHideFilter ? 'Hide Filter' : 'Show Filter'}
+              </span>
+            </Button>
             <Button
               type="button"
               variant="primary"
@@ -147,7 +169,6 @@ const MyLeaves: NextPage = (): JSX.Element => {
               <Plus className="h-4 w-4" />
               <span className="hidden sm:block">File leave</span>
             </Button>
-            <SummaryFilterDropdown />
           </div>
 
           {/* This will Open New Modal for Filing New Leave */}
@@ -158,8 +179,23 @@ const MyLeaves: NextPage = (): JSX.Element => {
             }}
           />
         </header>
+        {/* This will trigger filter */}
+        <AnimatePresence initial={false}>
+          {isHideFilter && (
+            <motion.div
+              key="dropdown"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="px-4"
+            >
+              <SummaryFilterDropdown />
+            </motion.div>
+          )}
+        </AnimatePresence>
         {!isUserLoading && !isLeavesLoading ? (
-          <div className="default-scrollbar h-full space-y-4 overflow-y-auto px-4">
+          <div className="space-y-4 px-4">
             <MaxWidthContainer>
               <Card className="default-scrollbar mt-4 overflow-x-auto overflow-y-hidden">
                 <div className="w-full min-w-[647px] px-5 pt-4 md:max-w-full">
