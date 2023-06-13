@@ -7,11 +7,11 @@ import { PulseLoader } from 'react-spinners'
 import React, { FC, useEffect, useState } from 'react'
 import { signOut, signIn, useSession } from 'next-auth/react'
 
+import { client } from '~/utils/shared/client'
 import WaveStyle from '~/utils/icons/WaveStyle'
 import { getServerSideProps } from '~/utils/ssr'
 import useSignInMutation from '~/hooks/useSignInMutation'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
-import { client } from '~/utils/shared/client'
 
 type Props = {
   cookies: string | null
@@ -52,7 +52,7 @@ const SignIn: FC<Props> = ({ cookies }): JSX.Element => {
   return (
     <>
       <Head>
-        <title>Sign In</title>
+        <title>HRIS - Sign In</title>
       </Head>
       <div className="relative flex h-screen min-h-screen flex-col justify-center overflow-hidden">
         <MaxWidthContainer
@@ -70,13 +70,11 @@ const SignIn: FC<Props> = ({ cookies }): JSX.Element => {
             <button
               type="button"
               className={classNames(
-                'overflow-hidden border-[#4285f4] px-6 py-2.5 text-xs font-medium shadow-md shadow-blue-100',
+                'overflow-hidden border-amber-400 px-6 py-2.5 text-xs font-medium shadow-md shadow-amber-100',
                 'relative inline-flex w-full items-center justify-center rounded border text-white focus:scale-95',
+                'bg-gradient-to-tl from-yellow-300 to-fuchsia-500 transition duration-200 ease-in-out focus:text-white',
                 !isVerifying &&
-                  'focus:shadow-lg focus:outline-none focus:ring-0 hover:shadow-lg hover:shadow-blue-200 active:shadow-lg',
-                !isVerifying
-                  ? 'focus:[#4285f4] bg-[#4285f4] transition duration-200 ease-in-out focus:text-white hover:bg-[#4285f4]/90'
-                  : 'bg-[#4285f4]',
+                  'focus:shadow-lg focus:outline-none focus:ring-0 hover:shadow-lg hover:shadow-amber-200/80 active:shadow-lg',
                 isVerifying || session.status === 'loading'
                   ? 'cursor-not-allowed opacity-50 active:scale-100'
                   : ''
@@ -107,7 +105,7 @@ const SignIn: FC<Props> = ({ cookies }): JSX.Element => {
             </button>
           </div>
         </MaxWidthContainer>
-        <div className="absolute inset-x-0 -bottom-14 -z-10">
+        <div className="absolute inset-x-0 -bottom-16 -z-10">
           <WaveStyle className="w-full" />
         </div>
       </div>
