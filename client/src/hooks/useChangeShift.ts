@@ -33,7 +33,7 @@ const useChangeShift = (): returnType => {
   const handleChangeShiftRequestMutation = (): handleChangeShiftRequestMutationType =>
     useMutation({
       mutationFn: async (data: IChangeShiftRequestInput) => {
-        return await client.request(CREATE_CHANGE_SHIFT_MUTATION, {
+        return await client().request(CREATE_CHANGE_SHIFT_MUTATION, {
           changeShiftRequest: data
         })
       },
@@ -47,7 +47,7 @@ const useChangeShift = (): returnType => {
   const handleApproveChangeShiftMutation = (): handleApproveChangeShiftMutationType =>
     useMutation({
       mutationFn: async (data: IApproveChangeShiftRequestInput) => {
-        return await client.request(APROVE_DISAPPROVE_CHANGE_SHIFT_MUTATION, {
+        return await client().request(APROVE_DISAPPROVE_CHANGE_SHIFT_MUTATION, {
           changeShiftApproval: data
         })
       },

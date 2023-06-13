@@ -33,7 +33,7 @@ const useNotificationMutation = (): returnType => {
   const handleNotificationMutation = (): handleNotificationMutationReturnType =>
     useMutation({
       mutationFn: async (notification: NotificationRequestInput) => {
-        return await client.request(NOTIFICATION_READ_AT_MUTATION, { notification })
+        return await client().request(NOTIFICATION_READ_AT_MUTATION, { notification })
       },
       onSuccess: async () => {}
     })
@@ -41,7 +41,7 @@ const useNotificationMutation = (): returnType => {
   const handleReadAllNotificationMutation = (): handleNotificationMutationReturnType =>
     useMutation({
       mutationFn: async (id: NotificationRequestInput) => {
-        return await client.request(READ_ALL_NOTIFICATIONS, { id })
+        return await client().request(READ_ALL_NOTIFICATIONS, { id })
       },
       onSuccess: async () => {}
     })

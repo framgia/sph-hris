@@ -2,6 +2,7 @@ import Head from 'next/head'
 import classNames from 'classnames'
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/router'
+import { setCookie } from 'cookies-next'
 import { FcGoogle } from 'react-icons/fc'
 import { PulseLoader } from 'react-spinners'
 import React, { FC, useEffect, useState } from 'react'
@@ -27,21 +28,16 @@ const SignIn: FC<Props> = ({ cookies }): JSX.Element => {
 
   useEffect(() => {
     if (session?.status === 'authenticated') {
-      SignInMutation.mutate({
-        email: session?.data?.user?.email as string,
-        token: cookies as string,
-        expiration: session?.data?.expires
-      })
-      localStorage.setItem('cookies', cookies as string)
+      SignInMutation.mutate(null)
       localStorage.setItem('newNotificationCount', '0')
     }
   }, [session?.status])
 
   useEffect(() => {
     if (session?.data != null) setIsVerifying(true)
-    if (SignInMutation?.data?.createSignIn === true) {
-      client.setHeaders({ 'nextauth-token': cookies as string })
+    if (SignInMutation.isSuccess) {
       void router.replace('/my-daily-time-record')
+      setCookie('authorization', SignInMutation?.data.createSignIn)
       toast.success('Verification Success!', { duration: 3000 })
     } else if (session?.data != null) {
       void signOut({ callbackUrl: '/sign-in' })

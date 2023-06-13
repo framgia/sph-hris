@@ -6,7 +6,6 @@ import {
 } from '~/graphql/queries/UserQuery'
 import { client } from '~/utils/shared/client'
 import { User } from '~/utils/types/userTypes'
-import moment from 'moment'
 
 type handleUserQueryType = UseQueryResult<
   {
@@ -40,11 +39,7 @@ const useUserQuery = (): returnType => {
   const handleUserQuery = (): handleUserQueryType =>
     useQuery({
       queryKey: ['GET_USER_QUERY'],
-      queryFn: async () =>
-        await client.request(GET_USER_QUERY, {
-          token: localStorage.getItem('cookies'),
-          schedule: moment(new Date()).format('dddd')
-        }),
+      queryFn: async () => await client().request(GET_USER_QUERY),
       select: (data: { userById: User }) => data
     })
 
@@ -52,7 +47,7 @@ const useUserQuery = (): returnType => {
   const handleAllUsersQuery = (ready: boolean = true): handleAllUsersQueryType =>
     useQuery({
       queryKey: ['GET_ALL_USERS_QUERY'],
-      queryFn: async () => await client.request(GET_ALL_USERS_QUERY),
+      queryFn: async () => await client().request(GET_ALL_USERS_QUERY),
       select: (data: { allUsers: User[] }) => data,
       enabled: ready
     })
@@ -62,7 +57,7 @@ const useUserQuery = (): returnType => {
     useQuery({
       queryKey: ['GET_ESL_USERS_QUERY'],
       queryFn: async () =>
-        await client.request(GET_ALL_ESL_USERS_QUERY, { requestingUserId: null }),
+        await client().request(GET_ALL_ESL_USERS_QUERY, { requestingUserId: null }),
       select: (data: { allESLUsers: Array<Pick<User, 'id' | 'name'>> }) => data,
       enabled: ready
     })

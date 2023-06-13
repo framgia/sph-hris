@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request'
 export const GET_USER_QUERY = gql`
-  query ($token: String!, $schedule: String!) {
-    userById(token: $token, schedule: $schedule) {
+  query {
+    userById {
       id
       name
       avatarLink

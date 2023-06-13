@@ -29,14 +29,17 @@ const useUnusedESLOffset = (): HookReturnType => {
     useQuery({
       queryKey: ['GET_ALL_UNUSED_ESL_OFFSETS_BY_TIME_ENTRY'],
       queryFn: async () =>
-        await client.request(GET_ALL_UNUSED_ESL_OFFSETS_BY_TIME_ENTRY, { timeEntryId, onlyUnused }),
+        await client().request(GET_ALL_UNUSED_ESL_OFFSETS_BY_TIME_ENTRY, {
+          timeEntryId,
+          onlyUnused
+        }),
       select: (data: { eslOffsetsByTimeEntry: IUnusedESLOffset[] }) => data
     })
 
   const getAllESLOffsetQuery = (): AllOffsetFuncReturnType =>
     useQuery({
       queryKey: ['GET_ALL_UNUSED_ESL_OFFSETS'],
-      queryFn: async () => await client.request(GET_ALL_UNUSED_ESL_OFFSETS),
+      queryFn: async () => await client().request(GET_ALL_UNUSED_ESL_OFFSETS),
       select: (data: { allESLOffsets: IUnusedESLOffset[] }) => data
     })
 

@@ -17,14 +17,14 @@ const useProject = (): returnType => {
   const handleProjectQuery = (): handleProjectQueryType =>
     useQuery({
       queryKey: ['GET_ALL_PROJECTS_QUERY'],
-      queryFn: async () => await client.request(GET_ALL_PROJECTS_QUERY),
+      queryFn: async () => await client().request(GET_ALL_PROJECTS_QUERY),
       select: (data: Project) => data
     })
 
   const getLeadersQuery = (projectId: number | undefined): getLeadersQueryType =>
     useQuery({
       queryKey: ['GET_ALL_LEADERS_QUERY', projectId],
-      queryFn: async () => await client.request(GET_ALL_LEADERS_QUERY, { projectId }),
+      queryFn: async () => await client().request(GET_ALL_LEADERS_QUERY, { projectId }),
       select: (data: Leaders) => data,
       onError: () => toast.error('Failed fetching leaders')
     })

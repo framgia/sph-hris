@@ -33,7 +33,7 @@ const useUpdateTimeEntryMutation = (): returnType => {
   const handleUpdateTimeEntryMutation = (): handleUpdateTimeEntryMutationReturnType =>
     useMutation({
       mutationFn: async (updatedTimeEntry: UpdateTimeEntryRequest) => {
-        return await client.request(UPDATE_TIME_ENTRY, updatedTimeEntry)
+        return await client().request(UPDATE_TIME_ENTRY, updatedTimeEntry)
       },
       onSuccess: async (data) => {
         await queryClient.refetchQueries(['GET_ALL_EMPLOYEE_TIMESHEET'])

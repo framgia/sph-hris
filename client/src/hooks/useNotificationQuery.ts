@@ -15,7 +15,7 @@ export const useNotification = (): returnType => {
   const getUserNotificationsQuery = (id: number): getUserNotificationsQueryType =>
     useQuery({
       queryKey: ['GET_ALL_USER_NOTIFICATION'],
-      queryFn: async () => await client.request(GET_ALL_USER_NOTIFICATION, { id }),
+      queryFn: async () => await client().request(GET_ALL_USER_NOTIFICATION, { id }),
       select: (data: UserNotifications) => data,
       enabled: !isNaN(id)
     })

@@ -1,4 +1,3 @@
-using api.Requests;
 using api.Services;
 
 namespace api.Schema.Mutations
@@ -11,9 +10,22 @@ namespace api.Schema.Mutations
         {
             _signInService = signInService;
         }
-        public async Task<bool> CreateSignIn(SigninRequest signIn)
+        public async Task<string> CreateSignIn()
         {
-            return await _signInService.Create(signIn);
+            try
+            {
+                return await _signInService.Create();
+            }
+            catch (GraphQLException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw new GraphQLException(ErrorBuilder.New()
+                .SetMessage(e.Message)
+                .Build());
+            }
         }
     }
 }

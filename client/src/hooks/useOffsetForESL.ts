@@ -31,7 +31,7 @@ const useOffsetForESL = (): HookReturnType => {
   const handleAddNewOffsetMutation = (): NewOffsetFuncReturnType =>
     useMutation({
       mutationFn: async (request: IESLOffsetInput) => {
-        return await client.request(CREATE_ESL_OFFSET_MUTATION, { request })
+        return await client().request(CREATE_ESL_OFFSET_MUTATION, { request })
       },
       onError: async (err: Error) => {
         const [errorMessage] = err.message.split(/:\s/, 2)
@@ -42,7 +42,7 @@ const useOffsetForESL = (): HookReturnType => {
   const handleApproveEslOffsetMutation = (): ApproveChangeShiftMutationType =>
     useMutation({
       mutationFn: async (request: IApproveESLOffsetInput) => {
-        return await client.request(APROVE_DISAPPROVE_ESL_OFFSET_MUTATION, {
+        return await client().request(APROVE_DISAPPROVE_ESL_OFFSET_MUTATION, {
           request
         })
       },
@@ -57,7 +57,7 @@ const useOffsetForESL = (): HookReturnType => {
   const handleApproveOffsetMutation = (): handleApproveOffsetMutationType =>
     useMutation({
       mutationFn: async (request: IApproveOffsetInput) => {
-        return await client.request(APROVE_DISAPPROVE_OFFSET_MUTATION, {
+        return await client().request(APROVE_DISAPPROVE_OFFSET_MUTATION, {
           request
         })
       },

@@ -24,6 +24,8 @@ builder.Services.AddCors(options =>
         policy => policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod());
 });
 
+builder.Services.AddHttpResponseFormatter<CustomHttpResponseFormatter>();
+
 builder.Services.AddGraphQLServer()
     .AddQueryType(q => q.Name("Query"))
     .UseField<AuthorizeUser>()
