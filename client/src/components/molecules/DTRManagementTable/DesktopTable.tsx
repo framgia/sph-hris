@@ -23,11 +23,7 @@ const DesktopTable: FC<Props> = (props): JSX.Element => {
   } = props
 
   return (
-    <AnimatedTable
-      {...{
-        table
-      }}
-    >
+    <AnimatedTable className="w-full min-w-[1520px]">
       <thead className="border-b border-slate-200">
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>

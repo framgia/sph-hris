@@ -70,13 +70,11 @@ const EmployeeManagementTable: FC<Props> = (props): JSX.Element => {
           }}
         />
       ) : (
-        <div className="mx-auto w-full max-w-fit">
-          <DesktopTable
-            {...{
-              table
-            }}
-          />
-        </div>
+        <DesktopTable
+          {...{
+            table
+          }}
+        />
       )}
       {/* Table Pagination & Filtering */}
       {table.getPageCount() >= 1 && (

@@ -73,7 +73,7 @@ const DTRTable: FC<Props> = (props): JSX.Element => {
           }}
         />
       ) : (
-        <div className="mx-auto mb-12 w-full max-w-fit">
+        <div className="mb-12">
           <DesktopTable
             {...{
               table,

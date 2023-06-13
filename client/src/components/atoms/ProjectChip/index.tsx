@@ -12,7 +12,7 @@ type Props = {
 
 const ProjectChip: FC<Props> = ({ projects }): JSX.Element => {
   return (
-    <div className="-ml-2 flex w-full min-w-[100px] flex-wrap">
+    <div className="-ml-2 flex w-full min-w-[100px] flex-wrap gap-y-2">
       {projects.map((option, index) => {
         const projectName = option.project_name.label
         const otherProjects =

@@ -59,6 +59,17 @@ const MobileDisclose: FC<Props> = ({ table }): JSX.Element => {
                             <small className="text-slate-500">Web Developer</small>
                           </div>
                         </div>
+                        <span
+                          className={classNames(
+                            'py-0.25  ml-1 rounded-full border  px-1.5',
+                            row.original.status === 'Active' &&
+                              'border-green-200 bg-green-50 text-green-600',
+                            row.original.status === 'Inactive' &&
+                              'border-rose-200 bg-rose-50 text-rose-600'
+                          )}
+                        >
+                          {row.original.status}
+                        </span>
                       </div>
                       <ChevronRight
                         className={classNames(
@@ -85,20 +96,6 @@ const MobileDisclose: FC<Props> = ({ table }): JSX.Element => {
                         <li className="px-4 py-2">
                           Date Joined:{' '}
                           <span className="font-semibold">{row.original.date_joined}</span>
-                        </li>
-                        <li className="inline-flex items-center px-4 py-2 md:py-3">
-                          Status:{' '}
-                          <span
-                            className={classNames(
-                              'py-0.25  ml-1 rounded-full border  px-1.5',
-                              row.original.status === 'Active' &&
-                                'border-green-200 bg-green-50 text-green-600',
-                              row.original.status === 'Inactive' &&
-                                'border-rose-200 bg-rose-50 text-rose-600'
-                            )}
-                          >
-                            {row.original.status}
-                          </span>
                         </li>
                         <li className="flex items-center space-x-2 px-4 py-2">
                           <span>Actions:</span>

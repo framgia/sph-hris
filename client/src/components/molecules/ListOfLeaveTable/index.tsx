@@ -14,6 +14,7 @@ import FooterTable from './../FooterTable'
 import MobileDisclose from './MobileDisclose'
 import { fuzzyFilter } from '~/utils/fuzzyFilter'
 import { IListOfLeave } from '~/utils/interfaces'
+import useScreenCondition from '~/hooks/useScreenCondition'
 
 type Props = {
   query: {
@@ -29,6 +30,9 @@ type Props = {
 }
 
 const ListOfLeaveTable: FC<Props> = (props): JSX.Element => {
+  // SCREEN SIZE CONDITION HOOKS
+  const isMediumScreen = useScreenCondition('(max-width: 768px)')
+
   const {
     query: { data: dummy, isLoading, error },
     table: { columns, globalFilter, setGlobalFilter }
@@ -61,7 +65,7 @@ const ListOfLeaveTable: FC<Props> = (props): JSX.Element => {
   return (
     <>
       {/* Show only on mobile size */}
-      <div className="block md:hidden">
+      {isMediumScreen ? (
         <MobileDisclose
           {...{
             table,
@@ -69,9 +73,8 @@ const ListOfLeaveTable: FC<Props> = (props): JSX.Element => {
             error
           }}
         />
-      </div>
-      {/* Show on medium size and beyond */}
-      <div className="mx-auto hidden w-full max-w-fit md:block">
+      ) : (
+        // Show on medium size and beyond
         <DesktopTable
           {...{
             table,
@@ -81,7 +84,7 @@ const ListOfLeaveTable: FC<Props> = (props): JSX.Element => {
             }
           }}
         />
-      </div>
+      )}
       {/* Table Pagination & Filtering */}
       {table.getPageCount() >= 1 && (
         <FooterTable
