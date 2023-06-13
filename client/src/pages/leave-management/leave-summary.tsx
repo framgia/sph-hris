@@ -2,26 +2,31 @@ import { NextPage } from 'next'
 import dynamic from 'next/dynamic'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
+import { Filter } from '@icon-park/react'
 import { PulseLoader } from 'react-spinners'
 import React, { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 import NotFound from './../404'
 import Card from '~/components/atoms/Card'
+import useLeave from '~/hooks/useLeave'
+import useUserQuery from '~/hooks/useUserQuery'
+import { Roles } from '~/utils/constants/roles'
+import FadeInOut from '~/components/templates/FadeInOut'
+import useLocalStorageState from 'use-local-storage-state'
+import Button from '~/components/atoms/Buttons/ButtonAction'
+import { Breakdown, LeaveTable } from '~/utils/types/leaveTypes'
+import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
+import BreakdownOfLeaveCard from '~/components/molecules/BreakdownOfLeavesCard'
+import SummaryFilterDropdown from '~/components/molecules/SummaryFilterDropdown'
+import LeaveManagementLayout, { Chip } from '~/components/templates/LeaveManagementLayout'
+import LeaveManagementResultTable from '~/components/molecules/LeaveManagementResultTable'
 import {
   Series,
   getHeatmapData,
   initialSeriesData,
   initialChartOptions
 } from '~/utils/generateData'
-import useLeave from '~/hooks/useLeave'
-import useUserQuery from '~/hooks/useUserQuery'
-import { Roles } from '~/utils/constants/roles'
-import FadeInOut from '~/components/templates/FadeInOut'
-import { Breakdown, LeaveTable } from '~/utils/types/leaveTypes'
-import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
-import BreakdownOfLeaveCard from '~/components/molecules/BreakdownOfLeavesCard'
-import LeaveManagementLayout from '~/components/templates/LeaveManagementLayout'
-import LeaveManagementResultTable from '~/components/molecules/LeaveManagementResultTable'
 
 const ReactApexChart = dynamic(async () => await import('react-apexcharts'), {
   ssr: false
@@ -34,11 +39,18 @@ type SeriesData = {
 
 const LeaveSummary: NextPage = (): JSX.Element => {
   const router = useRouter()
+  const [isHideFilter, setHideFilter] = useLocalStorageState('hideFilter', {
+    defaultValue: false
+  })
+
+  const handleHideFilterToggle = (): void => setHideFilter(!isHideFilter)
+
+  // CURRENT USER HOOKS
   const { getLeaveQuery } = useLeave()
   const { handleUserQuery } = useUserQuery()
-
   const { data: user, isSuccess: isUserSuccess } = handleUserQuery()
 
+  // GET USERS LEAVE HOOKS
   const {
     data: leaves,
     refetch,
@@ -121,6 +133,41 @@ const LeaveSummary: NextPage = (): JSX.Element => {
   return (
     <LeaveManagementLayout metaTitle="Leave Summary">
       <FadeInOut className="default-scrollbar h-full overflow-y-auto px-4">
+        <header className="mt-4 flex flex-wrap justify-between space-x-2 text-xs">
+          <div className="flex items-center space-x-1">
+            <p className="text-sm text-slate-500">Available Paid Leaves:</p>
+            <Chip count={leaves?.leaves.user.paidLeaves} />
+          </div>
+          {/* FOR INTEGRATOR: Filter it by shallow route */}
+          <div className="flex items-center space-x-2">
+            <Button
+              type="button"
+              rounded="full"
+              variant="secondary"
+              onClick={handleHideFilterToggle}
+              className="flex items-center space-x-0.5 !bg-white px-2 py-[3px]"
+            >
+              <Filter size={14} theme="outline" />
+              <span className="hidden sm:block">
+                {isHideFilter ? 'Hide Filter' : 'Show Filter'}
+              </span>
+            </Button>
+          </div>
+        </header>
+        {/* This will trigger filter */}
+        <AnimatePresence initial={false}>
+          {isHideFilter && (
+            <motion.div
+              key="dropdown"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <SummaryFilterDropdown />
+            </motion.div>
+          )}
+        </AnimatePresence>
         {!isLeavesLoading ? (
           <main className="flex flex-col space-y-4">
             <MaxWidthContainer>

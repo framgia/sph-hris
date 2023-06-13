@@ -6,12 +6,6 @@ import { useRouter } from 'next/router'
 import { PulseLoader } from 'react-spinners'
 import React, { useEffect, useState } from 'react'
 
-import {
-  Series,
-  getHeatmapData,
-  initialSeriesData,
-  initialChartOptions
-} from '~/utils/generateData'
 import NotFound from './../404'
 import useLeave from '~/hooks/useLeave'
 import Card from '~/components/atoms/Card'
@@ -22,7 +16,14 @@ import { Breakdown, LeaveTable } from '~/utils/types/leaveTypes'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import BreakdownOfLeaveCard from '~/components/molecules/BreakdownOfLeavesCard'
 import LeaveManagementLayout from '~/components/templates/LeaveManagementLayout'
+import SummaryFilterDropdown from '~/components/molecules/SummaryFilterDropdown'
 import LeaveManagementResultTable from '~/components/molecules/LeaveManagementResultTable'
+import {
+  Series,
+  getHeatmapData,
+  initialSeriesData,
+  initialChartOptions
+} from '~/utils/generateData'
 
 const ReactApexChart = dynamic(async () => await import('react-apexcharts'), {
   ssr: false
@@ -34,10 +35,13 @@ type SeriesData = {
 }
 
 const YearlySummary: NextPage = (): JSX.Element => {
+  const router = useRouter()
+
+  // CURRENT USER QUERY HOOKS
   const { handleUserQuery } = useUserQuery()
   const { data: currentUser } = handleUserQuery()
 
-  const router = useRouter()
+  // GET YEARLY LEAVE HOOKS
   const { getYearlyAllLeaveQuery } = useLeave()
   const {
     data: leaves,
@@ -115,6 +119,9 @@ const YearlySummary: NextPage = (): JSX.Element => {
   return (
     <LeaveManagementLayout metaTitle="Yearly Summary">
       <FadeInOut className="default-scrollbar h-full overflow-y-auto px-4">
+        {/* This will trigger filter */}
+        <SummaryFilterDropdown />
+
         {!isLeavesLoading ? (
           <main className="flex flex-col space-y-4">
             <MaxWidthContainer>
