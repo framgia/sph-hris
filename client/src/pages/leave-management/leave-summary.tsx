@@ -2,10 +2,8 @@ import { NextPage } from 'next'
 import dynamic from 'next/dynamic'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
-import { Filter } from '@icon-park/react'
 import { PulseLoader } from 'react-spinners'
 import React, { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 
 import NotFound from './../404'
 import Card from '~/components/atoms/Card'
@@ -13,8 +11,6 @@ import useLeave from '~/hooks/useLeave'
 import useUserQuery from '~/hooks/useUserQuery'
 import { Roles } from '~/utils/constants/roles'
 import FadeInOut from '~/components/templates/FadeInOut'
-import useLocalStorageState from 'use-local-storage-state'
-import Button from '~/components/atoms/Buttons/ButtonAction'
 import { Breakdown, LeaveTable } from '~/utils/types/leaveTypes'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import BreakdownOfLeaveCard from '~/components/molecules/BreakdownOfLeavesCard'
@@ -39,11 +35,6 @@ type SeriesData = {
 
 const LeaveSummary: NextPage = (): JSX.Element => {
   const router = useRouter()
-  const [isHideFilter, setHideFilter] = useLocalStorageState('hideFilter', {
-    defaultValue: false
-  })
-
-  const handleHideFilterToggle = (): void => setHideFilter(!isHideFilter)
 
   // CURRENT USER HOOKS
   const { getLeaveQuery } = useLeave()
@@ -63,7 +54,8 @@ const LeaveSummary: NextPage = (): JSX.Element => {
       : (user?.userById.id as number),
     router.query.year !== undefined
       ? parseInt(router.query.year as string)
-      : new Date().getFullYear()
+      : new Date().getFullYear(),
+    router.query.leave !== undefined ? parseInt(router.query.leave as string) : 0
   )
   const [series, setSeries] = useState<SeriesData[]>(initialSeriesData)
 
@@ -138,36 +130,9 @@ const LeaveSummary: NextPage = (): JSX.Element => {
             <p className="text-sm text-slate-500">Available Paid Leaves:</p>
             <Chip count={leaves?.leaves.user.paidLeaves} />
           </div>
-          {/* FOR INTEGRATOR: Filter it by shallow route */}
-          <div className="flex items-center space-x-2">
-            <Button
-              type="button"
-              rounded="full"
-              variant="secondary"
-              onClick={handleHideFilterToggle}
-              className="flex items-center space-x-0.5 !bg-white px-2 py-[3px]"
-            >
-              <Filter size={14} theme="outline" />
-              <span className="hidden sm:block">
-                {isHideFilter ? 'Hide Filter' : 'Show Filter'}
-              </span>
-            </Button>
-          </div>
         </header>
-        {/* This will trigger filter */}
-        <AnimatePresence initial={false}>
-          {isHideFilter && (
-            <motion.div
-              key="dropdown"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <SummaryFilterDropdown />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <SummaryFilterDropdown />
+
         {!isLeavesLoading ? (
           <main className="flex flex-col space-y-4">
             <MaxWidthContainer>

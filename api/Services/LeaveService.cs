@@ -31,39 +31,72 @@ namespace api.Services
                 return await context.LeaveTypes.ToListAsync();
             }
         }
-        public async Task<LeavesDTO> GetLeavesSummary(int userId, int year)
+        public async Task<LeavesDTO> GetLeavesSummary(int userId, int year, int leaveTypeId)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
-                var leaves = await context.Leaves
-                            .Include(i => i.LeaveType)
-                            .Include(i => i.User)
-                            .Where(u => u.UserId == userId && u.LeaveDate.Year == year)
-                            .OrderBy(o => o.LeaveDate.Day)
-                            .Select(s => new LeavesTableDTO(s))
-                            .ToListAsync();
+                var query = context.Leaves
+                    .Include(i => i.LeaveType)
+                    .Include(i => i.User)
+                    .Where(u => u.UserId == userId && u.LeaveDate.Year == year);
+
+                switch (leaveTypeId)
+                {
+                    case 0:
+                        query = query.OrderBy(o => o.LeaveDate.Day);
+                        break;
+                    case 7:
+                        query = query.Where(u => u.IsManagerApproved == null || u.IsLeaderApproved == null)
+                                    .OrderBy(o => o.LeaveDate.Day);
+                        break;
+                    default:
+                        query = query.Where(u => u.LeaveTypeId == leaveTypeId)
+                                    .OrderBy(o => o.LeaveDate.Day);
+                        break;
+                }
+
+                var leaves = await query
+                    .Select(s => new LeavesTableDTO(s))
+                    .ToListAsync();
 
                 var user = await context.Users
-                            .Where(u => u.Id == userId)
-                            .FirstAsync();
+                    .Where(u => u.Id == userId)
+                    .FirstAsync();
 
-                LeaveHeatMapDTO heatmap = new(leaves);
-                return new LeavesDTO(new LeaveHeatMapDTO(leaves), leaves, user);
+                var heatmap = new LeaveHeatMapDTO(leaves);
+                return new LeavesDTO(heatmap, leaves, user);
             }
         }
 
-        public async Task<LeavesDTO> ShowYearlyLeavesSummary(int year)
+        public async Task<LeavesDTO> ShowYearlyLeavesSummary(int year, int leaveTypeId)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
             {
-                var leaves = await context.Leaves
-                            .Include(i => i.LeaveType)
-                            .Include(i => i.User)
-                            .Where(u => u.LeaveDate.Year == year)
-                            .OrderBy(o => o.LeaveDate.Day)
-                            .Select(s => new LeavesTableDTO(s))
-                            .ToListAsync();
-                LeaveHeatMapDTO heatmap = new(leaves);
+                var query = context.Leaves
+                    .Include(i => i.LeaveType)
+                    .Include(i => i.User)
+                    .Where(u => u.LeaveDate.Year == year);
+
+                switch (leaveTypeId)
+                {
+                    case 0:
+                        query = query.OrderBy(o => o.LeaveDate.Day);
+                        break;
+                    case 7:
+                        query = query.Where(u => u.IsManagerApproved == null || u.IsLeaderApproved == null)
+                                    .OrderBy(o => o.LeaveDate.Day);
+                        break;
+                    default:
+                        query = query.Where(u => u.LeaveTypeId == leaveTypeId)
+                                    .OrderBy(o => o.LeaveDate.Day);
+                        break;
+                }
+
+                var leaves = await query
+                    .Select(s => new LeavesTableDTO(s))
+                    .ToListAsync();
+
+                var heatmap = new LeaveHeatMapDTO(leaves);
                 heatmap.summarizeMonth();
                 return new LeavesDTO(heatmap, leaves);
             }
