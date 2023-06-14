@@ -53,6 +53,7 @@ const SignIn: FC<Props> = ({ cookies }): JSX.Element => {
     <>
       <Head>
         <title>HRIS - Sign In</title>
+        <link rel="icon" href="/company-logo.jpg" />
       </Head>
       <div className="relative flex h-screen min-h-screen flex-col justify-center overflow-hidden">
         <MaxWidthContainer
