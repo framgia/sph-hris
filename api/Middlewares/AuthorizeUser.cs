@@ -87,6 +87,10 @@ namespace api.Middlewares
                     httpContext.Items["User"] = currentUser;
                 }
             }
+            catch (GraphQLException)
+            {
+                throw;
+            }
             catch (Exception e)
             {
                 var error = ErrorBuilder.New()
