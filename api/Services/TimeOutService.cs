@@ -38,7 +38,7 @@ namespace api.Services
 
                     timeEntry.TimeOutId = time.Entity.Id;
                     timeEntry.TimeOut = time.Entity;
-                    timeEntry.WorkedHours = timeout.WorkedHours;
+                    timeEntry.WorkedHours = GetWorkedHours(timeEntry);
                     timeEntry.TrackedHours = GetTrackedHours(timeEntry, time.Entity);
                     context.TimeEntries.Update(timeEntry);
 
@@ -66,6 +66,12 @@ namespace api.Services
             if ((ScheduledHours - LateTimeSpan).TotalMinutes < 0) LateTimeSpan = ScheduledHours - UndertimeTimeSpan;
 
             return ScheduledHours - UndertimeTimeSpan - LateTimeSpan;
+        }
+
+        private string? GetWorkedHours(TimeEntry timeEntry)
+        {
+            var workedHours = timeEntry.TimeOut?.TimeHour - timeEntry.TimeIn?.TimeHour;
+            return workedHours.ToString();
         }
     }
 }
