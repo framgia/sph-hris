@@ -79,7 +79,6 @@ const MyDTRTable: FC<Props> = (props): JSX.Element => {
       ) : (
         <div
           className={classNames(
-            'mx-auto w-full max-w-fit',
             user?.userById.position.id === USER_POSITIONS.ESL_TEACHER ? ' mb-12' : 'mb-3'
           )}
         >

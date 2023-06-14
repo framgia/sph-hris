@@ -16,16 +16,12 @@ type Props = {
 
 const DesktopTable: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
   return (
-    <AnimatedTable
-      {...{
-        table
-      }}
-    >
+    <AnimatedTable className="w-full min-w-[1300px]">
       <thead className="border-b border-slate-200">
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
             {headerGroup.headers.map(({ id, colSpan, isPlaceholder, column, getContext }) => (
-              <th key={id} colSpan={colSpan} className="px-4 py-3 text-left">
+              <th key={id} colSpan={colSpan} className="shrink-0 px-4 py-3 text-left">
                 {isPlaceholder ? null : (
                   <div
                     {...{

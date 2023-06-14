@@ -72,15 +72,13 @@ const OvertimeManagementTable: FC<Props> = (props): JSX.Element => {
           }}
         />
       ) : (
-        <div className="mx-auto w-full max-w-fit">
-          <DesktopTable
-            {...{
-              table,
-              isLoading: false,
-              error
-            }}
-          />
-        </div>
+        <DesktopTable
+          {...{
+            table,
+            isLoading: false,
+            error
+          }}
+        />
       )}
 
       {/* Table Pagination & Filtering */}

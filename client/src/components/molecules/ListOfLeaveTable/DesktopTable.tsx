@@ -5,6 +5,7 @@ import { flexRender, Table } from '@tanstack/react-table'
 import Tr from '~/components/atoms/Tr'
 import TableSkeleton from './../SkeletonTable'
 import { IListOfLeave } from '~/utils/interfaces'
+import AnimatedTable from '~/components/atoms/Table'
 
 type Props = {
   table: Table<IListOfLeave>
@@ -21,13 +22,7 @@ const DesktopTable: FC<Props> = (props): JSX.Element => {
   } = props
 
   return (
-    <table
-      {...{
-        style: {
-          width: table.getCenterTotalSize()
-        }
-      }}
-    >
+    <AnimatedTable className="w-full min-w-[1761px]">
       <thead className="border-b border-slate-200">
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
@@ -87,7 +82,7 @@ const DesktopTable: FC<Props> = (props): JSX.Element => {
           )}
         </>
       </tbody>
-    </table>
+    </AnimatedTable>
   )
 }
 

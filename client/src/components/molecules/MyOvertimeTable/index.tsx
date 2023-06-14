@@ -72,7 +72,7 @@ const MyOvertimeTable: FC<Props> = (props): JSX.Element => {
           }}
         />
       ) : (
-        <div className="mx-auto mb-8 w-full max-w-fit">
+        <div className="mb-8">
           <DesktopTable
             {...{
               table,

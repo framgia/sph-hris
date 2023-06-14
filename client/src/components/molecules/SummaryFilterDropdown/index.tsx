@@ -108,7 +108,7 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
   }, [router])
 
   return (
-    <div className="flex flex-col items-center gap-y-4 space-x-2 text-xs sm:flex-row sm:items-end">
+    <div className="flex flex-col items-center gap-y-4 text-xs sm:flex-row sm:items-end sm:space-x-2">
       {!isListOfLeaveTabPage && (
         <div className="flex w-full flex-col items-center sm:w-auto sm:flex-row sm:space-x-2">
           {/* ===== PAGE FOR: LEAVE SUMMARY ===== */}
@@ -154,12 +154,12 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
         </div>
       )}
 
-      <div className="mb-0.5 w-full">
+      <div className="mb-[1px] w-full">
         <Button
           onClick={handleUpdateResult}
           type="button"
           variant="primary"
-          className="w-full py-2 px-4 sm:w-auto"
+          className="w-full py-[9px] px-4 sm:w-auto"
         >
           Filter
         </Button>

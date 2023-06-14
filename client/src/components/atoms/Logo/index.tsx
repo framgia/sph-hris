@@ -19,7 +19,11 @@ const Logo: FC<Props> = ({ isOpen = true, href = '/' }): JSX.Element => {
         isOpen ? 'px-7' : 'px-3'
       )}
     >
-      <Text theme="md" color="amber" weight="bold">
+      <Text
+        theme="md"
+        weight="bold"
+        className="bg-gradient-to-r from-amber-500 to-fuchsia-500 bg-clip-text text-transparent"
+      >
         Sun*
       </Text>
       <Text theme="md" weight="bold" className={classNames('duration-200', !isOpen && 'hidden')}>

@@ -15,16 +15,12 @@ type Props = {
 
 const DesktopTable: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
   return (
-    <AnimatedTable
-      {...{
-        table
-      }}
-    >
+    <AnimatedTable className="w-full min-w-[1018px]">
       <thead className="border-b border-slate-200">
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
             {headerGroup.headers.map(({ id, colSpan, isPlaceholder, column, getContext }) => (
-              <th key={id} colSpan={colSpan} className="px-1 py-3 text-left">
+              <th key={id} colSpan={colSpan} className="shrink-0 px-4 py-3 text-left">
                 {isPlaceholder ? null : (
                   <div
                     {...{
@@ -67,7 +63,7 @@ const DesktopTable: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
                       )}
                     >
                       {row.getVisibleCells().map(({ id, column, getContext }) => (
-                        <td key={id} className="flex-wrap px-1 py-2 capitalize">
+                        <td key={id} className="flex-wrap px-4 py-2 capitalize">
                           {flexRender(column.columnDef.cell, getContext())}
                         </td>
                       ))}

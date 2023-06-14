@@ -1,22 +1,13 @@
 import React from 'react'
 import { createColumnHelper } from '@tanstack/react-table'
 
-import SortIcon from '~/utils/icons/SortIcon'
 import Avatar from '~/components/atoms/Avatar'
+import CellHeader from '~/components/atoms/CellHeader'
 import handleImageError from '~/utils/handleImageError'
 import CellTimeValue from '~/components/atoms/CellTimeValue'
 import { ITimesheetSummary } from '~/utils/types/timeEntryTypes'
 
 const columnHelper = createColumnHelper<ITimesheetSummary>()
-
-const CellHeader = ({ label }: { label: string }): JSX.Element => {
-  return (
-    <span className="group flex w-[13vw] items-center font-normal text-slate-500">
-      {label}
-      <SortIcon className="ml-2 h-3 w-3 shrink-0 fill-current group-active:scale-95" />
-    </span>
-  )
-}
 
 export const columns = [
   columnHelper.accessor('user.name', {

@@ -55,11 +55,6 @@ export const columns = [
       )
     }
   }),
-  columnHelper.display({
-    id: 'empty2',
-    header: () => '',
-    footer: (info) => info.column.id
-  }),
   columnHelper.accessor('dateFiled', {
     header: () => <CellHeader label="Date Filed" />,
     footer: (info) => info.column.id
@@ -68,11 +63,6 @@ export const columns = [
     header: () => <CellHeader label="Status" />,
     footer: (info) => info.column.id,
     cell: ({ row: { original } }) => <RequestStatusChip label={original?.status} />
-  }),
-  columnHelper.display({
-    id: 'empty3',
-    header: () => '',
-    footer: (info) => info.column.id
   }),
   columnHelper.display({
     id: 'actions',

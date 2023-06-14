@@ -4,22 +4,13 @@ import classNames from 'classnames'
 import { Edit, Trash2 } from 'react-feather'
 import { createColumnHelper } from '@tanstack/react-table'
 
-import SortIcon from '~/utils/icons/SortIcon'
 import Avatar from '~/components/atoms/Avatar'
 import Button from '~/components/atoms/Buttons/Button'
+import CellHeader from '~/components/atoms/CellHeader'
 import handleImageError from '~/utils/handleImageError'
 import { IEmployeeManagement } from '~/utils/interfaces'
 
 const columnHelper = createColumnHelper<IEmployeeManagement>()
-
-const CellHeader = ({ label }: { label: string }): JSX.Element => {
-  return (
-    <span className="group flex w-[273px] items-center font-normal text-slate-500">
-      {label}
-      <SortIcon className="ml-2 h-3 w-3 shrink-0 fill-current group-active:scale-95" />
-    </span>
-  )
-}
 
 export const columns = [
   columnHelper.accessor('name', {

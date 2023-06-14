@@ -64,18 +64,8 @@ export const hrColumns = [
     footer: (info) => info.column.id,
     cell: (props) => <CellTimeValue initialMinutes={props.row.original.approvedMinutes} />
   }),
-  columnHelper.display({
-    id: 'empty2',
-    header: () => '',
-    footer: (info) => info.column.id
-  }),
   columnHelper.accessor('supervisor', {
     header: () => <CellHeader label="Supervisor" />,
-    footer: (info) => info.column.id
-  }),
-  columnHelper.display({
-    id: 'empty3',
-    header: () => '',
     footer: (info) => info.column.id
   }),
   columnHelper.accessor('dateFiled', {

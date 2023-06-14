@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react'
 
 import useUserQuery from '~/hooks/useUserQuery'
 import Layout from '~/components/templates/Layout'
+import useScreenCondition from '~/hooks/useScreenCondition'
 import { getEmployeeTimesheet } from '~/hooks/useTimesheetQuery'
 import MyDTRTable from '~/components/molecules/MyDailyTimeRecordTable'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
@@ -13,6 +14,8 @@ import { columns } from '~/components/molecules/MyDailyTimeRecordTable/columns'
 
 const MyDailyTimeRecord: NextPage = (): JSX.Element => {
   const router = useRouter()
+  // SCREEN SIZE CONDITION HOOKS
+  const isMediumScreen = useScreenCondition('(max-width: 768px)')
 
   const [globalFilter, setGlobalFilter] = useState<string>('')
 
@@ -43,23 +46,25 @@ const MyDailyTimeRecord: NextPage = (): JSX.Element => {
   return (
     <Layout metaTitle="My Daily Time Record">
       <section className="default-scrollbar relative h-full min-h-full overflow-auto text-xs text-slate-800">
-        <div className="block md:hidden">
+        {isMediumScreen ? (
           <div className="border-b border-slate-200 px-4 py-2">
             <h1 className="text-base font-semibold text-slate-700">My Daily Time Record</h1>
           </div>
-        </div>
-        <header
-          className={classNames(
-            'sticky top-0 left-0 flex items-center justify-between',
-            'border-b border-slate-200 bg-slate-100 px-4 py-2'
-          )}
-        >
-          <GlobalSearchFilter
-            value={globalFilter ?? ''}
-            onChange={(value) => setGlobalFilter(String(value))}
-            placeholder="Search"
-          />
-        </header>
+        ) : (
+          <header
+            className={classNames(
+              'sticky top-0 left-0 flex items-center justify-between',
+              'z-10 border-b border-slate-200 bg-slate-100 px-4 py-2'
+            )}
+          >
+            <GlobalSearchFilter
+              value={globalFilter ?? ''}
+              onChange={(value) => setGlobalFilter(String(value))}
+              placeholder="Search"
+            />
+          </header>
+        )}
+
         {!isLoading && data !== undefined ? (
           <MyDTRTable
             {...{
