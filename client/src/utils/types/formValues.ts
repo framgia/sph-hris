@@ -59,6 +59,16 @@ export type NewOvertimeFormValues = {
   remarks: string
 }
 
+export type NewBulkOvertimeFormValues = {
+  // eslint-disable-next-line @typescript-eslint/array-type
+  project: ReactSelectOption
+  members: ReactSelectOption[]
+  manager: ReactSelectOption
+  date_effective: string
+  requested_minutes: number
+  remarks: string
+}
+
 export type NewEmployeeFormValues = {
   // eslint-disable-next-line @typescript-eslint/array-type
   email: string
