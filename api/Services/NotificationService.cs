@@ -21,13 +21,15 @@ namespace api.Services
         private readonly ESLChangeShiftService _eslChangeShiftService;
         private readonly ESLOffsetService _eslOffsetService;
         private readonly UserService _userService;
+        private readonly IHttpContextAccessor _accessor;
         public NotificationService(
             IDbContextFactory<HrisContext> contextFactory,
             LeaveService leaveService, OvertimeService overtimeService,
             UserService userService, ChangeShiftService changeShiftService,
             ESLChangeShiftService eslChangeShiftService,
             ESLOffsetService eslOffsetService,
-            [Service] ITopicEventSender eventSender)
+            [Service] ITopicEventSender eventSender,
+            IHttpContextAccessor accessor)
         {
             _contextFactory = contextFactory;
             _eventSender = eventSender;
@@ -37,6 +39,7 @@ namespace api.Services
             _eslChangeShiftService = eslChangeShiftService;
             _eslOffsetService = eslOffsetService;
             _userService = userService;
+            _accessor = accessor;
         }
 
         public async Task<List<LeaveNotification>> createLeaveNotification(Leave leave)
@@ -339,7 +342,6 @@ namespace api.Services
             await context.SaveChangesAsync();
             return notifications;
         }
-
         public async Task<ESLChangeShiftNotification> createESLChangeShiftRequestNotification(HrisContext context, ESLChangeShiftRequest request)
         {
             var user = await context.Users.FindAsync(request.UserId);
@@ -378,6 +380,38 @@ namespace api.Services
 
             await context.SaveChangesAsync();
             return newNotification;
+        }
+        public async Task<Notification> CreateSummarizedOvertimeNotification(CreateSummaryRequest summarizedOvertime, HrisContext context)
+        {
+            var httpContext = _accessor.HttpContext!;
+            var hrAdmin = (User)httpContext.Items["User"]!;
+
+            var dataToManager = JsonSerializer.Serialize(new OvertimeSummaryData
+            {
+                User = new NotificationUser
+                {
+                    Id = hrAdmin!.Id,
+                    Name = hrAdmin.Name!,
+                    AvatarLink = _userService.GenerateAvatarLink(hrAdmin?.ProfileImageId ?? default)
+                },
+                StartDate = summarizedOvertime.StartDate,
+                EndDate = summarizedOvertime.EndDate
+            }
+            );
+
+            // Notification to Requesting User
+            var notificationToManager = new Notification
+            {
+                RecipientId = summarizedOvertime!.ManagerId,
+                Type = NotificationTypeEnum.OVERTIME_SUMMARY,
+                Data = dataToManager
+            };
+
+            context.Notifications.Add(notificationToManager);
+            await context.SaveChangesAsync();
+
+            SendSummarizedOvertimeNotificationEvent(notificationToManager);
+            return notificationToManager;
         }
 
         public async Task<ESLOffsetNotification> createESLOffsetRequestNotification(ESLOffset request, HrisContext context)
@@ -580,6 +614,19 @@ namespace api.Services
             }
         }
 
+        public async void SendSummarizedOvertimeNotificationEvent(Notification notif)
+        {
+            try
+            {
+                string topic = $"{notif.RecipientId}_{nameof(SubscriptionObjectType.OvertimeSummaryCreated)}";
+                await _eventSender.SendAsync(topic, notif);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async void sendChangeShiftNotificationEvent(ChangeShiftNotification notif)
         {
             try
@@ -655,8 +702,6 @@ namespace api.Services
             var user = await context.Users.FindAsync(fromUserId);
             var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
             var offsets = await context.ESLOffsets.Where(x => x.ESLChangeShiftRequestId == request.Id).Select(x => new ESLOffsetNotificationDTO(x)).ToListAsync();
-
-
             var dataToUser = JsonSerializer.Serialize(new ESLChangeShiftData
             {
                 User = new NotificationUser
@@ -696,8 +741,6 @@ namespace api.Services
         {
             var user = await context.Users.FindAsync(fromUserId);
             var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
-
-
             var dataToUser = JsonSerializer.Serialize(new ChangeShiftData
             {
                 User = new NotificationUser

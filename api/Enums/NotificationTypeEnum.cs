@@ -1,9 +1,10 @@
 namespace api.Enums
 {
-    public class NotificationTypeEnum
+    public static class NotificationTypeEnum
     {
         public const string LEAVE = "leave";
         public const string OVERTIME = "overtime";
+        public const string OVERTIME_SUMMARY = "overtime summary";
         public const string UNDERTIME = "undertime";
         public const string CHANGE_SHIFT = "change shift";
         public const string ESL_OFFSET_SCHEDULE = "esl change shift";

@@ -14,5 +14,6 @@ namespace api.Enums
         public const string EXCEEDS_MAXIMUM_REMAINING_PAID_LEAVES = " does not have enough remaining paid leaves!";
         public const string LEAVE_USERDETAILS_NULL_IDENTIFIER = "Leave or userDetails is null";
         public const string FAILED_LEAVE_CANCEL = "Failed to cancel leave!";
+        public const string EMPTY_OVERTIME = "Empty overtime request range";
     }
 }

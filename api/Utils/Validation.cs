@@ -54,6 +54,15 @@ namespace api.Utils
             return user.RoleId == role.Id;
         }
 
+        public async Task<bool> CheckManagerPosition(int id)
+        {
+            using HrisContext context = _contextFactory.CreateDbContext();
+            var user = await context.Users.FindAsync(id);
+            var role = await context.Roles.Where(x => x.Name == RoleEnum.MANAGER).FirstAsync();
+            if (user == null) return false;
+            return user.RoleId == role.Id && user.PositionId == PositionEnum.MANAGER;
+        }
+
         public async Task<bool> checkProjectLeaderUser(int id)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
@@ -316,7 +325,6 @@ namespace api.Utils
             if (!checkDateFormat(overtime.Date))
                 errors.Add(buildError(nameof(overtime.Date), InputValidationMessageEnum.INVALID_DATE));
 
-
             index = 0;
             overtime.OvertimeProjects?.ForEach(project =>
             {
@@ -330,6 +338,36 @@ namespace api.Utils
             });
 
             return errors;
+        }
+
+        public List<IError> CheckSummaryOvertimeRequestInput(CreateSummaryRequest overtime)
+        {
+            var errors = new List<IError>();
+
+            if (!CheckManagerPosition(overtime.ManagerId).Result)
+                errors.Add(buildError(nameof(overtime.ManagerId), InputValidationMessageEnum.INVALID_MANAGER));
+
+            if (!checkDateFormat(overtime.StartDate))
+                errors.Add(buildError(nameof(overtime.StartDate), InputValidationMessageEnum.INVALID_DATE));
+
+            if (!checkDateFormat(overtime.EndDate))
+                errors.Add(buildError(nameof(overtime.EndDate), InputValidationMessageEnum.INVALID_DATE));
+
+            if (!CheckEmptyOvertimeRange(overtime.StartDate, overtime.EndDate))
+                errors.Add(buildError(nameof(overtime.StartDate), ErrorMessageEnum.EMPTY_OVERTIME));
+
+            return errors;
+        }
+
+        private bool CheckEmptyOvertimeRange(string startDate, string endDate)
+        {
+            using HrisContext context = _contextFactory.CreateDbContext();
+            DateTime StartDate = DateTime.Parse(startDate);
+            DateTime EndDate = DateTime.Parse(endDate);
+
+            var overtimeSummary = context.Overtimes.Where(x => x.OvertimeDate >= StartDate && x.OvertimeDate <= EndDate).ToList();
+
+            return overtimeSummary.Count > 0;
         }
 
         public List<IError> checkApproveOvertimeRequestInput(ApproveOvertimeRequest request)
