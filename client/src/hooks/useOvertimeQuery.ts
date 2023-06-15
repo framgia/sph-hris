@@ -9,7 +9,7 @@ export const getOvertimeQuery = (
 ): UseQueryResult<{ overtime: IMyOvertimeData[] }, unknown> => {
   const result = useQuery({
     queryKey: ['GET_ALL_OVERTIME_QUERY', userId],
-    queryFn: async () => await client().request(GET_ALL_OVERTIME_QUERY, { userId }),
+    queryFn: async () => await client.request(GET_ALL_OVERTIME_QUERY, { userId }),
     select: (data: { overtime: IMyOvertimeData[] }) => data,
     enabled: !isNaN(userId)
   })

@@ -89,13 +89,13 @@ const useInterruptionType = (): returnType => {
   const handleInterruptionTypeQuery = (): handleInterruptionTypeQueryType =>
     useQuery({
       queryKey: ['GET_INTERRUPTION_TYPES_QUERY'],
-      queryFn: async () => await client().request(GET_INTERRUPTION_TYPES_QUERY),
+      queryFn: async () => await client.request(GET_INTERRUPTION_TYPES_QUERY),
       select: (data: WorkInterruptionType) => data
     })
   const handleInterruptionMutation = (): handleInterruptionMutationReturnType =>
     useMutation({
       mutationFn: async (interruption: CreateInterruptionRequest) => {
-        return await client().request(CREATE_INTERRUPTION_MUTATION, {
+        return await client.request(CREATE_INTERRUPTION_MUTATION, {
           interruption
         })
       }
@@ -105,8 +105,7 @@ const useInterruptionType = (): returnType => {
   ): handleGetAllWorkInterruptionsQueryType =>
     useQuery({
       queryKey: ['GET_ALL_WORK_INTERRUPTIONS_QUERY'],
-      queryFn: async () =>
-        await client().request(GET_ALL_WORK_INTERRUPTIONS_QUERY, { interruption }),
+      queryFn: async () => await client.request(GET_ALL_WORK_INTERRUPTIONS_QUERY, { interruption }),
       select: (data: WorkInterruptions) => data
     })
   const handleUpdateInterruptionMutation = (
@@ -114,7 +113,7 @@ const useInterruptionType = (): returnType => {
   ): handleUpdateInterruptionMutationReturnType =>
     useMutation({
       mutationFn: async (interruption: UpdateInterruptionRequest) => {
-        return await client().request(UPDATE_INTERRUPTION_MUTATION, {
+        return await client.request(UPDATE_INTERRUPTION_MUTATION, {
           interruption
         })
       },
@@ -131,7 +130,7 @@ const useInterruptionType = (): returnType => {
   const handleDeleteInterruptionMutation = (): handleDeleteInterruptionMutationReturnType =>
     useMutation({
       mutationFn: async (interruption: DeleteInterruptionRequest) => {
-        return await client().request(DELETE_INTERRUPTION_MUTATION, interruption)
+        return await client.request(DELETE_INTERRUPTION_MUTATION, interruption)
       },
       onSuccess: async () => {
         await queryClient.invalidateQueries({

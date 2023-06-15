@@ -106,7 +106,7 @@ const useEmployeeSchedule = (): HookReturnType => {
   const handleAddMemberToScheduleMutation = (): AddMemberToScheduleReturnType =>
     useMutation({
       mutationFn: async (request: IAddMemberToScheduleInput) => {
-        return await client().request(ADD_EMPLOYEE_TO_SCHEDULE, { request })
+        return await client.request(ADD_EMPLOYEE_TO_SCHEDULE, { request })
       },
       onSuccess: async (data) => {
         void queryClient.invalidateQueries().then(() => {
@@ -122,7 +122,7 @@ const useEmployeeSchedule = (): HookReturnType => {
   const getAllEmployeeScheduleQuery = (): GetAllEmployeeScheduleFuncReturnType =>
     useQuery({
       queryKey: ['GET_ALL_EMPLOYEE_SCHEDULE'],
-      queryFn: async () => await client().request(GET_ALL_EMPLOYEE_SCHEDULE),
+      queryFn: async () => await client.request(GET_ALL_EMPLOYEE_SCHEDULE),
       select: (data: { allEmployeeScheduleDetails: IGetAllEmployeeSchedule[] }) => data
     })
 
@@ -131,7 +131,7 @@ const useEmployeeSchedule = (): HookReturnType => {
   ): GetEmployeeScheduleFuncReturnType =>
     useQuery({
       queryKey: ['GET_EMPLOYEE_SCHEDULE', employeeScheduleId],
-      queryFn: async () => await client().request(GET_EMPLOYEE_SCHEDULE, { employeeScheduleId }),
+      queryFn: async () => await client.request(GET_EMPLOYEE_SCHEDULE, { employeeScheduleId }),
       select: (data: { employeeScheduleDetails: IGetEmployeeSchedule[] }) => data,
       enabled: !isNaN(employeeScheduleId)
     })
@@ -139,7 +139,7 @@ const useEmployeeSchedule = (): HookReturnType => {
   const handleCreateEmployeeScheduleMutation = (): CreateEmployeeScheduleMutationType =>
     useMutation({
       mutationFn: async (request: ICreateEmployeeScheduleRequestInput) => {
-        return await client().request(CREATE_EMPLOYEE_SCHEDULE, { request })
+        return await client.request(CREATE_EMPLOYEE_SCHEDULE, { request })
       },
       onError: async (err: Error) => {
         const [errorMessage] = err.message.split(/:\s/, 2)
@@ -150,7 +150,7 @@ const useEmployeeSchedule = (): HookReturnType => {
   const handleEditEmployeeScheduleMutation = (): EditEmployeeScheduleMutationType =>
     useMutation({
       mutationFn: async (request: IEditEmployeeScheduleRequestInput) => {
-        return await client().request(EDIT_EMPLOYEE_SCHEDULE, { request })
+        return await client.request(EDIT_EMPLOYEE_SCHEDULE, { request })
       },
       onError: async (err: Error) => {
         const [errorMessage] = err.message.split(/:\s/, 2)
@@ -161,7 +161,7 @@ const useEmployeeSchedule = (): HookReturnType => {
   const handleReassignEmployeeScheduleMutation = (): ReassignEmployeeScheduleMutationType =>
     useMutation({
       mutationFn: async (request: IReassignEmployeesScheduleRequestInput) => {
-        return await client().request(REASSIGN_EMPLOYEE_TO_SCHEDULE, { request })
+        return await client.request(REASSIGN_EMPLOYEE_TO_SCHEDULE, { request })
       },
       onSuccess: async (data) => {
         void queryClient.invalidateQueries().then(() => {
@@ -177,7 +177,7 @@ const useEmployeeSchedule = (): HookReturnType => {
   const handleDeleteEmployeeScheduleMutation = (): DeleteEmployeeScheduleMutationType =>
     useMutation({
       mutationFn: async (request: IDeleteEmployeeScheduleRequestInput) => {
-        return await client().request(DELETE_EMPLOYEE_SCHEDULE, { request })
+        return await client.request(DELETE_EMPLOYEE_SCHEDULE, { request })
       },
       onError: async (err: Error) => {
         const [errorMessage] = err.message.split(/:\s/, 2)
@@ -191,8 +191,7 @@ const useEmployeeSchedule = (): HookReturnType => {
   ): GetEmployeesByScheduleFuncReturnType =>
     useQuery({
       queryKey: ['GET_EMPLOYEES_BY_SCHEDULE', employeeScheduleId],
-      queryFn: async () =>
-        await client().request(GET_EMPLOYEES_BY_SCHEDULE, { employeeScheduleId }),
+      queryFn: async () => await client.request(GET_EMPLOYEES_BY_SCHEDULE, { employeeScheduleId }),
       select: (data: { employeesBySchedule: IScheduleMember[] }) => data,
       enabled: !isNaN(employeeScheduleId) && isOpen
     })
@@ -203,7 +202,7 @@ const useEmployeeSchedule = (): HookReturnType => {
   ): GetSearchEmployeesByScheduleFuncReturnType =>
     useQuery({
       queryKey: ['SEARCH_EMPLOYEES_BY_SCHEDULE', request.employeeScheduleId, request.searchKey],
-      queryFn: async () => await client().request(SEARCH_EMPLOYEES_BY_SCHEDULE, { request }),
+      queryFn: async () => await client.request(SEARCH_EMPLOYEES_BY_SCHEDULE, { request }),
       select: (data: { searchEmployeesBySchedule: IScheduleMember[] }) => data,
       enabled: !isNaN(request.employeeScheduleId) && isOpen
     })

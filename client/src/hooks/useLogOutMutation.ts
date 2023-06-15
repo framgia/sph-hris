@@ -16,7 +16,7 @@ const useLogoutMutation = (): returnType => {
   const handleLogoutMutation = (): handleLogoutMutationReturnType =>
     useMutation({
       mutationFn: async (logOut: LogoutRequestInput) => {
-        return await client().request(LOGOUT_USER_MUTATION, { logOut })
+        return await client.request(LOGOUT_USER_MUTATION, { logOut })
       },
       onSuccess: async (data) => {}
     })

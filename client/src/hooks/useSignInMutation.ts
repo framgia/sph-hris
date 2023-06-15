@@ -12,7 +12,7 @@ const useSignInMutation = (): returnType => {
   const handleSignInMutation = (): handleSignInMutationReturnType =>
     useMutation({
       mutationFn: async () => {
-        return await client().request(SIGNIN_USER_MUTATION)
+        return await client.request(SIGNIN_USER_MUTATION)
       },
       onSuccess: async (data) => {},
       onError: async () => toast.error('Email does not exist!', { duration: 3000 })

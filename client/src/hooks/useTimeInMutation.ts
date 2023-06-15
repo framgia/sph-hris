@@ -23,7 +23,7 @@ const useTimeInMutation = (): returnType => {
   const handleTimeInMutation = (): handleTimeInMutationReturnType =>
     useMutation({
       mutationFn: async (timeIn: TimeInRequest) => {
-        return await client().request(UPDATE_TIME_IN_MUTATION, {
+        return await client.request(UPDATE_TIME_IN_MUTATION, {
           timeIn
         })
       },

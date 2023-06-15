@@ -21,7 +21,7 @@ const useFileOffset = (): HookReturnType => {
   const handleAddFileOffsetMutation = (): FileOffsetFuncReturnType =>
     useMutation({
       mutationFn: async (request: IFileOffset) => {
-        return await client().request(CREATE_FILE_OFFSET_MUTATION, { request })
+        return await client.request(CREATE_FILE_OFFSET_MUTATION, { request })
       },
       onError: async (err: Error) => {
         const [errorMessage] = err.message.split(/:\s/, 2)
@@ -32,7 +32,7 @@ const useFileOffset = (): HookReturnType => {
   const getESLFiledOffsetsQuery = (timeEntryId: number): FiledOffsetFuncReturnType =>
     useQuery({
       queryKey: ['GET_ALL_ESL_FILED_OFFSETS'],
-      queryFn: async () => await client().request(GET_ALL_ESL_FILED_OFFSETS, { timeEntryId }),
+      queryFn: async () => await client.request(GET_ALL_ESL_FILED_OFFSETS, { timeEntryId }),
       select: (data: { eslOffsetsByTimeEntry: IFiledOffsetData[] }) => data
     })
 

@@ -46,7 +46,7 @@ const useOvertime = (): returnType => {
   const handleOvertimeMutation = (): handleOvertimeMutationType =>
     useMutation({
       mutationFn: async (overtime: IOvertimeRequestInput) => {
-        return await client().request(CREATE_OVERTIME_MUTATION, {
+        return await client.request(CREATE_OVERTIME_MUTATION, {
           overtime
         })
       },
@@ -64,7 +64,7 @@ const useOvertime = (): returnType => {
   const handleManagerApproveOvertimeMutation = (): handleManagerApproveOvertimeMutationType =>
     useMutation({
       mutationFn: async (data: IManagerApproveOvertimeRequestInput) => {
-        return await client().request(APROVE_DISAPPROVE_OVERTIME_MUTATION, {
+        return await client.request(APROVE_DISAPPROVE_OVERTIME_MUTATION, {
           overtimeApproval: data
         })
       },
@@ -82,7 +82,7 @@ const useOvertime = (): returnType => {
   const handleLeaderApproveOvertimeMutation = (): handleLeaderApproveOvertimeMutationType =>
     useMutation({
       mutationFn: async (data: ILeaderApproveOvertimeRequestInput) => {
-        return await client().request(APROVE_DISAPPROVE_OVERTIME_MUTATION, {
+        return await client.request(APROVE_DISAPPROVE_OVERTIME_MUTATION, {
           overtimeApproval: data
         })
       },
@@ -106,7 +106,7 @@ export default useOvertime
 export const getAllovertime = (): UseQueryResult<{ allOvertime: IAllOvertime[] }, unknown> => {
   const result = useQuery({
     queryKey: ['GET_ALL_OVERTIME'],
-    queryFn: async () => await client().request(GET_ALL_OVERTIME),
+    queryFn: async () => await client.request(GET_ALL_OVERTIME),
     select: (data: { allOvertime: IAllOvertime[] }) => data
   })
   return result

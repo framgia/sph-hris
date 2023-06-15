@@ -8,7 +8,6 @@ import { PulseLoader } from 'react-spinners'
 import React, { FC, useEffect, useState } from 'react'
 import { signOut, signIn, useSession } from 'next-auth/react'
 
-import { client } from '~/utils/shared/client'
 import WaveStyle from '~/utils/icons/WaveStyle'
 import { getServerSideProps } from '~/utils/ssr'
 import useSignInMutation from '~/hooks/useSignInMutation'

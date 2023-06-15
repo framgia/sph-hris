@@ -34,7 +34,7 @@ export const getAllEmployeeTimesheet = (
   const result = useQuery({
     queryKey: ['GET_ALL_EMPLOYEE_TIMESHEET'],
     queryFn: async () =>
-      await client().request(GET_ALL_EMPLOYEE_TIMESHEET(input, argument), variables),
+      await client.request(GET_ALL_EMPLOYEE_TIMESHEET(input, argument), variables),
     select: (data: { timeEntries: ITimeEntry[] }) => data,
     enabled: ready,
     onError: () => {
@@ -54,7 +54,7 @@ export const getEmployeeTimesheet = (
 > => {
   const result = useQuery({
     queryKey: ['GET_EMPLOYEE_TIMESHEET', userId],
-    queryFn: async () => await client().request(GET_EMPLOYEE_TIMESHEET, { id: userId }),
+    queryFn: async () => await client.request(GET_EMPLOYEE_TIMESHEET, { id: userId }),
     select: (data: { timeEntriesByEmployeeId: IEmployeeTimeEntry[] }) => data,
     enabled: !isNaN(userId),
     onError: () => {
@@ -74,7 +74,7 @@ export const getSpecificTimeEntry = (
 > => {
   const result = useQuery({
     queryKey: ['GET_SPECIFIC_TIME_ENTRY', id],
-    queryFn: async () => await client().request(GET_SPECIFIC_TIME_ENTRY, { id }),
+    queryFn: async () => await client.request(GET_SPECIFIC_TIME_ENTRY, { id }),
     select: (data: { timeById: ITimeEntryById }) => data,
     enabled: !isNaN(id)
   })
@@ -94,7 +94,7 @@ export const getTimesheetSummary = (
 > => {
   const result = useQuery({
     queryKey: ['GET_TIMESHEET_SUMMARY'],
-    queryFn: async () => await client().request(GET_TIMESHEET_SUMMARY(input, argument), variables),
+    queryFn: async () => await client.request(GET_TIMESHEET_SUMMARY(input, argument), variables),
     select: (data: { timesheetSummary: ITimesheetSummary[] }) => data,
     enabled: ready
   })
@@ -111,7 +111,7 @@ export const getSpecificTimeEntryById = (
 > => {
   const result = useQuery({
     queryKey: ['GET_SPECIFIC_TIME_ENTRY_BY_ID', timeEntryId],
-    queryFn: async () => await client().request(GET_SPECIFIC_TIME_ENTRY_BY_ID, { id: timeEntryId }),
+    queryFn: async () => await client.request(GET_SPECIFIC_TIME_ENTRY_BY_ID, { id: timeEntryId }),
     select: (data: { specificTimeEntryById: ISpecificTimeEntryById }) => data,
     enabled: !isNaN(timeEntryId)
   })
@@ -128,7 +128,7 @@ export const getUserProfileLink = (
 > => {
   const result = useQuery({
     queryKey: ['GET_SPECIFIC_USER_PROFILE_LINK', userId],
-    queryFn: async () => await client().request(GET_SPECIFIC_USER_PROFILE_LINK, { id: userId }),
+    queryFn: async () => await client.request(GET_SPECIFIC_USER_PROFILE_LINK, { id: userId }),
     select: (data: { specificUserProfileDetail: ISpecificUserDetail }) => data,
     enabled: !isNaN(userId)
   })

@@ -20,7 +20,7 @@ const useTimeOutMutation = (): returnType => {
   const handleTimeOutMutation = (): handleTimeOutMutationReturnType =>
     useMutation({
       mutationFn: async (timeOut: TimeOutRequest) => {
-        return await client().request(UPDATE_TIME_OUT_MUTATION, {
+        return await client.request(UPDATE_TIME_OUT_MUTATION, {
           timeOut
         })
       },

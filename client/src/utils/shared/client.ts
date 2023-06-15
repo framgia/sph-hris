@@ -6,8 +6,19 @@ type RESULT = {
   response: { status: number }
 }
 
-// export const graphqlClient = new GraphQLClient(process.env.NEXT_PUBLIC_BACKEND_URL as string)
-export const graphqlClient = new GraphQLClient(process.env.NEXT_PUBLIC_BACKEND_URL as string, {
+export const client = new GraphQLClient(process.env.NEXT_PUBLIC_BACKEND_URL as string, {
+  requestMiddleware: (request) => {
+    const accessToken = getCookie('access_token')
+    const authtoken = getCookie('authorization')
+    return {
+      ...request,
+      headers: {
+        ...request.headers,
+        access_token: accessToken as string,
+        authorization: authtoken as string
+      }
+    }
+  },
   responseMiddleware: (response) => {
     const resultResponse: RESULT = JSON.parse(JSON.stringify(response))
     if (response instanceof Error && resultResponse.response.status === 401) {
@@ -17,14 +28,3 @@ export const graphqlClient = new GraphQLClient(process.env.NEXT_PUBLIC_BACKEND_U
     }
   }
 })
-
-const addRequestInterceptor = (client: GraphQLClient): GraphQLClient => {
-  const accessToken = getCookie('access_token')
-  const authtoken = getCookie('authorization')
-  client.setHeaders({ access_token: accessToken as string, authorization: authtoken as string })
-  // client.setHeaders({ authorization: accessToken as string })
-
-  return client
-}
-
-export const client = (): GraphQLClient => addRequestInterceptor(graphqlClient)
