@@ -8,8 +8,8 @@ export const GET_LEAVE_TYPES_QUERY = gql`
   }
 `
 export const GET_MY_LEAVES_QUERY = gql`
-  query ($userId: Int!, $year: Int!) {
-    leaves(userId: $userId, year: $year) {
+  query ($userId: Int!, $year: Int!, $leaveTypeId: Int!) {
+    leaves(userId: $userId, year: $year, leaveTypeId: $leaveTypeId) {
       user {
         id
         paidLeaves
@@ -104,8 +104,8 @@ export const GET_MY_LEAVES_QUERY = gql`
 `
 
 export const GET_YEARLY_ALL_LEAVES_QUERY = gql`
-  query ($year: Int!) {
-    yearlyAllLeaves(year: $year) {
+  query ($year: Int!, $leaveTypeId: Int!) {
+    yearlyAllLeaves(year: $year, leaveTypeId: $leaveTypeId) {
       heatmap {
         january {
           value

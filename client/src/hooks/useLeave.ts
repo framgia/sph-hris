@@ -43,20 +43,24 @@ type handleApproveLeaveUndertimeMutationType = UseMutationResult<
 type returnType = {
   handleLeaveTypeQuery: () => getLeaveTypeQueryType
   getSpecificLeaveQuery: (userId: number) => getSpecificLeaveQuery
-  getLeaveQuery: (userId: number, year: number) => getLeaveQueryType
+  getLeaveQuery: (userId: number, year: number, leaeTypeId: number) => getLeaveQueryType
   handleApproveLeaveMutation: () => handleApproveLeaveUndertimeMutationType
   handleApproveUndertimeMutation: () => handleApproveLeaveUndertimeMutationType
   handleLeaveMutation: (userId: number, year: number) => handleLeaveMutationType
-  getYearlyAllLeaveQuery: (year: number, ready: boolean) => getYearlyLeaveQueryType
+  getYearlyAllLeaveQuery: (
+    year: number,
+    leaveById: number,
+    ready: boolean
+  ) => getYearlyLeaveQueryType
   handleUpdateLeaveMutation: (userId: number, year: number) => handleUpdateLeaveMutationType
   handleCancelLeaveMutation: (userId: number, leaveIds: number) => handleCancelLeaveMutationType
 }
 
 const useLeave = (): returnType => {
-  const getLeaveQuery = (userId: number, year: number): getLeaveQueryType =>
+  const getLeaveQuery = (userId: number, year: number, leaveTypeId: number): getLeaveQueryType =>
     useQuery({
       queryKey: ['GET_MY_LEAVES_QUERY', userId, year],
-      queryFn: async () => await client.request(GET_MY_LEAVES_QUERY, { userId, year }),
+      queryFn: async () => await client.request(GET_MY_LEAVES_QUERY, { userId, year, leaveTypeId }),
       select: (data: Leaves) => data,
       enabled: Boolean(userId) && Boolean(year)
     })
@@ -69,10 +73,14 @@ const useLeave = (): returnType => {
       enabled: !isNaN(leaveId)
     })
 
-  const getYearlyAllLeaveQuery = (year: number, ready: boolean): getYearlyLeaveQueryType =>
+  const getYearlyAllLeaveQuery = (
+    year: number,
+    leaveTypeId: number,
+    ready: boolean
+  ): getYearlyLeaveQueryType =>
     useQuery({
-      queryKey: ['GET_YEARLY_ALL_LEAVES_QUERY', year],
-      queryFn: async () => await client.request(GET_YEARLY_ALL_LEAVES_QUERY, { year }),
+      queryKey: ['GET_YEARLY_ALL_LEAVES_QUERY', year, leaveTypeId],
+      queryFn: async () => await client.request(GET_YEARLY_ALL_LEAVES_QUERY, { year, leaveTypeId }),
       select: (data: YearlyLeaves) => data,
       enabled: ready
     })

@@ -52,6 +52,7 @@ const YearlySummary: NextPage = (): JSX.Element => {
     isNaN(parseInt(router.query.year as string))
       ? moment().year()
       : parseInt(router.query.year as string),
+    isNaN(parseInt(router.query.leave as string)) ? 0 : parseInt(router.query.leave as string),
     router.isReady
   )
 

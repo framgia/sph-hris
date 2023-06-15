@@ -1,9 +1,11 @@
 import Select from 'react-select'
+import isEmpty from 'lodash/isEmpty'
 import { useRouter } from 'next/router'
 import React, { FC, useEffect, useState } from 'react'
 
 import useUserQuery from '~/hooks/useUserQuery'
 import Button from '~/components/atoms/Buttons/ButtonAction'
+import { leaveOptions } from '~/utils/constants/leaveOptions'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import { optionType, usersSelectOptions, yearSelectOptions } from '~/utils/maps/filterOptions'
 
@@ -20,10 +22,12 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
 
   const NAME_FIELD = 'name'
   const YEAR_FIELD = 'year'
+  const LEAVE_FIELD = 'leave'
 
   // filter states
   const [year, setYear] = useState<number>(currentYear)
   const [selectedUser, setSelectedUser] = useState<number>()
+  const [selectedLeave, setSelectedLeave] = useState<number>()
 
   // filter options
   const [nameOptions, setNameOptions] = useState<optionType[]>([])
@@ -45,7 +49,8 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
       void router.replace({
         pathname: router.pathname,
         query: {
-          year
+          year,
+          leave: selectedLeave
         }
       })
     } else if (router.pathname.includes('/leave-management/leave-summary')) {
@@ -53,7 +58,8 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
         pathname: router.pathname,
         query: {
           id: selectedUser,
-          year
+          year,
+          leave: selectedLeave
         }
       })
     }
@@ -69,6 +75,9 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
       case NAME_FIELD:
         defaultValue = nameOptions[0]
         break
+      case LEAVE_FIELD:
+        defaultValue = leaveOptions[0]
+        break
     }
 
     if (isLeaveSummaryTabPage) {
@@ -83,6 +92,10 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
       return yearOptions.find((option) => option.value === year) ?? null
     }
 
+    if (!isEmpty(router.query.leave)) {
+      return leaveOptions.find((option) => option.value === selectedLeave) ?? null
+    }
+
     return defaultValue
   }
 
@@ -94,6 +107,7 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
           ? data.allUsers[0].id
           : parseInt(router.query.id as string)
       )
+      setSelectedLeave(parseInt(router.query.leave as string))
     }
   }, [isSuccess])
 
@@ -104,19 +118,21 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
           ? currentYear
           : parseInt(router.query.year as string)
       )
+      setSelectedLeave(parseInt(router.query.leave as string))
     }
   }, [router])
 
   return (
-    <div className="flex flex-col items-center gap-y-4 text-xs sm:flex-row sm:items-end sm:space-x-2">
+    <div className="flex flex-col items-center gap-y-4 text-xs lg:flex-row lg:items-end lg:space-x-2">
       {!isListOfLeaveTabPage && (
-        <div className="flex w-full flex-col items-center sm:w-auto sm:flex-row sm:space-x-2">
+        <div className="flex w-full flex-col items-center lg:w-auto lg:flex-row lg:space-x-2">
           {/* ===== PAGE FOR: LEAVE SUMMARY ===== */}
           {router.pathname === '/leave-management/leave-summary' && (
-            <div className="mt-4 w-full sm:w-64">
+            <div className="mt-4 w-full lg:w-64">
               <label htmlFor="leaveSummaryFilterName" className="flex flex-col space-y-1">
                 <span className="text-xs text-slate-500">Name</span>
                 <Select
+                  instanceId="leaveSummaryFilterName"
                   id="leaveSummaryFilterName"
                   styles={customStyles}
                   defaultValue={handleDefaultValues(NAME_FIELD)}
@@ -134,10 +150,11 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
           )}
 
           {/* ===== PAGE FOR: MY LEAVE PAGE AND YEARLY SUMMARY ===== */}
-          <div className="mt-4 w-full sm:w-64">
+          <div className="mt-4 w-full lg:w-64">
             <label htmlFor="myleaveFilterYear" className="flex flex-col space-y-1">
               <span className="text-xs text-slate-500">Filter By Year</span>
               <Select
+                instanceId="myleaveFilterYear"
                 id="myleaveFilterYear"
                 styles={customStyles}
                 defaultValue={handleDefaultValues(YEAR_FIELD)}
@@ -151,6 +168,26 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
               />
             </label>
           </div>
+
+          {/* ===== FILTER BY LEAVE ===== */}
+          <div className="mt-4 w-full lg:w-64">
+            <label htmlFor="leaveFilter" className="flex flex-col space-y-1">
+              <span className="text-xs text-slate-500">Filter By Leave</span>
+              <Select
+                instanceId="leaveFilter"
+                id="leaveFilter"
+                styles={customStyles}
+                defaultValue={handleDefaultValues(LEAVE_FIELD)}
+                name={LEAVE_FIELD}
+                className="w-full"
+                classNames={{
+                  control: (state) => (state.isFocused ? 'border-primary' : 'border-slate-300')
+                }}
+                onChange={(e) => (e !== null ? setSelectedLeave(e.value) : null)}
+                options={leaveOptions}
+              />
+            </label>
+          </div>
         </div>
       )}
 
@@ -159,7 +196,7 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
           onClick={handleUpdateResult}
           type="button"
           variant="primary"
-          className="w-full py-[9px] px-4 sm:w-auto"
+          className="w-full py-[9px] px-4 lg:w-auto"
         >
           Filter
         </Button>

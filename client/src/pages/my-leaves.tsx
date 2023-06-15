@@ -3,11 +3,8 @@ import dynamic from 'next/dynamic'
 import classNames from 'classnames'
 import { Plus } from 'react-feather'
 import { useRouter } from 'next/router'
-import { Filter } from '@icon-park/react'
 import { PulseLoader } from 'react-spinners'
 import React, { useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import useLocalStorageState from 'use-local-storage-state'
 
 import useLeave from '~/hooks/useLeave'
 import Card from '~/components/atoms/Card'
@@ -42,12 +39,6 @@ const MyLeaves: NextPage = (): JSX.Element => {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
-  const [isHideFilter, setHideFilter] = useLocalStorageState('hideFilter', {
-    defaultValue: false
-  })
-
-  const handleHideFilterToggle = (): void => setHideFilter(!isHideFilter)
-
   // CURRENT USER HOOKS
   const { handleUserQuery } = useUserQuery()
   const { data: user, isSuccess: isUserSuccess, isLoading: isUserLoading } = handleUserQuery()
@@ -60,23 +51,33 @@ const MyLeaves: NextPage = (): JSX.Element => {
     isSuccess,
     isLoading: isLeavesLoading,
     isError: isLeavesError
-  } = getLeaveQuery(user?.userById.id as number, parseInt(router.query.year as string))
+  } = getLeaveQuery(
+    user?.userById.id as number,
+    parseInt(router.query.year as string),
+    parseInt(router.query.leave as string)
+  )
   const [series, setSeries] = useState<SeriesData[]>(initialSeriesData)
   const { data: paidLeaves } = getRemainingPaidLeaves(user?.userById?.id as number)
 
   useEffect(() => {
-    if (router.isReady && router.query.year === undefined) {
+    if (router.isReady && router.query.year === undefined && router.query.leave === undefined) {
       void router.replace({
         pathname: router.pathname,
         query: {
-          year: new Date().getFullYear()
+          year: new Date().getFullYear(),
+          leave: 0
         }
       })
     }
   }, [router])
 
   useEffect(() => {
-    if (isUserSuccess && user?.userById.id !== undefined && router.query.year !== undefined) {
+    if (
+      isUserSuccess &&
+      user?.userById.id !== undefined &&
+      router.query.year !== undefined &&
+      router.query.leave !== undefined
+    ) {
       void refetch()
     }
   }, [isUserSuccess, user, router])
@@ -146,31 +147,15 @@ const MyLeaves: NextPage = (): JSX.Element => {
             <p className="text-sm text-slate-500">Available Paid Leaves:</p>
             <Chip count={paidLeaves?.paidLeaves} />
           </div>
-          {/* FOR INTEGRATOR: Filter it by shallow route */}
-          <div className="flex items-center space-x-2">
-            <Button
-              type="button"
-              rounded="full"
-              variant="secondary"
-              onClick={handleHideFilterToggle}
-              className="flex items-center space-x-0.5 !bg-white px-2 py-[3px]"
-            >
-              <Filter size={14} theme="outline" />
-              <span className="hidden sm:block">
-                {isHideFilter ? 'Hide Filter' : 'Show Filter'}
-              </span>
-            </Button>
-            <Button
-              type="button"
-              variant="primary"
-              className="flex items-center space-x-0.5 px-1.5 py-[3px]"
-              onClick={handleToggle}
-            >
-              <Plus className="h-4 w-4" />
-              <span className="hidden sm:block">File leave</span>
-            </Button>
-          </div>
-
+          <Button
+            type="button"
+            variant="primary"
+            className="flex items-center space-x-0.5 px-1.5 py-[3px]"
+            onClick={handleToggle}
+          >
+            <Plus className="h-4 w-4" />
+            <span className="hidden sm:block">File leave</span>
+          </Button>
           {/* This will Open New Modal for Filing New Leave */}
           <AddNewLeaveModal
             {...{
@@ -180,20 +165,9 @@ const MyLeaves: NextPage = (): JSX.Element => {
           />
         </header>
         {/* This will trigger filter */}
-        <AnimatePresence initial={false}>
-          {isHideFilter && (
-            <motion.div
-              key="dropdown"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="px-4"
-            >
-              <SummaryFilterDropdown />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <div className="px-4">
+          <SummaryFilterDropdown />
+        </div>
         {!isUserLoading && !isLeavesLoading ? (
           <div className="space-y-4 px-4">
             <MaxWidthContainer>

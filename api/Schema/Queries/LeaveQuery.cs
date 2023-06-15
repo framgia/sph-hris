@@ -23,15 +23,15 @@ namespace api.Schema.Queries
         {
             return await _leaveService.GetLeaveTypes();
         }
-        public async Task<LeavesDTO> GetLeaves(int userId, int year)
+        public async Task<LeavesDTO> GetLeaves(int userId, int year, int leaveTypeId)
         {
-            return await _leaveService.GetLeavesSummary(userId, year);
+            return await _leaveService.GetLeavesSummary(userId, year, leaveTypeId);
         }
 
         [AdminUser]
-        public async Task<LeavesDTO> GetYearlyAllLeaves(int year)
+        public async Task<LeavesDTO> GetYearlyAllLeaves(int year, int leaveTypeId)
         {
-            return await _leaveService.ShowYearlyLeavesSummary(year);
+            return await _leaveService.ShowYearlyLeavesSummary(year, leaveTypeId);
         }
 
         public async Task<double> GetPaidLeaves(int id)
