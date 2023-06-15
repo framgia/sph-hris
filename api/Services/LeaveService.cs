@@ -42,10 +42,10 @@ namespace api.Services
 
                 switch (leaveTypeId)
                 {
-                    case 0:
+                    case LeaveTypeEnum.ALL:
                         query = query.OrderBy(o => o.LeaveDate.Day);
                         break;
-                    case 7:
+                    case LeaveTypeEnum.PENDING:
                         query = query.Where(u => u.IsManagerApproved == null || u.IsLeaderApproved == null)
                                     .OrderBy(o => o.LeaveDate.Day);
                         break;
@@ -79,10 +79,10 @@ namespace api.Services
 
                 switch (leaveTypeId)
                 {
-                    case 0:
+                    case LeaveTypeEnum.ALL:
                         query = query.OrderBy(o => o.LeaveDate.Day);
                         break;
-                    case 7:
+                    case LeaveTypeEnum.PENDING:
                         query = query.Where(u => u.IsManagerApproved == null || u.IsLeaderApproved == null)
                                     .OrderBy(o => o.LeaveDate.Day);
                         break;
