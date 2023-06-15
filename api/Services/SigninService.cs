@@ -50,7 +50,6 @@ namespace api.Services
                     var newToken = GenerateUserToken(user);
 
                     return newToken;
-                    // return user != null;
                 }
                 catch
                 {
