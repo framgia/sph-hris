@@ -78,6 +78,24 @@ export const MyOvertimeSchema = yup.object().shape({
   remarks: yup.string().required().label('Reason')
 })
 
+export const MyBulkOvertimeSchema = yup.object().shape({
+  project: SelectSchema.label('Project').required(),
+  members: yup
+    .array()
+    .min(1, 'At least one member must be selected')
+    .of(
+      yup.object().shape({
+        value: yup.string().required(),
+        label: yup.string().required()
+      })
+    )
+    .required('Member is required'),
+  manager: SelectSchema.label('Manager'),
+  date_effective: yup.string().required().label('Date Effective'),
+  requested_minutes: yup.number().required().label('Requested minutes'),
+  remarks: yup.string().required().label('Reason')
+})
+
 export const NewEmployeeSchema = yup.object().shape({
   email: yup.string().required().label('Email'),
   position: yup.string().required().label('Position'),

@@ -9,8 +9,10 @@ import useUserQuery from '~/hooks/useUserQuery'
 import Layout from '~/components/templates/Layout'
 import { IMyOvertimeTable } from '~/utils/interfaces'
 import { getOvertimeQuery } from '~/hooks/useOvertimeQuery'
+import Button from '~/components/atoms/Buttons/ButtonAction'
 import { getApprovalStatus } from '~/utils/myOvertimeHelpers'
 import MyOvertimeTable from '~/components/molecules/MyOvertimeTable'
+import AddNewBulkOvertimeModal from '~/components/molecules/AddNewBulkOvertimeModal'
 import { columns } from '~/components/molecules/MyOvertimeTable/columns'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import YearlyFilterDropdown from '~/components/molecules/MyOvertimeTable/YearlyFilterDropdown'
@@ -20,13 +22,14 @@ const MyOverTime: NextPage = (): JSX.Element => {
   const { status, year } = router.query
   const [globalFilter, setGlobalFilter] = useState<string>('')
   const [filteredData, setFilteredData] = useState<IMyOvertimeTable[]>()
-
+  const [isOpen, setIsOpen] = useState<boolean>(false)
   // From User Query Hooks
   const { handleUserQuery } = useUserQuery()
   const { data: user } = handleUserQuery()
 
   // From Overtime Query Hooks
   const { data: overtime } = getOvertimeQuery(user?.userById?.id as number)
+  const handleToggle = (): void => setIsOpen(!isOpen)
 
   useEffect(() => {
     if (router.isReady && year === undefined && status === undefined) {
@@ -123,7 +126,26 @@ const MyOverTime: NextPage = (): JSX.Element => {
             onChange={(value) => setGlobalFilter(String(value))}
             placeholder="Search"
           />
-          <YearlyFilterDropdown />
+          <div className="flex items-center space-x-2">
+            <YearlyFilterDropdown />
+            {user?.userById.position.id === 7 && (
+              <Button
+                type="button"
+                variant="primary"
+                className="flex items-center space-x-0.5 px-1.5 py-[3px]"
+                onClick={handleToggle}
+              >
+                <span className="hidden sm:block">File Bulk Overtime</span>
+              </Button>
+            )}
+          </div>
+          {/* This will Open New Modal for Filing New Leave */}
+          <AddNewBulkOvertimeModal
+            {...{
+              isOpen,
+              closeModal: handleToggle
+            }}
+          />
         </header>
         {filteredData !== undefined ? (
           <MyOvertimeTable
