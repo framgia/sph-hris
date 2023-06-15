@@ -344,9 +344,6 @@ namespace api.Utils
         {
             var errors = new List<IError>();
 
-            if (!checkUserExist(overtime.HrAdminId))
-                errors.Add(buildError(nameof(overtime.HrAdminId), InputValidationMessageEnum.INVALID_USER));
-
             if (!CheckManagerPosition(overtime.ManagerId).Result)
                 errors.Add(buildError(nameof(overtime.ManagerId), InputValidationMessageEnum.INVALID_MANAGER));
 

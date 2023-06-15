@@ -21,13 +21,15 @@ namespace api.Services
         private readonly ESLChangeShiftService _eslChangeShiftService;
         private readonly ESLOffsetService _eslOffsetService;
         private readonly UserService _userService;
+        private readonly IHttpContextAccessor _accessor;
         public NotificationService(
             IDbContextFactory<HrisContext> contextFactory,
             LeaveService leaveService, OvertimeService overtimeService,
             UserService userService, ChangeShiftService changeShiftService,
             ESLChangeShiftService eslChangeShiftService,
             ESLOffsetService eslOffsetService,
-            [Service] ITopicEventSender eventSender)
+            [Service] ITopicEventSender eventSender,
+            IHttpContextAccessor accessor)
         {
             _contextFactory = contextFactory;
             _eventSender = eventSender;
@@ -37,6 +39,7 @@ namespace api.Services
             _eslChangeShiftService = eslChangeShiftService;
             _eslOffsetService = eslOffsetService;
             _userService = userService;
+            _accessor = accessor;
         }
 
         public async Task<List<LeaveNotification>> createLeaveNotification(Leave leave)
@@ -380,15 +383,16 @@ namespace api.Services
         }
         public async Task<Notification> CreateSummarizedOvertimeNotification(CreateSummaryRequest summarizedOvertime, HrisContext context)
         {
-            var user = context.Users.Find(summarizedOvertime.HrAdminId);
+            var httpContext = _accessor.HttpContext!;
+            var hrAdmin = (User)httpContext.Items["User"]!;
 
             var dataToManager = JsonSerializer.Serialize(new OvertimeSummaryData
             {
                 User = new NotificationUser
                 {
-                    Id = user!.Id,
-                    Name = user.Name!,
-                    AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default)
+                    Id = hrAdmin!.Id,
+                    Name = hrAdmin.Name!,
+                    AvatarLink = _userService.GenerateAvatarLink(hrAdmin?.ProfileImageId ?? default)
                 },
                 StartDate = summarizedOvertime.StartDate,
                 EndDate = summarizedOvertime.EndDate
@@ -398,7 +402,7 @@ namespace api.Services
             // Notification to Requesting User
             var notificationToManager = new Notification
             {
-                RecipientId = summarizedOvertime.ManagerId,
+                RecipientId = summarizedOvertime!.ManagerId,
                 Type = NotificationTypeEnum.OVERTIME_SUMMARY,
                 Data = dataToManager
             };

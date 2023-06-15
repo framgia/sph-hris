@@ -4,7 +4,6 @@ using api.Entities;
 using api.Enums;
 using api.Requests;
 using api.Utils;
-using HotChocolate.Subscriptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Services
@@ -13,14 +12,12 @@ namespace api.Services
     {
         private readonly IDbContextFactory<HrisContext> _contextFactory = default!;
         private readonly HttpContextService _httpService;
-        private readonly ITopicEventSender _eventSender;
         private readonly OvertimeServiceInputValidation _customInputValidation;
         private readonly IHttpContextAccessor _accessor;
 
-        public OvertimeService(IDbContextFactory<HrisContext> contextFactory, ITopicEventSender eventSender, IHttpContextAccessor accessor)
+        public OvertimeService(IDbContextFactory<HrisContext> contextFactory, IHttpContextAccessor accessor)
         {
             _contextFactory = contextFactory;
-            _eventSender = eventSender;
             _customInputValidation = new OvertimeServiceInputValidation(_contextFactory);
             _httpService = new HttpContextService(accessor);
             _accessor = accessor;
@@ -66,14 +63,14 @@ namespace api.Services
             }
         }
 
-        public Task<CreateSummaryRequest> CreateSummary(CreateSummaryRequest overtimeRequests)
+        public CreateSummaryRequest CreateSummary(CreateSummaryRequest overtimeRequests)
         {
             using HrisContext context = _contextFactory.CreateDbContext();
             var errors = _customInputValidation.CheckSummaryOvertimeRequestInput(overtimeRequests);
 
             if (errors.Count > 0) throw new GraphQLException(errors);
 
-            return Task.FromResult(overtimeRequests);
+            return overtimeRequests;
         }
 
         public string GetOvertimeRequestStatus(Overtime overtime)

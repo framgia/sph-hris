@@ -1,7 +1,7 @@
 using api.Context;
 using api.Entities;
-using api.Middlewares.Attributes;
 using api.Enums;
+using api.Middlewares.Attributes;
 using api.Requests;
 using api.Services;
 using HotChocolate.Subscriptions;
@@ -35,6 +35,7 @@ namespace api.Schema.Mutations
             }
         }
 
+        [AdminUser]
         public async Task<string> CreateSummarizedOvertime(CreateSummaryRequest overtimeSummary, [Service] OvertimeService _overtimeService, [Service] NotificationService _notificationService, [Service] ITopicEventSender eventSender, [Service] IDbContextFactory<HrisContext> contextFactory)
         {
             using HrisContext context = contextFactory.CreateDbContext();
@@ -42,7 +43,7 @@ namespace api.Schema.Mutations
             {
                 using var transaction = context.Database.BeginTransaction();
 
-                var summarizedOvertime = await _overtimeService.CreateSummary(overtimeSummary);
+                var summarizedOvertime = _overtimeService.CreateSummary(overtimeSummary);
 
                 var notificationList = await _notificationService.CreateSummarizedOvertimeNotification(summarizedOvertime, context);
 
