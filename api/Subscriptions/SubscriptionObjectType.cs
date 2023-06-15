@@ -45,7 +45,19 @@ namespace api.Subscriptions
             return eventReceiver.SubscribeAsync<ESLOffsetNotification>(topic);
         }
 
+        public ValueTask<ISourceStream<Notification>> OvertimeSummaryEventReceiver(int id, [Service] ITopicEventReceiver eventReceiver)
+        {
+            var topic = $"{id}_{nameof(OvertimeSummaryCreated)}";
+            return eventReceiver.SubscribeAsync<Notification>(topic);
+        }
+
         // Resolver
+        [Subscribe(With = nameof(OvertimeSummaryEventReceiver))]
+        public Notification OvertimeSummaryCreated([EventMessage] Notification notification)
+        {
+            return notification;
+        }
+
         [Subscribe(With = nameof(SubscriptionObjectType.LeaveEventReceiver))]
         public LeaveNotification LeaveCreated([EventMessage] LeaveNotification notification)
         {

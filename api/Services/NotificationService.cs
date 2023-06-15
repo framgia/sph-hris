@@ -339,7 +339,6 @@ namespace api.Services
             await context.SaveChangesAsync();
             return notifications;
         }
-
         public async Task<ESLChangeShiftNotification> createESLChangeShiftRequestNotification(HrisContext context, ESLChangeShiftRequest request)
         {
             var user = await context.Users.FindAsync(request.UserId);
@@ -378,6 +377,37 @@ namespace api.Services
 
             await context.SaveChangesAsync();
             return newNotification;
+        }
+        public async Task<Notification> CreateSummarizedOvertimeNotification(CreateSummaryRequest summarizedOvertime, HrisContext context)
+        {
+            var user = context.Users.Find(summarizedOvertime.HrAdminId);
+
+            var dataToManager = JsonSerializer.Serialize(new OvertimeSummaryData
+            {
+                User = new NotificationUser
+                {
+                    Id = user!.Id,
+                    Name = user.Name!,
+                    AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default)
+                },
+                StartDate = summarizedOvertime.StartDate,
+                EndDate = summarizedOvertime.EndDate
+            }
+            );
+
+            // Notification to Requesting User
+            var notificationToManager = new Notification
+            {
+                RecipientId = summarizedOvertime.ManagerId,
+                Type = NotificationTypeEnum.OVERTIME_SUMMARY,
+                Data = dataToManager
+            };
+
+            context.Notifications.Add(notificationToManager);
+            await context.SaveChangesAsync();
+
+            SendSummarizedOvertimeNotificationEvent(notificationToManager);
+            return notificationToManager;
         }
 
         public async Task<ESLOffsetNotification> createESLOffsetRequestNotification(ESLOffset request, HrisContext context)
@@ -580,6 +610,19 @@ namespace api.Services
             }
         }
 
+        public async void SendSummarizedOvertimeNotificationEvent(Notification notif)
+        {
+            try
+            {
+                string topic = $"{notif.RecipientId}_{nameof(SubscriptionObjectType.OvertimeSummaryCreated)}";
+                await _eventSender.SendAsync(topic, notif);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async void sendChangeShiftNotificationEvent(ChangeShiftNotification notif)
         {
             try
@@ -655,8 +698,6 @@ namespace api.Services
             var user = await context.Users.FindAsync(fromUserId);
             var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
             var offsets = await context.ESLOffsets.Where(x => x.ESLChangeShiftRequestId == request.Id).Select(x => new ESLOffsetNotificationDTO(x)).ToListAsync();
-
-
             var dataToUser = JsonSerializer.Serialize(new ESLChangeShiftData
             {
                 User = new NotificationUser
@@ -696,8 +737,6 @@ namespace api.Services
         {
             var user = await context.Users.FindAsync(fromUserId);
             var timeEntry = await context.TimeEntries.FindAsync(request.TimeEntryId);
-
-
             var dataToUser = JsonSerializer.Serialize(new ChangeShiftData
             {
                 User = new NotificationUser

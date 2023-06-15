@@ -25,4 +25,9 @@ namespace api.NotificationDataClasses
     {
         public NotificationUser ProjectMember { get; set; } = default!;
     }
+    public class OvertimeSummaryData : OvertimeData
+    {
+        public string StartDate { get; set; } = default!;
+        public string EndDate { get; set; } = default!;
+    }
 }

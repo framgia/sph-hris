@@ -66,6 +66,16 @@ namespace api.Services
             }
         }
 
+        public Task<CreateSummaryRequest> CreateSummary(CreateSummaryRequest overtimeRequests)
+        {
+            using HrisContext context = _contextFactory.CreateDbContext();
+            var errors = _customInputValidation.CheckSummaryOvertimeRequestInput(overtimeRequests);
+
+            if (errors.Count > 0) throw new GraphQLException(errors);
+
+            return Task.FromResult(overtimeRequests);
+        }
+
         public string GetOvertimeRequestStatus(Overtime overtime)
         {
             if (overtime.IsLeaderApproved == true && overtime.IsManagerApproved == true) return RequestStatus.APPROVED;

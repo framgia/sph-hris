@@ -1,6 +1,7 @@
 using api.Context;
 using api.Entities;
 using api.Middlewares.Attributes;
+using api.Enums;
 using api.Requests;
 using api.Services;
 using HotChocolate.Subscriptions;
@@ -13,29 +14,47 @@ namespace api.Schema.Mutations
     {
         public async Task<Overtime> CreateOvertime(CreateOvertimeRequest overtime, [Service] OvertimeService _overtimeService, [Service] NotificationService _notificationService, [Service] ITopicEventSender eventSender, [Service] IDbContextFactory<HrisContext> contextFactory)
         {
-            using (HrisContext context = contextFactory.CreateDbContext())
+            using HrisContext context = contextFactory.CreateDbContext();
+            try
             {
-                try
-                {
-                    using var transaction = context.Database.BeginTransaction();
+                using var transaction = context.Database.BeginTransaction();
 
-                    var newOvertime = await _overtimeService.Create(overtime);
+                var newOvertime = await _overtimeService.Create(overtime);
 
-                    var notificationList = await _notificationService.createOvertimeNotification(newOvertime);
+                var notificationList = await _notificationService.createOvertimeNotification(newOvertime);
 
-                    notificationList.ForEach(notif =>
-                    {
-                        _notificationService.sendOvertimeNotificationEvent(notif);
-                    });
+                notificationList.ForEach(notif => _notificationService.sendOvertimeNotificationEvent(notif));
 
-                    transaction.Commit();
+                transaction.Commit();
 
-                    return newOvertime;
-                }
-                catch (GraphQLException error)
-                {
-                    throw error;
-                }
+                return newOvertime;
+            }
+            catch (GraphQLException)
+            {
+                throw;
+            }
+        }
+
+        public async Task<string> CreateSummarizedOvertime(CreateSummaryRequest overtimeSummary, [Service] OvertimeService _overtimeService, [Service] NotificationService _notificationService, [Service] ITopicEventSender eventSender, [Service] IDbContextFactory<HrisContext> contextFactory)
+        {
+            using HrisContext context = contextFactory.CreateDbContext();
+            try
+            {
+                using var transaction = context.Database.BeginTransaction();
+
+                var summarizedOvertime = await _overtimeService.CreateSummary(overtimeSummary);
+
+                var notificationList = await _notificationService.CreateSummarizedOvertimeNotification(summarizedOvertime, context);
+
+                _notificationService.SendSummarizedOvertimeNotificationEvent(notificationList);
+
+                transaction.Commit();
+
+                return SuccessMessageEnum.OVERTIME_SUMMARY_SUBMITTED;
+            }
+            catch (GraphQLException)
+            {
+                throw;
             }
         }
 
