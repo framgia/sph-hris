@@ -1,4 +1,5 @@
 using api.Context;
+using api.DTOs;
 using api.Entities;
 using api.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,17 @@ namespace api.Services
                 var avatarLink = $"{_httpService.getDomainURL()}/media/{avatar?.CollectionName}/{avatar?.FileName}";
 
                 return avatarLink;
+            }
+        }
+
+        public UserDTO? GetLoggedInUser()
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                var httpContext = _httpService.GetHttpContext();
+                User? currentUser = httpContext != null ? (User?)httpContext.Items["User"] : null;
+
+                return currentUser != null ? new UserDTO(currentUser, "") : null;
             }
         }
 

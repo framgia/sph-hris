@@ -1,16 +1,21 @@
+import { getCookie } from 'cookies-next'
+
 type headerType =
   | {
-      'nextauth-token': string
+      'nextauth-token': string | undefined
+      'authorization-token': string | undefined
     }
   | undefined
 
 export const customHttpHeader = (): headerType => {
   let header
   try {
-    const token = localStorage.getItem('cookies') as string
+    const token = getCookie('accessToken')?.toString()
+    const authtoken = getCookie('authorization')?.toString()
     if (token !== undefined) {
       header = {
-        'nextauth-token': token
+        'nextauth-token': token,
+        'authorization-token': authtoken
       }
     }
   } catch (e) {}

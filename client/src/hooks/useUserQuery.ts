@@ -6,7 +6,6 @@ import {
 } from '~/graphql/queries/UserQuery'
 import { client } from '~/utils/shared/client'
 import { User } from '~/utils/types/userTypes'
-import moment from 'moment'
 
 type handleUserQueryType = UseQueryResult<
   {
@@ -40,11 +39,7 @@ const useUserQuery = (): returnType => {
   const handleUserQuery = (): handleUserQueryType =>
     useQuery({
       queryKey: ['GET_USER_QUERY'],
-      queryFn: async () =>
-        await client.request(GET_USER_QUERY, {
-          token: localStorage.getItem('cookies'),
-          schedule: moment(new Date()).format('dddd')
-        }),
+      queryFn: async () => await client.request(GET_USER_QUERY),
       select: (data: { userById: User }) => data
     })
 

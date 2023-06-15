@@ -14,9 +14,9 @@ namespace api.Schema.Queries
             _timeInService = timeInService;
             _userService = userService;
         }
-        public async Task<UserDTO?> GetUserById(string token, string schedule)
+        public UserDTO? GetUserById()
         {
-            return await _timeInService.GetByIdSchedule(token, schedule);
+            return _userService.GetLoggedInUser();
         }
         public async Task<List<User>> GetAllUsers([Service] UserService _userService)
         {

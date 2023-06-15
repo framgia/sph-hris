@@ -1,5 +1,6 @@
 import { Menu } from '@headlessui/react'
 import { signOut } from 'next-auth/react'
+import { deleteCookie } from 'cookies-next'
 import React, { FC, ReactNode } from 'react'
 import { LogOut, Settings } from 'react-feather'
 
@@ -18,7 +19,10 @@ const UserMenuDropDown: FC<Props> = ({ currentUser, children }): JSX.Element => 
   const LogoutMutation = handleLogoutMutation()
 
   const handleSignOut = async (): Promise<void> => {
-    await signOut({ callbackUrl: '/sign-in' })
+    await signOut({ callbackUrl: '/sign-in' }).then(() => {
+      deleteCookie('authorization')
+      deleteCookie('access_token')
+    })
     LogoutMutation.mutate({ token: localStorage.getItem('cookies') as string })
     localStorage.removeItem('cookies')
   }

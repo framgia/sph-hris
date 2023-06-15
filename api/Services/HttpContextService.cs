@@ -15,5 +15,10 @@ namespace api.Services
             if (protocol != null && protocol.Contains("https")) return $"https://{host}/";
             return $"http://{host}";
         }
+
+        public HttpContext? GetHttpContext()
+        {
+            return _httpContext.HttpContext;
+        }
     }
 }
