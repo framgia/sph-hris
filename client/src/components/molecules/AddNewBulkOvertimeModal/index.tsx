@@ -220,7 +220,7 @@ const AddNewBulkOvertimeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element
                       isClearable
                       placeholder=""
                       styles={customStyles}
-                      closeMenuOnSelect={true}
+                      closeMenuOnSelect={false}
                       isDisabled={isSubmitting}
                       classNames={{
                         control: (state) =>
@@ -272,11 +272,10 @@ const AddNewBulkOvertimeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element
                 iserror={
                   errors.requested_minutes !== null && errors?.requested_minutes !== undefined
                 }
-                // value={100}
               />
             </TextField>
             {errors?.requested_minutes !== null && errors?.requested_minutes !== undefined && (
-              <span className="error text-[10px]">{errors.requested_minutes?.message}</span>
+              <span className="error text-[10px]">Requested Minutes must be number.</span>
             )}
           </section>
 
