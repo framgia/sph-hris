@@ -14,14 +14,16 @@ namespace api.Services
         private readonly IDbContextFactory<HrisContext> _contextFactory = default!;
         private readonly HttpContextService _httpService;
         private readonly ITopicEventSender _eventSender;
-        private readonly CustomInputValidation _customInputValidation;
+        private readonly OvertimeServiceInputValidation _customInputValidation;
+        private readonly IHttpContextAccessor _accessor;
 
         public OvertimeService(IDbContextFactory<HrisContext> contextFactory, ITopicEventSender eventSender, IHttpContextAccessor accessor)
         {
             _contextFactory = contextFactory;
             _eventSender = eventSender;
-            _customInputValidation = new CustomInputValidation(_contextFactory);
+            _customInputValidation = new OvertimeServiceInputValidation(_contextFactory);
             _httpService = new HttpContextService(accessor);
+            _accessor = accessor;
         }
 
         public async Task<Overtime> Create(CreateOvertimeRequest overtime)
@@ -111,6 +113,66 @@ namespace api.Services
                 .OrderByDescending(x => x.CreatedAt)
                 .Select(x => new OvertimeDTO(x, domain))
                 .ToListAsync();
+            }
+        }
+
+        public async Task<List<Overtime>> CreateBulk(CreateBulkOvertimeRequest request)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                using var transaction = context.Database.BeginTransaction();
+                var httpContext = _accessor.HttpContext!;
+                var leader = (User)httpContext.Items["User"]!;
+                var overtimesList = new List<Overtime>();
+                var overtimeProjectsList = new List<MultiProject>();
+                var errors = _customInputValidation.checkBulkOvertimeRequestInput(request);
+
+                if (errors.Count > 0) throw new GraphQLException(errors);
+
+                DateTime requestedDate = DateTime.Parse(request.Date);
+
+                // Get all related time entries
+                var timeEntries = await context.TimeEntries.Where(x => request.EmployeeIds.Contains(x.UserId)).ToListAsync();
+                timeEntries = timeEntries.Where(x => (x.Date.Date - requestedDate.Date).Days == 0).ToList();
+
+                // Create overtime, pre-approved by leader
+                request.EmployeeIds.ForEach(id =>
+                {
+                    var userTimeEntry = timeEntries.Where(x => x.UserId == id).FirstOrDefault();
+
+                    if (userTimeEntry != null)
+                    {
+                        // Create MultiProjects entity
+                        var projectOvertime = new MultiProject
+                        {
+                            ProjectId = request.ProjectId,
+                            ProjectLeaderId = leader.Id,
+                            Type = MultiProjectTypeEnum.OVERTIME
+                        };
+                        overtimeProjectsList.Add(projectOvertime);
+
+                        var newOvertime = new Overtime
+                        {
+                            UserId = id,
+                            TimeEntryId = userTimeEntry.Id,
+                            ManagerId = request.ManagerId,
+                            MultiProjects = new List<MultiProject> { projectOvertime },
+                            OtherProject = request.OtherProject,
+                            Remarks = request.Remarks,
+                            OvertimeDate = requestedDate,
+                            RequestedMinutes = request.RequestedMinutes,
+                            IsLeaderApproved = true
+                        };
+                        overtimesList.Add(newOvertime);
+                    }
+                });
+
+                await context.MultiProjects.AddRangeAsync(overtimeProjectsList);
+                await context.Overtimes.AddRangeAsync(overtimesList);
+                await context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return overtimesList;
             }
         }
     }

@@ -1,5 +1,6 @@
 using api.Context;
 using api.Enums;
+using HotChocolate.Language;
 using HotChocolate.Resolvers;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,7 +20,7 @@ namespace api.Middlewares
             var httpContext = accessor.HttpContext!;
             try
             {
-                if (httpContext.Items["User"] != null || context.Path.ToString().Contains("/createSignIn"))
+                if (httpContext.Items["User"] != null || context.Path.ToString().Contains("/createSignIn") || context.Operation.Type == OperationType.Subscription)
                 {
                     await _next(context);
                 }
