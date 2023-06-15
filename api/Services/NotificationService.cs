@@ -196,6 +196,66 @@ namespace api.Services
             }
         }
 
+        // notification service for bulk overtime
+        public async Task<List<OvertimeNotification>> createBulkOvertimeNotification(List<Overtime> overtimeList, int leaderId)
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                List<OvertimeNotification> notificationsList = new List<OvertimeNotification>();
+                List<int> userIds = overtimeList.Select(overtime => overtime.UserId).ToList();
+                userIds.Add(leaderId);
+
+                var users = context.Users.Where(user => userIds.Contains(user.Id));
+                var leader = users.Where(user => user.Id == leaderId).FirstOrDefault();
+
+                var overtimeInstance = overtimeList.First();
+                var projectNames = context.MultiProjects.Where(x => x.OvertimeId == overtimeInstance.Id && x.Type == MultiProjectTypeEnum.OVERTIME).Select(x => x.ProjectId == ProjectId.OTHER_PROJECT ? overtimeInstance.OtherProject : x.Project.Name);
+
+                overtimeList.ForEach(overtime =>
+                {
+                    var user = users.Where(user => user.Id == overtime.UserId).FirstOrDefault();
+
+                    var dataToManager = JsonSerializer.Serialize(new BulkOvertimeManagerData
+                    {
+                        User = new NotificationUser
+                        {
+                            Id = (int)leader?.Id!,
+                            Name = leader?.Name!,
+                            AvatarLink = _userService.GenerateAvatarLink(leader?.ProfileImageId ?? default(int))
+                        },
+                        ProjectMember = new NotificationUser
+                        {
+                            Id = (int)user?.Id!,
+                            Name = user?.Name!,
+                            AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default(int))
+                        },
+                        Projects = projectNames,
+                        RequestedMinutes = overtime.RequestedMinutes,
+                        DateRequested = overtime.OvertimeDate,
+                        DateFiled = (DateTime)overtime.CreatedAt!,
+                        Type = NotificationDataTypeEnum.REQUEST,
+                        Status = _overtimeService.GetOvertimeRequestStatus(overtime),
+                        Remarks = overtime.Remarks
+                    });
+
+                    // Notification to Manager
+                    var notificationToManager = new OvertimeNotification
+                    {
+                        RecipientId = overtime.ManagerId,
+                        OvertimeId = overtime.Id,
+                        Type = NotificationTypeEnum.OVERTIME,
+                        Data = dataToManager
+                    };
+                    notificationsList.Add(notificationToManager);
+                });
+
+                await context.OvertimeNotifications.AddRangeAsync(notificationsList);
+
+                await context.SaveChangesAsync();
+                return notificationsList;
+            }
+        }
+
         public async Task<List<ChangeShiftNotification>> createChangeShiftRequestNotification(HrisContext context, ChangeShiftRequest request, int fromUserId, bool isManager = false)
         {
             var notifications = new List<ChangeShiftNotification>();

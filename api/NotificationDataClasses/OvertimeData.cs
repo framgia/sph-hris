@@ -20,4 +20,9 @@ namespace api.NotificationDataClasses
     {
         public List<string> Projects { get; set; } = default!;
     }
+
+    public class BulkOvertimeManagerData : OvertimeManagerData
+    {
+        public NotificationUser ProjectMember { get; set; } = default!;
+    }
 }
