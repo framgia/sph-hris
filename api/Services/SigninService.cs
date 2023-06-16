@@ -28,7 +28,7 @@ namespace api.Services
                 {
                     HttpClient httpClient = new HttpClient();
                     HttpContext? httpContext = _httpContextAccessor.HttpContext;
-                    string? accessToken = httpContext?.Request.Headers["access_token"];
+                    string? accessToken = httpContext?.Request.Headers["access-token"];
 
                     var response = await httpClient.GetAsync($"https://www.googleapis.com/oauth2/v3/userinfo?access_token={accessToken}");
 

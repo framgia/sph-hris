@@ -14,7 +14,7 @@ export const client = new GraphQLClient(process.env.NEXT_PUBLIC_BACKEND_URL as s
       ...request,
       headers: {
         ...request.headers,
-        access_token: accessToken as string,
+        'access-token': accessToken as string,
         authorization: authtoken as string
       }
     }
