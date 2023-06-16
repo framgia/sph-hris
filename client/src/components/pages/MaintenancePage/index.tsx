@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import React, { FC } from 'react'
-import handleImageError from '~/utils/handleImageError'
+import MaintenanceIcon from '~/utils/icons/MaintenanceIcon'
 
 const MaintenancePage: FC = (): JSX.Element => {
   return (
@@ -9,12 +9,8 @@ const MaintenancePage: FC = (): JSX.Element => {
         <title>Page Under Maintenance</title>
       </Head>
       <div className="flex h-screen min-h-full flex-col items-center justify-center">
-        <main className="flex max-w-[400px] flex-col items-center justify-center">
-          <img
-            onError={(e) => handleImageError(e, '/images/default.png')}
-            src="/images/maintenance.png"
-            alt="maintenance"
-          />
+        <main className="flex max-w-[500px] flex-col items-center justify-center">
+          <MaintenanceIcon />
           <h1 className="text-center text-xl font-medium text-slate-600">
             This page is currently under maintenance.
           </h1>
