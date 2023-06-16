@@ -1,6 +1,6 @@
 import classNames from 'classnames'
-import React, { Fragment, FC, ReactNode } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
+import React, { Fragment, FC, ReactNode, useRef } from 'react'
 
 type Props = {
   isOpen: boolean
@@ -10,11 +10,12 @@ type Props = {
 }
 
 const ModalTemplate: FC<Props> = (props): JSX.Element => {
+  const refDiv = useRef<HTMLDivElement>(null)
   const { isOpen, closeModal, children, className } = props
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={() => closeModal()}>
+      <Dialog as="div" className="relative z-50" onClose={() => closeModal()} initialFocus={refDiv}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -43,6 +44,7 @@ const ModalTemplate: FC<Props> = (props): JSX.Element => {
                   className,
                   'transform overflow-hidden rounded-xl bg-white text-left align-middle shadow-xl transition-all'
                 )}
+                ref={refDiv}
               >
                 {children}
               </Dialog.Panel>

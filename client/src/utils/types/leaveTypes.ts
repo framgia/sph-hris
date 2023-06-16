@@ -53,6 +53,14 @@ export type LeaveTable = {
   leaveId: number
   createdAt: string
 }
+
+export type LeaveCellDetailTable = {
+  typeOfLeave: number
+  withPay: boolean
+  numOfLeaves: number
+  reason: string
+}
+
 export type Breakdown = {
   sickLeave: number
   undertime: number
