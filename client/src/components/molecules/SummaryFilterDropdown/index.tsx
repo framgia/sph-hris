@@ -86,6 +86,9 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
 
       if (field === NAME_FIELD && router.query.id !== undefined)
         return nameOptions.find((option) => option.value === selectedUser) ?? null
+
+      if (field === LEAVE_FIELD && router.query.id !== undefined)
+        return leaveOptions.find((option) => option.value === selectedUser) ?? null
     }
 
     if (isYearlySummaryTabPage && router.query.year !== undefined) {
@@ -107,7 +110,11 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
           ? data.allUsers[0].id
           : parseInt(router.query.id as string)
       )
-      setSelectedLeave(parseInt(router.query.leave as string))
+      setSelectedLeave(
+        router.query.leave === undefined || router.query.leave === ''
+          ? leaveOptions[0].value
+          : parseInt(router.query.leave as string)
+      )
     }
   }, [isSuccess])
 
@@ -118,7 +125,11 @@ const SummaryFilterDropdown: FC<Props> = (): JSX.Element => {
           ? currentYear
           : parseInt(router.query.year as string)
       )
-      setSelectedLeave(parseInt(router.query.leave as string))
+      setSelectedLeave(
+        router.query.leave === undefined || router.query.leave === ''
+          ? leaveOptions[0].value
+          : parseInt(router.query.leave as string)
+      )
     }
   }, [router])
 

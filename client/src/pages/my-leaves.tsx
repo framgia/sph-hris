@@ -18,10 +18,12 @@ import AddNewLeaveModal from '~/components/molecules/AddNewLeaveModal'
 import BreakdownOfLeaveCard from '~/components/molecules/BreakdownOfLeavesCard'
 import { Breakdown, HeatmapDetails, LeaveTable } from '~/utils/types/leaveTypes'
 import SummaryFilterDropdown from '~/components/molecules/SummaryFilterDropdown'
+import LeaveCellDetailsModal from '~/components/molecules/LeaveCellDetailsModal'
 import LeaveManagementResultTable from '~/components/molecules/LeaveManagementResultTable'
 import {
   Series,
   getHeatmapData,
+  ConfigApexChart,
   initialSeriesData,
   initialChartOptions
 } from '~/utils/generateData'
@@ -37,7 +39,12 @@ type SeriesData = {
 
 const MyLeaves: NextPage = (): JSX.Element => {
   const router = useRouter()
+  const [selectedMonth, setSelectedMonth] = useState<string>('')
+  const [selectedDay, setSelectedDay] = useState<number>(0)
   const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [isOpenCellDetails, setIsOpenCellDetails] = useState<boolean>(false)
+
+  const handleToggleCellDetails = (): void => setIsOpenCellDetails(!isOpenCellDetails)
 
   // CURRENT USER HOOKS
   const { handleUserQuery } = useUserQuery()
@@ -139,6 +146,25 @@ const MyLeaves: NextPage = (): JSX.Element => {
 
   const handleToggle = (): void => setIsOpen(!isOpen)
 
+  const updatedInitialChartOptions = {
+    ...initialChartOptions, // Replace with your existing initialChartOptions variable
+    chart: {
+      ...initialChartOptions.chart, // Merge the previous chart configuration
+      events: {
+        click: (event: MouseEvent, chartContext: ApexCharts, config: ConfigApexChart) => {
+          const selectedMonth = config?.config?.series[config.seriesIndex]?.name
+          const selectedDay = config?.dataPointIndex + 1
+
+          if (config.seriesIndex !== -1) {
+            setSelectedMonth(selectedMonth)
+            setSelectedDay(selectedDay)
+            handleToggleCellDetails()
+          }
+        }
+      }
+    }
+  }
+
   return (
     <Layout metaTitle="My Leaves">
       <main className="default-scrollbar h-full overflow-y-auto">
@@ -174,7 +200,7 @@ const MyLeaves: NextPage = (): JSX.Element => {
               <Card className="default-scrollbar mt-4 overflow-x-auto overflow-y-hidden">
                 <div className="w-full min-w-[647px] px-5 pt-4 md:max-w-full">
                   <ReactApexChart
-                    options={initialChartOptions}
+                    options={updatedInitialChartOptions}
                     series={series}
                     type="heatmap"
                     width={'100%'}
@@ -209,6 +235,19 @@ const MyLeaves: NextPage = (): JSX.Element => {
             <PulseLoader color="#ffb40b" size={10} />
           </div>
         )}
+
+        {/* For Leave Cell Details Modal */}
+        <LeaveCellDetailsModal
+          {...{
+            isOpen: isOpenCellDetails,
+            closeModal: handleToggleCellDetails,
+            selectedDate: {
+              month: selectedMonth,
+              day: selectedDay,
+              year: parseInt(router.query.year as string)
+            }
+          }}
+        />
       </main>
     </Layout>
   )

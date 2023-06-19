@@ -2,6 +2,7 @@ import moment from 'moment'
 import { NextPage } from 'next'
 import dynamic from 'next/dynamic'
 import classNames from 'classnames'
+import isEmpty from 'lodash/isEmpty'
 import { useRouter } from 'next/router'
 import { PulseLoader } from 'react-spinners'
 import React, { useEffect, useState } from 'react'
@@ -15,12 +16,14 @@ import FadeInOut from '~/components/templates/FadeInOut'
 import { Breakdown, LeaveTable } from '~/utils/types/leaveTypes'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import BreakdownOfLeaveCard from '~/components/molecules/BreakdownOfLeavesCard'
+import LeaveCellDetailsModal from '~/components/molecules/LeaveCellDetailsModal'
 import LeaveManagementLayout from '~/components/templates/LeaveManagementLayout'
 import SummaryFilterDropdown from '~/components/molecules/SummaryFilterDropdown'
 import LeaveManagementResultTable from '~/components/molecules/LeaveManagementResultTable'
 import {
   Series,
   getHeatmapData,
+  ConfigApexChart,
   initialSeriesData,
   initialChartOptions
 } from '~/utils/generateData'
@@ -36,6 +39,11 @@ type SeriesData = {
 
 const YearlySummary: NextPage = (): JSX.Element => {
   const router = useRouter()
+  const [selectedMonth, setSelectedMonth] = useState<string>('')
+  const [selectedDay, setSelectedDay] = useState<number>(0)
+  const [isOpenCellDetails, setIsOpenCellDetails] = useState<boolean>(false)
+
+  const handleToggleCellDetails = (): void => setIsOpenCellDetails(!isOpenCellDetails)
 
   // CURRENT USER QUERY HOOKS
   const { handleUserQuery } = useUserQuery()
@@ -113,6 +121,25 @@ const YearlySummary: NextPage = (): JSX.Element => {
     }
   }, [isSuccess, leaves?.yearlyAllLeaves.heatmap])
 
+  const updatedInitialChartOptions = {
+    ...initialChartOptions, // Replace with your existing initialChartOptions variable
+    chart: {
+      ...initialChartOptions.chart, // Merge the previous chart configuration
+      events: {
+        click: (event: MouseEvent, chartContext: ApexCharts, config: ConfigApexChart) => {
+          const selectedMonth = config?.config?.series[config.seriesIndex]?.name
+          const selectedDay = config?.dataPointIndex + 1
+
+          if (config.seriesIndex !== -1) {
+            setSelectedDay(selectedDay)
+            setSelectedMonth(selectedMonth)
+            handleToggleCellDetails()
+          }
+        }
+      }
+    }
+  }
+
   if (process.env.NODE_ENV === 'production' && currentUser?.userById.role.name !== Roles.HR_ADMIN) {
     return <NotFound />
   }
@@ -129,7 +156,7 @@ const YearlySummary: NextPage = (): JSX.Element => {
               <Card className="default-scrollbar mt-4 overflow-x-auto overflow-y-hidden">
                 <div className="w-full min-w-[647px] px-5 pt-4 md:max-w-full">
                   <ReactApexChart
-                    options={initialChartOptions}
+                    options={updatedInitialChartOptions}
                     series={series}
                     type="heatmap"
                     width={'100%'}
@@ -164,6 +191,21 @@ const YearlySummary: NextPage = (): JSX.Element => {
             <PulseLoader color="#ffb40b" size={10} />
           </div>
         )}
+
+        {/* For Leave Cell Details Modal */}
+        <LeaveCellDetailsModal
+          {...{
+            isOpen: isOpenCellDetails,
+            closeModal: handleToggleCellDetails,
+            selectedDate: {
+              month: selectedMonth,
+              day: selectedDay,
+              year: !isEmpty(router.query.year)
+                ? parseInt(router.query.year as string)
+                : new Date().getFullYear()
+            }
+          }}
+        />
       </FadeInOut>
     </LeaveManagementLayout>
   )

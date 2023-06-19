@@ -3,6 +3,7 @@ import moment from 'moment'
 import { User } from '~/utils/types/userTypes'
 import { LeaveType } from './types/leaveTypes'
 import { ProjectDetails } from './types/projectTypes'
+import { leaveOptions } from './constants/leaveOptions'
 import { IUnusedESLOffset } from './interfaces/unusedELSOffsetInterface'
 
 export type SelectOptionType = {
@@ -41,3 +42,8 @@ export const generateUnusedESLDateSelect = (
     })`,
     value: item.id.toString()
   }))
+
+export const getLeaveLabel = (typeOfLeave: number): string => {
+  const leaveType = leaveOptions.find((option) => option.value === typeOfLeave)
+  return leaveType !== undefined ? leaveType.label : ''
+}

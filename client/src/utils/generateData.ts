@@ -4,6 +4,7 @@ export type Series = {
   x: string
   y: number
 }
+
 export const generateData = (count: number, yrange: { min: number; max: number }): any[] => {
   let i = 0
   const series = []
@@ -15,6 +16,7 @@ export const generateData = (count: number, yrange: { min: number; max: number }
   }
   return series
 }
+
 export const getHeatmapData = (count: number, heatmap: HeatmapDetails[]): Series[] => {
   let i = 0
   const series = []
@@ -28,6 +30,25 @@ export const getHeatmapData = (count: number, heatmap: HeatmapDetails[]): Series
     i++
   }
   return series
+}
+
+export type ConfigApexChart = {
+  config: {
+    series: ISeries[]
+  }
+  seriesIndex: number
+  dataPointIndex: number
+}
+
+type ISeries = {
+  name: string
+  data: IData[]
+}
+
+type IData = {
+  x: string
+  y: number
+  leaveName: number | null | string
 }
 
 export const initialChartOptions = {
