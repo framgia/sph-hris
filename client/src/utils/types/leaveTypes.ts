@@ -55,9 +55,11 @@ export type LeaveTable = {
 }
 
 export type LeaveCellDetailTable = {
-  typeOfLeave: number
-  withPay: boolean
-  numOfLeaves: number
+  id: number
+  userName: string
+  typeOfLeave: string
+  withPay: string
+  numOfLeaves: string
   reason: string
 }
 
@@ -80,6 +82,18 @@ export type Leaves = {
     }
     breakdown: Breakdown
     heatmap: Heatmap
+    table: LeaveTable[]
+  }
+}
+
+export type LeaveByDate = {
+  leavesByDate: {
+    table: LeaveTable[]
+  }
+}
+
+export type YearlyLeaveByDate = {
+  yearlyAllLeavesByDate: {
     table: LeaveTable[]
   }
 }

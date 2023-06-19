@@ -45,11 +45,11 @@ const LeaveSummary: NextPage = (): JSX.Element => {
   const handleToggleCellDetails = (): void => setIsOpenCellDetails(!isOpenCellDetails)
 
   // CURRENT USER HOOKS
-  const { getLeaveQuery } = useLeave()
   const { handleUserQuery } = useUserQuery()
   const { data: user, isSuccess: isUserSuccess } = handleUserQuery()
 
   // GET USERS LEAVE HOOKS
+  const { getLeaveQuery } = useLeave()
   const {
     data: leaves,
     refetch,
@@ -203,19 +203,25 @@ const LeaveSummary: NextPage = (): JSX.Element => {
         )}
 
         {/* For Leave Cell Details Modal */}
-        <LeaveCellDetailsModal
-          {...{
-            isOpen: isOpenCellDetails,
-            closeModal: handleToggleCellDetails,
-            selectedDate: {
-              month: selectedMonth,
-              day: selectedDay,
-              year: !isEmpty(router.query.year)
-                ? parseInt(router.query.year as string)
-                : new Date().getFullYear()
-            }
-          }}
-        />
+        {isOpenCellDetails ? (
+          <LeaveCellDetailsModal
+            {...{
+              isOpen: isOpenCellDetails,
+              closeModal: handleToggleCellDetails,
+              selectedDate: {
+                month: selectedMonth,
+                day: selectedDay,
+                year: !isEmpty(router.query.year)
+                  ? parseInt(router.query.year as string)
+                  : new Date().getFullYear()
+              },
+              userId:
+                router.query.id !== undefined
+                  ? parseInt(router.query.id as string)
+                  : (user?.userById.id as number)
+            }}
+          />
+        ) : null}
       </FadeInOut>
     </LeaveManagementLayout>
   )

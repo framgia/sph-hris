@@ -237,17 +237,21 @@ const MyLeaves: NextPage = (): JSX.Element => {
         )}
 
         {/* For Leave Cell Details Modal */}
-        <LeaveCellDetailsModal
-          {...{
-            isOpen: isOpenCellDetails,
-            closeModal: handleToggleCellDetails,
-            selectedDate: {
-              month: selectedMonth,
-              day: selectedDay,
-              year: parseInt(router.query.year as string)
-            }
-          }}
-        />
+        {isOpenCellDetails ? (
+          <LeaveCellDetailsModal
+            {...{
+              isOpen: isOpenCellDetails,
+              closeModal: handleToggleCellDetails,
+              selectedDate: {
+                month: selectedMonth,
+                day: selectedDay,
+                year: parseInt(router.query.year as string)
+              },
+              isMyLeave: true,
+              userId: user?.userById?.id
+            }}
+          />
+        ) : null}
       </main>
     </Layout>
   )

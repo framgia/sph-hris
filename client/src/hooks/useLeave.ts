@@ -1,35 +1,41 @@
-import { useMutation, UseMutationResult, useQuery, UseQueryResult } from '@tanstack/react-query'
 import { toast } from 'react-hot-toast'
+import { useMutation, UseMutationResult, useQuery, UseQueryResult } from '@tanstack/react-query'
 
 import { client } from '~/utils/shared/client'
 import {
+  GET_LEAVES_BY_DATE,
   GET_MY_LEAVES_QUERY,
-  GET_YEARLY_ALL_LEAVES_QUERY,
   GET_LEAVE_TYPES_QUERY,
-  GET_SPECIFIC_USER_LEAVE_QUERY
+  GET_YEARLY_ALL_LEAVES_QUERY,
+  GET_SPECIFIC_USER_LEAVE_QUERY,
+  GET_YEARLY_LEAVES_BY_DATE_QUERY
 } from '~/graphql/queries/leaveQuery'
 import {
-  LeaveRequest,
   Leaves,
-  YearlyLeaves,
   LeaveTypes,
   IUserLeave,
+  YearlyLeaves,
+  LeaveRequest,
   UpdateLeaveRequest,
+  CancelLeaveRequest,
   IApproveLeaveUndertimeRequestInput,
-  CancelLeaveRequest
+  LeaveByDate,
+  YearlyLeaveByDate
 } from '~/utils/types/leaveTypes'
 import {
   CREATE_LEAVE_MUTATION,
-  APROVE_DISAPPROVE_LEAVE_MUTATION,
-  APROVE_DISAPPROVE_UNDERTIME_MUTATION,
   UPDATE_LEAVE_MUTATION,
-  CANCEL_LEAVE_MUTATION
+  CANCEL_LEAVE_MUTATION,
+  APROVE_DISAPPROVE_LEAVE_MUTATION,
+  APROVE_DISAPPROVE_UNDERTIME_MUTATION
 } from '~/graphql/mutations/leaveMutation'
 
 type getLeaveQueryType = UseQueryResult<Leaves, unknown>
 type getSpecificLeaveQuery = UseQueryResult<IUserLeave, unknown>
 type getLeaveTypeQueryType = UseQueryResult<LeaveTypes, unknown>
+type LeaveByDateReturnFunc = UseQueryResult<LeaveByDate, unknown>
 type getYearlyLeaveQueryType = UseQueryResult<YearlyLeaves, unknown>
+type YearlyLeaveByDateReturnFunc = UseQueryResult<YearlyLeaveByDate, unknown>
 type handleLeaveMutationType = UseMutationResult<any, unknown, LeaveRequest, unknown>
 type handleUpdateLeaveMutationType = UseMutationResult<any, unknown, UpdateLeaveRequest, unknown>
 type handleCancelLeaveMutationType = UseMutationResult<any, unknown, CancelLeaveRequest, unknown>
@@ -40,7 +46,7 @@ type handleApproveLeaveUndertimeMutationType = UseMutationResult<
   unknown
 >
 
-type returnType = {
+type HookReturnType = {
   handleLeaveTypeQuery: () => getLeaveTypeQueryType
   getSpecificLeaveQuery: (userId: number) => getSpecificLeaveQuery
   getLeaveQuery: (userId: number, year: number, leaeTypeId: number) => getLeaveQueryType
@@ -54,9 +60,11 @@ type returnType = {
   ) => getYearlyLeaveQueryType
   handleUpdateLeaveMutation: (userId: number, year: number) => handleUpdateLeaveMutationType
   handleCancelLeaveMutation: (userId: number, leaveIds: number) => handleCancelLeaveMutationType
+  getLeaveByDateQuery: (userId: number, date: string, isReady: boolean) => LeaveByDateReturnFunc
+  getYearlyLeaveByDateQuery: (date: string, isReady: boolean) => YearlyLeaveByDateReturnFunc
 }
 
-const useLeave = (): returnType => {
+const useLeave = (): HookReturnType => {
   const getLeaveQuery = (userId: number, year: number, leaveTypeId: number): getLeaveQueryType =>
     useQuery({
       queryKey: ['GET_MY_LEAVES_QUERY', userId, year],
@@ -159,12 +167,34 @@ const useLeave = (): returnType => {
       }
     })
 
+  const getLeaveByDateQuery = (
+    userId: number,
+    date: string,
+    isReady: boolean
+  ): LeaveByDateReturnFunc =>
+    useQuery({
+      queryKey: ['GET_LEAVES_BY_DATE', userId, date],
+      queryFn: async () => await client.request(GET_LEAVES_BY_DATE, { userId, date }),
+      select: (data: LeaveByDate) => data,
+      enabled: isReady
+    })
+
+  const getYearlyLeaveByDateQuery = (date: string, isReady: boolean): YearlyLeaveByDateReturnFunc =>
+    useQuery({
+      queryKey: ['GET_YEARLY_LEAVES_BY_DATE_QUERY', date],
+      queryFn: async () => await client.request(GET_YEARLY_LEAVES_BY_DATE_QUERY, { date }),
+      select: (data: YearlyLeaveByDate) => data,
+      enabled: isReady
+    })
+
   return {
     getLeaveQuery,
+    getLeaveByDateQuery,
     handleLeaveMutation,
     handleLeaveTypeQuery,
     getSpecificLeaveQuery,
     getYearlyAllLeaveQuery,
+    getYearlyLeaveByDateQuery,
     handleUpdateLeaveMutation,
     handleCancelLeaveMutation,
     handleApproveLeaveMutation,

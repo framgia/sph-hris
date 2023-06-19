@@ -16,7 +16,6 @@ import FadeInOut from '~/components/templates/FadeInOut'
 import { Breakdown, LeaveTable } from '~/utils/types/leaveTypes'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import BreakdownOfLeaveCard from '~/components/molecules/BreakdownOfLeavesCard'
-import LeaveCellDetailsModal from '~/components/molecules/LeaveCellDetailsModal'
 import LeaveManagementLayout from '~/components/templates/LeaveManagementLayout'
 import SummaryFilterDropdown from '~/components/molecules/SummaryFilterDropdown'
 import LeaveManagementResultTable from '~/components/molecules/LeaveManagementResultTable'
@@ -27,6 +26,7 @@ import {
   initialSeriesData,
   initialChartOptions
 } from '~/utils/generateData'
+import LeaveCellDetailsModal from '~/components/molecules/LeaveCellDetailsModal'
 
 const ReactApexChart = dynamic(async () => await import('react-apexcharts'), {
   ssr: false
@@ -193,19 +193,25 @@ const YearlySummary: NextPage = (): JSX.Element => {
         )}
 
         {/* For Leave Cell Details Modal */}
-        <LeaveCellDetailsModal
-          {...{
-            isOpen: isOpenCellDetails,
-            closeModal: handleToggleCellDetails,
-            selectedDate: {
-              month: selectedMonth,
-              day: selectedDay,
-              year: !isEmpty(router.query.year)
-                ? parseInt(router.query.year as string)
-                : new Date().getFullYear()
-            }
-          }}
-        />
+        {isOpenCellDetails ? (
+          <LeaveCellDetailsModal
+            {...{
+              isOpen: isOpenCellDetails,
+              closeModal: handleToggleCellDetails,
+              selectedDate: {
+                month: selectedMonth,
+                day: selectedDay,
+                year: !isEmpty(router.query.year)
+                  ? parseInt(router.query.year as string)
+                  : new Date().getFullYear()
+              },
+              userId:
+                router.query.id !== undefined
+                  ? parseInt(router.query.id as string)
+                  : (currentUser?.userById.id as number)
+            }}
+          />
+        ) : null}
       </FadeInOut>
     </LeaveManagementLayout>
   )

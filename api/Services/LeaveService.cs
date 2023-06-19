@@ -68,6 +68,56 @@ namespace api.Services
             }
         }
 
+        public async Task<LeavesDTO> GetLeavesByDate(int userId, string date)
+        {
+            try
+            {
+                using (HrisContext context = _contextFactory.CreateDbContext())
+                {
+                    var query = context.Leaves
+                        .Include(i => i.LeaveType)
+                        .Include(i => i.User)
+                        .Where(u => u.UserId == userId && u.LeaveDate.Date == DateTime.Parse(date));
+
+                    var leaves = await query
+                        .Select(s => new LeavesTableDTO(s))
+                        .ToListAsync();
+
+                    var heatmap = new LeaveHeatMapDTO(leaves);
+                    return new LeavesDTO(heatmap, leaves);
+                }
+            }
+            catch
+            {
+                return new LeavesDTO(new LeaveHeatMapDTO(), new List<LeavesTableDTO>());
+            }
+        }
+
+        public async Task<LeavesDTO> ShowYearlyLeavesSummaryByDate(string date)
+        {
+            try
+            {
+                using (HrisContext context = _contextFactory.CreateDbContext())
+                {
+                    var query = context.Leaves
+                        .Include(i => i.LeaveType)
+                        .Include(i => i.User)
+                        .Where(u => u.LeaveDate.Date == DateTime.Parse(date));
+
+                    var leaves = await query
+                        .Select(s => new LeavesTableDTO(s))
+                        .ToListAsync();
+
+                    var heatmap = new LeaveHeatMapDTO(leaves);
+                    return new LeavesDTO(heatmap, leaves);
+                }
+            }
+            catch
+            {
+                return new LeavesDTO(new LeaveHeatMapDTO(), new List<LeavesTableDTO>());
+            }
+        }
+
         public async Task<LeavesDTO> ShowYearlyLeavesSummary(int year, int leaveTypeId)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
