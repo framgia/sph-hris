@@ -12,11 +12,19 @@ import Layout from '~/components/templates/Layout'
 import { getAllovertime } from '~/hooks/useOvertime'
 import { Position } from '~/utils/constants/position'
 import { IOvertimeManagement } from '~/utils/interfaces'
+import Button from '~/components/atoms/Buttons/ButtonAction'
 import { STATUS_OPTIONS } from '~/utils/constants/notificationFilter'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import OvertimeManagementTable from '~/components/molecules/OvertimeManagementTable'
-import YearlyFilterDropdown from '~/components/molecules/MyOvertimeTable/YearlyFilterDropdown'
+import HROvertimeFilterDropdown from '~/components/molecules/HROvertimeFilterDropDown'
 import { hrColumns, managerColumns } from '~/components/molecules/OvertimeManagementTable/columns'
+import FilterIcon from '~/utils/icons/FilterIcon'
+
+type URLParameterType = {
+  startDate: string
+  endDate: string
+  searchKey: string
+}
 
 const OvertimeManagement: NextPage = (): JSX.Element => {
   const router = useRouter()
@@ -29,6 +37,32 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
   const { data: overtime } = getAllovertime()
 
   const [overtimeData, setOvertimeData] = useState<IOvertimeManagement[]>()
+
+  const [filters, setFilters] = useState({
+    date: moment().format('YYYY-MM-DD'),
+    status: '',
+    startDate:
+      new Date().getDate() > 15 ? moment().format('YYYY-MM-16') : moment().format('YYYY-MM-01'),
+    endDate:
+      new Date().getDate() > 15
+        ? moment().endOf('month').format('YYYY-MM-DD')
+        : moment().format('YYYY-MM-15')
+  })
+
+  const handleURLParameterChange = (query: URLParameterType): void => {
+    void router.replace({
+      pathname: '/overtime-management',
+      query
+    })
+  }
+
+  const handleFilterUpdate = (): void => {
+    handleURLParameterChange({
+      startDate: filters.startDate,
+      endDate: filters.endDate,
+      searchKey: globalFilter
+    })
+  }
 
   const status = (isLeaderApproved: boolean, isManagerApproved: boolean): string | undefined => {
     if (isLeaderApproved == null || isManagerApproved == null) {
@@ -170,7 +204,27 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
             onChange={(value) => setGlobalFilter(String(value))}
             placeholder="Search"
           />
-          <YearlyFilterDropdown />
+          <div className="flex items-center space-x-2">
+            <div>
+              <HROvertimeFilterDropdown
+                className={classNames(
+                  'flex items-center space-x-2 rounded border border-slate-200 bg-transparent bg-white',
+                  'px-3 py-1 shadow-sm outline-none hover:text-slate-600 active:scale-95'
+                )}
+                filters={filters}
+                setFilters={setFilters}
+                handleFilterUpdate={handleFilterUpdate}
+              >
+                <FilterIcon className="h-4 w-4 fill-current" />
+                <span>Filters</span>
+              </HROvertimeFilterDropdown>
+            </div>
+            <div>
+              <Button type="button" variant="primary" className="flex items-center px-1.5 py-[3px]">
+                <span>Send Summary</span>
+              </Button>
+            </div>
+          </div>
         </header>
 
         {overtimeData !== undefined ? (
