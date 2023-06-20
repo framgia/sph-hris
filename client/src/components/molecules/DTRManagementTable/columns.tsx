@@ -21,7 +21,7 @@ const columnHelper = createColumnHelper<ITimeEntry>()
 const EMPTY = 'N/A'
 
 export const columns = [
-  columnHelper.accessor('user', {
+  columnHelper.accessor('user.name', {
     header: () => <CellHeader label="Name" />,
     footer: (info) => info.column.id,
     cell: (props) => {
@@ -50,7 +50,7 @@ export const columns = [
     footer: (info) => info.column.id,
     cell: (props) => <WorkStatusChip label={props.getValue()} />
   }),
-  columnHelper.accessor('timeIn.timeHour', {
+  columnHelper.accessor((row) => row.timeIn?.timeHour, {
     id: 'Time In',
     header: () => <CellHeader label="Time In" />,
     footer: (info) => info.column.id,
@@ -101,7 +101,8 @@ export const columns = [
       )
     }
   }),
-  columnHelper.accessor('timeOut.timeHour', {
+  columnHelper.accessor((row) => row.timeOut?.timeHour, {
+    id: 'Time Out',
     header: () => <CellHeader label="Time Out" />,
     footer: (info) => info.column.id,
     cell: (props) => {
