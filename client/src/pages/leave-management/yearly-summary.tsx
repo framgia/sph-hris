@@ -18,6 +18,7 @@ import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import BreakdownOfLeaveCard from '~/components/molecules/BreakdownOfLeavesCard'
 import LeaveManagementLayout from '~/components/templates/LeaveManagementLayout'
 import SummaryFilterDropdown from '~/components/molecules/SummaryFilterDropdown'
+import LeaveCellDetailsModal from '~/components/molecules/LeaveCellDetailsModal'
 import LeaveManagementResultTable from '~/components/molecules/LeaveManagementResultTable'
 import {
   Series,
@@ -26,7 +27,6 @@ import {
   initialSeriesData,
   initialChartOptions
 } from '~/utils/generateData'
-import LeaveCellDetailsModal from '~/components/molecules/LeaveCellDetailsModal'
 
 const ReactApexChart = dynamic(async () => await import('react-apexcharts'), {
   ssr: false

@@ -18,7 +18,7 @@ type Props = {
 const LeaveCellDetailsTable: FC<Props> = (props) => {
   const {
     table,
-    query: { isLoading = false, isError = false },
+    query: { isLoading, isError },
     isMyLeave
   } = props
 

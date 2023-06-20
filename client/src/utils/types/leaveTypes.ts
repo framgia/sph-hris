@@ -88,12 +88,14 @@ export type Leaves = {
 
 export type LeaveByDate = {
   leavesByDate: {
+    totalNumberOfFiledLeaves: number
     table: LeaveTable[]
   }
 }
 
 export type YearlyLeaveByDate = {
   yearlyAllLeavesByDate: {
+    totalNumberOfFiledLeaves: number
     table: LeaveTable[]
   }
 }

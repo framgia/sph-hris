@@ -16,6 +16,7 @@ import useLeave from '~/hooks/useLeave'
 import FooterTable from './../FooterTable'
 import LeaveCellDetailsTable from './Table'
 import { fuzzyFilter } from '~/utils/fuzzyFilter'
+import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import GlobalSearchFilter from './../GlobalSearchFilter'
 import { getLeaveLabel } from '~/utils/createLeaveHelpers'
 import { LeaveCellDetailTable } from '~/utils/types/leaveTypes'
@@ -47,6 +48,7 @@ const LeaveCellDetailsModal: FC<Props> = (props): JSX.Element => {
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState<string>('')
+  const [totNumFiledLeaves, setTotNumFiledLeaves] = useState<number>()
   const [leaveData, setLeaveData] = useState<LeaveCellDetailTable[]>()
 
   const dateCell: string = `${month} ${day}, ${year}`
@@ -60,7 +62,7 @@ const LeaveCellDetailsModal: FC<Props> = (props): JSX.Element => {
     isError: isLeavesError
   } = getLeaveByDateQuery(userId as number, dateCell, isReady)
 
-  // LEAVE HOOKS -> getLeavesByDate
+  // LEAVE HOOKS -> getLeavesByDateYearly
   const { getYearlyLeaveByDateQuery } = useLeave()
   const {
     data: leavesByDateYearly,
@@ -88,6 +90,12 @@ const LeaveCellDetailsModal: FC<Props> = (props): JSX.Element => {
           numOfLeaves: item.numLeaves.toString(),
           reason: item.reason
         })
+      )
+
+      setTotNumFiledLeaves(
+        isMyLeave === true
+          ? leavesByDate?.leavesByDate?.totalNumberOfFiledLeaves
+          : leavesByDateYearly?.yearlyAllLeavesByDate?.totalNumberOfFiledLeaves ?? 0
       )
 
       setLeaveData(isMyLeave === true ? leaveData : leaveDatayearly ?? [])
@@ -137,8 +145,12 @@ const LeaveCellDetailsModal: FC<Props> = (props): JSX.Element => {
             }}
           />
           <div className="inline-flex items-center space-x-2">
-            <p className="text-slate-700">Total number of leaves</p>
-            <Chip count={26} />
+            <p className="text-slate-700">Total number of filed leaves</p>
+            {isLeavesLoading || isLeavesLoadingYearly ? (
+              <SpinnerIcon className="h-4 w-4 fill-amber-500" />
+            ) : (
+              <Chip count={totNumFiledLeaves} />
+            )}
           </div>
         </header>
         {isLeavesLoading || isLeavesLoadingYearly ? (
