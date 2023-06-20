@@ -11,16 +11,24 @@ import { client } from '~/utils/shared/client'
 import { GET_ALL_OVERTIME } from '~/graphql/queries/overtimeQuery'
 import {
   CREATE_OVERTIME_MUTATION,
-  APROVE_DISAPPROVE_OVERTIME_MUTATION
+  APROVE_DISAPPROVE_OVERTIME_MUTATION,
+  CREATE_BULK_OVERTIME_MUTATION
 } from '~/graphql/mutations/overtimeMutation'
 import {
   ILeaderApproveOvertimeRequestInput,
   IManagerApproveOvertimeRequestInput,
   IOvertimeRequestInput,
-  IAllOvertime
+  IAllOvertime,
+  IBulkOvertimeRequestInput
 } from '~/utils/types/overtimeTypes'
 
 type handleOvertimeMutationType = UseMutationResult<any, unknown, IOvertimeRequestInput, unknown>
+type handleBulkOvertimeMutationType = UseMutationResult<
+  any,
+  unknown,
+  IBulkOvertimeRequestInput,
+  unknown
+>
 type handleManagerApproveOvertimeMutationType = UseMutationResult<
   any,
   unknown,
@@ -38,6 +46,7 @@ type returnType = {
   handleOvertimeMutation: () => handleOvertimeMutationType
   handleManagerApproveOvertimeMutation: () => handleManagerApproveOvertimeMutationType
   handleLeaderApproveOvertimeMutation: () => handleLeaderApproveOvertimeMutationType
+  handleBulkOvertimeMutation: () => handleBulkOvertimeMutationType
 }
 
 const useOvertime = (): returnType => {
@@ -54,6 +63,24 @@ const useOvertime = (): returnType => {
         toast.success('Overtime request filed successfully!')
         await queryClient.invalidateQueries({
           queryKey: ['GET_EMPLOYEE_TIMESHEET']
+        })
+      },
+      onError: async () => {
+        toast.error('Something went wrong')
+      }
+    })
+
+  const handleBulkOvertimeMutation = (): handleBulkOvertimeMutationType =>
+    useMutation({
+      mutationFn: async (request: IBulkOvertimeRequestInput) => {
+        return await client.request(CREATE_BULK_OVERTIME_MUTATION, {
+          request
+        })
+      },
+      onSuccess: async () => {
+        toast.success('Overtime request filed successfully!')
+        await queryClient.invalidateQueries({
+          queryKey: ['GET_ALL_OVERTIME_QUERY']
         })
       },
       onError: async () => {
@@ -97,7 +124,8 @@ const useOvertime = (): returnType => {
   return {
     handleOvertimeMutation,
     handleManagerApproveOvertimeMutation,
-    handleLeaderApproveOvertimeMutation
+    handleLeaderApproveOvertimeMutation,
+    handleBulkOvertimeMutation
   }
 }
 
