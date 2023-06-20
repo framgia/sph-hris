@@ -24,7 +24,7 @@ namespace api.DTOs
         new public Over? User { get; set; }
         new public int Id { get; set; }
         public ICollection<MultiProject> Projects { get; set; } = default!;
-        new public string OtherProject { get; set; } = default!;
+        new public string? OtherProject { get; set; } = default!;
         public string Supervisor { get; set; }
         public DateTime? DateFiled { get; set; }
         new public string Remarks { get; set; }
