@@ -7,14 +7,14 @@ import { Popover } from '@headlessui/react'
 
 import Text from '~/components/atoms/Text'
 import Avatar from '~/components/atoms/Avatar'
+import useUserQuery from '~/hooks/useUserQuery'
 import { INotification } from '~/utils/interfaces'
 import handleImageError from '~/utils/handleImageError'
 import { switchMessage } from '~/utils/notificationHelpers'
 import useNotificationMutation from '~/hooks/useNotificationMutation'
-import { NOTIFICATION_TYPE } from '~/utils/constants/notificationTypes'
 import PopoverTransition from '~/components/templates/PopoverTransition'
 import { NotificationRequestInput } from '~/utils/types/notificationTypes'
-import useUserQuery from '~/hooks/useUserQuery'
+import { NOTIFICATION_TYPE, SpecificType } from '~/utils/constants/notificationTypes'
 
 type Props = {
   className: string
@@ -46,6 +46,18 @@ const NotificationPopover: FC<Props> = (props): JSX.Element => {
 
   const handleReadAllNotifications = (id: NotificationRequestInput): void => {
     void readAllNotifications.mutate(id)
+  }
+
+  const isSummary = (type: string): boolean => {
+    return SpecificType.SUMMARY === type
+  }
+
+  const pageHandler = (i: INotification): string => {
+    if (isSummary(i.specificType)) {
+      return `/overtime-management?startDate=${i.startDate}&endDate=${i.endDate}`
+    } else {
+      return `/notifications/?id=${i.id}`
+    }
   }
 
   return (
@@ -95,7 +107,7 @@ const NotificationPopover: FC<Props> = (props): JSX.Element => {
                       .map((i) => (
                         <Link
                           key={i.id}
-                          href={`/notifications/?id=${i.id}`}
+                          href={pageHandler(i)}
                           onClick={() => {
                             handleLink(i.id, open)
                             close()
@@ -126,7 +138,19 @@ const NotificationPopover: FC<Props> = (props): JSX.Element => {
                             <p>
                               <span className="font-semibold">{i.name}</span>{' '}
                               {switchMessage(i.specificType)}{' '}
-                              <span className="font-semibold">{i.type.split('_')[0]} </span>
+                              <span className="font-semibold">{i.type.split('_')[0]} </span>{' '}
+                              {isSummary(i.specificType) && (
+                                <span>
+                                  from{' '}
+                                  <span className="font-semibold">
+                                    {moment(i.startDate).format('MMM D')}
+                                  </span>{' '}
+                                  to{' '}
+                                  <span className="font-semibold">
+                                    {moment(i.endDate).format('MMM D')}
+                                  </span>{' '}
+                                </span>
+                              )}
                             </p>
                             <small>
                               {moment(i.createdAt).fromNow()} &bull;{' '}

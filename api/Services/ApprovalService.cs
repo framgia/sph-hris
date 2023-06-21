@@ -97,7 +97,6 @@ namespace api.Services
                     var overtime = await context.Overtimes.FindAsync(notification?.OvertimeId);
                     var notificationData = notification != null ? JsonConvert.DeserializeObject<dynamic>(notification.Data) : null;
 
-
                     // if approving project leader doesn't match
                     var isProjectLeader = _customInputValidation.checkApprovingProjectLeader(overtimeRequest.UserId, overtime!.Id, MultiProjectTypeEnum.OVERTIME).Result;
                     if (!isProjectLeader) throw new GraphQLException(ErrorBuilder.New().SetMessage(InputValidationMessageEnum.MISMATCH_PROJECT_LEADER).Build());
@@ -110,7 +109,6 @@ namespace api.Services
                     if (!overtimeRequest.IsApproved && notificationData != null) notificationData!.Status = RequestStatus.DISAPPROVED;
 
                     if (notification != null) notification.Data = JsonConvert.SerializeObject(notificationData);
-
 
                     // create notification
                     if (overtime != null && overtime.IsManagerApproved == true && overtime.IsLeaderApproved == true)
@@ -131,7 +129,63 @@ namespace api.Services
                     return true;
                 }
             }
+            return false;
+        }
 
+        public async Task<bool> ApproveDisapproveSummaryOvertime(ApproveOvertimeRequest overtimeRequest, HrisContext context)
+        {
+            var errors = new List<IError>();
+            errors = _customInputValidation.checkApproveOvertimeRequestInput(overtimeRequest);
+            if (errors.Count > 0) throw new GraphQLException(errors);
+
+            // check if approving/disapproving is manager
+            if (_customInputValidation.CheckManagerUser(overtimeRequest.UserId).Result)
+            {
+                // validate input for manager case
+                errors = _customInputValidation.checkManagerApproveOvertimeRequestInput(overtimeRequest);
+                if (errors.Count > 0) throw new GraphQLException(errors);
+
+                // approve/disapprove operation
+                var headManager = await context.Users.Where(x => x.PositionId == PositionEnum.MANAGER || (x.PositionId == PositionEnum.ASSISTANT_MANAGER && x.Id == overtimeRequest.UserId)).ToListAsync();
+                var notification = await context.OvertimeNotifications.Where(x => x.OvertimeId == overtimeRequest.OvertimeId && x.RecipientId == overtimeRequest.UserId && x.Type == NotificationTypeEnum.OVERTIME).FirstOrDefaultAsync();
+                var overtime = await context.Overtimes.FindAsync(overtimeRequest.OvertimeId);
+                var notificationData = notification != null ? JsonConvert.DeserializeObject<dynamic>(notification.Data) : null;
+
+                if ((overtime != null && notificationData != null) || headManager.Count > 0)
+                {
+                    overtime!.IsManagerApproved = overtimeRequest.IsApproved;
+
+                    if (overtimeRequest.IsApproved)
+                    {
+                        if (notificationData != null)
+                            notificationData!.Status = RequestStatus.APPROVED;
+                        overtime.ApprovedMinutes = overtimeRequest.ApprovedMinutes;
+                    }
+                    if (!overtimeRequest.IsApproved)
+                    {
+                        if (notificationData != null)
+                            notificationData!.Status = RequestStatus.DISAPPROVED;
+                        overtime.ApprovedMinutes = 0;
+                    }
+
+                    overtime.ManagerRemarks = overtimeRequest.ManagerRemarks;
+                }
+
+                if (notification != null) notification.Data = JsonConvert.SerializeObject(notificationData);
+
+                // create notification
+                if (overtime != null)
+                {
+                    bool isLeaderApproved = overtime.IsLeaderApproved == true;
+                    bool isManagerApproved = overtime.IsManagerApproved == true;
+                    if (!isLeaderApproved || !isManagerApproved)
+                    {
+                        await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, overtimeRequest.UserId, DISAPPROVED);
+                    }
+                }
+
+                return true;
+            }
 
             return false;
         }
@@ -298,7 +352,6 @@ namespace api.Services
                     {
                         timeEntry.StartTime = changeShiftRequest.TimeIn;
                         timeEntry.EndTime = changeShiftRequest.TimeOut;
-
                     }
                     await _notificationService.createChangeShiftApproveDisapproveNotification(context, changeShiftRequest, request.UserId, (bool)changeShiftRequest.IsManagerApproved);
 
@@ -340,7 +393,7 @@ namespace api.Services
             {
                 timeEntry!.StartTime = eSLChangeShiftRequest.TimeIn;
                 timeEntry!.EndTime = eSLChangeShiftRequest.TimeOut;
-            };
+            }
 
             // Send notification
             await _notificationService.CreateESLChangeShiftStatusRequestNotification(eSLChangeShiftRequest, request.TeamLeaderId, context);

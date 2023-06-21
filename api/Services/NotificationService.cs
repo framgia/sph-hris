@@ -395,7 +395,8 @@ namespace api.Services
                     AvatarLink = _userService.GenerateAvatarLink(hrAdmin?.ProfileImageId ?? default)
                 },
                 StartDate = summarizedOvertime.StartDate,
-                EndDate = summarizedOvertime.EndDate
+                EndDate = summarizedOvertime.EndDate,
+                Type = NotificationDataTypeEnum.SUMMARY
             }
             );
 

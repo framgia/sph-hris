@@ -113,6 +113,10 @@ export const ApproveConfirmationSchema = yup.object().shape({
   managerRemarks: yup.string().required('Remarks is required').label('Remarks')
 })
 
+export const ApproveSummaryConfirmationSchema = yup.object().shape({
+  managerRemarks: yup.string().required('Remarks is required').label('Remarks')
+})
+
 export const DisapproveConfirmationSchema = ApproveConfirmationSchema.omit(['requested_minutes'])
 
 const fileSchema = yup

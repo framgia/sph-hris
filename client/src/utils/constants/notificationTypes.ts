@@ -1,7 +1,8 @@
 export const SpecificType = {
   REQUEST: 'request',
   APPROVAL: 'approve',
-  DISAPPROVAL: 'disapprove'
+  DISAPPROVAL: 'disapprove',
+  SUMMARY: 'summary'
 }
 
 export const NOTIFICATION_TYPE = {

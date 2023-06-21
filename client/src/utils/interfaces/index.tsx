@@ -64,6 +64,8 @@ export interface INotification {
   createdAt: string
   offsets: IESLOffset[]
   managerRemarks: string | null
+  startDate: string
+  endDate: string
 }
 
 export interface IEmployeeManagement {

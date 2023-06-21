@@ -106,9 +106,13 @@ export interface IMultiProject {
 export interface IManagerApproveOvertimeRequestInput {
   userId: number
   overtimeId: number
-  isApproved: boolean
+  isApproved: boolean | undefined
   approvedMinutes: number | null
   managerRemarks?: string | null
+}
+
+export interface IManagerApproveOvertimeSummaryRequestInput {
+  approvingDatas: IManagerApproveOvertimeRequestInput[]
 }
 
 export interface ILeaderApproveOvertimeRequestInput {

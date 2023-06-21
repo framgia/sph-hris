@@ -9,6 +9,8 @@ export const switchMessage = (type: string): string => {
       return 'has approved your request for'
     case SpecificType.DISAPPROVAL:
       return 'has disapproved your request for'
+    case SpecificType.SUMMARY:
+      return 'has requested for your approval for an'
     default:
       return ''
   }

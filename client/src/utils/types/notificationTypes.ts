@@ -35,6 +35,8 @@ export type NotificationData = {
   RequestedTimeOut: string | null
   Description: string | null
   ManagerRemarks: string | null
+  StartDate: string
+  EndDate: string
 }
 
 export type NotificationRequestInput = {

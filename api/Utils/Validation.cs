@@ -365,7 +365,7 @@ namespace api.Utils
             DateTime StartDate = DateTime.Parse(startDate);
             DateTime EndDate = DateTime.Parse(endDate);
 
-            var overtimeSummary = context.Overtimes.Where(x => x.OvertimeDate >= StartDate && x.OvertimeDate <= EndDate).ToList();
+            var overtimeSummary = context.Overtimes.Where(x => x.CreatedAt >= StartDate && x.CreatedAt <= EndDate).ToList();
 
             return overtimeSummary.Count > 0;
         }

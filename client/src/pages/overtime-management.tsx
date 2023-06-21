@@ -10,15 +10,17 @@ import useUserQuery from '~/hooks/useUserQuery'
 import { Roles } from '~/utils/constants/roles'
 import Layout from '~/components/templates/Layout'
 import { getAllovertime } from '~/hooks/useOvertime'
+import FilterIcon from '~/utils/icons/FilterIcon'
 import { Position } from '~/utils/constants/position'
 import { IOvertimeManagement } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/ButtonAction'
+import { RequestStatus } from '~/utils/constants/requestStatus'
 import { STATUS_OPTIONS } from '~/utils/constants/notificationFilter'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
+import OptionDropdown from '~/components/molecules/MyOvertimeTable/OptionDropdown'
 import OvertimeManagementTable from '~/components/molecules/OvertimeManagementTable'
 import HROvertimeFilterDropdown from '~/components/molecules/HROvertimeFilterDropDown'
 import { hrColumns, managerColumns } from '~/components/molecules/OvertimeManagementTable/columns'
-import FilterIcon from '~/utils/icons/FilterIcon'
 
 type URLParameterType = {
   startDate: string
@@ -28,10 +30,16 @@ type URLParameterType = {
 
 const OvertimeManagement: NextPage = (): JSX.Element => {
   const router = useRouter()
+  const { startDate, endDate } = router.query
+  const newStartDate = new Date(startDate as string)
+  const newEndDate = new Date(endDate as string)
   const { status: requestStatus } = router.query as any
   const { year } = router.query as any
   const { handleUserQuery } = useUserQuery()
   const { data: user } = handleUserQuery()
+  const isHRAdmin = user?.userById.role.name === Roles.HR_ADMIN
+  const isManager = user?.userById.position.id === Position.MANAGER
+
   const [globalFilter, setGlobalFilter] = useState<string>('')
 
   const { data: overtime } = getAllovertime()
@@ -63,6 +71,12 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
       searchKey: globalFilter
     })
   }
+  const isShowOption =
+    isManager &&
+    overtimeData !== undefined &&
+    overtimeData.length > 0 &&
+    startDate !== undefined &&
+    endDate !== undefined
 
   const status = (isLeaderApproved: boolean, isManagerApproved: boolean): string | undefined => {
     if (isLeaderApproved == null || isManagerApproved == null) {
@@ -167,12 +181,21 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
           requestStatus === undefined ||
           (requestStatus === '' && year === '')
         ) {
-          void setOvertimeData(mappedOvertime)
-          void router.replace('/overtime-management')
+          const isFiltered = startDate !== undefined && endDate !== undefined
+          const filteredOvertime = mappedOvertime.filter((x) => {
+            const newDateFiled = new Date(x.dateFiled)
+            return (
+              newDateFiled >= newStartDate &&
+              newDateFiled <= newEndDate &&
+              x.status.toLowerCase() === RequestStatus.APPROVED.toLowerCase()
+            )
+          })
+
+          void setOvertimeData(isFiltered ? filteredOvertime : mappedOvertime)
         }
       }
     }
-  }, [overtime, year, requestStatus, router.isReady])
+  }, [overtime, year, requestStatus, router.isReady, startDate, endDate])
 
   function managerData(overtimeData: IOvertimeManagement[]): IOvertimeManagement[] {
     overtimeData = overtimeData.filter(
@@ -205,7 +228,17 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
             placeholder="Search"
           />
           <div className="flex items-center space-x-2">
-            <div>
+            <span
+              className={classNames(
+                'sticky left-0 top-0 z-20 flex justify-evenly space-x-2',
+                'border-b border-slate-200 bg-slate-100 px-4 py-2'
+              )}
+            >
+              {isShowOption && (
+                <div>
+                  <OptionDropdown data={overtimeData} />
+                </div>
+              )}
               <HROvertimeFilterDropdown
                 className={classNames(
                   'flex items-center space-x-2 rounded border border-slate-200 bg-transparent bg-white',
@@ -218,12 +251,18 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
                 <FilterIcon className="h-4 w-4 fill-current" />
                 <span>Filters</span>
               </HROvertimeFilterDropdown>
-            </div>
-            <div>
-              <Button type="button" variant="primary" className="flex items-center px-1.5 py-[3px]">
-                <span>Send Summary</span>
-              </Button>
-            </div>
+            </span>
+            {isHRAdmin && (
+              <div>
+                <Button
+                  type="button"
+                  variant="primary"
+                  className="flex items-center px-1.5 py-[3px]"
+                >
+                  <span>Send Summary</span>
+                </Button>
+              </div>
+            )}
           </div>
         </header>
 
@@ -231,12 +270,11 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
           <OvertimeManagementTable
             {...{
               query: {
-                data:
-                  user?.userById.role.name === Roles.HR_ADMIN
-                    ? overtimeData
-                    : user?.userById.position.id === Position.MANAGER
-                    ? overtimeData
-                    : managerData(overtimeData),
+                data: isHRAdmin
+                  ? overtimeData
+                  : isManager
+                  ? overtimeData
+                  : managerData(overtimeData),
                 error: null
               },
               table: {
