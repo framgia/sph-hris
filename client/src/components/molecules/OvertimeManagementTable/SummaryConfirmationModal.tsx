@@ -67,7 +67,7 @@ const SummaryConfirmationModal: FC<Props> = ({
     })
   }
 
-  const statement = `Do you want to approve the requested overtime summary?`
+  const statement = 'Do you want to approve the requested overtime summary?'
 
   return (
     <ModalTemplate

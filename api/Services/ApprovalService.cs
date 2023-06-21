@@ -174,15 +174,15 @@ namespace api.Services
                 if (notification != null) notification.Data = JsonConvert.SerializeObject(notificationData);
 
                 // create notification
-                if (overtime != null && overtime.IsManagerApproved == true && overtime.IsLeaderApproved == true)
-                    await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, overtimeRequest.UserId, APPROVED);
-
-                if (overtime != null && (overtime.IsLeaderApproved == null && overtime.IsManagerApproved == false))
-                    await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, overtimeRequest.UserId, DISAPPROVED);
-                else if (overtime != null && (overtime.IsLeaderApproved == true && overtime.IsManagerApproved == false))
-                    await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, overtimeRequest.UserId, DISAPPROVED);
-                else if (overtime != null && (overtime.IsLeaderApproved == false && overtime.IsManagerApproved == false))
-                    await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, overtimeRequest.UserId, DISAPPROVED);
+                if (overtime != null)
+                {
+                    bool isLeaderApproved = overtime.IsLeaderApproved == true;
+                    bool isManagerApproved = overtime.IsManagerApproved == true;
+                    if (!isLeaderApproved || !isManagerApproved)
+                    {
+                        await _notificationService.createOvertimeApproveDisapproveNotification(overtime!, overtimeRequest.UserId, DISAPPROVED);
+                    }
+                }
 
                 return true;
             }
