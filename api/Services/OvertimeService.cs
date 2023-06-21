@@ -139,13 +139,20 @@ namespace api.Services
                 DateTime requestedDate = DateTime.Parse(request.Date);
 
                 // Get all related time entries
-                var timeEntries = await context.TimeEntries.Where(x => request.EmployeeIds.Contains(x.UserId)).ToListAsync();
+                var timeEntries = await context.TimeEntries.Where(x => request.EmployeeIds.Contains(x.UserId)).Include(x => x.User).ToListAsync();
                 timeEntries = timeEntries.Where(x => (x.Date.Date - requestedDate.Date).Days == 0).ToList();
+
+                // Get existing overtimes for time entries if there are any
+                var timeEntriesIds = timeEntries.Select(x => x.Id).ToList();
+                var existingOvertimes = await context.Overtimes.Where(x => timeEntriesIds.Contains(x.TimeEntryId)).ToListAsync();
 
                 // Create overtime, pre-approved by leader
                 request.EmployeeIds.ForEach(id =>
                 {
-                    var userTimeEntry = timeEntries.Where(x => x.UserId == id).FirstOrDefault();
+                    var userTimeEntry = timeEntries != null ? timeEntries.Where(x => x.UserId == id).FirstOrDefault() : null;
+                    var timeEntryOvertime = existingOvertimes.Find(x => x.TimeEntryId == userTimeEntry?.Id);
+
+                    if (timeEntryOvertime != null) throw new Exception($"{ErrorMessageEnum.EXISTING_OVERTIME} for {userTimeEntry?.User.Name}");
 
                     if (userTimeEntry != null)
                     {
@@ -171,6 +178,10 @@ namespace api.Services
                             IsLeaderApproved = true
                         };
                         overtimesList.Add(newOvertime);
+                    }
+                    else
+                    {
+                        throw new Exception(ErrorMessageEnum.ADVANCED_DATE);
                     }
                 });
 

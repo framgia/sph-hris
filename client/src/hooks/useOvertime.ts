@@ -83,8 +83,9 @@ const useOvertime = (): returnType => {
           queryKey: ['GET_ALL_OVERTIME_QUERY']
         })
       },
-      onError: async () => {
-        toast.error('Something went wrong')
+      onError: async (error: Error) => {
+        const [errorMessage] = error.message.split(/:\s/, 2)
+        toast.error(errorMessage)
       }
     })
 

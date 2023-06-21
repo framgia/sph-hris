@@ -90,7 +90,7 @@ namespace api.Schema.Mutations
                 catch (Exception e)
                 {
                     throw new GraphQLException(ErrorBuilder.New()
-                    .SetMessage(e.Message)
+                    .SetMessage($"{e.Message}")
                     .SetCode("BAD_REQUEST")
                     .Build());
                 }

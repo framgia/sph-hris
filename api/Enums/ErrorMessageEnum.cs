@@ -16,5 +16,7 @@ namespace api.Enums
         public const string LEAVE_USERDETAILS_NULL_IDENTIFIER = "Leave or userDetails is null";
         public const string FAILED_LEAVE_CANCEL = "Failed to cancel leave!";
         public const string EMPTY_OVERTIME = "Empty overtime request range";
+        public const string EXISTING_OVERTIME = "There is an existing overtime";
+        public const string ADVANCED_DATE = "It is not possible to file a request in advance";
     }
 }
