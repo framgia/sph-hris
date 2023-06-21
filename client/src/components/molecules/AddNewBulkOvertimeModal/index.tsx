@@ -11,6 +11,7 @@ import { X, User, Save, Clock, Coffee, FileText, Calendar, RefreshCcw } from 're
 import TextField from './../TextField'
 import useProject from '~/hooks/useProject'
 import Input from '~/components/atoms/Input'
+import useOvertime from '~/hooks/useOvertime'
 import { Roles } from '~/utils/constants/roles'
 import useUserQuery from '~/hooks/useUserQuery'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
@@ -43,6 +44,9 @@ const AddNewBulkOvertimeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element
   const { handleAllUsersQuery } = useUserQuery()
   const { data: users, isSuccess: isUsersSuccess } = handleAllUsersQuery()
 
+  const { handleBulkOvertimeMutation } = useOvertime()
+  const bulkOvertimeMutation = handleBulkOvertimeMutation()
+
   useEffect(() => {
     if (isUsersSuccess) {
       const tempManager = users.allUsers.filter((user) => user.role.name === Roles.MANAGER)
@@ -71,7 +75,25 @@ const AddNewBulkOvertimeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element
   // This will handle Submit and Save New Overtime
   const handleSave = async (data: NewBulkOvertimeFormValues): Promise<void> => {
     return await new Promise((resolve) => {
-      // const others = project.project_name.__isNew__ === true && project.project_name.value
+      bulkOvertimeMutation.mutate(
+        {
+          managerId: parseInt(data.manager.value),
+          date: data.date_effective,
+          otherProject: data.project.__isNew__ === true ? data.project.value : null,
+          projectId: parseInt(data.project.value),
+          requestedMinutes: data.requested_minutes,
+          remarks: data.remarks,
+          employeeIds: data.members.map((member) => parseInt(member.value))
+        },
+        {
+          onSuccess: () => {
+            closeModal()
+          },
+          onSettled: () => {
+            resolve()
+          }
+        }
+      )
     })
   }
 

@@ -13,3 +13,11 @@ export const APROVE_DISAPPROVE_OVERTIME_MUTATION = gql`
     approveDisapproveOvertime(approvingData: $overtimeApproval)
   }
 `
+
+export const CREATE_BULK_OVERTIME_MUTATION = gql`
+  mutation ($request: CreateBulkOvertimeRequestInput!) {
+    createBulkOvertime(request: $request) {
+      id
+    }
+  }
+`

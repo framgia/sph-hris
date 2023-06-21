@@ -9,6 +9,16 @@ export interface IOvertimeRequestInput {
   overtimeProjects: IOvertimeProjects[]
 }
 
+export interface IBulkOvertimeRequestInput {
+  managerId: number
+  requestedMinutes: number
+  otherProject: string | null
+  remarks: string
+  date: string
+  projectId: number
+  employeeIds: number[]
+}
+
 export interface IOvertimeProjects {
   id?: number
   projectId: number
