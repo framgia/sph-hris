@@ -18,7 +18,7 @@ import useNotification from '~/hooks/useNotificationQuery'
 import { switchMessage } from '~/utils/notificationHelpers'
 import LineSkeleton from '~/components/atoms/Skeletons/LineSkeleton'
 import useNotificationMutation from '~/hooks/useNotificationMutation'
-import { NOTIFICATION_TYPE } from '~/utils/constants/notificationTypes'
+import { NOTIFICATION_TYPE, SpecificType } from '~/utils/constants/notificationTypes'
 
 type Props = {
   table: Table<INotification>
@@ -48,7 +48,13 @@ const NotificationItem: FC<Props> = ({ table, isLoading }): JSX.Element => {
   }, [id])
 
   const handleViewDetails = (row: INotification): void => {
-    void router.push(`/notifications/?id=${row.id}`)
+    const { startDate, endDate, specificType, id } = row
+    const isSummary = specificType === SpecificType.SUMMARY
+    if (isSummary) {
+      void router.push(`/overtime-management?startDate=${startDate}&endDate=${endDate}`)
+    } else {
+      void router.push(`/notifications/?id=${id}`)
+    }
   }
 
   const handleLink = (row: INotification): void => {

@@ -12,6 +12,7 @@ import { GET_ALL_OVERTIME } from '~/graphql/queries/overtimeQuery'
 import {
   CREATE_OVERTIME_MUTATION,
   CREATE_BULK_OVERTIME_MUTATION,
+  CREATE_OVERTIME_SUMMARY_MUTATION,
   APROVE_DISAPPROVE_OVERTIME_MUTATION,
   APROVE_DISAPPROVE_OVERTIME_SUMMARY_MUTATION
 } from '~/graphql/mutations/overtimeMutation'
@@ -20,6 +21,7 @@ import {
   IOvertimeRequestInput,
   IBulkOvertimeRequestInput,
   ILeaderApproveOvertimeRequestInput,
+  ICreateOvertimeSummaryRequestInput,
   IManagerApproveOvertimeRequestInput
 } from '~/utils/types/overtimeTypes'
 
@@ -48,11 +50,18 @@ type handleLeaderApproveOvertimeMutationType = UseMutationResult<
   ILeaderApproveOvertimeRequestInput,
   unknown
 >
+type handleCreateOvertimeSummaryMutationType = UseMutationResult<
+  any,
+  unknown,
+  ICreateOvertimeSummaryRequestInput,
+  unknown
+>
 
 type returnType = {
   handleOvertimeMutation: () => handleOvertimeMutationType
-  handleLeaderApproveOvertimeMutation: () => handleLeaderApproveOvertimeMutationType
   handleBulkOvertimeMutation: () => handleBulkOvertimeMutationType
+  handleLeaderApproveOvertimeMutation: () => handleLeaderApproveOvertimeMutationType
+  handleCreateOvertimeSummaryMutation: () => handleCreateOvertimeSummaryMutationType
   handleManagerApproveOvertimeMutation: () => handleManagerApproveOvertimeMutationType
   handleManagerApproveOvertimesSummaryMutation: () => handleManagerApproveOvertimeSummaryMutationType
 }
@@ -149,11 +158,27 @@ const useOvertime = (): returnType => {
       }
     })
 
+  const handleCreateOvertimeSummaryMutation = (): handleCreateOvertimeSummaryMutationType =>
+    useMutation({
+      mutationFn: async (data: ICreateOvertimeSummaryRequestInput) => {
+        return await client.request(CREATE_OVERTIME_SUMMARY_MUTATION, {
+          overtimeSummary: data
+        })
+      },
+      onSuccess: async (data) => {
+        toast.success(data.createSummarizedOvertime)
+      },
+      onError: async () => {
+        toast.error('Something went wrong')
+      }
+    })
+
   return {
     handleOvertimeMutation,
-    handleLeaderApproveOvertimeMutation,
-    handleManagerApproveOvertimeMutation,
     handleBulkOvertimeMutation,
+    handleLeaderApproveOvertimeMutation,
+    handleCreateOvertimeSummaryMutation,
+    handleManagerApproveOvertimeMutation,
     handleManagerApproveOvertimesSummaryMutation
   }
 }

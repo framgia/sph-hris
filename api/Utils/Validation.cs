@@ -344,9 +344,6 @@ namespace api.Utils
         {
             var errors = new List<IError>();
 
-            if (!CheckManagerPosition(overtime.ManagerId).Result)
-                errors.Add(buildError(nameof(overtime.ManagerId), InputValidationMessageEnum.INVALID_MANAGER));
-
             if (!checkDateFormat(overtime.StartDate))
                 errors.Add(buildError(nameof(overtime.StartDate), InputValidationMessageEnum.INVALID_DATE));
 

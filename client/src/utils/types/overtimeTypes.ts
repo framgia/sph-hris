@@ -120,3 +120,8 @@ export interface ILeaderApproveOvertimeRequestInput {
   notificationId: number
   isApproved: boolean
 }
+
+export interface ICreateOvertimeSummaryRequestInput {
+  startDate: string | undefined | string[]
+  endDate: string | undefined | string[]
+}

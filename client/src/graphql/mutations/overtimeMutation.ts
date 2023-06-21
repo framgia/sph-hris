@@ -26,3 +26,9 @@ export const APROVE_DISAPPROVE_OVERTIME_SUMMARY_MUTATION = gql`
     approveDisapproveAllOvertimeSummary(approvingDatas: $approveOvertimeRequests)
   }
 `
+
+export const CREATE_OVERTIME_SUMMARY_MUTATION = gql`
+  mutation ($overtimeSummary: CreateSummaryRequestInput!) {
+    createSummarizedOvertime(overtimeSummary: $overtimeSummary)
+  }
+`
