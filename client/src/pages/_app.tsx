@@ -12,7 +12,7 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   return (
     <SessionProvider>
       <NextProgress />
-      <Toaster position="top-right" reverseOrder={false} />
+      <Toaster position="top-right" reverseOrder={false} containerStyle={{ top: 60 }} />
       <QueryClientProvider client={queryClient}>
         <Component {...pageProps} />
       </QueryClientProvider>
