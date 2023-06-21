@@ -9,12 +9,15 @@ namespace api.DTOs
         public LeaveBreakdownDTO Breakdown { get; set; }
         public User? User { get; set; } = null;
 
+        public float? TotalNumberOfFiledLeaves { get; set; } = default!;
+
         public LeavesDTO(LeaveHeatMapDTO heatmapLeaves, List<LeavesTableDTO> table, User? user = null)
         {
             Heatmap = heatmapLeaves;
             User = user;
             Table = table.OrderByDescending(table => table.CreatedAt).ToList();
             Breakdown = new LeaveBreakdownDTO(table);
+            TotalNumberOfFiledLeaves = table.Select(table => table.NumLeaves).ToList().Sum();
         }
     }
 }

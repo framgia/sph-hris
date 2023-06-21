@@ -12,16 +12,20 @@ type Props = {
     isLoading: boolean
     isError: boolean
   }
+  isMyLeave: boolean | undefined
 }
 
 const LeaveCellDetailsTable: FC<Props> = (props) => {
   const {
     table,
-    query: { isLoading = false, isError = false }
+    query: { isLoading, isError },
+    isMyLeave
   } = props
 
   return (
-    <AnimatedTable className="w-full min-w-[620px]">
+    <AnimatedTable
+      className={classNames('w-full', isMyLeave === true ? 'min-w-[620px]' : 'min-w-[720px]')}
+    >
       <thead className="border-b border-slate-200">
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>

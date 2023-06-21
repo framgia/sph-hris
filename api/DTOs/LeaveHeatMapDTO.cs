@@ -15,6 +15,10 @@ namespace api.DTOs
         public List<HeatMapDTO> November { get; set; } = new List<HeatMapDTO>();
         public List<HeatMapDTO> December { get; set; } = new List<HeatMapDTO>();
 
+        public LeaveHeatMapDTO()
+        {
+        }
+
         public LeaveHeatMapDTO(List<LeavesTableDTO> leaves)
         {
             leaves.Where(x => x.IsManagerApproved != false && x.IsLeaderApproved != false).OrderBy(leave => leave.Date).ToList().ForEach(leave =>

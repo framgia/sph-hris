@@ -28,10 +28,21 @@ namespace api.Schema.Queries
             return await _leaveService.GetLeavesSummary(userId, year, leaveTypeId);
         }
 
+        public async Task<LeavesDTO> GetLeavesByDate(int userId, string date)
+        {
+            return await _leaveService.GetLeavesByDate(userId, date);
+        }
+
         [AdminUser]
         public async Task<LeavesDTO> GetYearlyAllLeaves(int year, int leaveTypeId)
         {
             return await _leaveService.ShowYearlyLeavesSummary(year, leaveTypeId);
+        }
+
+        [AdminUser]
+        public async Task<LeavesDTO> GetYearlyAllLeavesByDate(string date)
+        {
+            return await _leaveService.ShowYearlyLeavesSummaryByDate(date);
         }
 
         public async Task<double> GetPaidLeaves(int id)

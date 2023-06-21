@@ -225,3 +225,41 @@ export const GET_SPECIFIC_USER_LEAVE_QUERY = gql`
     }
   }
 `
+
+export const GET_LEAVES_BY_DATE = gql`
+  query ($userId: Int!, $date: String!) {
+    leavesByDate(userId: $userId, date: $date) {
+      totalNumberOfFiledLeaves
+      table {
+        date
+        leaveTypeId
+        isWithPay
+        reason
+        numLeaves
+        status
+        userName
+        userId
+        createdAt
+      }
+    }
+  }
+`
+
+export const GET_YEARLY_LEAVES_BY_DATE_QUERY = gql`
+  query ($date: String!) {
+    yearlyAllLeavesByDate(date: $date) {
+      totalNumberOfFiledLeaves
+      table {
+        date
+        leaveTypeId
+        isWithPay
+        reason
+        numLeaves
+        status
+        userName
+        userId
+        createdAt
+      }
+    }
+  }
+`

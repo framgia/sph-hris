@@ -1,5 +1,8 @@
+import classNames from 'classnames'
+import isEmpty from 'lodash/isEmpty'
 import { Calendar } from 'react-feather'
-import React, { FC, useState } from 'react'
+import { PulseLoader } from 'react-spinners'
+import React, { FC, useEffect, useState } from 'react'
 import {
   SortingState,
   useReactTable,
@@ -9,15 +12,18 @@ import {
   getPaginationRowModel
 } from '@tanstack/react-table'
 
-import { columns } from './columns'
+import useLeave from '~/hooks/useLeave'
 import FooterTable from './../FooterTable'
 import LeaveCellDetailsTable from './Table'
 import { fuzzyFilter } from '~/utils/fuzzyFilter'
+import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import GlobalSearchFilter from './../GlobalSearchFilter'
+import { getLeaveLabel } from '~/utils/createLeaveHelpers'
+import { LeaveCellDetailTable } from '~/utils/types/leaveTypes'
 import ModalTemplate from '~/components/templates/ModalTemplate'
+import { leaveManagementColumns, myLeaveColumns } from './columns'
 import { Chip } from '~/components/templates/LeaveManagementLayout'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
-import { dummyCellDetailsData } from '~/utils/constants/dummyMyLeaveCellDetails'
 
 type Props = {
   isOpen: boolean
@@ -27,21 +33,78 @@ type Props = {
     day: number
     year: number
   }
+  isMyLeave?: boolean
+  userId?: number | undefined
 }
 
 const LeaveCellDetailsModal: FC<Props> = (props): JSX.Element => {
   const {
     isOpen,
     closeModal,
-    selectedDate: { month, day, year }
+    selectedDate: { month, day, year },
+    isMyLeave,
+    userId
   } = props
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState<string>('')
+  const [totNumFiledLeaves, setTotNumFiledLeaves] = useState<number>()
+  const [leaveData, setLeaveData] = useState<LeaveCellDetailTable[]>()
+
+  const dateCell: string = `${month} ${day}, ${year}`
+  const isReady = !isEmpty(month) && day !== 0
+
+  // LEAVE HOOKS -> getLeavesByDate
+  const { getLeaveByDateQuery } = useLeave()
+  const {
+    data: leavesByDate,
+    isLoading: isLeavesLoading,
+    isError: isLeavesError
+  } = getLeaveByDateQuery(userId as number, dateCell, isReady)
+
+  // LEAVE HOOKS -> getLeavesByDateYearly
+  const { getYearlyLeaveByDateQuery } = useLeave()
+  const {
+    data: leavesByDateYearly,
+    isLoading: isLeavesLoadingYearly,
+    isError: isLeavesErrorYearly
+  } = getYearlyLeaveByDateQuery(dateCell, isReady)
+
+  useEffect(() => {
+    if ((!isLeavesLoading && !isLeavesError) || (!isLeavesLoadingYearly && !isLeavesErrorYearly)) {
+      const leaveData = leavesByDate?.leavesByDate?.table.map((item, index) => ({
+        id: index + 1,
+        userName: item.userName,
+        typeOfLeave: getLeaveLabel(item.leaveTypeId),
+        withPay: item.isWithPay ? 'With Pay' : 'WiThout Pay',
+        numOfLeaves: item.numLeaves.toString(),
+        reason: item.reason
+      }))
+
+      const leaveDatayearly = leavesByDateYearly?.yearlyAllLeavesByDate?.table.map(
+        (item, index) => ({
+          id: index + 1,
+          userName: item.userName,
+          typeOfLeave: getLeaveLabel(item.leaveTypeId),
+          withPay: item.isWithPay ? 'With Pay' : 'WiThout Pay',
+          numOfLeaves: item.numLeaves.toString(),
+          reason: item.reason
+        })
+      )
+
+      setTotNumFiledLeaves(
+        isMyLeave === true
+          ? leavesByDate?.leavesByDate?.totalNumberOfFiledLeaves
+          : leavesByDateYearly?.yearlyAllLeavesByDate?.totalNumberOfFiledLeaves ?? 0
+      )
+
+      setLeaveData(isMyLeave === true ? leaveData : leaveDatayearly ?? [])
+    }
+  }, [isLeavesLoading, isLeavesLoadingYearly])
 
   const table = useReactTable({
-    data: dummyCellDetailsData ?? [],
-    columns,
+    data: leaveData ?? [],
+    columns: isMyLeave === true ? myLeaveColumns : leaveManagementColumns,
     // Options
     state: {
       sorting,
@@ -63,11 +126,11 @@ const LeaveCellDetailsModal: FC<Props> = (props): JSX.Element => {
         isOpen,
         closeModal
       }}
-      className="w-full max-w-3xl"
+      className={classNames('w-full', isMyLeave === true ? 'max-w-3xl' : 'max-w-4xl')}
     >
       <ModalHeader
         {...{
-          title: `Leave for ${month} ${day}, ${year}`,
+          title: `Leave for ${dateCell}`,
           closeModal,
           Icon: Calendar
         }}
@@ -82,27 +145,42 @@ const LeaveCellDetailsModal: FC<Props> = (props): JSX.Element => {
             }}
           />
           <div className="inline-flex items-center space-x-2">
-            <p className="text-slate-700">Total number of leaves</p>
-            <Chip count={26} />
+            <p className="text-slate-700">Total number of filed leaves</p>
+            {isLeavesLoading || isLeavesLoadingYearly ? (
+              <SpinnerIcon className="h-4 w-4 fill-amber-500" />
+            ) : (
+              <Chip count={totNumFiledLeaves} />
+            )}
           </div>
         </header>
-        <main className="border-t border-slate-200">
-          <div className="default-scrollbar overflow-auto">
-            <LeaveCellDetailsTable
-              {...{
-                table,
-                query: {
-                  isLoading: false,
-                  isError: false
-                }
-              }}
-            />
+        {isLeavesLoading || isLeavesLoadingYearly ? (
+          <div className="flex min-h-[10vh] items-center justify-center">
+            <PulseLoader color="#ffb40b" size={8} />
           </div>
-          <FooterTable {...{ table }} className="!bg-white text-xs" />
-        </main>
+        ) : (
+          <main className="border-t border-slate-200">
+            <div className="default-scrollbar overflow-auto">
+              <LeaveCellDetailsTable
+                {...{
+                  table,
+                  query: {
+                    isLoading: isLeavesLoading && isLeavesLoadingYearly,
+                    isError: isLeavesError && isLeavesErrorYearly
+                  },
+                  isMyLeave
+                }}
+              />
+            </div>
+            <FooterTable {...{ table }} className="!bg-white text-xs" />
+          </main>
+        )}
       </div>
     </ModalTemplate>
   )
+}
+
+LeaveCellDetailsModal.defaultProps = {
+  isMyLeave: false
 }
 
 export default LeaveCellDetailsModal
