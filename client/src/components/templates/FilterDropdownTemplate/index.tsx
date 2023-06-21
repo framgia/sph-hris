@@ -19,7 +19,7 @@ const FilterDropdownTemplate: FC<Props> = (props): JSX.Element => {
   const { btnStyle, children, btnText, Icon, cardClassName, className, ...rest } = props
 
   return (
-    <Menu as="div" className="relative z-10 flex w-full">
+    <Menu as="div" className="relative z-10 flex w-full ">
       <Menu.Button
         {...rest}
         className={classNames(
@@ -35,7 +35,7 @@ const FilterDropdownTemplate: FC<Props> = (props): JSX.Element => {
         <Menu.Items
           static
           className={classNames(
-            'fixed right-4 top-[94px] flex w-80 flex-col outline-none md:top-[97px]',
+            'fixed right-4 top-[94px] flex w-72 flex-col outline-none md:top-[97px]',
             className
           )}
         >

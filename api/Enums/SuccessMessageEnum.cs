@@ -10,5 +10,6 @@ namespace api.Enums
         public const string LEAVE_UPDATED = "Leave successfully updated!";
         public const string LEAVE_CANCELLED = "Leave successfully cancelled";
         public const string OVERTIME_SUMMARY_SUBMITTED = "Overtime summary request submitted";
+        public const string OVERTIME_SUMMARY_REVIEW_SUBMITTED = "Review submitted";
     }
 }

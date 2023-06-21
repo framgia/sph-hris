@@ -73,7 +73,9 @@ const Notifications: NextPage = (): JSX.Element => {
           userAvatarLink: parsedData.User.AvatarLink,
           createdAt: notif.createdAt,
           offsets: parsedData.Offsets,
-          managerRemarks: parsedData.ManagerRemarks
+          managerRemarks: parsedData.ManagerRemarks,
+          startDate: parsedData.StartDate,
+          endDate: parsedData.EndDate
         }
         return mapped
       })

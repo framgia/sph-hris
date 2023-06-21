@@ -1,25 +1,26 @@
 import { toast } from 'react-hot-toast'
 import {
-  useMutation,
-  UseMutationResult,
   useQuery,
+  useMutation,
+  UseQueryResult,
   useQueryClient,
-  UseQueryResult
+  UseMutationResult
 } from '@tanstack/react-query'
 
 import { client } from '~/utils/shared/client'
 import { GET_ALL_OVERTIME } from '~/graphql/queries/overtimeQuery'
 import {
   CREATE_OVERTIME_MUTATION,
+  CREATE_BULK_OVERTIME_MUTATION,
   APROVE_DISAPPROVE_OVERTIME_MUTATION,
-  CREATE_BULK_OVERTIME_MUTATION
+  APROVE_DISAPPROVE_OVERTIME_SUMMARY_MUTATION
 } from '~/graphql/mutations/overtimeMutation'
 import {
-  ILeaderApproveOvertimeRequestInput,
-  IManagerApproveOvertimeRequestInput,
-  IOvertimeRequestInput,
   IAllOvertime,
-  IBulkOvertimeRequestInput
+  IOvertimeRequestInput,
+  IBulkOvertimeRequestInput,
+  ILeaderApproveOvertimeRequestInput,
+  IManagerApproveOvertimeRequestInput
 } from '~/utils/types/overtimeTypes'
 
 type handleOvertimeMutationType = UseMutationResult<any, unknown, IOvertimeRequestInput, unknown>
@@ -35,6 +36,12 @@ type handleManagerApproveOvertimeMutationType = UseMutationResult<
   IManagerApproveOvertimeRequestInput,
   unknown
 >
+type handleManagerApproveOvertimeSummaryMutationType = UseMutationResult<
+  any,
+  unknown,
+  IManagerApproveOvertimeRequestInput[],
+  unknown
+>
 type handleLeaderApproveOvertimeMutationType = UseMutationResult<
   any,
   unknown,
@@ -44,9 +51,10 @@ type handleLeaderApproveOvertimeMutationType = UseMutationResult<
 
 type returnType = {
   handleOvertimeMutation: () => handleOvertimeMutationType
-  handleManagerApproveOvertimeMutation: () => handleManagerApproveOvertimeMutationType
   handleLeaderApproveOvertimeMutation: () => handleLeaderApproveOvertimeMutationType
   handleBulkOvertimeMutation: () => handleBulkOvertimeMutationType
+  handleManagerApproveOvertimeMutation: () => handleManagerApproveOvertimeMutationType
+  handleManagerApproveOvertimesSummaryMutation: () => handleManagerApproveOvertimeSummaryMutationType
 }
 
 const useOvertime = (): returnType => {
@@ -91,9 +99,9 @@ const useOvertime = (): returnType => {
 
   const handleManagerApproveOvertimeMutation = (): handleManagerApproveOvertimeMutationType =>
     useMutation({
-      mutationFn: async (data: IManagerApproveOvertimeRequestInput) => {
+      mutationFn: async (approveOvertimeRequests: IManagerApproveOvertimeRequestInput) => {
         return await client.request(APROVE_DISAPPROVE_OVERTIME_MUTATION, {
-          overtimeApproval: data
+          overtimeApproval: approveOvertimeRequests
         })
       },
       onSuccess: async () => {
@@ -106,6 +114,25 @@ const useOvertime = (): returnType => {
         toast.error('Something went wrong')
       }
     })
+
+  const handleManagerApproveOvertimesSummaryMutation =
+    (): handleManagerApproveOvertimeSummaryMutationType =>
+      useMutation({
+        mutationFn: async (data: IManagerApproveOvertimeRequestInput[]) => {
+          return await client.request(APROVE_DISAPPROVE_OVERTIME_SUMMARY_MUTATION, {
+            approveOvertimeRequests: { approveOvertimeRequests: data }
+          })
+        },
+        onSuccess: async (message) => {
+          toast.success(message.approveDisapproveAllOvertimeSummary)
+          await queryClient.invalidateQueries({
+            queryKey: ['GET_ALL_OVERTIME']
+          })
+        },
+        onError: async () => {
+          toast.error('Something went wrong')
+        }
+      })
 
   const handleLeaderApproveOvertimeMutation = (): handleLeaderApproveOvertimeMutationType =>
     useMutation({
@@ -124,9 +151,10 @@ const useOvertime = (): returnType => {
 
   return {
     handleOvertimeMutation,
-    handleManagerApproveOvertimeMutation,
     handleLeaderApproveOvertimeMutation,
-    handleBulkOvertimeMutation
+    handleManagerApproveOvertimeMutation,
+    handleBulkOvertimeMutation,
+    handleManagerApproveOvertimesSummaryMutation
   }
 }
 

@@ -73,7 +73,11 @@ const YearlyFilterDropdown: FC<Props> = (): JSX.Element => {
 
   return (
     <div>
-      <FilterDropdownTemplate btnText="Filters" cardClassName="overflow-visible">
+      <FilterDropdownTemplate
+        btnText="Filters"
+        className="translate-y-2"
+        cardClassName="overflow-visible "
+      >
         <main className="flex flex-col space-y-3 px-5 py-4">
           <Text theme="sm" weight="semibold" className="text-slate-500">
             Overtime Filters
