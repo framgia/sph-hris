@@ -106,7 +106,7 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
     const { from = '', to = '' } = workingDayTimes[0] ?? {}
 
     const time = moment()
-    const timeHour = time.format('PTHH[H]mm[M]ss[S]')
+    const timeHour = `PT${time.hours()}H${time.minutes()}M${time.seconds()}S`
 
     await timeInMutation.mutateAsync({
       id: timeEntry?.id ?? 0,

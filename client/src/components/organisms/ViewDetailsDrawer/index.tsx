@@ -2,7 +2,6 @@ import moment from 'moment'
 import React, { FC } from 'react'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
-import { parse } from 'iso8601-duration'
 import { Calendar, Clock, X } from 'react-feather'
 
 import Text from '~/components/atoms/Text'
@@ -28,7 +27,8 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
   const router = useRouter()
   const timeIdExists = router.query.time_in ?? router.query.time_out
   const res = getSpecificTimeEntry(Number(timeIdExists))
-  const timeIn = parse(res.data?.timeById?.timeHour ?? 'PT0H')
+  const timeHour = res?.data?.timeById?.timeHour ?? ''
+
   const date = res.data?.timeById?.createdAt
   const { data } = getSpecificTimeEntryById(Number(timeIdExists))
   const { data: profileLink } = getUserProfileLink(Number(data?.specificTimeEntryById?.user?.id))
@@ -95,6 +95,13 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
     return emailRegex.test(email)
   }
 
+  const getFormattedTimeHour = (timeHour: string): string => {
+    const duration = moment.duration(timeHour)
+    const formattedTime = moment.utc(duration.asMilliseconds()).format('h:mm A')
+
+    return formattedTime
+  }
+
   return (
     <DrawerTemplate
       {...{
@@ -141,8 +148,6 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
             </p>
           </div>
         </div>
-        {/* Error Message */}
-        {/* <Alert type="error" /> */}
         <div className="form-group space-y-2">
           {/* Time */}
           <div>
@@ -161,10 +166,7 @@ const ViewDetailsDrawer: FC<Props> = (props): JSX.Element => {
                     <Clock className="h-4 w-4 text-slate-500" />
                   </div>
                   <div className="border-l-4 border-slate-300"></div>
-                  <p className="text-xs">
-                    {Number(timeIn.hours) > 12 ? Number(timeIn.hours) - 12 : Number(timeIn.hours)}:
-                    {timeIn.minutes} {Number(timeIn?.hours) >= 12 ? 'PM' : 'AM'}
-                  </p>
+                  <p className="text-xs">{getFormattedTimeHour(timeHour)}</p>
                 </div>
               </div>
             </label>
