@@ -13,8 +13,10 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { X, Save, User, Coffee, FileText, Calendar, RefreshCcw } from 'react-feather'
 
 import TextField from './../TextField'
+import useLeave from '~/hooks/useLeave'
 import useProject from '~/hooks/useProject'
 import Input from '~/components/atoms/Input'
+import { queryClient } from '~/lib/queryClient'
 import useUserQuery from '~/hooks/useUserQuery'
 import { Roles } from '~/utils/constants/roles'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
@@ -22,18 +24,17 @@ import { NewLeaveSchema } from '~/utils/validation'
 import { User as UserType } from '~/utils/types/userTypes'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { customStyles } from '~/utils/customReactSelectStyles'
+import { LeaveProject, LeaveType } from '~/utils/types/leaveTypes'
+import { LeaderDetails, ProjectDetails } from '~/utils/types/projectTypes'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
+import { numberOfDaysInLeaves } from '~/utils/constants/dummyAddNewLeaveFields'
 import { NewLeaveFormValues, ReactSelectOption } from '~/utils/types/formValues'
 import {
   generateUserSelect,
-  generateProjectsMultiSelect,
   generateLeaveTypeSelect,
-  generateNumberOfDaysSelect
+  generateNumberOfDaysSelect,
+  generateProjectsMultiSelect
 } from '~/utils/createLeaveHelpers'
-import useLeave from '~/hooks/useLeave'
-import { LeaveProject, LeaveType } from '~/utils/types/leaveTypes'
-import { LeaderDetails, ProjectDetails } from '~/utils/types/projectTypes'
-import { numberOfDaysInLeaves } from '~/utils/constants/dummyAddNewLeaveFields'
 
 type Props = {
   isOpen: boolean
@@ -112,51 +113,48 @@ const EditTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
 
   // This will handle form submit and save
   const handleSave = async (data: NewLeaveFormValues): Promise<void> => {
-    return await new Promise((resolve) => {
-      // Other Project Name
-      const others = data.projects.map(
-        (project) => project.project_name.__isNew__ === true && project.project_name.value
-      )
+    // Other Project Name
+    const others = data.projects.map(
+      (project) => project.project_name.__isNew__ === true && project.project_name.value
+    )
 
-      leaveMutation.mutate(
-        {
-          userId: user?.userById.id as number,
-          leaveTypeId: parseInt(data.leave_type.value),
-          leaveId: Number(leaveId),
-          managerId: parseInt(data.manager.value),
-          reason: data.reason,
-          otherProject: others.filter((value) => value !== false).toString(),
-          leaveDates: data.leave_date.map((date) => {
-            return {
-              leaveDate: date.date,
-              isWithPay: date.is_with_pay,
-              days: parseFloat(date.number_of_days_in_leave.value)
-            }
-          }),
-          leaveProjects: data.projects.map((project) => {
-            const otherProjectType = projects?.projects.find(
-              (project) => project.name.toLowerCase() === 'others'
-            ) as ProjectDetails
-
-            return {
-              projectId: (project.project_name.__isNew__ as boolean)
-                ? otherProjectType.id
-                : parseInt(project.project_name.value),
-              projectLeaderId: parseInt(project.project_leader.value)
-            }
-          })
-        },
-        {
-          onSuccess: ({ updateLeave }) => {
-            // Reset state variables before making a new query
-            closeModal()
-            toast.success(updateLeave)
+    await leaveMutation.mutateAsync(
+      {
+        userId: user?.userById.id as number,
+        leaveTypeId: parseInt(data.leave_type.value),
+        leaveId: Number(leaveId),
+        managerId: parseInt(data.manager.value),
+        reason: data.reason,
+        otherProject: others.filter((value) => value !== false).toString(),
+        leaveDates: data.leave_date.map((date) => {
+          return {
+            leaveDate: date.date,
+            isWithPay: date.is_with_pay,
+            days: parseFloat(date.number_of_days_in_leave.value)
           }
-        }
-      )
+        }),
+        leaveProjects: data.projects.map((project) => {
+          const otherProjectType = projects?.projects.find(
+            (project) => project.name.toLowerCase() === 'others'
+          ) as ProjectDetails
 
-      resolve()
-    })
+          return {
+            projectId: (project.project_name.__isNew__ as boolean)
+              ? otherProjectType.id
+              : parseInt(project.project_name.value),
+            projectLeaderId: parseInt(project.project_leader.value)
+          }
+        })
+      },
+      {
+        onSuccess: ({ updateLeave }) => {
+          void queryClient.invalidateQueries().then(() => {
+            toast.success(updateLeave)
+            closeModal()
+          })
+        }
+      }
+    )
   }
 
   const { fields: leaveDateFields } = useFieldArray({

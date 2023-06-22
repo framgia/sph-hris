@@ -2,6 +2,7 @@ import { toast } from 'react-hot-toast'
 import { useMutation, UseMutationResult, useQuery, UseQueryResult } from '@tanstack/react-query'
 
 import { client } from '~/utils/shared/client'
+import { queryClient } from '~/lib/queryClient'
 import {
   GET_LEAVES_BY_DATE,
   GET_MY_LEAVES_QUERY,
@@ -14,13 +15,13 @@ import {
   Leaves,
   LeaveTypes,
   IUserLeave,
+  LeaveByDate,
   YearlyLeaves,
   LeaveRequest,
+  YearlyLeaveByDate,
   UpdateLeaveRequest,
   CancelLeaveRequest,
-  IApproveLeaveUndertimeRequestInput,
-  LeaveByDate,
-  YearlyLeaveByDate
+  IApproveLeaveUndertimeRequestInput
 } from '~/utils/types/leaveTypes'
 import {
   CREATE_LEAVE_MUTATION,
@@ -107,6 +108,9 @@ const useLeave = (): HookReturnType => {
       },
       onError: async () => {
         toast.error('Something went wrong')
+      },
+      onSuccess: () => {
+        void queryClient.invalidateQueries()
       }
     })
 
@@ -160,6 +164,9 @@ const useLeave = (): HookReturnType => {
         return await client.request(CANCEL_LEAVE_MUTATION, {
           request
         })
+      },
+      onSuccess: () => {
+        void queryClient.invalidateQueries()
       },
       onError: async (err: Error) => {
         const [errorMessage] = err.message.split(/:\s/, 2)

@@ -147,19 +147,11 @@ const LeaveTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
         },
         {
           onSuccess: () => {
-            void queryClient
-              .invalidateQueries({
-                queryKey: [
-                  'GET_MY_LEAVES_QUERY',
-                  user?.userById.id as number,
-                  parseInt(router.query.year as string)
-                ]
-              })
-              .then(() => {
-                resolve()
-                closeModal()
-                toast.success('Leave request filed successfully!')
-              })
+            void queryClient.invalidateQueries().then(() => {
+              resolve()
+              closeModal()
+              toast.success('Leave request filed successfully!')
+            })
           }
         }
       )

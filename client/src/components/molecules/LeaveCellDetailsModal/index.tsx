@@ -53,6 +53,7 @@ const LeaveCellDetailsModal: FC<Props> = (props): JSX.Element => {
 
   const dateCell: string = `${month} ${day}, ${year}`
   const isReady = !isEmpty(month) && day !== 0
+  const isReadyYearly = isMyLeave === false
 
   // LEAVE HOOKS -> getLeavesByDate
   const { getLeaveByDateQuery } = useLeave()
@@ -68,7 +69,7 @@ const LeaveCellDetailsModal: FC<Props> = (props): JSX.Element => {
     data: leavesByDateYearly,
     isLoading: isLeavesLoadingYearly,
     isError: isLeavesErrorYearly
-  } = getYearlyLeaveByDateQuery(dateCell, isReady)
+  } = getYearlyLeaveByDateQuery(dateCell, isReadyYearly)
 
   useEffect(() => {
     if ((!isLeavesLoading && !isLeavesError) || (!isLeavesLoadingYearly && !isLeavesErrorYearly)) {
@@ -76,8 +77,8 @@ const LeaveCellDetailsModal: FC<Props> = (props): JSX.Element => {
         id: index + 1,
         userName: item.userName,
         typeOfLeave: getLeaveLabel(item.leaveTypeId),
-        withPay: item.isWithPay ? 'With Pay' : 'WiThout Pay',
-        numOfLeaves: item.numLeaves.toString(),
+        withPay: item.isWithPay ? 'With Pay' : 'Without Pay',
+        numOfLeaves: parseFloat(item.numLeaves.toFixed(2)).toString(),
         reason: item.reason
       }))
 
@@ -86,8 +87,8 @@ const LeaveCellDetailsModal: FC<Props> = (props): JSX.Element => {
           id: index + 1,
           userName: item.userName,
           typeOfLeave: getLeaveLabel(item.leaveTypeId),
-          withPay: item.isWithPay ? 'With Pay' : 'WiThout Pay',
-          numOfLeaves: item.numLeaves.toString(),
+          withPay: item.isWithPay ? 'With Pay' : 'Without Pay',
+          numOfLeaves: parseFloat(item.numLeaves.toFixed(2)).toString(),
           reason: item.reason
         })
       )
@@ -146,14 +147,14 @@ const LeaveCellDetailsModal: FC<Props> = (props): JSX.Element => {
           />
           <div className="inline-flex items-center space-x-2">
             <p className="text-slate-700">Total number of filed leaves</p>
-            {isLeavesLoading || isLeavesLoadingYearly ? (
+            {isLeavesLoading && isLeavesLoadingYearly ? (
               <SpinnerIcon className="h-4 w-4 fill-amber-500" />
             ) : (
               <Chip count={totNumFiledLeaves} />
             )}
           </div>
         </header>
-        {isLeavesLoading || isLeavesLoadingYearly ? (
+        {isLeavesLoading && isLeavesLoadingYearly ? (
           <div className="flex min-h-[10vh] items-center justify-center">
             <PulseLoader color="#ffb40b" size={8} />
           </div>

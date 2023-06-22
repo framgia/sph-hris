@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import toast from 'react-hot-toast'
 import ReactSelect from 'react-select'
 import { useRouter } from 'next/router'
 import { Tab } from '@headlessui/react'
@@ -31,6 +32,7 @@ import {
   generateNumberOfDaysSelect,
   generateProjectsMultiSelect
 } from '~/utils/createLeaveHelpers'
+import { queryClient } from '~/lib/queryClient'
 
 type Props = {
   isOpen: boolean
@@ -114,46 +116,47 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
 
   // This will handle form submit and save
   const handleSave = async (data: UndertimeFormValues): Promise<void> => {
-    return await new Promise((resolve) => {
-      // Other Project Name
-      const others = data.projects.map(
-        (project) => project.project_name.__isNew__ === true && project.project_name.value
-      )
+    // Other Project Name
+    const others = data.projects.map(
+      (project) => project.project_name.__isNew__ === true && project.project_name.value
+    )
 
-      leaveMutation.mutate(
-        {
-          userId: user?.userById.id as number,
-          leaveTypeId: LeaveTypes.UNDERTIME,
-          managerId: parseInt(data.manager.value),
-          reason: data.reason,
-          otherProject: others.filter((value) => value !== false).toString(),
-          leaveProjects: data.projects.map((project) => {
-            const otherProjectType = projects?.projects.find(
-              (project) => project.name.toLowerCase() === 'others'
-            ) as ProjectDetails
+    await leaveMutation.mutateAsync(
+      {
+        userId: user?.userById.id as number,
+        leaveTypeId: LeaveTypes.UNDERTIME,
+        managerId: parseInt(data.manager.value),
+        reason: data.reason,
+        otherProject: others.filter((value) => value !== false).toString(),
+        leaveProjects: data.projects.map((project) => {
+          const otherProjectType = projects?.projects.find(
+            (project) => project.name.toLowerCase() === 'others'
+          ) as ProjectDetails
 
-            return {
-              projectId: (project.project_name.__isNew__ as boolean)
-                ? otherProjectType.id
-                : parseInt(project.project_name.value),
-              projectLeaderId: parseInt(project.project_leader.value)
-            }
-          }),
-          leaveDates: [
-            {
-              leaveDate: data.undertime_leave_date,
-              isWithPay: false,
-              days: parseFloat(data.number_of_days_in_leave_undertime.value)
-            }
-          ]
-        },
-        {
-          onSuccess: () => closeModal()
+          return {
+            projectId: (project.project_name.__isNew__ as boolean)
+              ? otherProjectType.id
+              : parseInt(project.project_name.value),
+            projectLeaderId: parseInt(project.project_leader.value)
+          }
+        }),
+        leaveDates: [
+          {
+            leaveDate: data.undertime_leave_date,
+            isWithPay: false,
+            days: parseFloat(data.number_of_days_in_leave_undertime.value)
+          }
+        ]
+      },
+      {
+        onSuccess: () => {
+          void queryClient.invalidateQueries().then(() => {
+            closeModal()
+            toast.success('Leave request filed successfully!')
+          })
         }
-      )
-
-      resolve()
-    })
+      }
+    )
   }
 
   useEffect(() => {
