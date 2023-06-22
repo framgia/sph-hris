@@ -15,7 +15,7 @@ namespace api.DTOs
         {
             Heatmap = heatmapLeaves;
             User = user;
-            Table = table.OrderByDescending(table => table.CreatedAt).ToList();
+            Table = table.OrderBy(table => table.CreatedAt).ToList();
             Breakdown = new LeaveBreakdownDTO(table);
             TotalNumberOfFiledLeaves = table.Select(table => table.NumLeaves).ToList().Sum();
         }

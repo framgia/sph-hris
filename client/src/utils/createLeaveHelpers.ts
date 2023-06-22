@@ -23,7 +23,9 @@ export const generateUserSelect = (users: User[]): SelectOptionType[] =>
   users?.map((user) => ({ label: user?.name, value: user?.id.toString() }))
 
 export const generateLeaveTypeSelect = (types: LeaveType[]): SelectOptionType[] =>
-  types?.map((type) => ({ label: type.name, value: type.id.toString() }))
+  types
+    ?.filter((item) => item.name !== 'Undertime')
+    ?.map((type) => ({ label: type.name, value: type.id.toString() }))
 
 export const generateNumberOfDaysSelect = (
   types: Array<{ id: number; value: string }>

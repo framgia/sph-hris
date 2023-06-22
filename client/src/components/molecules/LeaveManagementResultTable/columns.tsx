@@ -96,7 +96,6 @@ export const columns = [
     cell: (props) => {
       const router = useRouter()
       const { pathname } = router
-      const { year } = router.query
       const { userId } = props.row.original
       const leaveId = props.row.original.leaveId
       const { handleCancelLeaveMutation } = useLeave()
@@ -144,13 +143,9 @@ export const columns = [
                         { userId, leaveId },
                         {
                           onSuccess: ({ cancelLeave }) => {
-                            void queryClient
-                              .invalidateQueries({
-                                queryKey: ['GET_MY_LEAVES_QUERY', userId, Number(year)]
-                              })
-                              .then(() => {
-                                toast.success(cancelLeave)
-                              })
+                            void queryClient.invalidateQueries().then(() => {
+                              toast.success(cancelLeave)
+                            })
                           }
                         }
                       )
