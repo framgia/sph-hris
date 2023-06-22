@@ -70,8 +70,17 @@ namespace api.Services
 
         private string? GetWorkedHours(TimeEntry timeEntry)
         {
-            var workedHours = timeEntry.TimeOut?.TimeHour - timeEntry.TimeIn?.TimeHour;
-            return workedHours.ToString();
+            string? workedHours = null;
+            TimeSpan? totalTimeSpan = timeEntry.TimeOut?.CreatedAt - timeEntry.TimeIn?.CreatedAt;
+
+            if (totalTimeSpan != null)
+            {
+                var duration = (TimeSpan)totalTimeSpan;
+                var totalDays = duration.Days;
+                var totalHours = duration.Hours + (24 * totalDays);
+                workedHours = $"{totalHours}:{duration.ToString(@"mm\:ss")}";
+            }
+            return workedHours;
         }
     }
 }
