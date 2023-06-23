@@ -381,10 +381,14 @@ namespace api.Services
             await context.SaveChangesAsync();
             return newNotification;
         }
-        public async Task<Notification> CreateSummarizedOvertimeNotification(CreateSummaryRequest summarizedOvertime, HrisContext context)
+        public async Task<List<Notification>> CreateSummarizedOvertimeNotification(CreateSummaryRequest summarizedOvertime, HrisContext context)
         {
             var httpContext = _accessor.HttpContext!;
             var hrAdmin = (User)httpContext.Items["User"]!;
+
+            //For multiple manager positions
+            List<int> managerIds = await context.Users.Where(x => x.Role.Name!.ToLower() == RoleEnum.MANAGER && x.PositionId == PositionEnum.MANAGER).Select(x => x.Id).ToListAsync();
+            List<Notification> notificationsList = new();
 
             var dataToManager = JsonSerializer.Serialize(new OvertimeSummaryData
             {
@@ -400,19 +404,23 @@ namespace api.Services
             }
             );
 
-            // Notification to Requesting User
-            var notificationToManager = new Notification
+            managerIds.ForEach(managerId =>
             {
-                RecipientId = summarizedOvertime!.ManagerId,
-                Type = NotificationTypeEnum.OVERTIME_SUMMARY,
-                Data = dataToManager
-            };
+                // Notification to Requesting User
+                var notificationToManager = new Notification
+                {
+                    RecipientId = managerId,
+                    Type = NotificationTypeEnum.OVERTIME_SUMMARY,
+                    Data = dataToManager
+                };
+                notificationsList.Add(notificationToManager);
+                SendSummarizedOvertimeNotificationEvent(notificationToManager);
+            });
 
-            context.Notifications.Add(notificationToManager);
+            await context.Notifications.AddRangeAsync(notificationsList);
             await context.SaveChangesAsync();
 
-            SendSummarizedOvertimeNotificationEvent(notificationToManager);
-            return notificationToManager;
+            return notificationsList;
         }
 
         public async Task<ESLOffsetNotification> createESLOffsetRequestNotification(ESLOffset request, HrisContext context)

@@ -8,7 +8,7 @@ import FilterDropdownTemplate from '~/components/templates/FilterDropdownTemplat
 import SummaryConfirmationModal from '../OvertimeManagementTable/SummaryConfirmationModal'
 
 type Props = {
-  data: IOvertimeManagement[]
+  data: IOvertimeManagement[] | undefined
 }
 
 const OptionDropdown: FC<Props> = ({ data }): JSX.Element => {

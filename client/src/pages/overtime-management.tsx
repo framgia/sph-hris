@@ -6,15 +6,16 @@ import { PulseLoader } from 'react-spinners'
 import React, { useEffect, useState } from 'react'
 
 import NotFound from './404'
+import { Check } from 'react-feather'
 import useUserQuery from '~/hooks/useUserQuery'
 import { Roles } from '~/utils/constants/roles'
 import Layout from '~/components/templates/Layout'
-import { getAllovertime } from '~/hooks/useOvertime'
 import FilterIcon from '~/utils/icons/FilterIcon'
 import { Position } from '~/utils/constants/position'
 import { IOvertimeManagement } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { RequestStatus } from '~/utils/constants/requestStatus'
+import useOvertime, { getAllovertime } from '~/hooks/useOvertime'
 import { STATUS_OPTIONS } from '~/utils/constants/notificationFilter'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
 import OptionDropdown from '~/components/molecules/MyOvertimeTable/OptionDropdown'
@@ -43,8 +44,12 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
   const [globalFilter, setGlobalFilter] = useState<string>('')
 
   const { data: overtime } = getAllovertime()
+  const { handleCreateOvertimeSummaryMutation } = useOvertime()
+  const createOvertimeSummary = handleCreateOvertimeSummaryMutation()
 
   const [overtimeData, setOvertimeData] = useState<IOvertimeManagement[]>()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isDisable, setIsDisable] = useState<boolean>(false)
 
   const [filters, setFilters] = useState({
     date: moment().format('YYYY-MM-DD'),
@@ -71,12 +76,17 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
       searchKey: globalFilter
     })
   }
-  const isShowOption =
-    isManager &&
-    overtimeData !== undefined &&
-    overtimeData.length > 0 &&
-    startDate !== undefined &&
-    endDate !== undefined
+
+  const isDataAvailable = (
+    data: IOvertimeManagement[] | undefined,
+    startDate: string | string[] | undefined,
+    endDate: string | string[] | undefined
+  ): boolean => {
+    return data !== undefined && data.length > 0 && startDate !== undefined && endDate !== undefined
+  }
+
+  const isShowOption = isManager && isDataAvailable(overtimeData, startDate, endDate)
+  const isShowSendSummary = isHRAdmin && isDataAvailable(overtimeData, startDate, endDate)
 
   const status = (isLeaderApproved: boolean, isManagerApproved: boolean): string | undefined => {
     if (isLeaderApproved == null || isManagerApproved == null) {
@@ -89,6 +99,10 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
       return STATUS_OPTIONS.DISAPPROVED.toLowerCase()
     }
   }
+
+  useEffect(() => {
+    setIsDisable(false)
+  }, [overtimeData])
 
   useEffect(() => {
     if (overtime?.allOvertime !== undefined) {
@@ -208,6 +222,15 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
     return <NotFound />
   }
 
+  const handleSendSummary = async (): Promise<void> => {
+    setIsLoading(true)
+    await createOvertimeSummary.mutateAsync({ startDate, endDate })
+    setIsDisable(true)
+    setIsLoading(false)
+  }
+
+  const handleClick = handleSendSummary as () => void
+
   return (
     <Layout metaTitle="Overtime Management">
       <section
@@ -252,14 +275,26 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
                 <span>Filters</span>
               </HROvertimeFilterDropdown>
             </span>
-            {isHRAdmin && (
+            {isShowSendSummary && (
               <div>
                 <Button
                   type="button"
                   variant="primary"
                   className="flex items-center px-1.5 py-[3px]"
+                  onClick={handleClick}
+                  disabled={isLoading || isDisable}
                 >
-                  <span>Send Summary</span>
+                  {isLoading ? (
+                    <span>
+                      <PulseLoader color="#FFFFFF" size={8} />
+                    </span>
+                  ) : isDisable ? (
+                    <span className="px-3">
+                      <Check className="h-4 w-4 text-white" />
+                    </span>
+                  ) : (
+                    <span>Send Summary</span>
+                  )}
                 </Button>
               </div>
             )}

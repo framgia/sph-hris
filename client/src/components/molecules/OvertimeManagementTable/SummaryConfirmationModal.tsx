@@ -19,7 +19,7 @@ import { IManagerApproveOvertimeRequestInput } from '~/utils/types/overtimeTypes
 type Props = {
   isOpen: boolean
   closeModal: () => void
-  summary: IOvertimeManagement[]
+  summary: IOvertimeManagement[] | undefined
   state: boolean
 }
 
@@ -50,21 +50,23 @@ const SummaryConfirmationModal: FC<Props> = ({
 
   // This will handle Submit and Save New Overtime
   const handleSave: SubmitHandler<ApproveFormValues> = async (data): Promise<void> => {
-    const mappedOvertimeSummary = summary.map((x) => {
-      const mapped: IManagerApproveOvertimeRequestInput = {
-        userId: id as number,
-        overtimeId: x.id,
-        approvedMinutes: x.requestedMinutes,
-        isApproved: state,
-        managerRemarks: data.managerRemarks
-      }
-      return mapped
-    })
-    await approveOvertimeSummaryMutation.mutateAsync(mappedOvertimeSummary, {
-      onSuccess: () => {
-        void closeModal()
-      }
-    })
+    if (summary !== undefined) {
+      const mappedOvertimeSummary = summary?.map((x) => {
+        const mapped: IManagerApproveOvertimeRequestInput = {
+          userId: id as number,
+          overtimeId: x.id,
+          approvedMinutes: x.requestedMinutes,
+          isApproved: state,
+          managerRemarks: data.managerRemarks
+        }
+        return mapped
+      })
+      await approveOvertimeSummaryMutation.mutateAsync(mappedOvertimeSummary, {
+        onSuccess: () => {
+          void closeModal()
+        }
+      })
+    }
   }
 
   const statement = 'Do you want to approve the requested overtime summary?'

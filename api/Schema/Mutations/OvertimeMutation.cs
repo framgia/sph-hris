@@ -45,9 +45,9 @@ namespace api.Schema.Mutations
 
                 var summarizedOvertime = _overtimeService.CreateSummary(overtimeSummary);
 
-                var notificationList = await _notificationService.CreateSummarizedOvertimeNotification(summarizedOvertime, context);
+                var notificationLists = await _notificationService.CreateSummarizedOvertimeNotification(summarizedOvertime, context);
 
-                _notificationService.SendSummarizedOvertimeNotificationEvent(notificationList);
+                notificationLists.ForEach(notificationList => _notificationService.SendSummarizedOvertimeNotificationEvent(notificationList));
 
                 transaction.Commit();
 
@@ -74,10 +74,7 @@ namespace api.Schema.Mutations
 
                     var notificationList = await _notificationService.createBulkOvertimeNotification(newOvertimes, leader.Id);
 
-                    notificationList.ForEach(notif =>
-                    {
-                        _notificationService.sendOvertimeNotificationEvent(notif);
-                    });
+                    notificationList.ForEach(notif => _notificationService.sendOvertimeNotificationEvent(notif));
 
                     transaction.Commit();
 

@@ -30,7 +30,8 @@ import { NotificationRequestInput, NotificationData } from '~/utils/types/notifi
 import {
   getChangeShiftNotificationSubQuery,
   getLeaveNotificationSubQuery,
-  getOvertimeNotificationSubQuery
+  getOvertimeNotificationSubQuery,
+  getSummaryOvertimeNotification
 } from '~/graphql/subscriptions/leaveSubscription'
 import useScreenCondition from '~/hooks/useScreenCondition'
 import { getESLOffsetNotificationSubscription } from '~/graphql/subscriptions/eslOffsetSubscription'
@@ -255,6 +256,19 @@ const Header: FC<Props> = (props): JSX.Element => {
     clientWebsocket.subscribe(
       {
         query: getFileOffsetNotificationSubscription(userId)
+      },
+      {
+        next: ({ data }: any) => {
+          void queryClient.invalidateQueries({ queryKey: ['GET_ALL_USER_NOTIFICATION'] })
+        },
+        error: () => null,
+        complete: () => null
+      }
+    )
+
+    clientWebsocket.subscribe(
+      {
+        query: getSummaryOvertimeNotification(userId)
       },
       {
         next: ({ data }: any) => {
