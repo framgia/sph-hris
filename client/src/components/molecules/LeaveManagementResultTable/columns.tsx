@@ -14,8 +14,10 @@ import Card from '~/components/atoms/Card'
 import { queryClient } from '~/lib/queryClient'
 import { getLeaveType } from '~/utils/getLeaveType'
 import { LeaveTable } from '~/utils/types/leaveTypes'
-import { Pathname } from '~/utils/constants/pathnames'
 import CellHeader from '~/components/atoms/CellHeader'
+import EditUndertimeModal from '../EditUndertimeModal'
+import { Pathname } from '~/utils/constants/pathnames'
+import { LeaveTypes } from '~/utils/constants/leaveTypes'
 import { LeaveStatus } from '~/utils/constants/leaveStatus'
 import WorkStatusChip from '~/components/atoms/WorkStatusChip'
 import MenuTransition from '~/components/templates/MenuTransition'
@@ -95,19 +97,19 @@ export const columns = [
     cell: (props) => {
       const router = useRouter()
       const { pathname } = router
-      const isMyLeavePage = pathname === Pathname.MyLeavesPath
-
       const { userId } = props.row.original
       const leaveId = props.row.original.leaveId
+      const { handleCancelLeaveMutation } = useLeave()
+      const [isOpen, setIsOpen] = useState<boolean>(false)
+      const isMyLeavePage = pathname === Pathname.MyLeavesPath
+      const useCancelLeaveMutation = handleCancelLeaveMutation(userId, leaveId)
+      const isUndertime = props.row.original.leaveTypeId === LeaveTypes.UNDERTIME
+      const menuItemButton = 'flex px-3 py-2 text-left text-xs hover:text-slate-700 text-slate-500'
+
       const isPending =
         props.row.original.status.toLowerCase() === LeaveStatus.PENDING.toLowerCase()
 
-      const [isOpen, setIsOpen] = useState<boolean>(false)
       const cancelButtonRef = useRef<HTMLButtonElement | null>(null)
-
-      // USE LEAVE HOOKS
-      const { handleCancelLeaveMutation } = useLeave()
-      const cancelLeaveMutation = handleCancelLeaveMutation(userId, leaveId)
 
       // Close the Edit Modal
       const handleToggle = (): void => {
@@ -133,7 +135,7 @@ export const columns = [
           if (cancelButtonRef.current !== null) {
             try {
               cancelButtonRef.current.innerHTML = 'Canceling...'
-              await cancelLeaveMutation.mutateAsync({ userId, leaveId })
+              await useCancelLeaveMutation.mutateAsync({ userId, leaveId })
               await queryClient.invalidateQueries()
               toast.success('Leave cancelled successfully.')
             } catch {
@@ -187,8 +189,6 @@ export const columns = [
         void router.push({ pathname, query })
       }
 
-      const menuItemButton = 'flex px-3 py-2 text-left text-xs hover:text-slate-700 text-slate-500'
-
       if (isMyLeavePage) {
         return (
           <div
@@ -197,12 +197,22 @@ export const columns = [
               'border-transparent group-hover:border-slate-300'
             )}
           >
-            <EditLeaveModal
-              {...{
-                isOpen,
-                closeModal: handleToggle
-              }}
-            />
+            {isUndertime ? (
+              <EditUndertimeModal
+                {...{
+                  isOpen,
+                  closeModal: handleToggle
+                }}
+              />
+            ) : (
+              <EditLeaveModal
+                {...{
+                  isOpen,
+                  closeModal: handleToggle
+                }}
+              />
+            )}
+
             <Menu as="div" className="relative w-full">
               {isPending && (
                 <Menu.Button className="p-0.5 text-slate-500 outline-none">

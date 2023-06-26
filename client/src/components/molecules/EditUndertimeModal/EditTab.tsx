@@ -27,8 +27,8 @@ import { customStyles } from '~/utils/customReactSelectStyles'
 import { LeaveProject, LeaveType } from '~/utils/types/leaveTypes'
 import { LeaderDetails, ProjectDetails } from '~/utils/types/projectTypes'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
-import { numberOfDaysInLeaves } from '~/utils/constants/dummyAddNewLeaveFields'
 import { NewLeaveFormValues, ReactSelectOption } from '~/utils/types/formValues'
+import { numberOfDaysInLeavesByUndertime } from '~/utils/constants/dummyAddNewLeaveFields'
 import {
   generateUserSelect,
   generateLeaveTypeSelect,
@@ -43,7 +43,7 @@ type Props = {
 
 const animatedComponents = makeAnimated()
 
-const EditTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
+const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
   const router = useRouter()
   const { leaveId } = router.query
   const [managers, setManagers] = useState<UserType[]>([])
@@ -79,15 +79,7 @@ const EditTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
     label: '',
     value: ''
   }
-  const paidLeaves = user?.userById.paidLeaves
-
-  const hasRemainingPaidLeaves = paidLeaves !== undefined ? paidLeaves <= 0 : false
-
   const [isSaveDisable, setIsSaveDisable] = useState<boolean>(true)
-
-  const handleDataChange = (): void => {
-    setIsSaveDisable(false)
-  }
 
   // modify custom style control
   customStyles.control = (provided: Record<string, unknown>, state: any): any => ({
@@ -125,13 +117,11 @@ const EditTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
         managerId: parseInt(data.manager.value),
         reason: data.reason,
         otherProject: others.filter((value) => value !== false).toString(),
-        leaveDates: data.leave_date.map((date) => {
-          return {
-            leaveDate: date.date,
-            isWithPay: date.is_with_pay,
-            days: parseFloat(date.number_of_days_in_leave.value)
-          }
-        }),
+        leaveDates: data.leave_date.map((date) => ({
+          leaveDate: date.date,
+          isWithPay: date.is_with_pay,
+          days: parseFloat(date.number_of_days_in_leave.value)
+        })),
         leaveProjects: data.projects.map((project) => {
           const otherProjectType = projects?.projects.find(
             (project) => project.name.toLowerCase() === 'others'
@@ -257,9 +247,9 @@ const EditTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
       const leaveDateValue = [
         {
           date: moment(String(leaveDate)).format('YYYY-MM-DD'),
-          number_of_days_in_leave: generateNumberOfDaysSelect(numberOfDaysInLeaves).filter(
-            (x) => parseFloat(x.value).toFixed(4) === days.toFixed(4)
-          )[0],
+          number_of_days_in_leave: generateNumberOfDaysSelect(
+            numberOfDaysInLeavesByUndertime
+          ).filter((x) => parseFloat(x.value).toFixed(4) === days.toFixed(4))[0],
           is_with_pay: isWithPay
         }
       ]
@@ -416,9 +406,9 @@ const EditTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
             </div>
           ))}
 
-          {/* Leave Type */}
+          {/* undertime Type */}
           <section className="col-span-2">
-            <TextField title="Leave Type" Icon={User} isRequired className="py-2.5 text-xs">
+            <TextField title="undertime Type" Icon={User} isRequired className="py-2.5 text-xs">
               <Controller
                 name="leave_type"
                 control={control}
@@ -446,7 +436,7 @@ const EditTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                       }}
                       value={field.value}
                       onChange={handleDataChange}
-                      isDisabled={isSubmitting}
+                      isDisabled={true}
                       options={generateLeaveTypeSelect(leaveTypes?.leaveTypes as LeaveType[])}
                     />
                   )
@@ -454,11 +444,11 @@ const EditTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
               />
             </TextField>
             {errors.leave_type !== null && errors.leave_type !== undefined && (
-              <span className="error text-[10px]">Type of leave is required</span>
+              <span className="error text-[10px]">Type of undertime is required</span>
             )}
           </section>
 
-          {/* Leave Dynamic Field */}
+          {/* undertime Dynamic Field */}
           {leaveDateFields.map((date, index) => (
             <div
               key={date.id}
@@ -476,34 +466,49 @@ const EditTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
               {/* Date Calendar Field */}
               <section className="w-full sm:w-[36%]">
                 <TextField
-                  title={`Leave Date`}
+                  title={`Undertime Date`}
                   Icon={Calendar}
                   isRequired
                   isError={errors?.leave_date?.[index]?.date}
                   className="flex-1"
                 >
-                  <Input
-                    type="date"
-                    disabled={isSubmitting}
-                    {...register(`leave_date.${index}.date` as any)}
-                    placeholder="Leave Date"
-                    iserror={
-                      errors.leave_date?.[index]?.date !== null &&
-                      errors.leave_date?.[index]?.date !== undefined
-                    }
-                    className="py-2.5 pl-11 text-xs"
-                    onChange={handleDataChange}
+                  <Controller
+                    name={`leave_date.${index}.date` as any}
+                    control={control}
+                    render={({ field }) => {
+                      const handleDataChange = (selectedOption: any): void => {
+                        field.onChange(selectedOption)
+                        setIsSaveDisable(false)
+                      }
+
+                      return (
+                        <Input
+                          type="date"
+                          disabled={isSubmitting}
+                          {...register(`leave_date.${index}.date` as any)}
+                          placeholder="undertime Date"
+                          iserror={
+                            errors.leave_date?.[index]?.date !== null &&
+                            errors.leave_date?.[index]?.date !== undefined
+                          }
+                          className="py-2.5 pl-11 text-xs"
+                          onChange={handleDataChange}
+                        />
+                      )
+                    }}
                   />
                 </TextField>
                 {errors.leave_date?.[index]?.date !== null &&
                   errors.leave_date?.[index]?.date !== undefined && (
-                    <span className="error absolute text-[10px]">Leave Date is required field</span>
+                    <span className="error absolute text-[10px]">
+                      undertime Date is required field
+                    </span>
                   )}
               </section>
-              {/* Number of days in leave */}
-              <section className="w-full flex-1">
+              {/* Number of days in undertime (Undertime) */}
+              <section className="col-span-2 flex-1">
                 <TextField
-                  title="Number of Days in Leave"
+                  title="Number of Days in undertime"
                   Icon={User}
                   isRequired
                   className="py-2.5 text-xs"
@@ -537,7 +542,7 @@ const EditTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                           value={field.value}
                           onChange={handleDataChange}
                           isDisabled={isSubmitting}
-                          options={generateNumberOfDaysSelect(numberOfDaysInLeaves)}
+                          options={generateNumberOfDaysSelect(numberOfDaysInLeavesByUndertime)}
                         />
                       )
                     }}
@@ -545,37 +550,11 @@ const EditTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
                 </TextField>
                 {errors.leave_date?.[index]?.number_of_days_in_leave !== null &&
                   errors.leave_date?.[index]?.number_of_days_in_leave !== undefined && (
-                    <span className="error absolute text-[10px]">
-                      Number of days in leave is required
+                    <span className="error text-[10px]">
+                      Number of days in undertime is required
                     </span>
                   )}
               </section>
-              <div className="ml-4 flex items-center space-x-2 sm:ml-0">
-                {/* With Pay boolean */}
-                <div className="shrink-0">
-                  <label className="flex h-10 items-center">
-                    <input
-                      disabled={hasRemainingPaidLeaves}
-                      type="checkbox"
-                      className={classNames(
-                        `h-4 w-4 rounded border-slate-300 bg-slate-100 ${
-                          hasRemainingPaidLeaves ? 'opacity-30' : ''
-                        }`,
-                        'text-primary focus:ring-primary'
-                      )}
-                      {...register(`leave_date.${index}.is_with_pay` as any)}
-                      onChange={handleDataChange}
-                    />
-                    <span
-                      className={`ml-2 select-none text-xs capitalize text-slate-500 ${
-                        hasRemainingPaidLeaves ? 'opacity-30' : ''
-                      }`}
-                    >
-                      With Pay
-                    </span>
-                  </label>
-                </div>
-              </div>
             </div>
           ))}
 
@@ -621,20 +600,33 @@ const EditTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
             )}
           </section>
 
-          {/* Reason for leave Field */}
+          {/* Reason for undertime Field */}
           <section className="col-span-2">
-            <TextField title="Reason for leave" Icon={FileText} isRequired>
-              <ReactTextareaAutosize
-                id="reason"
-                {...register('reason')}
-                className={classNames(
-                  'text-area-auto-resize pl-12',
-                  errors?.reason !== null && errors.reason !== undefined
-                    ? 'border-rose-500 ring-rose-500'
-                    : ''
-                )}
-                disabled={isSubmitting}
-                onChange={handleDataChange}
+            <TextField title="Reason for undertime" Icon={FileText} isRequired>
+              <Controller
+                name={'reason'}
+                control={control}
+                render={({ field }) => {
+                  const handleDataChange = (selectedOption: any): void => {
+                    field.onChange(selectedOption)
+                    setIsSaveDisable(false)
+                  }
+
+                  return (
+                    <ReactTextareaAutosize
+                      id="reason"
+                      {...register('reason')}
+                      className={classNames(
+                        'text-area-auto-resize pl-12',
+                        errors?.reason !== null && errors.reason !== undefined
+                          ? 'border-rose-500 ring-rose-500'
+                          : ''
+                      )}
+                      disabled={isSubmitting}
+                      onChange={handleDataChange}
+                    />
+                  )
+                }}
               />
             </TextField>
             {errors.reason !== null && errors.reason !== undefined && (
@@ -689,6 +681,6 @@ const EditTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
   )
 }
 
-EditTab.defaultProps = {}
+UndertimeTab.defaultProps = {}
 
-export default EditTab
+export default UndertimeTab
