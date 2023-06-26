@@ -1,7 +1,7 @@
-import React, { FC } from 'react'
 import classNames from 'classnames'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/router'
+import React, { FC, useRef } from 'react'
 import { Calendar, Trash2 } from 'react-feather'
 import { confirmAlert } from 'react-confirm-alert'
 
@@ -21,6 +21,8 @@ type Props = {
 const ScheduleItem: FC<Props> = (props): JSX.Element => {
   const item = props.item
   const closeModal = props.closeModal ?? (() => {})
+
+  const deleteButtonRef = useRef<HTMLButtonElement | null>(null)
 
   const router = useRouter()
   const id = Number(router.query.id)
@@ -46,11 +48,12 @@ const ScheduleItem: FC<Props> = (props): JSX.Element => {
             </p>
             <div className="mt-6 flex items-center justify-center space-x-2 text-white">
               <ButtonAction
+                ref={deleteButtonRef}
                 onClick={() => {
-                  handleDeleteSchedule(onClose, item.id)
-                  return onClose()
+                  void handleDeleteSchedule(onClose, item.id)
                 }}
                 variant="danger"
+                disabled={deleteButtonRef.current !== null}
                 className="w-full py-1 px-4"
               >
                 Yes
@@ -70,25 +73,26 @@ const ScheduleItem: FC<Props> = (props): JSX.Element => {
   }
 
   // THIS WILL MUTATE THE DELETE ACTION
-  const handleDeleteSchedule = (onClose: () => void, id: Number): void => {
-    deleteEmployeeScheduleMutation.mutate(
-      {
-        employeeScheduleId: Number(id),
-        userId: user?.userById.id as number
-      },
-      {
-        onSuccess: () => {
-          void queryClient.invalidateQueries({
-            queryKey: ['GET_ALL_EMPLOYEE_SCHEDULE']
-          })
-          void router.replace({
-            pathname: router.pathname
-          })
-          toast.success('Deleted Successfully!')
-        }
+  const handleDeleteSchedule = async (onClose: () => void, id: Number): Promise<void> => {
+    try {
+      if (deleteButtonRef.current !== null) {
+        deleteButtonRef.current.innerHTML = 'Deleting...'
+        await deleteEmployeeScheduleMutation.mutateAsync({
+          employeeScheduleId: Number(id),
+          userId: user?.userById.id as number
+        })
+        await queryClient.invalidateQueries(['GET_ALL_EMPLOYEE_SCHEDULE'])
+        void router.replace({
+          pathname: router.pathname
+        })
+        toast.success('Deleted Successfully!')
       }
-    )
-    onClose()
+    } finally {
+      if (deleteButtonRef.current !== null) {
+        deleteButtonRef.current.innerHTML = 'Yes'
+        onClose()
+      }
+    }
   }
 
   return (

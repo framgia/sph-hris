@@ -1,5 +1,6 @@
 import moment from 'moment'
 import Tippy from '@tippyjs/react'
+import toast from 'react-hot-toast'
 import { useRouter } from 'next/router'
 import { Edit, Trash } from 'react-feather'
 import React, { useRef, useState } from 'react'
@@ -57,10 +58,22 @@ export const columns = [
       }
 
       // Actual Deletion
-      const handleYesDeleteRemark = (remarkId: string | number, onClose: () => void): void => {
-        if (deleteButtonRef.current !== undefined) {
-          deleteInterruption.mutate({ id: remarkId as number })
-          onClose()
+      const handleYesDeleteRemark = async (
+        remarkId: string | number,
+        onClose: () => void
+      ): Promise<void> => {
+        if (deleteButtonRef.current !== null) {
+          try {
+            deleteButtonRef.current.innerHTML = 'Deleting...'
+            await deleteInterruption.mutateAsync({ id: remarkId as number })
+          } catch {
+            toast.error('Something went wrong')
+          } finally {
+            if (deleteButtonRef.current !== null) {
+              deleteButtonRef.current.innerHTML = 'Yes'
+              onClose()
+            }
+          }
         }
       }
 
@@ -81,7 +94,9 @@ export const columns = [
                   </button>
                   <button
                     ref={deleteButtonRef}
-                    onClick={() => handleYesDeleteRemark(remarkId, onClose)}
+                    onClick={() => {
+                      void handleYesDeleteRemark(remarkId, onClose)
+                    }}
                     className="rounded-lg bg-blue-500 py-1 px-6 transition duration-100 ease-in-out hover:bg-blue-600"
                   >
                     Yes
@@ -141,7 +156,9 @@ export const columns = [
           </Tippy>
           <Tippy content="Delete" placement="right" className="!text-xs">
             <Button
-              onClick={() => handleConfirmDeleteRemark(interruptionTimeEntry.id)}
+              onClick={() => {
+                void handleConfirmDeleteRemark(interruptionTimeEntry.id)
+              }}
               disabled={checkStatus}
               rounded="none"
               className="py-0.5 px-1 text-slate-500"

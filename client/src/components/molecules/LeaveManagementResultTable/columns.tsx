@@ -1,19 +1,18 @@
 import moment from 'moment'
 import { omit } from 'lodash'
 import classNames from 'classnames'
-import React, { useState } from 'react'
+import toast from 'react-hot-toast'
 import { useRouter } from 'next/router'
 import { Menu } from '@headlessui/react'
+import React, { useRef, useState } from 'react'
+import { confirmAlert } from 'react-confirm-alert'
+import { Edit, MoreVertical, X } from 'react-feather'
 import { createColumnHelper } from '@tanstack/react-table'
 
-import toast from 'react-hot-toast'
 import useLeave from '~/hooks/useLeave'
 import Card from '~/components/atoms/Card'
 import { queryClient } from '~/lib/queryClient'
-import { confirmAlert } from 'react-confirm-alert'
 import { getLeaveType } from '~/utils/getLeaveType'
-import SpinnerIcon from '~/utils/icons/SpinnerIcon'
-import { Edit, MoreVertical, X } from 'react-feather'
 import { LeaveTable } from '~/utils/types/leaveTypes'
 import { Pathname } from '~/utils/constants/pathnames'
 import CellHeader from '~/components/atoms/CellHeader'
@@ -96,16 +95,19 @@ export const columns = [
     cell: (props) => {
       const router = useRouter()
       const { pathname } = router
+      const isMyLeavePage = pathname === Pathname.MyLeavesPath
+
       const { userId } = props.row.original
       const leaveId = props.row.original.leaveId
-      const { handleCancelLeaveMutation } = useLeave()
-      const [isOpen, setIsOpen] = useState<boolean>(false)
-      const isMyLeavePage = pathname === Pathname.MyLeavesPath
-      const useCancelLeaveMutation = handleCancelLeaveMutation(userId, leaveId)
-      const menuItemButton = 'flex px-3 py-2 text-left text-xs hover:text-slate-700 text-slate-500'
-
       const isPending =
         props.row.original.status.toLowerCase() === LeaveStatus.PENDING.toLowerCase()
+
+      const [isOpen, setIsOpen] = useState<boolean>(false)
+      const cancelButtonRef = useRef<HTMLButtonElement | null>(null)
+
+      // USE LEAVE HOOKS
+      const { handleCancelLeaveMutation } = useLeave()
+      const cancelLeaveMutation = handleCancelLeaveMutation(userId, leaveId)
 
       // Close the Edit Modal
       const handleToggle = (): void => {
@@ -127,6 +129,24 @@ export const columns = [
       }
 
       const handleConfirmCancelLeave = (userId: number, leaveId: number): void => {
+        const handleCancel = async (onClose: () => void): Promise<void> => {
+          if (cancelButtonRef.current !== null) {
+            try {
+              cancelButtonRef.current.innerHTML = 'Canceling...'
+              await cancelLeaveMutation.mutateAsync({ userId, leaveId })
+              await queryClient.invalidateQueries()
+              toast.success('Leave cancelled successfully.')
+            } catch {
+              toast.error('Something went wrong')
+            } finally {
+              if (cancelButtonRef.current !== null) {
+                cancelButtonRef.current.innerHTML = 'Yes'
+                onClose()
+              }
+            }
+          }
+        }
+
         confirmAlert({
           customUI: ({ onClose }) => {
             return (
@@ -137,26 +157,13 @@ export const columns = [
                 </p>
                 <div className="mt-6 flex items-center justify-center space-x-2 text-white">
                   <ButtonAction
-                    disabled={useCancelLeaveMutation.isLoading}
+                    ref={cancelButtonRef}
                     onClick={() => {
-                      void useCancelLeaveMutation.mutate(
-                        { userId, leaveId },
-                        {
-                          onSuccess: ({ cancelLeave }) => {
-                            void queryClient.invalidateQueries().then(() => {
-                              toast.success(cancelLeave)
-                            })
-                          }
-                        }
-                      )
-                      return onClose()
+                      void handleCancel(onClose)
                     }}
                     variant="danger"
                     className="w-full py-1 px-4"
                   >
-                    {useCancelLeaveMutation.isLoading && (
-                      <SpinnerIcon className=" mr-2 fill-gray-500" />
-                    )}
                     Yes
                   </ButtonAction>
                   <ButtonAction
@@ -179,6 +186,8 @@ export const columns = [
         query[key] = value
         void router.push({ pathname, query })
       }
+
+      const menuItemButton = 'flex px-3 py-2 text-left text-xs hover:text-slate-700 text-slate-500'
 
       if (isMyLeavePage) {
         return (
