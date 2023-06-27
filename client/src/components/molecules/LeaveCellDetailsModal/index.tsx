@@ -60,49 +60,53 @@ const LeaveCellDetailsModal: FC<Props> = (props): JSX.Element => {
   const {
     data: leavesByDate,
     isLoading: isLeavesLoading,
-    isError: isLeavesError
-  } = getLeaveByDateQuery(userId as number, dateCell, isReady)
+    isError: isLeavesError,
+    isFetching
+  } = getLeaveByDateQuery(userId as number, dateCell, isOpen)
 
   // LEAVE HOOKS -> getLeavesByDateYearly
   const { getYearlyLeaveByDateQuery } = useLeave()
   const {
     data: leavesByDateYearly,
     isLoading: isLeavesLoadingYearly,
-    isError: isLeavesErrorYearly
+    isError: isLeavesErrorYearly,
+    isFetching: isFetchingYearly
   } = getYearlyLeaveByDateQuery(dateCell, isReadyYearly)
 
+  const fetchStatus = isMyLeave === true ? !isFetching : !isFetchingYearly
+
   useEffect(() => {
-    if (isReady && isOpen) {
+    if (isReady && isOpen && fetchStatus) {
       const leaveData = leavesByDate?.leavesByDate?.table.map((item, index) => ({
         id: index + 1,
         userName: item.userName,
         typeOfLeave: getLeaveLabel(item.leaveTypeId),
         withPay: item.isWithPay ? 'With Pay' : 'Without Pay',
-        numOfLeaves: parseFloat(item.numLeaves.toFixed(2)).toString(),
+        numOfLeaves: parseFloat(item.numLeaves.toFixed(3)).toString(),
         reason: item.reason
       }))
 
       setTotNumFiledLeaves(leavesByDate?.leavesByDate?.totalNumberOfFiledLeaves)
       setLeaveData(leaveData ?? [])
     }
-  }, [isLeavesLoading, isOpen])
+  }, [isLeavesLoading, isOpen, fetchStatus])
 
   useEffect(() => {
-    if (isReadyYearly && isOpen) {
+    if (isReadyYearly && isOpen && fetchStatus) {
       const leaveDatayearly = leavesByDateYearly?.yearlyAllLeavesByDate?.table.map(
         (item, index) => ({
           id: index + 1,
           userName: item.userName,
           typeOfLeave: getLeaveLabel(item.leaveTypeId),
           withPay: item.isWithPay ? 'With Pay' : 'Without Pay',
-          numOfLeaves: parseFloat(item.numLeaves.toFixed(2)).toString(),
+          numOfLeaves: parseFloat(item.numLeaves.toFixed(3)).toString(),
           reason: item.reason
         })
       )
       setTotNumFiledLeaves(leavesByDateYearly?.yearlyAllLeavesByDate?.totalNumberOfFiledLeaves ?? 0)
       setLeaveData(leaveDatayearly ?? [])
     }
-  }, [isLeavesLoadingYearly, isOpen])
+  }, [isLeavesLoadingYearly, isOpen, fetchStatus])
 
   const table = useReactTable({
     data: leaveData ?? [],
@@ -125,7 +129,7 @@ const LeaveCellDetailsModal: FC<Props> = (props): JSX.Element => {
   return (
     <ModalTemplate
       {...{
-        isOpen,
+        isOpen: isOpen && fetchStatus,
         closeModal
       }}
       className={classNames('w-full', isMyLeave === true ? 'max-w-3xl' : 'max-w-4xl')}
