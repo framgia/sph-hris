@@ -52,8 +52,8 @@ const LeaveCellDetailsModal: FC<Props> = (props): JSX.Element => {
   const [leaveData, setLeaveData] = useState<LeaveCellDetailTable[]>()
 
   const dateCell: string = `${month} ${day}, ${year}`
-  const isReady = !isEmpty(month) && day !== 0
-  const isReadyYearly = isMyLeave === false
+  const isReady = !isEmpty(month) && day !== 0 && isMyLeave === true // Query will enable on My Leaves Page
+  const isReadyYearly = isMyLeave === false // Query will enable on Leave Summary and Yearly Summary
 
   // LEAVE HOOKS -> getLeavesByDate
   const { getLeaveByDateQuery } = useLeave()
@@ -72,7 +72,7 @@ const LeaveCellDetailsModal: FC<Props> = (props): JSX.Element => {
   } = getYearlyLeaveByDateQuery(dateCell, isReadyYearly)
 
   useEffect(() => {
-    if ((!isLeavesLoading && !isLeavesError) || (!isLeavesLoadingYearly && !isLeavesErrorYearly)) {
+    if (isReady && isOpen) {
       const leaveData = leavesByDate?.leavesByDate?.table.map((item, index) => ({
         id: index + 1,
         userName: item.userName,
@@ -82,6 +82,13 @@ const LeaveCellDetailsModal: FC<Props> = (props): JSX.Element => {
         reason: item.reason
       }))
 
+      setTotNumFiledLeaves(leavesByDate?.leavesByDate?.totalNumberOfFiledLeaves)
+      setLeaveData(leaveData ?? [])
+    }
+  }, [isLeavesLoading, isOpen])
+
+  useEffect(() => {
+    if (isReadyYearly && isOpen) {
       const leaveDatayearly = leavesByDateYearly?.yearlyAllLeavesByDate?.table.map(
         (item, index) => ({
           id: index + 1,
@@ -92,16 +99,10 @@ const LeaveCellDetailsModal: FC<Props> = (props): JSX.Element => {
           reason: item.reason
         })
       )
-
-      setTotNumFiledLeaves(
-        isMyLeave === true
-          ? leavesByDate?.leavesByDate?.totalNumberOfFiledLeaves
-          : leavesByDateYearly?.yearlyAllLeavesByDate?.totalNumberOfFiledLeaves ?? 0
-      )
-
-      setLeaveData(isMyLeave === true ? leaveData : leaveDatayearly ?? [])
+      setTotNumFiledLeaves(leavesByDateYearly?.yearlyAllLeavesByDate?.totalNumberOfFiledLeaves ?? 0)
+      setLeaveData(leaveDatayearly ?? [])
     }
-  }, [isLeavesLoading, isLeavesLoadingYearly])
+  }, [isLeavesLoadingYearly, isOpen])
 
   const table = useReactTable({
     data: leaveData ?? [],

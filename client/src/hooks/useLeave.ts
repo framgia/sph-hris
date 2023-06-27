@@ -93,12 +93,14 @@ const useLeave = (): HookReturnType => {
       select: (data: YearlyLeaves) => data,
       enabled: ready
     })
+
   const handleLeaveTypeQuery = (): getLeaveTypeQueryType =>
     useQuery({
       queryKey: ['GET_LEAVE_TYPES_QUERY'],
       queryFn: async () => await client.request(GET_LEAVE_TYPES_QUERY),
       select: (data: LeaveTypes) => data
     })
+
   const handleLeaveMutation = (): handleLeaveMutationType =>
     useMutation({
       mutationFn: async (leave: LeaveRequest) => {
@@ -155,6 +157,9 @@ const useLeave = (): HookReturnType => {
       onError: async (err: Error) => {
         const [errorMessage] = err.message.split(/:\s/, 2)
         toast.error(errorMessage)
+      },
+      onSuccess: () => {
+        void queryClient.invalidateQueries()
       }
     })
 
@@ -165,12 +170,12 @@ const useLeave = (): HookReturnType => {
           request
         })
       },
-      onSuccess: () => {
-        void queryClient.invalidateQueries()
-      },
       onError: async (err: Error) => {
         const [errorMessage] = err.message.split(/:\s/, 2)
         toast.error(errorMessage)
+      },
+      onSuccess: () => {
+        void queryClient.invalidateQueries()
       }
     })
 
