@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { useRouter } from 'next/router'
-import { Check, X } from 'react-feather'
 import { BsFileEarmarkText } from 'react-icons/bs'
+import { ThumbsDown, ThumbsUp } from 'react-feather'
 
 import useLeave from '~/hooks/useLeave'
 import LeaveDetails from './LeaveDetails'
@@ -145,7 +145,8 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
     <ModalTemplate
       {...{
         isOpen,
-        closeModal: handleClose
+        closeModal: handleClose,
+        status: row.status
       }}
       className="w-full max-w-lg"
     >
@@ -158,7 +159,7 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
         }}
       />
       <main className="px-8 py-4 text-sm  text-slate-700">
-        <ul className="flex flex-col space-y-3 divide-y divide-slate-200">
+        <ul className="flex flex-col space-y-3 divide-y divide-slate-100">
           {/* DETAILS FOR OVERTIME DATA */}
           {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.OVERTIME && (
             <OvertimeDetails
@@ -286,18 +287,18 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
             <>
               <Button
                 variant="success"
-                className="flex items-center space-x-1 py-0.5 px-4"
+                className="flex items-center space-x-1.5 py-0.5 px-4"
                 onClick={() => handleApproveDisapprove(true)}
               >
-                <Check className="h-4 w-4" />
+                <ThumbsUp className="h-4 w-4" />
                 <span>Approve</span>
               </Button>
               <Button
                 variant="danger-outline"
-                className="flex items-center space-x-1 py-0.5 px-2"
+                className="flex items-center space-x-1.5 py-0.5 px-2"
                 onClick={() => handleApproveDisapprove(false)}
               >
-                <X className="h-4 w-4" />
+                <ThumbsDown className="h-4 w-4" />
                 <span>Disapprove</span>
               </Button>
             </>

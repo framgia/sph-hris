@@ -2,16 +2,34 @@ import classNames from 'classnames'
 import { Dialog, Transition } from '@headlessui/react'
 import React, { Fragment, FC, ReactNode, useRef } from 'react'
 
+import { RequestStatus } from '~/utils/constants/requestStatus'
+
 type Props = {
   isOpen: boolean
   closeModal: () => void
   children: ReactNode
   className?: string
+  status?: string | undefined
 }
 
 const ModalTemplate: FC<Props> = (props): JSX.Element => {
   const refDiv = useRef<HTMLDivElement>(null)
-  const { isOpen, closeModal, children, className } = props
+  const { isOpen, closeModal, children, className, status } = props
+
+  const getStatusStyle = (status: string): string => {
+    switch (status) {
+      case RequestStatus.APPROVED:
+        return 'shadow-green-200 ring-1 ring-green-300'
+      case RequestStatus.DISAPPROVED:
+        return 'shadow-rose-200 ring-1 ring-rose-300'
+      case RequestStatus.PENDING:
+        return 'shadow-amber-200 ring-1 ring-amber-300'
+      case RequestStatus.CANCELLED:
+        return 'shadow-red-200 ring-1 ring-red-300'
+      default:
+        return ''
+    }
+  }
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -42,7 +60,8 @@ const ModalTemplate: FC<Props> = (props): JSX.Element => {
               <Dialog.Panel
                 className={classNames(
                   className,
-                  'transform overflow-hidden rounded-xl bg-white text-left align-middle shadow-xl transition-all'
+                  'transform overflow-hidden rounded-xl bg-white text-left align-middle shadow-xl transition-all',
+                  getStatusStyle(status as string)
                 )}
                 ref={refDiv}
               >
@@ -58,7 +77,8 @@ const ModalTemplate: FC<Props> = (props): JSX.Element => {
 
 ModalTemplate.defaultProps = {
   isOpen: false,
-  className: 'w-full max-w-3xl'
+  className: 'w-full max-w-3xl',
+  status: ''
 }
 
 export default ModalTemplate
