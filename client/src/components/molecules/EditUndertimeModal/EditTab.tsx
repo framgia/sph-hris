@@ -24,14 +24,13 @@ import { NewLeaveSchema } from '~/utils/validation'
 import { User as UserType } from '~/utils/types/userTypes'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { customStyles } from '~/utils/customReactSelectStyles'
-import { LeaveProject, LeaveType } from '~/utils/types/leaveTypes'
+import { LeaveProject } from '~/utils/types/leaveTypes'
 import { LeaderDetails, ProjectDetails } from '~/utils/types/projectTypes'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import { NewLeaveFormValues, ReactSelectOption } from '~/utils/types/formValues'
 import { numberOfDaysInLeavesByUndertime } from '~/utils/constants/dummyAddNewLeaveFields'
 import {
   generateUserSelect,
-  generateLeaveTypeSelect,
   generateNumberOfDaysSelect,
   generateProjectsMultiSelect
 } from '~/utils/createLeaveHelpers'
@@ -50,14 +49,13 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
   const [leaders, setLeaders] = useState<LeaderDetails[]>([])
   const { handleProjectQuery, getLeadersQuery } = useProject()
   const { handleAllUsersQuery, handleUserQuery } = useUserQuery()
-  const { handleLeaveTypeQuery, getSpecificLeaveQuery, handleUpdateLeaveMutation } = useLeave()
+  const { getSpecificLeaveQuery, handleUpdateLeaveMutation } = useLeave()
   const { data: user } = handleUserQuery()
   const leaveMutation = handleUpdateLeaveMutation(
     user?.userById.id as number,
     parseInt(router.query.year as string)
   )
   const { data: projects } = handleProjectQuery()
-  const { data: leaveTypes } = handleLeaveTypeQuery()
   const { data: leadersList } = getLeadersQuery(undefined)
   const { data: userLeave } = getSpecificLeaveQuery(Number(leaveId))
   const { data: users, isSuccess: isUsersSuccess } = handleAllUsersQuery()
@@ -309,7 +307,7 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
               )}
             >
               {/* Project */}
-              <section className="w-full sm:w-[43%]">
+              <section className="w-full sm:w-[50%]">
                 <TextField title={`Project`} Icon={Coffee} isRequired>
                   <Controller
                     name={`projects.${index}.project_name` as any}
@@ -406,48 +404,6 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
             </div>
           ))}
 
-          {/* undertime Type */}
-          <section className="col-span-2">
-            <TextField title="undertime Type" Icon={User} isRequired className="py-2.5 text-xs">
-              <Controller
-                name="leave_type"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => {
-                  const handleDataChange = (selectedOption: any): void => {
-                    field.onChange(selectedOption)
-                    setIsSaveDisable(false)
-                  }
-
-                  return (
-                    <ReactSelect
-                      {...field}
-                      isClearable
-                      placeholder=""
-                      className="w-full"
-                      styles={customStyles}
-                      classNames={{
-                        control: (state) =>
-                          state.isFocused
-                            ? 'border-primary'
-                            : errors.leave_type !== null && errors.leave_type !== undefined
-                            ? 'border-rose-500 ring-rose-500'
-                            : 'border-slate-300'
-                      }}
-                      value={field.value}
-                      onChange={handleDataChange}
-                      isDisabled={true}
-                      options={generateLeaveTypeSelect(leaveTypes?.leaveTypes as LeaveType[])}
-                    />
-                  )
-                }}
-              />
-            </TextField>
-            {errors.leave_type !== null && errors.leave_type !== undefined && (
-              <span className="error text-[10px]">Type of undertime is required</span>
-            )}
-          </section>
-
           {/* undertime Dynamic Field */}
           {leaveDateFields.map((date, index) => (
             <div
@@ -464,7 +420,7 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
               )}
             >
               {/* Date Calendar Field */}
-              <section className="w-full sm:w-[36%]">
+              <section className="w-full sm:w-[50%]">
                 <TextField
                   title={`Undertime Date`}
                   Icon={Calendar}
