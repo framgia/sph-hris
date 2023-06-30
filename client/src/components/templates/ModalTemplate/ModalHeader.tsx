@@ -27,7 +27,7 @@ const ModalHeader: FC<Props> = (props): JSX.Element => {
         className
       )}
     >
-      <div className="flex items-start space-x-2 text-slate-700">
+      <div className="flex flex-wrap items-center gap-2 text-slate-700">
         {hasAvatar === true ? (
           <Avatar
             onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) =>

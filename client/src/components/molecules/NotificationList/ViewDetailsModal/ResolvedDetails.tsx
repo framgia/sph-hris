@@ -2,6 +2,7 @@ import moment from 'moment'
 import React, { FC } from 'react'
 
 import { INotification } from '~/utils/interfaces'
+import RequestStatusChip from '~/components/atoms/RequestStatusChip'
 
 type Props = {
   notification: INotification
@@ -29,7 +30,7 @@ const ResolvedDetails: FC<Props> = ({ notification }): JSX.Element => {
       </li>
       <li className="inline-flex items-center space-x-3 pt-2">
         <span className="text-slate-600">Status: </span>
-        <span className="flex items-center font-medium">{status}</span>
+        <RequestStatusChip label={status.toLocaleLowerCase()} />
       </li>
       <li className="inline-flex flex-col space-y-2 pt-2">
         <span className="text-slate-600">Remarks: </span>
