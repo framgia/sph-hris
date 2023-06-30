@@ -518,7 +518,6 @@ namespace api.Services
             {
                 var user = context.Users.Find(fromUserId);
                 var projectNames = context.MultiProjects.Where(x => x.OvertimeId == overtime.Id && x.Type == MultiProjectTypeEnum.OVERTIME).Select(x => x.ProjectId == ProjectId.OTHER_PROJECT ? overtime.OtherProject : x.Project.Name);
-
                 var dataToUser = JsonSerializer.Serialize(new
                 {
                     User = new
@@ -535,7 +534,9 @@ namespace api.Services
                     Type = IsApproved ? NotificationDataTypeEnum.APPROVE : NotificationDataTypeEnum.DISAPPROVE,
                     Status = IsApproved ? RequestStatus.APPROVED : RequestStatus.DISAPPROVED,
                     Remarks = overtime.Remarks,
-                    ManagerRemarks = overtime.ManagerRemarks
+                    ManagerRemarks = overtime.ManagerRemarks,
+                    RequestedTimeIn = overtime.TimeEntry.TimeIn!.TimeHour.ToString(@"hh\:mm"),
+                    RequestedTimeOut = overtime.TimeEntry.TimeOut!.TimeHour.ToString(@"hh\:mm")
                 }
                 );
 

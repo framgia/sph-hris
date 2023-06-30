@@ -319,7 +319,7 @@ const EditTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
               )}
             >
               {/* Project */}
-              <section className="w-full sm:w-[43%]">
+              <section className="w-full sm:w-[50%]">
                 <TextField title={`Project`} Icon={Coffee} isRequired>
                   <Controller
                     name={`projects.${index}.project_name` as any}
@@ -474,7 +474,7 @@ const EditTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
               )}
             >
               {/* Date Calendar Field */}
-              <section className="w-full sm:w-[36%]">
+              <section className="w-full sm:w-[43%]">
                 <TextField
                   title={`Leave Date`}
                   Icon={Calendar}
