@@ -14,10 +14,12 @@ import { X, Save, Coffee, FileText, Calendar, User, Minus, Plus, RefreshCcw } fr
 import TextField from './../TextField'
 import useLeave from '~/hooks/useLeave'
 import useProject from '~/hooks/useProject'
+import { Emoji } from '~/utils/types/emoji'
 import Input from '~/components/atoms/Input'
 import useUserQuery from '~/hooks/useUserQuery'
 import { Roles } from '~/utils/constants/roles'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
+import EmojiPopoverPicker from '../EmojiPopoverPicker'
 import { UndertimeLeaveSchema } from '~/utils/validation'
 import { LeaveTypes } from '~/utils/constants/leaveTypes'
 import { User as UserType } from '~/utils/types/userTypes'
@@ -89,10 +91,11 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
 
   const {
     reset,
+    watch,
     control,
     register,
+    setValue,
     handleSubmit,
-    watch,
     formState: { errors, isSubmitting }
   } = useForm<UndertimeFormValues>({
     mode: 'onTouched',
@@ -192,6 +195,9 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
 
   // Remove Date
   const handleRemoveProject = (index: number): void => projectRemove(index)
+
+  const handleEmojiSelect = (emoji: Emoji): void =>
+    setValue('reason', watch('reason') + emoji.native)
 
   return (
     <Tab.Panel className="focus:outline-none">
@@ -422,22 +428,30 @@ const UndertimeTab: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
           </section>
 
           {/* Reason for leave Field */}
-          <section className="col-span-2">
+          <section className="relative col-span-2">
             <TextField title="Reason for leave" Icon={FileText} isRequired>
               <ReactTextareaAutosize
                 id="reason"
                 {...register('reason')}
                 className={classNames(
-                  'text-area-auto-resize pl-12',
+                  'text-area-auto-resize min-h-[13vh] w-full pl-12 pb-8',
                   errors?.reason !== null && errors.reason !== undefined
                     ? 'border-rose-500 ring-rose-500'
                     : ''
                 )}
                 disabled={isSubmitting}
               />
+              <div className="absolute bottom-1 left-11">
+                <EmojiPopoverPicker
+                  {...{
+                    handleEmojiSelect,
+                    panelPosition: 'left-0 bottom-8'
+                  }}
+                />
+              </div>
             </TextField>
             {errors.reason !== null && errors.reason !== undefined && (
-              <span className="error text-[10px]">{errors.reason?.message}</span>
+              <span className="error text-[10px]">{errors?.reason?.message}</span>
             )}
           </section>
         </main>

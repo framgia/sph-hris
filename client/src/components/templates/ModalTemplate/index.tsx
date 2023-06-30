@@ -33,7 +33,7 @@ const ModalTemplate: FC<Props> = (props): JSX.Element => {
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={() => closeModal()} initialFocus={refDiv}>
+      <Dialog as="div" className="relative z-50" onClose={closeModal} initialFocus={refDiv}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"

@@ -7,10 +7,12 @@ import ReactTextareaAutosize from 'react-textarea-autosize'
 import { MessageCircle, ThumbsDown, X } from 'react-feather'
 
 import TextField from './../TextField'
+import { Emoji } from '~/utils/types/emoji'
 import useOvertime from '~/hooks/useOvertime'
 import useUserQuery from '~/hooks/useUserQuery'
 import Button from '~/components/atoms/Buttons/Button'
 import handleImageError from '~/utils/handleImageError'
+import EmojiPopoverPicker from './../EmojiPopoverPicker'
 import { IOvertimeManagementManager } from '~/utils/interfaces'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import { DisapproveConfirmationSchema } from '~/utils/validation'
@@ -29,7 +31,9 @@ type DisapproveFormValues = {
 const DisapproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Element => {
   const {
     reset,
+    watch,
     register,
+    setValue,
     handleSubmit,
     formState: { errors, isSubmitting }
   } = useForm<DisapproveFormValues>({
@@ -76,13 +80,16 @@ const DisapproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JS
 
   const statement = `Do you want disapprove the requested overtime for the Project ${projectNamesString} of this person?`
 
+  const handleEmojiSelect = (emoji: Emoji): void =>
+    setValue('managerRemarks', watch('managerRemarks') + emoji.native)
+
   return (
     <ModalTemplate
       {...{
         isOpen,
         closeModal
       }}
-      className="w-full max-w-md"
+      className="w-full max-w-md overflow-visible"
     >
       <form
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -112,7 +119,7 @@ const DisapproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JS
           <h3 className="text-sm font-normal text-slate-600">{statement}</h3>
 
           {/* Remarks */}
-          <section className="col-span-2 mt-4">
+          <section className="relative col-span-2 mt-4">
             <TextField title="Remarks" Icon={MessageCircle} isRequired>
               <ReactTextareaAutosize
                 id="reason"
@@ -125,6 +132,14 @@ const DisapproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JS
                 )}
                 disabled={isSubmitting || disapproveOvertimeMutation.isLoading}
               />
+              <div className="absolute bottom-1 left-11">
+                <EmojiPopoverPicker
+                  {...{
+                    handleEmojiSelect,
+                    panelPosition: 'left-0 bottom-8'
+                  }}
+                />
+              </div>
             </TextField>
             {errors.managerRemarks !== null && errors.managerRemarks !== undefined && (
               <span className="error text-[10px]">{errors.managerRemarks?.message}</span>

@@ -18,7 +18,7 @@ const UserTimeZone: FC<Props> = ({ user }): JSX.Element => {
           handleImageError(e, '/images/default.png')
         }
         src={user?.avatarLink}
-        alt="user-avatar"
+        alt=""
         size="lg"
         rounded="full"
       />

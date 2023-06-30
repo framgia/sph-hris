@@ -168,11 +168,6 @@ export const managerColumns = [
     footer: (info) => info.column.id,
     cell: ({ row: { original } }) => <ProjectChip projects={original.projects} />
   }),
-  columnHelper.display({
-    id: 'empty1',
-    header: () => '',
-    footer: (info) => info.column.id
-  }),
   columnHelper.accessor('date', {
     header: () => <CellHeader label="Date" />,
     footer: (info) => info.column.id,
@@ -180,18 +175,8 @@ export const managerColumns = [
       <span>{moment(new Date(props.row.original.date)).format('MMMM DD, YYYY')}</span>
     )
   }),
-  columnHelper.display({
-    id: 'empty2',
-    header: () => '',
-    footer: (info) => info.column.id
-  }),
   columnHelper.accessor('approvedMinutes', {
     header: () => <CellHeader label="Approved Minutes" />,
-    footer: (info) => info.column.id
-  }),
-  columnHelper.display({
-    id: 'empty3',
-    header: () => '',
     footer: (info) => info.column.id
   }),
   columnHelper.accessor('dateFiled', {
@@ -205,11 +190,6 @@ export const managerColumns = [
     header: () => <CellHeader label="Status" />,
     footer: (info) => info.column.id,
     cell: (props) => <RequestStatusChip label={props.getValue()} />
-  }),
-  columnHelper.display({
-    id: 'empty4',
-    header: () => '',
-    footer: (info) => info.column.id
   }),
   columnHelper.display({
     id: 'id',

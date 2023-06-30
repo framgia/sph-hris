@@ -6,11 +6,13 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { Clock, MessageCircle, ThumbsUp, X } from 'react-feather'
 
 import TextField from './../TextField'
+import { Emoji } from '~/utils/types/emoji'
 import Input from '~/components/atoms/Input'
 import useOvertime from '~/hooks/useOvertime'
 import useUserQuery from '~/hooks/useUserQuery'
 import Button from '~/components/atoms/Buttons/Button'
 import handleImageError from '~/utils/handleImageError'
+import EmojiPopoverPicker from './../EmojiPopoverPicker'
 import ReactTextareaAutosize from 'react-textarea-autosize'
 import { ApproveConfirmationSchema } from '~/utils/validation'
 import { IOvertimeManagementManager } from '~/utils/interfaces'
@@ -31,6 +33,8 @@ type ApproveFormValues = {
 const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.Element => {
   const {
     reset,
+    watch,
+    setValue,
     register,
     handleSubmit,
     formState: { errors, isSubmitting }
@@ -79,13 +83,16 @@ const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.E
 
   const statement = `Do you want approve the requested overtime for the Project ${projectNamesString} of this person?`
 
+  const handleEmojiSelect = (emoji: Emoji): void =>
+    setValue('managerRemarks', watch('managerRemarks') + emoji.native)
+
   return (
     <ModalTemplate
       {...{
         isOpen,
         closeModal
       }}
-      className="w-full max-w-md"
+      className="w-full max-w-md overflow-visible"
     >
       <form
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -133,7 +140,7 @@ const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.E
             )}
           </section>
           {/* Remarks */}
-          <section className="col-span-2 mt-4">
+          <section className="relative col-span-2 mt-4">
             <TextField title="Remarks" Icon={MessageCircle} isRequired>
               <ReactTextareaAutosize
                 id="reason"
@@ -146,6 +153,14 @@ const ApproveConfirmationModal: FC<Props> = ({ isOpen, closeModal, row }): JSX.E
                 )}
                 disabled={isSubmitting}
               />
+              <div className="absolute bottom-1 left-11">
+                <EmojiPopoverPicker
+                  {...{
+                    handleEmojiSelect,
+                    panelPosition: 'left-0 bottom-8'
+                  }}
+                />
+              </div>
             </TextField>
             {errors.managerRemarks !== null && errors.managerRemarks !== undefined && (
               <span className="error text-[10px]">{errors.managerRemarks?.message}</span>

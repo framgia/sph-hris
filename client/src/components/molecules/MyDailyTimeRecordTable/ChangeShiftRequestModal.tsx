@@ -18,6 +18,7 @@ import useUserQuery from '~/hooks/useUserQuery'
 import { queryClient } from '~/lib/queryClient'
 import useChangeShift from '~/hooks/useChangeShift'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
+import EmojiPopoverPicker from './../EmojiPopoverPicker'
 import { User as UserType } from '~/utils/types/userTypes'
 import { PROJECT_NAMES } from '~/utils/constants/projects'
 import Button from '~/components/atoms/Buttons/ButtonAction'
@@ -30,6 +31,7 @@ import { ProjectDetails, LeaderDetails } from '~/utils/types/projectTypes'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
 import { generateProjectsMultiSelect, generateUserSelect } from '~/utils/createLeaveHelpers'
+import { Emoji } from '~/utils/types/emoji'
 
 type Props = {
   isOpen: boolean
@@ -72,8 +74,10 @@ const ChangeShiftRequestModal: FC<Props> = ({ isOpen, timeEntry, closeModal }): 
 
   const {
     reset,
+    watch,
     control,
     register,
+    setValue,
     handleSubmit,
     formState: { errors, isSubmitting }
   } = useForm<changeShiftRequestFormValues>({
@@ -178,6 +182,9 @@ const ChangeShiftRequestModal: FC<Props> = ({ isOpen, timeEntry, closeModal }): 
   // Remove Date
   const handleRemoveProject = (index: number): void => projectRemove(index)
 
+  const handleEmojiSelect = (emoji: Emoji): void =>
+    setValue('remarks', watch('remarks') + emoji.native)
+
   return (
     <ModalTemplate
       {...{
@@ -222,7 +229,7 @@ const ChangeShiftRequestModal: FC<Props> = ({ isOpen, timeEntry, closeModal }): 
                     className="w-full py-1.5 px-4 text-[13px] placeholder:text-slate-500"
                   />
                   {!isEmpty(errors.requested_time_in) && (
-                    <p className="error absolute">{errors.requested_time_in.message}</p>
+                    <p className="error absolute text-[10px]">{errors.requested_time_in.message}</p>
                   )}
                 </div>
                 <span>to</span>
@@ -235,7 +242,9 @@ const ChangeShiftRequestModal: FC<Props> = ({ isOpen, timeEntry, closeModal }): 
                     className="py-1.5 px-4 text-[13px] placeholder:text-slate-500"
                   />
                   {!isEmpty(errors.requested_time_out) && (
-                    <p className="error absolute">{errors.requested_time_out.message}</p>
+                    <p className="error absolute text-[10px]">
+                      {errors.requested_time_out.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -396,20 +405,27 @@ const ChangeShiftRequestModal: FC<Props> = ({ isOpen, timeEntry, closeModal }): 
           </section>
 
           {/* Remarks */}
-          <section className="col-span-2">
+          <section className="relative col-span-2">
             <TextField title="Remarks" Icon={FileText} isRequired>
               <ReactTextareaAutosize
                 id="remarks"
-                placeholder=""
                 {...register('remarks')}
                 className={classNames(
-                  'text-area-auto-resize min-h-[14vh] pl-12',
+                  'text-area-auto-resize min-h-[13vh] w-full pl-12 pb-8',
                   errors?.remarks !== null && errors.remarks !== undefined
                     ? 'border-rose-500 ring-rose-500'
                     : ''
                 )}
                 disabled={isSubmitting}
               />
+              <div className="absolute bottom-1 left-11">
+                <EmojiPopoverPicker
+                  {...{
+                    handleEmojiSelect,
+                    panelPosition: 'left-0 bottom-8'
+                  }}
+                />
+              </div>
             </TextField>
             {errors.remarks !== null && errors.remarks !== undefined && (
               <span className="error text-[10px]">{errors.remarks?.message}</span>

@@ -1,9 +1,8 @@
 import React, { FC } from 'react'
-import { Tab } from '@headlessui/react'
 
+import Form from './Form'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
-import EditTab from './EditTab'
 
 type Props = {
   isOpen: boolean
@@ -26,18 +25,12 @@ const EditUndertimeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
           closeModal
         }}
       />
-      <Tab.Group>
-        {/* Tab header */}
-        <Tab.Panels className="overflow-y-auto">
-          {/* Edit Tab Form */}
-          <EditTab
-            {...{
-              isOpen,
-              closeModal
-            }}
-          />
-        </Tab.Panels>
-      </Tab.Group>
+      <Form
+        {...{
+          isOpen,
+          closeModal
+        }}
+      />
     </ModalTemplate>
   )
 }

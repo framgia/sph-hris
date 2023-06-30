@@ -1,13 +1,15 @@
 import moment from 'moment'
+import { X } from 'react-feather'
 import classNames from 'classnames'
 import toast from 'react-hot-toast'
-import { X, Info } from 'react-feather'
 import React, { FC, useEffect } from 'react'
 import { PulseLoader } from 'react-spinners'
 import { FieldError, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import TextareaAutosize from 'react-textarea-autosize'
 
+import { Emoji } from '~/utils/types/emoji'
+import Alert from '~/components/atoms/Alert'
 import useUserQuery from '~/hooks/useUserQuery'
 import Button from '~/components/atoms/Buttons/Button'
 import useInterruptionType from '~/hooks/useInterruptionType'
@@ -16,6 +18,7 @@ import UserTimeZone from '~/components/molecules/UserTimeZone'
 import DrawerTemplate from '~/components/templates/DrawerTemplate'
 import { ConfirmInterruptionValues } from '~/utils/types/formValues'
 import { WorkInterruptionType } from '~/utils/constants/work-status'
+import EmojiPopoverPicker from '~/components/molecules/EmojiPopoverPicker'
 
 type Props = {
   isOpenWorkInterruptionDrawer: boolean
@@ -38,10 +41,10 @@ const WorkInterruptionDrawer: FC<Props> = (props): JSX.Element => {
 
   const {
     reset,
-    register,
-    handleSubmit,
-    setValue,
     watch,
+    register,
+    setValue,
+    handleSubmit,
     formState: { errors, isSubmitting }
   } = useForm<ConfirmInterruptionValues>({
     mode: 'onTouched',
@@ -95,6 +98,9 @@ const WorkInterruptionDrawer: FC<Props> = (props): JSX.Element => {
       : 'focus:border-primary focus:ring-primary'
   }
 
+  const handleEmojiSelect = (emoji: Emoji): void =>
+    setValue('remarks', watch('remarks') + emoji.native)
+
   return (
     <DrawerTemplate
       {...{
@@ -114,7 +120,7 @@ const WorkInterruptionDrawer: FC<Props> = (props): JSX.Element => {
       <form
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={handleSubmit(handleSave)}
-        className="default-scrollbar flex h-full flex-col justify-between overflow-y-auto"
+        className="flex h-full flex-col justify-between overflow-visible"
       >
         {/* Body */}
         <main className="flex flex-col space-y-3 px-6">
@@ -123,25 +129,13 @@ const WorkInterruptionDrawer: FC<Props> = (props): JSX.Element => {
 
           {/* Error Message */}
           {interruptionMutation.isError ? (
-            <div className="relative flex items-center justify-center rounded-md border border-rose-400 bg-rose-50 py-2.5 px-4 shadow-md">
-              <X className="absolute left-4 h-4 w-4 rounded-full bg-rose-500 p-0.5 text-white" />
-              <p className="text-xs font-medium text-rose-500">Something went wrong</p>
-            </div>
+            <Alert message="Something went wrong" type="error" />
           ) : (
             <></>
           )}
           {/* Warning Message */}
           {!watch('power_checkbox') ? (
-            <div className="relative flex flex-row items-center justify-between space-x-4 rounded-md border border-blue-400 bg-blue-50 py-2.5 px-4 shadow-md">
-              <div className="relative flex h-5 w-5 items-center">
-                <Info className="absolute inset-0 h-5 w-5 rounded-full bg-blue-500 p-0.5 text-white" />
-              </div>
-              <div>
-                <p className="text-xs font-medium text-blue-500">
-                  You may not yet submit if you can still continue working
-                </p>
-              </div>
-            </div>
+            <Alert message="You may not yet submit if you can still continue working" type="info" />
           ) : (
             <></>
           )}
@@ -268,22 +262,24 @@ const WorkInterruptionDrawer: FC<Props> = (props): JSX.Element => {
                 )}
               </section>
               {/* Remarks */}
-              <section>
+              <section className="relative">
                 <label htmlFor="remarks" className="space-y-0.5">
                   <span className="text-xs text-slate-500">Remarks</span>
                   <TextareaAutosize
                     id="remarks"
                     disabled={isSubmitting}
-                    className={classNames(
-                      'm-0 block min-h-[20vh] w-full rounded placeholder:font-light placeholder:text-slate-400',
-                      'border border-solid border-slate-300 bg-white bg-clip-padding focus:ring-primary',
-                      'resize-none px-3 py-1.5 text-sm font-normal text-slate-700 transition focus:border-primary',
-                      'ease-in-out focus:bg-white focus:text-slate-700 focus:outline-none',
-                      'disabled:cursor-not-allowed disabled:opacity-50'
-                    )}
+                    className="text-area-auto-resize min-h-[20vh] pb-8"
                     placeholder="Message..."
                     {...register('remarks')}
                   />
+                  <div className="absolute bottom-0 left-2">
+                    <EmojiPopoverPicker
+                      {...{
+                        handleEmojiSelect,
+                        panelPosition: 'right-8 bottom-0'
+                      }}
+                    />
+                  </div>
                 </label>
               </section>
             </>

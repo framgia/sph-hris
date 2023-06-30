@@ -7,35 +7,37 @@ import React, { FC, useEffect, useState } from 'react'
 import ReactTextareaAutosize from 'react-textarea-autosize'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import {
-  Calendar,
+  X,
+  Save,
+  Plus,
+  User,
   Clock,
+  Minus,
   Coffee,
   FileText,
-  Minus,
-  Plus,
-  RefreshCcw,
-  Save,
-  User,
-  X
+  Calendar,
+  RefreshCcw
 } from 'react-feather'
 
 import TextField from './../TextField'
 import useProject from '~/hooks/useProject'
+import { Emoji } from '~/utils/types/emoji'
 import Input from '~/components/atoms/Input'
 import useOvertime from '~/hooks/useOvertime'
 import { Roles } from '~/utils/constants/roles'
 import useUserQuery from '~/hooks/useUserQuery'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import { MyOvertimeSchema } from '~/utils/validation'
+import EmojiPopoverPicker from './../EmojiPopoverPicker'
 import { User as UserType } from '~/utils/types/userTypes'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import { NewOvertimeFormValues } from '~/utils/types/formValues'
 import { IEmployeeTimeEntry } from '~/utils/types/timeEntryTypes'
-import { LeaderDetails, ProjectDetails } from '~/utils/types/projectTypes'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
+import { LeaderDetails, ProjectDetails } from '~/utils/types/projectTypes'
 import { generateProjectsMultiSelect, generateUserSelect } from '~/utils/createLeaveHelpers'
 
 type Props = {
@@ -85,7 +87,9 @@ const AddNewOvertimeModal: FC<Props> = ({
 
   const {
     reset,
+    watch,
     control,
+    setValue,
     register,
     handleSubmit,
     formState: { errors, isSubmitting }
@@ -184,13 +188,16 @@ const AddNewOvertimeModal: FC<Props> = ({
   // Remove Date
   const handleRemoveProject = (index: number): void => projectRemove(index)
 
+  const handleEmojiSelect = (emoji: Emoji): void =>
+    setValue('remarks', watch('remarks') + emoji.native)
+
   return (
     <ModalTemplate
       {...{
         isOpen,
         closeModal
       }}
-      className="w-full max-w-[700px]"
+      className="relative w-full max-w-[700px] overflow-visible"
     >
       <form
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -388,7 +395,6 @@ const AddNewOvertimeModal: FC<Props> = ({
                 iserror={
                   errors.requested_minutes !== null && errors?.requested_minutes !== undefined
                 }
-                // value={100}
               />
             </TextField>
             {errors?.requested_minutes !== null && errors?.requested_minutes !== undefined && (
@@ -397,20 +403,27 @@ const AddNewOvertimeModal: FC<Props> = ({
           </section>
 
           {/* Remarks */}
-          <section className="col-span-2">
+          <section className="relative col-span-2">
             <TextField title="Remarks" Icon={FileText} isRequired>
               <ReactTextareaAutosize
                 id="remarks"
-                placeholder=""
                 {...register('remarks')}
                 className={classNames(
-                  'text-area-auto-resize min-h-[14vh] pl-12',
+                  'text-area-auto-resize min-h-[13vh] w-full pl-12 pb-8',
                   errors?.remarks !== null && errors.remarks !== undefined
                     ? 'border-rose-500 ring-rose-500'
                     : ''
                 )}
                 disabled={isSubmitting}
               />
+              <div className="absolute bottom-1 left-11">
+                <EmojiPopoverPicker
+                  {...{
+                    handleEmojiSelect,
+                    panelPosition: 'left-0 bottom-8'
+                  }}
+                />
+              </div>
             </TextField>
             {errors.remarks !== null && errors.remarks !== undefined && (
               <span className="error text-[10px]">{errors.remarks?.message}</span>
@@ -419,7 +432,7 @@ const AddNewOvertimeModal: FC<Props> = ({
         </main>
 
         {/* Custom Modal Footer Style */}
-        <ModalFooter>
+        <ModalFooter className="rounded-b-xl">
           <Button
             type="button"
             variant="secondary"

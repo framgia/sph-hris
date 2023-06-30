@@ -9,6 +9,7 @@ import React, { FC, useEffect, useState } from 'react'
 import TextareaAutosize from 'react-textarea-autosize'
 
 import Card from '~/components/atoms/Card'
+import { Emoji } from '~/utils/types/emoji'
 import Alert from '~/components/atoms/Alert'
 import { queryClient } from '~/lib/queryClient'
 import useUserQuery from '~/hooks/useUserQuery'
@@ -17,6 +18,7 @@ import useTimeInMutation from '~/hooks/useTimeInMutation'
 import UserTimeZone from '~/components/molecules/UserTimeZone'
 import DrawerTemplate from '~/components/templates/DrawerTemplate'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
+import EmojiPopoverPicker from '~/components/molecules/EmojiPopoverPicker'
 
 type Props = {
   isOpenTimeInDrawer: boolean
@@ -44,6 +46,10 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
   const handleFileUploads = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setFiles(e.target.files)
   }
+
+  const handleEmojiSelect = (emoji: Emoji): void =>
+    setRemarks((prevRemarks) => prevRemarks + emoji.native) // Append selected emoji to the remarks
+
   useEffect(() => {
     let status = false
     if (data !== null && data !== undefined) {
@@ -148,7 +154,7 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
         </button>
       </header>
       {/* Body */}
-      <div className="flex flex-col space-y-3 px-6">
+      <div className="flex flex-col space-y-3 overflow-visible px-6">
         {/* User */}
         <UserTimeZone user={data?.userById} />
 
@@ -156,32 +162,38 @@ const TimeInDrawer: FC<Props> = (props): JSX.Element => {
         {timeInMutation.isError && <Alert type="error" />}
 
         {/* Remarks */}
-        <div className="form-group space-y-2">
+        <div className="form-group space-y-8">
           <div>
             <label htmlFor="remarks" className="space-y-0.5">
               <span className="text-xs text-slate-500">Remarks</span>
-              <TextareaAutosize
-                required={afterStartTime}
-                value={remarks}
-                id="remarks"
-                disabled={timeInMutation.isLoading}
-                onChange={(e) => setRemarks(e.target.value)}
-                className={classNames(
-                  'm-0 block min-h-[20vh] w-full rounded placeholder:text-slate-400',
-                  'bg-white bg-clip-padding focus:ring-primary',
-                  'resize-none px-3 py-1.5 text-sm font-normal text-slate-700 transition focus:border-primary',
-                  'ease-in-out focus:border-primary focus:bg-white focus:text-slate-700 focus:outline-none',
-                  errorRemark !== ''
-                    ? '!border-rose-500 !ring-rose-500'
-                    : 'border border-solid border-slate-300'
+              <div className="relative">
+                <TextareaAutosize
+                  required={afterStartTime}
+                  value={remarks}
+                  id="remarks"
+                  disabled={timeInMutation.isLoading}
+                  onChange={(e) => setRemarks(e.target.value)}
+                  className={classNames(
+                    'text-area-auto-resize min-h-[20vh] pb-10',
+                    errorRemark !== ''
+                      ? '!border-rose-500 !ring-rose-500'
+                      : 'border border-solid border-slate-300'
+                  )}
+                  onBlur={() => setErrorRemark('')}
+                  onFocus={() => setErrorRemark('')}
+                  placeholder="Message..."
+                />
+                <div className="absolute bottom-0 left-2">
+                  <EmojiPopoverPicker
+                    {...{
+                      handleEmojiSelect
+                    }}
+                  />
+                </div>
+                {errorRemark !== null && errorRemark !== undefined && (
+                  <span className="error -bottom-4.5 absolute text-[10px]">{errorRemark}</span>
                 )}
-                onBlur={() => setErrorRemark('')}
-                onFocus={() => setErrorRemark('')}
-                placeholder="Message..."
-              />
-              {errorRemark !== null && errorRemark !== undefined && (
-                <span className="error text-[10px]">{errorRemark}</span>
-              )}
+              </div>
             </label>
           </div>
           {afterStartTime && (
