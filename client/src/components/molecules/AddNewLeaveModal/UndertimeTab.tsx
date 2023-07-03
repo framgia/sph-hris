@@ -26,9 +26,9 @@ import { User as UserType } from '~/utils/types/userTypes'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import { UndertimeFormValues } from '~/utils/types/formValues'
-import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import { LeaderDetails, ProjectDetails } from '~/utils/types/projectTypes'
-import { numberOfDaysInLeavesByUndertime } from '~/utils/constants/dummyAddNewLeaveFields'
+import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
+import { numberOfDaysInLeavesByUndertime } from '~/utils/constants/leaveEquivalentValues'
 import {
   generateUserSelect,
   generateNumberOfDaysSelect,

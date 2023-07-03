@@ -10,7 +10,6 @@ import { Check } from 'react-feather'
 import useUserQuery from '~/hooks/useUserQuery'
 import { Roles } from '~/utils/constants/roles'
 import Layout from '~/components/templates/Layout'
-import FilterIcon from '~/utils/icons/FilterIcon'
 import { Position } from '~/utils/constants/position'
 import { IOvertimeManagement } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/ButtonAction'
@@ -250,37 +249,19 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
             onChange={(value) => setGlobalFilter(String(value))}
             placeholder="Search"
           />
-          <div className="flex items-center space-x-2">
-            <span
-              className={classNames(
-                'sticky left-0 top-0 z-20 flex justify-evenly space-x-2',
-                'border-b border-slate-200 bg-slate-100 px-4 py-2'
-              )}
-            >
-              {isShowOption && (
-                <div>
-                  <OptionDropdown data={overtimeData} />
-                </div>
-              )}
+          <div className="fixed right-0 z-50">
+            <div className="flex justify-evenly space-x-2 bg-slate-100 px-4 py-2">
+              {isShowOption && <OptionDropdown data={overtimeData} />}
               <HROvertimeFilterDropdown
-                className={classNames(
-                  'flex items-center space-x-2 rounded border border-slate-200 bg-transparent bg-white',
-                  'px-3 py-1 shadow-sm outline-none hover:text-slate-600 active:scale-95'
-                )}
                 filters={filters}
                 setFilters={setFilters}
                 handleFilterUpdate={handleFilterUpdate}
-              >
-                <FilterIcon className="h-4 w-4 fill-current" />
-                <span>Filters</span>
-              </HROvertimeFilterDropdown>
-            </span>
-            {isShowSendSummary && (
-              <div>
+              />
+              {isShowSendSummary && (
                 <Button
                   type="button"
                   variant="primary"
-                  className="flex items-center px-1.5 py-[3px]"
+                  className="flex items-center px-1.5  py-[3px]"
                   onClick={handleClick}
                   disabled={isLoading || isDisable}
                 >
@@ -296,8 +277,8 @@ const OvertimeManagement: NextPage = (): JSX.Element => {
                     <span>Send Summary</span>
                   )}
                 </Button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </header>
 

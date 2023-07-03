@@ -4,6 +4,7 @@ import Select, { SingleValue } from 'react-select'
 import React, { FC, useEffect, useState } from 'react'
 
 import Text from '~/components/atoms/Text'
+import Card from '~/components/atoms/Card'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import { optionType, yearSelectOptions } from '~/utils/maps/filterOptions'
@@ -72,12 +73,8 @@ const YearlyFilterDropdown: FC<Props> = (): JSX.Element => {
   }, [router])
 
   return (
-    <div>
-      <FilterDropdownTemplate
-        btnText="Filters"
-        className="translate-y-2"
-        cardClassName="overflow-visible "
-      >
+    <FilterDropdownTemplate btnText="Filters" menuItemsStyle="w-72">
+      <Card shadow-size="xl" rounded="md" className="overflow-visible !bg-white">
         <main className="flex flex-col space-y-3 px-5 py-4">
           <Text theme="sm" weight="semibold" className="text-slate-500">
             Overtime Filters
@@ -117,11 +114,9 @@ const YearlyFilterDropdown: FC<Props> = (): JSX.Element => {
             Update Results
           </Button>
         </footer>
-      </FilterDropdownTemplate>
-    </div>
+      </Card>
+    </FilterDropdownTemplate>
   )
 }
-
-YearlyFilterDropdown.defaultProps = {}
 
 export default YearlyFilterDropdown

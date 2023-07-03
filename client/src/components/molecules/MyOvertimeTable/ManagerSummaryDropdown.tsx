@@ -72,49 +72,47 @@ const YearlyFilterDropdown: FC<Props> = (): JSX.Element => {
   }, [router])
 
   return (
-    <div>
-      <FilterDropdownTemplate btnText="Create Summary" cardClassName="overflow-visible">
-        <main className="flex flex-col space-y-3 px-5 py-4">
-          <Text theme="sm" weight="semibold" className="text-slate-500">
-            Overtime Filters
-          </Text>
-          <label htmlFor="filterYear" className="flex flex-col space-y-1">
-            <span className="text-xs text-slate-500">Status</span>
-            <Select
-              options={statusOptions}
-              value={selectedStatus}
-              onChange={handleStatusChange}
-              isClearable={false}
-              isSearchable={false}
-              placeholder="Select status"
-              styles={customStyles}
-            />
-          </label>
-          <label htmlFor="filterYear" className="flex flex-col space-y-1">
-            <span className="text-xs text-slate-500">Year</span>
-            <Select
-              id="filterYear"
-              styles={customStyles}
-              defaultValue={handleDefaultValues(YEAR_FIELD)}
-              onChange={(e) => (e !== null ? setYear(e.value) : null)}
-              name={YEAR_FIELD}
-              options={yearOptions}
-            />
-          </label>
-        </main>
-        <footer className="rounded-b-md bg-slate-100 px-5 py-3">
-          <Button
-            onClick={handleUpdateResult}
-            type="button"
-            variant="primary"
-            rounded="md"
-            className="w-full py-2"
-          >
-            Update Results
-          </Button>
-        </footer>
-      </FilterDropdownTemplate>
-    </div>
+    <FilterDropdownTemplate btnText="Create Summary">
+      <main className="flex flex-col space-y-3 px-5 py-4">
+        <Text theme="sm" weight="semibold" className="text-slate-500">
+          Overtime Filters
+        </Text>
+        <label htmlFor="filterYear" className="flex flex-col space-y-1">
+          <span className="text-xs text-slate-500">Status</span>
+          <Select
+            options={statusOptions}
+            value={selectedStatus}
+            onChange={handleStatusChange}
+            isClearable={false}
+            isSearchable={false}
+            placeholder="Select status"
+            styles={customStyles}
+          />
+        </label>
+        <label htmlFor="filterYear" className="flex flex-col space-y-1">
+          <span className="text-xs text-slate-500">Year</span>
+          <Select
+            id="filterYear"
+            styles={customStyles}
+            defaultValue={handleDefaultValues(YEAR_FIELD)}
+            onChange={(e) => (e !== null ? setYear(e.value) : null)}
+            name={YEAR_FIELD}
+            options={yearOptions}
+          />
+        </label>
+      </main>
+      <footer className="rounded-b-md bg-slate-100 px-5 py-3">
+        <Button
+          onClick={handleUpdateResult}
+          type="button"
+          variant="primary"
+          rounded="md"
+          className="w-full py-2"
+        >
+          Update Results
+        </Button>
+      </footer>
+    </FilterDropdownTemplate>
   )
 }
 

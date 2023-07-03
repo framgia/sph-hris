@@ -1,11 +1,13 @@
 import React, { FC, useState } from 'react'
 
 import Text from '~/components/atoms/Text'
+import Card from '~/components/atoms/Card'
 import GearIcon from '~/utils/icons/GearIcon'
 import { IOvertimeManagement } from '~/utils/interfaces'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import FilterDropdownTemplate from '~/components/templates/FilterDropdownTemplate'
-import SummaryConfirmationModal from '../OvertimeManagementTable/SummaryConfirmationModal'
+import SummaryConfirmationModal from './../OvertimeManagementTable/SummaryConfirmationModal'
+import { ThumbsDown, ThumbsUp } from 'react-feather'
 
 type Props = {
   data: IOvertimeManagement[] | undefined
@@ -18,7 +20,7 @@ const OptionDropdown: FC<Props> = ({ data }): JSX.Element => {
   const [isApprove, setIsApprove] = useState<boolean>(false)
 
   return (
-    <div>
+    <>
       {/* This will show the Approve Confirmation Modal */}
       <SummaryConfirmationModal
         {...{
@@ -28,43 +30,42 @@ const OptionDropdown: FC<Props> = ({ data }): JSX.Element => {
           state: isApprove
         }}
       />
-      <FilterDropdownTemplate
-        btnText="Options"
-        className="w-52 translate-y-2"
-        cardClassName="overflow-visible w-52"
-        Icon={GearIcon}
-      >
-        <main className="flex w-52 flex-col space-y-3  px-5 py-4">
-          <Text theme="sm" weight="semibold" className="text-slate-500">
-            Options
-          </Text>
-          <Button
-            type="button"
-            variant="primary"
-            rounded="md"
-            className="relative mt-1 flex items-center justify-center space-x-2 px-5 py-0.5 text-sm"
-            onClick={() => {
-              handleConfirmationToggle()
-              setIsApprove(true)
-            }}
-          >
-            Approve all
-          </Button>
-          <Button
-            type="submit"
-            variant="danger"
-            rounded="md"
-            className="relative mt-1 flex items-center justify-center space-x-2 px-5 py-0.5 text-sm"
-            onClick={() => {
-              handleConfirmationToggle()
-              setIsApprove(false)
-            }}
-          >
-            Disapprove all
-          </Button>
-        </main>
+      <FilterDropdownTemplate btnText="Options" menuItemsStyle="w-56" Icon={GearIcon}>
+        <Card shadow-size="xl" rounded="md" className="overflow-visible !bg-white">
+          <main className="flex flex-col space-y-3 p-4">
+            <Text theme="sm" weight="semibold" className="text-slate-500">
+              Options
+            </Text>
+            <div className="flex flex-col space-y-2 text-sm">
+              <Button
+                type="button"
+                variant="primary"
+                className="inline-flex items-center justify-center px-5 py-0.5"
+                onClick={() => {
+                  handleConfirmationToggle()
+                  setIsApprove(true)
+                }}
+              >
+                <ThumbsUp className="absolute left-6 h-4 w-4" />
+                <span>Approve All</span>
+              </Button>
+              <Button
+                type="submit"
+                variant="danger"
+                className="inline-flex items-center justify-center px-5 py-0.5"
+                onClick={() => {
+                  handleConfirmationToggle()
+                  setIsApprove(false)
+                }}
+              >
+                <ThumbsDown className="absolute left-6 h-4 w-4" />
+                <span>Disapprove All</span>
+              </Button>
+            </div>
+          </main>
+        </Card>
       </FilterDropdownTemplate>
-    </div>
+    </>
   )
 }
 
