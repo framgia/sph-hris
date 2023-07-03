@@ -8,6 +8,7 @@ import { confirmAlert } from 'react-confirm-alert'
 import TextareaAutosize from 'react-textarea-autosize'
 
 import Card from '~/components/atoms/Card'
+import { Emoji } from '~/utils/types/emoji'
 import Alert from '~/components/atoms/Alert'
 import { queryClient } from '~/lib/queryClient'
 import useUserQuery from '~/hooks/useUserQuery'
@@ -17,6 +18,7 @@ import useTimeOutMutation from '~/hooks/useTimeOutMutation'
 import UserTimeZone from '~/components/molecules/UserTimeZone'
 import DrawerTemplate from '~/components/templates/DrawerTemplate'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
+import EmojiPopoverPicker from '~/components/molecules/EmojiPopoverPicker'
 
 type Props = {
   isOpenTimeOutDrawer: boolean
@@ -38,6 +40,9 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
   const { handleTimeOutMutation } = useTimeOutMutation()
   const { data } = handleUserQuery()
   const timeOutMutation = handleTimeOutMutation()
+
+  const handleEmojiSelect = (emoji: Emoji): void =>
+    setRemarks((prevRemarks) => prevRemarks + emoji.native) // Append selected emoji to the remarks
 
   const handleEarlyTimeOutChecker = async (): Promise<void> => {
     const time = moment().hour()
@@ -145,19 +150,23 @@ const TimeOutDrawer: FC<Props> = (props): JSX.Element => {
           <div>
             <label htmlFor="remarks" className="space-y-0.5">
               <span className="text-xs text-slate-500">Remarks</span>
-              <TextareaAutosize
-                id="remarks"
-                value={remarks}
-                disabled={timeOutMutation.isLoading}
-                onChange={(e) => setRemarks(e.target.value)}
-                className={classNames(
-                  'm-0 block min-h-[20vh] w-full rounded placeholder:font-light placeholder:text-slate-400',
-                  'border border-solid border-slate-300 bg-white bg-clip-padding focus:ring-primary',
-                  'resize-none px-3 py-1.5 text-sm font-normal text-slate-700 transition focus:border-primary',
-                  'ease-in-out focus:border-primary focus:bg-white focus:text-slate-700 focus:outline-none'
-                )}
-                placeholder="Message..."
-              />
+              <div className="relative">
+                <TextareaAutosize
+                  id="remarks"
+                  value={remarks}
+                  disabled={timeOutMutation.isLoading}
+                  onChange={(e) => setRemarks(e.target.value)}
+                  className="text-area-auto-resize min-h-[20vh] pb-8"
+                  placeholder="Message..."
+                />
+                <div className="absolute bottom-0 left-2">
+                  <EmojiPopoverPicker
+                    {...{
+                      handleEmojiSelect
+                    }}
+                  />
+                </div>
+              </div>
             </label>
           </div>
         </div>

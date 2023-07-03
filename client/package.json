@@ -11,6 +11,8 @@
     "check-all": "npm run check-format && npm run check-lint && npm run check-types && npm run build"
   },
   "dependencies": {
+    "@emoji-mart/data": "^1.1.2",
+    "@emoji-mart/react": "^1.1.1",
     "@headlessui/react": "^1.7.7",
     "@hookform/resolvers": "^2.9.10",
     "@icon-park/react": "^1.4.2",
@@ -21,6 +23,7 @@
     "apexcharts": "^3.36.3",
     "classnames": "^2.3.2",
     "cookies-next": "^2.1.1",
+    "emoji-mart": "^5.5.2",
     "framer-motion": "^10.0.1",
     "graphql": "^16.6.0",
     "graphql-request": "^5.1.0",

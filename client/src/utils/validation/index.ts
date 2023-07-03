@@ -402,7 +402,7 @@ export const changeShiftRequestSchema = yup.object().shape({
   manager: SelectSchema.label('Manager'),
   requested_time_in: yup.string().required().label('Time In'),
   requested_time_out: yup.string().required().label('Time Out'),
-  remarks: yup.string().required().label('Reason')
+  remarks: yup.string().required().label('Remarks')
 })
 
 export const AddScheduleMemberSchema = yup.object().shape({

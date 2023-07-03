@@ -24,6 +24,8 @@ import { generateESLUserSelect } from '~/utils/createLeaveHelpers'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
 import { IEmployeeTimeEntry, ITimeEntry } from '~/utils/types/timeEntryTypes'
+import EmojiPopoverPicker from '../EmojiPopoverPicker'
+import { Emoji } from '~/utils/types/emoji'
 
 type Props = {
   isOpen: boolean
@@ -36,8 +38,10 @@ const FileOffsetModal: FC<Props> = ({ isOpen, closeModal, tableRow }): JSX.Eleme
 
   const {
     reset,
+    watch,
     control,
     register,
+    setValue,
     handleSubmit,
     formState: { errors, isSubmitting }
   } = useForm<FileOffsetFormValues>({
@@ -116,6 +120,9 @@ const FileOffsetModal: FC<Props> = ({ isOpen, closeModal, tableRow }): JSX.Eleme
       color: '#75c55e'
     }
   })
+
+  const handleEmojiSelect = (emoji: Emoji): void =>
+    setValue('remarks', watch('remarks') + emoji.native)
 
   return (
     <ModalTemplate
@@ -235,19 +242,27 @@ const FileOffsetModal: FC<Props> = ({ isOpen, closeModal, tableRow }): JSX.Eleme
           </section>
 
           {/* Descriptiohn Field */}
-          <section className="col-span-2">
-            <TextField title="Remarks" isRequired>
+          <section className="relative col-span-2">
+            <TextField title="Remarks" Icon={FileText} isRequired>
               <ReactTextareaAutosize
-                id="reason"
+                id="remarks"
                 {...register('remarks')}
                 className={classNames(
-                  'text-area-auto-resize pl-12',
+                  'text-area-auto-resize min-h-[13vh] w-full pl-12 pb-8',
                   errors?.remarks !== null && errors.remarks !== undefined
                     ? 'border-rose-500 ring-rose-500'
                     : ''
                 )}
                 disabled={isSubmitting}
               />
+              <div className="absolute bottom-1 left-11">
+                <EmojiPopoverPicker
+                  {...{
+                    handleEmojiSelect,
+                    panelPosition: 'left-0 bottom-8'
+                  }}
+                />
+              </div>
             </TextField>
             {errors.remarks !== null && errors.remarks !== undefined && (
               <span className="error text-[10px]">{errors.remarks?.message}</span>

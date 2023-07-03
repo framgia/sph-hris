@@ -54,14 +54,14 @@ const Alert: FC<Props> = ({ message, type, className }): JSX.Element => {
   return (
     <div
       className={classNames(
-        'relative flex justify-center',
+        'relative flex items-start justify-center gap-x-6',
         'rounded-md border py-2.5 px-4 shadow-md shadow-slate-200',
         containerStyle,
         className
       )}
     >
       <span>{IconType}</span>
-      <p className={classNames('pl-6 text-xs font-medium', textStyle)}>{message}</p>
+      <p className={classNames('text-xs font-medium', textStyle)}>{message}</p>
     </div>
   )
 }
