@@ -9,6 +9,7 @@ using LiteX.Storage.FileSystem;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 
+DotNetEnv.Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -87,7 +88,6 @@ builder.Services.AddScoped<ESLChangeShiftService>();
 builder.Services.AddScoped<ESLOffsetService>();
 builder.Services.AddScoped<EmployeeScheduleService>();
 builder.Services.AddScoped<EmployeeService>();
-
 
 var app = builder.Build();
 
