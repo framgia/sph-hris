@@ -77,11 +77,6 @@ namespace api.Middlewares
                                         .AsSplitQuery()
                                         .FirstOrDefaultAsync();
 
-                    if (currentUser != null)
-                        currentUser.EmployeeSchedule.WorkingDayTimes = currentUser.EmployeeSchedule.WorkingDayTimes
-                                                                    .Where(p => p.Day == DateTime.Now.DayOfWeek.ToString())
-                                                                    .ToList();
-
                     if (currentUser == null) throw new Exception(MiddlewareErrorMessageEnum.UNAUTHENTICATED_USER);
 
                     httpContext.Items["User"] = currentUser;
