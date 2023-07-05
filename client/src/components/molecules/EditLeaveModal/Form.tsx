@@ -28,7 +28,7 @@ import { customStyles } from '~/utils/customReactSelectStyles'
 import { LeaveProject, LeaveType } from '~/utils/types/leaveTypes'
 import { LeaderDetails, ProjectDetails } from '~/utils/types/projectTypes'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
-import { numberOfDaysInLeaves } from '~/utils/constants/dummyAddNewLeaveFields'
+import { numberOfDaysInLeaves } from '~/utils/constants/leaveEquivalentValues'
 import { NewLeaveFormValues, ReactSelectOption } from '~/utils/types/formValues'
 import {
   generateUserSelect,
@@ -625,7 +625,6 @@ const LeaveForm: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
           )}
         </section>
 
-        {/* Reason for leave Field */}
         {/* Reason for leave Field */}
         <section className="relative col-span-2">
           <TextField title="Reason for leave" Icon={FileText} isRequired>

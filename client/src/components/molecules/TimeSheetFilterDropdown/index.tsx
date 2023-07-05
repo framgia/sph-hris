@@ -1,31 +1,21 @@
 import moment from 'moment'
+import React, { FC } from 'react'
 import classNames from 'classnames'
-import { Menu } from '@headlessui/react'
-import React, { FC, ReactNode } from 'react'
 
 import Text from '~/components/atoms/Text'
 import { Filters } from '~/pages/dtr-management'
 import Button from '~/components/atoms/Buttons/ButtonAction'
-import MenuTransition from '~/components/templates/MenuTransition'
+import FilterDropdownTemplate from '~/components/templates/FilterDropdownTemplate'
 
 type Props = {
-  className?: string
   filters: Filters
   setFilters: React.Dispatch<React.SetStateAction<any>>
   handleFilterUpdate: Function
   isOpenSummaryTable: boolean
-  children: ReactNode
 }
 
 const TimeSheetFilterDropdown: FC<Props> = (props): JSX.Element => {
-  const {
-    children,
-    className = 'shrink-0 outline-none active:scale-95',
-    filters,
-    setFilters,
-    handleFilterUpdate,
-    isOpenSummaryTable
-  } = props
+  const { filters, setFilters, handleFilterUpdate, isOpenSummaryTable } = props
 
   const dateSelectionRef = React.createRef<HTMLInputElement>()
 
@@ -81,95 +71,87 @@ const TimeSheetFilterDropdown: FC<Props> = (props): JSX.Element => {
     return 'All'
   }
 
+  const menuItems = classNames(
+    'w-80 rounded-md  ring-opacity-5 focus:outline-none top-8 right-0',
+    'bg-white py-1 shadow-xl shadow-slate-200 ring-1 ring-black'
+  )
+
   return (
-    <Menu as="div" className="relative z-10 flex w-full">
-      <Menu.Button className={className}>{children}</Menu.Button>
-      <MenuTransition>
-        <Menu.Items
-          className={classNames(
-            'fixed right-6 top-[138px] flex w-80 flex-col overflow-hidden rounded-md sm:right-16 md:top-[102px]',
-            'flex flex-col bg-white shadow-xl ring-1 ring-black',
-            'shadow-slate-200 ring-opacity-5 focus:outline-none'
-          )}
-        >
-          <main className="flex flex-col space-y-4 px-5 py-4">
-            <Text theme="sm" weight="semibold" className="text-slate-500">
-              Timesheet Filters
-            </Text>
-            {isOpenSummaryTable ? (
-              <>
-                <input
-                  type="month"
-                  className={classNames(
-                    'w-full rounded-md border border-slate-300 text-xs shadow-sm',
-                    'focus:border-primary focus:ring-1 focus:ring-primary'
-                  )}
-                  ref={monthYearSelectionRef}
-                  defaultValue={moment(filters.startDate).format('YYYY-MM')}
-                  onChange={handleSummaryFilterChange}
-                ></input>
-                <select
-                  className={classNames(
-                    'w-full rounded-md border border-slate-300 text-xs shadow-sm',
-                    'focus:border-primary focus:ring-1 focus:ring-primary'
-                  )}
-                  ref={daysRangeSelectionRef}
-                  onChange={handleSummaryFilterChange}
-                  defaultValue={
-                    new Date(filters.endDate).getDate() > 15
-                      ? daysRangeOptions[1]
-                      : daysRangeOptions[0]
-                  }
-                >
-                  <option>{daysRangeOptions[0]}</option>
-                  <option>{daysRangeOptions[1]}</option>
-                </select>
-              </>
-            ) : (
-              <>
-                <div>
-                  <input
-                    type="date"
-                    className={classNames(
-                      'w-full rounded-md border border-slate-300 text-xs shadow-sm',
-                      'focus:border-primary focus:ring-1 focus:ring-primary'
-                    )}
-                    defaultValue={filters.date}
-                    ref={dateSelectionRef}
-                    onChange={handleDateChange}
-                  />
-                </div>
-                <label htmlFor="filterStatus" className="flex flex-col space-y-1">
-                  <span className="text-xs text-slate-500">Filter Status</span>
-                  <select
-                    className={`
-                  w-full rounded-md border border-slate-300 text-xs shadow-sm 
+    <FilterDropdownTemplate btnText="Filters" menuItemsStyle={menuItems}>
+      <main className="flex flex-col space-y-4 px-5 py-4">
+        <Text theme="sm" weight="semibold" className="text-slate-500">
+          Timesheet Filters
+        </Text>
+        {isOpenSummaryTable ? (
+          <>
+            <input
+              type="month"
+              className={classNames(
+                'w-full rounded-md border border-slate-300 text-xs shadow-sm',
+                'focus:border-primary focus:ring-1 focus:ring-primary'
+              )}
+              ref={monthYearSelectionRef}
+              defaultValue={moment(filters.startDate).format('YYYY-MM')}
+              onChange={handleSummaryFilterChange}
+            ></input>
+            <select
+              className={classNames(
+                'w-full rounded-md border border-slate-300 text-xs shadow-sm',
+                'focus:border-primary focus:ring-1 focus:ring-primary'
+              )}
+              ref={daysRangeSelectionRef}
+              onChange={handleSummaryFilterChange}
+              defaultValue={
+                new Date(filters.endDate).getDate() > 15 ? daysRangeOptions[1] : daysRangeOptions[0]
+              }
+            >
+              <option>{daysRangeOptions[0]}</option>
+              <option>{daysRangeOptions[1]}</option>
+            </select>
+          </>
+        ) : (
+          <>
+            <div>
+              <input
+                type="date"
+                className={classNames(
+                  'w-full rounded-md border border-slate-300 text-xs shadow-sm',
+                  'focus:border-primary focus:ring-1 focus:ring-primary'
+                )}
+                defaultValue={filters.date}
+                ref={dateSelectionRef}
+                onChange={handleDateChange}
+              />
+            </div>
+            <label htmlFor="filterStatus" className="flex flex-col space-y-1">
+              <span className="text-xs text-slate-500">Filter Status</span>
+              <select
+                className={`
+                  w-full rounded-md border border-slate-300 text-xs shadow-sm
                 focus:border-primary focus:ring-1 focus:ring-primary
                 `}
-                    id="filterStatus"
-                    defaultValue={getDefaultStatus(filters.status)}
-                    onChange={(e) => handleStatusChange(e)}
-                  >
-                    {filterStatusOptions(statusOptions)}
-                  </select>
-                </label>
-              </>
-            )}
-          </main>
-          <footer className="bg-slate-100 px-5 py-3">
-            <Button
-              type="button"
-              variant="primary"
-              rounded="md"
-              className="w-full py-2 text-xs"
-              onClick={(): React.MouseEvent<HTMLInputElement> => handleFilterUpdate()}
-            >
-              Update Results
-            </Button>
-          </footer>
-        </Menu.Items>
-      </MenuTransition>
-    </Menu>
+                id="filterStatus"
+                defaultValue={getDefaultStatus(filters.status)}
+                onChange={(e) => handleStatusChange(e)}
+              >
+                {filterStatusOptions(statusOptions)}
+              </select>
+            </label>
+          </>
+        )}
+      </main>
+      <footer className="bg-slate-100 px-5 py-3">
+        <Button
+          type="button"
+          variant="primary"
+          rounded="md"
+          className="w-full py-2 text-xs"
+          onClick={(): React.MouseEvent<HTMLInputElement> => handleFilterUpdate()}
+        >
+          Update Results
+        </Button>
+      </footer>
+    </FilterDropdownTemplate>
   )
 }
 

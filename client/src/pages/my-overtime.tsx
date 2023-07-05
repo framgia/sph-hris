@@ -8,14 +8,16 @@ import React, { useEffect, useState } from 'react'
 import useUserQuery from '~/hooks/useUserQuery'
 import Layout from '~/components/templates/Layout'
 import { IMyOvertimeTable } from '~/utils/interfaces'
+import { Position } from '~/utils/constants/position'
 import { getOvertimeQuery } from '~/hooks/useOvertimeQuery'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { getApprovalStatus } from '~/utils/myOvertimeHelpers'
 import MyOvertimeTable from '~/components/molecules/MyOvertimeTable'
-import AddNewBulkOvertimeModal from '~/components/molecules/AddNewBulkOvertimeModal'
 import { columns } from '~/components/molecules/MyOvertimeTable/columns'
 import GlobalSearchFilter from '~/components/molecules/GlobalSearchFilter'
+import AddNewBulkOvertimeModal from '~/components/molecules/AddNewBulkOvertimeModal'
 import YearlyFilterDropdown from '~/components/molecules/MyOvertimeTable/YearlyFilterDropdown'
+import { Plus } from 'react-feather'
 
 const MyOverTime: NextPage = (): JSX.Element => {
   const router = useRouter()
@@ -107,6 +109,8 @@ const MyOverTime: NextPage = (): JSX.Element => {
     }
   }, [overtime])
 
+  const isTeamLeader = user?.userById.position.id === Position.WEB_DEVELOPER_TEAM_LEADER
+
   return (
     <Layout metaTitle="My Overtime">
       <section
@@ -117,27 +121,32 @@ const MyOverTime: NextPage = (): JSX.Element => {
       >
         <header
           className={classNames(
-            'sticky left-0 top-0 z-20 flex items-center justify-between',
-            'border-b border-slate-200 bg-slate-100 px-4 py-2'
+            'sticky left-0 top-0 z-20 px-4 py-2',
+            'border-b border-slate-200 bg-slate-100'
           )}
         >
-          <GlobalSearchFilter
-            value={globalFilter ?? ''}
-            onChange={(value) => setGlobalFilter(String(value))}
-            placeholder="Search"
-          />
-          <div className="flex items-center space-x-2">
-            <YearlyFilterDropdown />
-            {user?.userById.position.id === 7 && (
-              <Button
-                type="button"
-                variant="primary"
-                className="flex items-center space-x-0.5 px-1.5 py-[3px]"
-                onClick={handleToggle}
-              >
-                <span className="hidden sm:block">File Bulk Overtime</span>
-              </Button>
-            )}
+          <div className="flex items-center justify-between">
+            <GlobalSearchFilter
+              value={globalFilter ?? ''}
+              onChange={(value) => setGlobalFilter(String(value))}
+              placeholder="Search"
+            />
+            <div className="flex items-center space-x-2">
+              <div className={classNames('fixed z-50', isTeamLeader ? 'right-40' : 'right-4')}>
+                <YearlyFilterDropdown />
+              </div>
+              {isTeamLeader && (
+                <Button
+                  type="button"
+                  variant="primary"
+                  className="flex items-center space-x-0.5 px-1.5 py-[3px]"
+                  onClick={handleToggle}
+                >
+                  <Plus className="h-4 w-4" />
+                  <span className="hidden sm:block">File Bulk Overtime</span>
+                </Button>
+              )}
+            </div>
           </div>
           {/* This will Open New Modal for Filing New Leave */}
           <AddNewBulkOvertimeModal

@@ -3,5 +3,7 @@ export const Position = {
   ASSISTANT_MANAGER: 2,
   ADMIN: 3,
   WEB_DEVELOPER: 4,
-  ESL_TEACHER: 5
-}
+  ESL_TEACHER: 5,
+  WEB_DEVELOPER_TRAINER: 6,
+  WEB_DEVELOPER_TEAM_LEADER: 7
+} as const

@@ -16,7 +16,7 @@ type Props = {
 
 const DesktopTable: FC<Props> = ({ table, isLoading, error }): JSX.Element => {
   return (
-    <AnimatedTable className="w-full min-w-[1300px]">
+    <AnimatedTable className="w-full min-w-max">
       <thead className="border-b border-slate-200">
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>

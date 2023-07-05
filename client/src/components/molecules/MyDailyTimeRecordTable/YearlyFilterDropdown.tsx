@@ -37,58 +37,56 @@ const YearlyFilterDropdown: FC<Props> = (): JSX.Element => {
   }
 
   return (
-    <div>
-      <FilterDropdownTemplate btnText="Filters" cardClassName="overflow-visible">
-        <main className="flex flex-col space-y-3 px-5 py-4">
-          <Text theme="sm" weight="semibold" className="text-slate-500">
-            Overtime Filters
-          </Text>
-          <label htmlFor="filterYear" className="flex flex-col space-y-1">
-            <span className="text-xs text-slate-500">Status</span>
-            <Select
-              className="text-xs"
-              defaultValue={routerStatus ?? status}
-              onChange={(e: { target: { value: string } }) => setStatus(e.target.value)}
-            >
-              {overtimeStatus.map((item) => (
-                <option key={item.id} value={item.value}>
-                  {item.value}
-                </option>
-              ))}
-            </Select>
-          </label>
-          <label htmlFor="filterYear" className="flex flex-col space-y-1">
-            <span className="text-xs text-slate-500">Year</span>
-            <Select
-              id="filterYear"
-              className="text-xs"
-              name={YEAR_FIELD}
-              defaultValue={routerYear ?? year}
-              onChange={(e: { target: { value: string } }) => setYear(e.target.value)}
-            >
-              {[
-                ...yearOptions.slice(0, 0),
-                { label: 'Select...', value: '' },
-                ...yearOptions.slice(0)
-              ].map((item) => (
-                <option key={item.value} value={item.value}>
-                  {item.label}
-                </option>
-              ))}
-            </Select>
-          </label>
-        </main>
-        <footer className="rounded-b-md bg-slate-100 px-5 py-3">
-          <Menu.Button
-            onClick={() => handleUpdateResult(status, year)}
-            type="button"
-            className="w-full rounded-md bg-primary py-2 text-white"
+    <FilterDropdownTemplate btnText="Filters">
+      <main className="flex flex-col space-y-3 px-5 py-4">
+        <Text theme="sm" weight="semibold" className="text-slate-500">
+          Overtime Filters
+        </Text>
+        <label htmlFor="filterYear" className="flex flex-col space-y-1">
+          <span className="text-xs text-slate-500">Status</span>
+          <Select
+            className="text-xs"
+            defaultValue={routerStatus ?? status}
+            onChange={(e: { target: { value: string } }) => setStatus(e.target.value)}
           >
-            Update Results
-          </Menu.Button>
-        </footer>
-      </FilterDropdownTemplate>
-    </div>
+            {overtimeStatus.map((item) => (
+              <option key={item.id} value={item.value}>
+                {item.value}
+              </option>
+            ))}
+          </Select>
+        </label>
+        <label htmlFor="filterYear" className="flex flex-col space-y-1">
+          <span className="text-xs text-slate-500">Year</span>
+          <Select
+            id="filterYear"
+            className="text-xs"
+            name={YEAR_FIELD}
+            defaultValue={routerYear ?? year}
+            onChange={(e: { target: { value: string } }) => setYear(e.target.value)}
+          >
+            {[
+              ...yearOptions.slice(0, 0),
+              { label: 'Select...', value: '' },
+              ...yearOptions.slice(0)
+            ].map((item) => (
+              <option key={item.value} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </Select>
+        </label>
+      </main>
+      <footer className="rounded-b-md bg-slate-100 px-5 py-3">
+        <Menu.Button
+          onClick={() => handleUpdateResult(status, year)}
+          type="button"
+          className="w-full rounded-md bg-primary py-2 text-white"
+        >
+          Update Results
+        </Menu.Button>
+      </footer>
+    </FilterDropdownTemplate>
   )
 }
 

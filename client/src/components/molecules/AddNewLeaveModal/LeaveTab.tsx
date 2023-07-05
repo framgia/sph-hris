@@ -29,7 +29,7 @@ import { NewLeaveFormValues } from '~/utils/types/formValues'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 import { LeaderDetails, ProjectDetails } from '~/utils/types/projectTypes'
-import { numberOfDaysInLeaves } from '~/utils/constants/dummyAddNewLeaveFields'
+import { numberOfDaysInLeaves } from '~/utils/constants/leaveEquivalentValues'
 import {
   generateUserSelect,
   generateLeaveTypeSelect,
