@@ -116,14 +116,14 @@ const ScheduleItem: FC<Props> = (props): JSX.Element => {
         }}
         className={classNames('w-full py-2.5 pr-4 pl-8 hover:bg-amber-50 md:pl-4')}
       >
-        <div className="flex items-center space-x-2">
-          <Calendar className="h-5 w-5 stroke-1" />
-          <span className="text-sm md:text-xs">{item.scheduleName}</span>
+        <div className="flex items-start space-x-2">
+          <Calendar className="h-5 w-5 shrink-0 stroke-1" />
+          <span className="pr-6 text-sm md:text-xs">{item.scheduleName}</span>
         </div>
       </div>
       <div
         className={classNames(
-          'insert-y-0 absolute right-6 z-50 flex items-center group-hover:opacity-100 md:right-5',
+          'insert-y-0 absolute right-6 z-50 flex items-center group-hover:opacity-100 hover:text-amber-600 md:right-5',
           active ? 'opacity-100' : 'opacity-0 '
         )}
       >

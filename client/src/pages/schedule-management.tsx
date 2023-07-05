@@ -24,6 +24,7 @@ import FadeInOut from '~/components/templates/FadeInOut'
 import DayButton from '~/components/atoms/Buttons/DayButton'
 import useEmployeeSchedule from '~/hooks/useEmployeeSchedule'
 import { customStyles } from '~/utils/customReactSelectStyles'
+import { IWorkDay } from '~/utils/types/employeeScheduleTypes'
 import { shiftSchedule } from '~/utils/constants/shiftSchedule'
 import ClearButton from '~/components/atoms/Buttons/ClearButton'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
@@ -42,15 +43,20 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
   const [selectedShift, setSelectedShift] = useState<ReactSelectOption>()
   const [isOpenApplyToAll, setIsOpenApplyToAll] = useState<boolean>(false)
   const [isOpenViewScheduleMember, setIsOpenViewScheduleMember] = useState<boolean>(false)
+  const [allSchedule, setAllSchedule] = useState<ReactSelectOption[]>([])
 
   // USE EMPLOYEE SCHEDULE HOOKS
   const {
     getEmployeeScheduleQuery,
+    getAllEmployeeScheduleQuery,
     handleEditEmployeeScheduleMutation,
     handleCreateEmployeeScheduleMutation
   } = useEmployeeSchedule()
   const { data, isLoading } = getEmployeeScheduleQuery(Number(id))
   const EmployeeSchedule = data?.employeeScheduleDetails[0]
+
+  const { data: allEmployeeData } = getAllEmployeeScheduleQuery()
+  const allEmployeeSchedule = allEmployeeData?.allEmployeeScheduleDetails
 
   const createEmployeeScheduleMutation = handleCreateEmployeeScheduleMutation()
   const editEmployeeScheduleMutation = handleEditEmployeeScheduleMutation()
@@ -87,9 +93,27 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
     }
   }, [id])
 
+  useEffect(() => {
+    if (allEmployeeSchedule !== undefined) {
+      const empty = [{ value: '', label: '' }]
+      const customShift: ReactSelectOption = {
+        value: '0',
+        label: 'Custom Shift'
+      }
+      const filteredSchedule: ReactSelectOption[] | undefined = allEmployeeSchedule?.map(
+        (sched) => ({
+          value: sched?.id.toString(),
+          label: sched?.scheduleName
+        })
+      )
+      filteredSchedule?.unshift(customShift)
+      setAllSchedule(filteredSchedule ?? empty)
+    }
+  }, [allEmployeeSchedule])
+
+  // THIS WILL SUBMIT TO EITHER SAVE OR UPDATE SCHEDULE
   const handleSaveSchedule: SubmitHandler<any> = async (data): Promise<void> => {
-    // eslint-disable-next-line @typescript-eslint/array-type
-    const workingDays: { day: string; from: string; to: string }[] = []
+    const workingDays: IWorkDay[] = []
     const daysOfWeek = [
       'monday',
       'tuesday',
@@ -107,7 +131,9 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
         workingDays.push({
           day: day.charAt(0).toUpperCase() + day.slice(1),
           from: dayData.timeIn,
-          to: dayData.timeOut
+          to: dayData.timeOut,
+          breakFrom: dayData.breakFrom,
+          breakTo: dayData.breakTo
         })
       }
     }
@@ -119,10 +145,10 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
     }
   }
 
+  // THIS WILL CREATE NEW SCHEDULE
   const handleCreateSchedule = async (
     data: ScheduleFormData,
-    // eslint-disable-next-line @typescript-eslint/array-type
-    workingDays: { day: string; from: string; to: string }[]
+    workingDays: IWorkDay[]
   ): Promise<void> => {
     return await new Promise((resolve) => {
       createEmployeeScheduleMutation.mutate(
@@ -150,9 +176,10 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
     })
   }
 
+  // THIS WILL UPDATE EXISTING SCEHDULE
   const handleEditSchedule = async (
     data: ScheduleFormData,
-    workingDays: Array<{ day: string; from: string; to: string }>
+    workingDays: IWorkDay[]
   ): Promise<void> => {
     return await new Promise((resolve) => {
       editEmployeeScheduleMutation.mutate(
@@ -177,6 +204,7 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
   }
 
   const assignDay = (): void => {
+    setSelectedShift(shiftSchedule[0])
     setValue('scheduleName', EmployeeSchedule?.scheduleName as string)
     const dayProperties: any = {
       Monday: {
@@ -305,101 +333,82 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
   }, [selectedShift])
 
   const getScheduleShiftData = (selectedShift: ReactSelectOption): void => {
-    const shiftSelect = {
-      mondaySelected: true,
-      tuesdaySelected: true,
-      wednesdaySelected: true,
-      thursdaySelected: true,
-      fridaySelected: true,
-      saturdaySelected: false,
-      sundaySelected: false
-    }
-    const morningShiftData = {
-      ...shiftSelect,
+    const newShiftData = allEmployeeSchedule?.find(
+      (item) => item.id.toString() === selectedShift.value
+    )
+
+    const { scheduleName, days } = newShiftData ?? {}
+
+    const mondayData = days?.[0]
+    const tuesdayData = days?.[1]
+    const wednesdayData = days?.[2]
+    const thursdayData = days?.[3]
+    const fridayData = days?.[4]
+    const saturdayData = days?.[5]
+    const sundayData = days?.[6]
+
+    const shiftData = {
+      scheduleName: scheduleName ?? '',
+      mondaySelected: mondayData?.isDaySelected ?? false,
       monday: {
-        timeIn: '09:30',
-        timeOut: '06:30',
-        breakFrom: '12:00',
-        breakTo: '13:00'
+        timeIn: mondayData?.timeIn ?? '',
+        timeOut: mondayData?.timeOut ?? '',
+        breakFrom: mondayData?.breakFrom ?? '',
+        breakTo: mondayData?.breakTo ?? ''
       },
+      tuesdaySelected: tuesdayData?.isDaySelected ?? false,
       tuesday: {
-        timeIn: '09:30',
-        timeOut: '06:30',
-        breakFrom: '12:00',
-        breakTo: '03:00'
+        timeIn: tuesdayData?.timeIn ?? '',
+        timeOut: tuesdayData?.timeOut ?? '',
+        breakFrom: tuesdayData?.breakFrom ?? '',
+        breakTo: tuesdayData?.breakTo ?? ''
       },
+      wednesdaySelected: wednesdayData?.isDaySelected ?? false,
       wednesday: {
-        timeIn: '09:30',
-        timeOut: '06:30',
-        breakFrom: '12:00',
-        breakTo: '03:00'
+        timeIn: wednesdayData?.timeIn ?? '',
+        timeOut: wednesdayData?.timeOut ?? '',
+        breakFrom: wednesdayData?.breakFrom ?? '',
+        breakTo: wednesdayData?.breakTo ?? ''
       },
+      thursdaySelected: thursdayData?.isDaySelected ?? false,
       thursday: {
-        timeIn: '09:30',
-        timeOut: '06:30',
-        breakFrom: '12:00',
-        breakTo: '03:00'
+        timeIn: thursdayData?.timeIn ?? '',
+        timeOut: thursdayData?.timeOut ?? '',
+        breakFrom: thursdayData?.breakFrom ?? '',
+        breakTo: thursdayData?.breakTo ?? ''
       },
+      fridaySelected: fridayData?.isDaySelected ?? false,
       friday: {
-        timeIn: '09:30',
-        timeOut: '06:30',
-        breakFrom: '12:00',
-        breakTo: '03:00'
+        timeIn: fridayData?.timeIn ?? '',
+        timeOut: fridayData?.timeOut ?? '',
+        breakFrom: fridayData?.breakFrom ?? '',
+        breakTo: fridayData?.breakTo ?? ''
+      },
+      saturdaySelected: saturdayData?.isDaySelected ?? false,
+      saturday: {
+        timeIn: saturdayData?.timeIn ?? '',
+        timeOut: saturdayData?.timeOut ?? '',
+        breakFrom: saturdayData?.breakFrom ?? '',
+        breakTo: saturdayData?.breakTo ?? ''
+      },
+      sundaySelected: sundayData?.isDaySelected ?? false,
+      sunday: {
+        timeIn: sundayData?.timeIn ?? '',
+        timeOut: sundayData?.timeOut ?? '',
+        breakFrom: sundayData?.breakFrom ?? '',
+        breakTo: sundayData?.breakTo ?? ''
       }
     }
-    const afternoonShiftData = {
-      ...shiftSelect,
-      monday: {
-        timeIn: '01:00',
-        timeOut: '10:00',
-        breakFrom: '05:00',
-        breakTo: '01:00'
-      },
-      tuesday: {
-        timeIn: '01:00',
-        timeOut: '10:00',
-        breakFrom: '05:00',
-        breakTo: '06:00'
-      },
-      wednesday: {
-        timeIn: '06:00',
-        timeOut: '10:00',
-        breakFrom: '05:00',
-        breakTo: '06:00'
-      },
-      thursday: {
-        timeIn: '06:00',
-        timeOut: '10:00',
-        breakFrom: '05:00',
-        breakTo: '06:00'
-      },
-      friday: {
-        timeIn: '06:00',
-        timeOut: '10:00',
-        breakFrom: '05:00',
-        breakTo: '06:00'
-      }
-    }
-    switch (selectedShift.value) {
-      case '1':
-        handleReset()
-        break
-      case '2':
-        reset(morningShiftData)
-        break
-      case '3':
-        reset(afternoonShiftData)
-        break
-      default:
-        handleReset()
-        break
-    }
+
+    reset(shiftData)
+    setSelectedShift(selectedShift)
   }
 
   const handleOpenApplyToAllToggle = (): void => setIsOpenApplyToAll(!isOpenApplyToAll)
 
-  const handleShiftChange = (selectedOption: ReactSelectOption): void =>
+  const handleShiftChange = (selectedOption: ReactSelectOption): void => {
     setSelectedShift(selectedOption)
+  }
 
   const handleApplyToAll: SubmitHandler<TimeEntryWithBreak> = (dayData): void => {
     reset({
@@ -469,11 +478,11 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
                   className="text-xs"
                   value={selectedShift}
                   styles={customStyles}
-                  options={shiftSchedule}
+                  options={allSchedule}
                   closeMenuOnSelect={true}
                   isDisabled={isSubmitting}
                   instanceId="scheduleShift"
-                  defaultValue={shiftSchedule[0]}
+                  defaultValue={allSchedule[0]}
                   components={animatedComponents}
                   onChange={(option) => handleShiftChange(option as ReactSelectOption)}
                 />

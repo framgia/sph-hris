@@ -8,8 +8,7 @@ export const CREATE_EMPLOYEE_SCHEDULE = gql`
 `
 export const EDIT_EMPLOYEE_SCHEDULE = gql`
   mutation ($request: UpdateEmployeeScheduleRequestInput!) {
-    updateEmployeeSchedule(request: $request){
-    }
+    updateEmployeeSchedule(request: $request)
   }
 `
 export const DELETE_EMPLOYEE_SCHEDULE = gql`

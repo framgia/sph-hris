@@ -1,18 +1,21 @@
 export interface IGetAllEmployeeSchedule {
   id: number
   scheduleName: string
+  days: IDay[]
+}
+
+export interface IDay {
+  isDaySelected: boolean
+  workingDay: string
+  timeIn: string
+  timeOut: string
+  breakFrom: string
+  breakTo: string
 }
 
 export interface IGetEmployeeSchedule {
   id: number
-  days: Array<{
-    isDaySelected: boolean
-    workingDay: string
-    timeIn: string
-    timeOut: string
-    breakFrom: string
-    breakTo: string
-  }>
+  days: IDay[]
   scheduleName: string
   memberCount: number
 }
@@ -23,28 +26,27 @@ export interface IAddMemberToScheduleInput {
   scheduleId: number
 }
 
+export interface IWorkDay {
+  day: string
+  from: string
+  to: string
+  breakFrom: string
+  breakTo: string
+}
+
 export interface ICreateEmployeeScheduleRequestInput {
-  // eslint-disable-next-line @typescript-eslint/array-type
-  workingDays: {
-    day: string
-    from: string
-    to: string
-  }[]
+  workingDays: IWorkDay[]
   userId: number
   scheduleName: string
 }
 
 export interface IEditEmployeeScheduleRequestInput {
-  // eslint-disable-next-line @typescript-eslint/array-type
-  workingDays: {
-    day: string
-    from: string
-    to: string
-  }[]
+  workingDays: IWorkDay[]
   userId: number
   scheduleName: string
   employeeScheduleId: number
 }
+
 export interface IDeleteEmployeeScheduleRequestInput {
   userId: number
   employeeScheduleId: number
