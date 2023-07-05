@@ -23,7 +23,7 @@ namespace api.DTOs
                 // For included days of the week
                 foreach (var workingDayTime in employeeSchedule.WorkingDayTimes)
                 {
-                    Day workingDayTimes = new(workingDayTime.Day, workingDayTime.From.ToString(@"hh\:mm"), workingDayTime.To.ToString(@"hh\:mm"), true);
+                    Day workingDayTimes = new(workingDayTime.Day, workingDayTime.From.ToString(@"hh\:mm"), workingDayTime.To.ToString(@"hh\:mm"), workingDayTime.BreakFrom.ToString(@"hh\:mm"), workingDayTime.BreakTo.ToString(@"hh\:mm"), true);
                     DaysOfTheWeek = DaysOfTheWeek.Where(val => val.ToLower() != workingDayTime.Day?.ToLower()).ToArray();
                     Days.Add(workingDayTimes);
                 }
@@ -31,7 +31,7 @@ namespace api.DTOs
                 // For exluded days of the week
                 foreach (var DayOfTheWeek in DaysOfTheWeek)
                 {
-                    Day workingDayTimes = new(DayOfTheWeek, "", "", false);
+                    Day workingDayTimes = new(DayOfTheWeek, "", "", "", "", false);
                     Days.Add(workingDayTimes);
                 }
             }
@@ -44,13 +44,17 @@ namespace api.DTOs
         public string? WorkingDay { get; set; }
         public string? TimeIn { get; set; }
         public string? TimeOut { get; set; }
+        public string? BreakFrom { get; set; }
+        public string? BreakTo { get; set; }
 
-        public Day(string? workingDay, string timeIn, string timeOut, bool selected)
+        public Day(string? workingDay, string timeIn, string timeOut, string breakFrom, string breakTo, bool selected)
         {
             IsDaySelected = selected;
             WorkingDay = workingDay;
             TimeIn = timeIn;
             TimeOut = timeOut;
+            BreakFrom = breakFrom;
+            BreakTo = breakTo;
         }
     }
 }

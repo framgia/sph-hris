@@ -1,4 +1,4 @@
-import { ReactSelectOption } from '../types/formValues'
+import { ReactSelectOption } from './../types/formValues'
 
 export const shiftSchedule: ReactSelectOption[] = [
   {

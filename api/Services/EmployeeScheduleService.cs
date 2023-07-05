@@ -66,7 +66,9 @@ namespace api.Services
                     EmployeeScheduleId = newEmployeeSchedule.Id,
                     Day = workingDay.Day,
                     From = TimeSpan.Parse(workingDay.From!),
-                    To = TimeSpan.Parse(workingDay.To!)
+                    To = TimeSpan.Parse(workingDay.To!),
+                    BreakFrom = TimeSpan.Parse(workingDay.BreakFrom!),
+                    BreakTo = TimeSpan.Parse(workingDay.BreakTo!),
                 };
                 context.WorkingDayTimes.Add(newWorkingDayTimes);
             }
@@ -207,7 +209,9 @@ namespace api.Services
                 EmployeeScheduleId = employeeScheduleId,
                 Day = x.Day,
                 From = TimeSpan.Parse(x.From!),
-                To = TimeSpan.Parse(x.To!)
+                To = TimeSpan.Parse(x.To!),
+                BreakFrom = TimeSpan.Parse(x.BreakFrom!),
+                BreakTo = TimeSpan.Parse(x.BreakTo!),
             });
             context.WorkingDayTimes.AddRange(newWorkingDays);
         }

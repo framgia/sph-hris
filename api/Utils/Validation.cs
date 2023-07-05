@@ -494,6 +494,16 @@ namespace api.Utils
                 {
                     errors.Add(buildError(nameof(workingDay.To), InputValidationMessageEnum.INVALID_END_TIME));
                 }
+
+                if (string.IsNullOrEmpty(workingDay.BreakFrom))
+                {
+                    errors.Add(buildError(nameof(workingDay.BreakFrom), InputValidationMessageEnum.INVALID_END_TIME));
+                }
+
+                if (string.IsNullOrEmpty(workingDay.BreakTo))
+                {
+                    errors.Add(buildError(nameof(workingDay.BreakTo), InputValidationMessageEnum.INVALID_END_TIME));
+                }
             }
 
             return errors;

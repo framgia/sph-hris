@@ -5,6 +5,14 @@ export const GET_ALL_EMPLOYEE_SCHEDULE = gql`
     allEmployeeScheduleDetails {
       id
       scheduleName
+      days {
+        isDaySelected
+        workingDay
+        timeIn
+        timeOut
+        breakFrom
+        breakTo
+      }
     }
   }
 `
@@ -19,6 +27,8 @@ export const GET_EMPLOYEE_SCHEDULE = gql`
         workingDay
         timeIn
         timeOut
+        breakFrom
+        breakTo
       }
       memberCount
     }
