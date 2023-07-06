@@ -7,7 +7,7 @@ import Card from '~/components/atoms/Card'
 import { TimeEntryWithBreak } from '~/utils/types/formValues'
 
 type Props = {
-  day: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday'
+  day: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday' | string
   schedule: TimeEntryWithBreak
 }
 
