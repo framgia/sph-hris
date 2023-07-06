@@ -123,7 +123,7 @@ const ScheduleItem: FC<Props> = (props): JSX.Element => {
       </div>
       <div
         className={classNames(
-          'insert-y-0 absolute right-6 z-50 flex items-center group-hover:opacity-100 hover:text-amber-600 md:right-5',
+          'insert-y-0 absolute right-6 z-30 flex items-center group-hover:opacity-100 hover:text-amber-600 md:right-5',
           active ? 'opacity-100' : 'opacity-0 '
         )}
       >

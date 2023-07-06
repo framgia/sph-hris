@@ -25,7 +25,6 @@ import DayButton from '~/components/atoms/Buttons/DayButton'
 import useEmployeeSchedule from '~/hooks/useEmployeeSchedule'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import { IWorkDay } from '~/utils/types/employeeScheduleTypes'
-import { shiftSchedule } from '~/utils/constants/shiftSchedule'
 import ClearButton from '~/components/atoms/Buttons/ClearButton'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
 import ApplyToAllModal from '~/components/molecules/ApplyToAllModal'
@@ -204,7 +203,6 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
   }
 
   const assignDay = (): void => {
-    setSelectedShift(shiftSchedule[0])
     setValue('scheduleName', EmployeeSchedule?.scheduleName as string)
     const dayProperties: any = {
       Monday: {
@@ -298,7 +296,6 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
 
   const handleReset = (): void => {
     setErrorMessage('')
-    setSelectedShift(shiftSchedule[0])
 
     if (!isEmpty(id)) {
       assignDay()
@@ -441,7 +438,9 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
       ) : (
         <FadeInOut className="default-scrollbar overflow-auto p-6 text-slate-800">
           <header className="flex items-center justify-between">
-            <h1 className="font-medium uppercase">{watch('scheduleName') ?? 'New Schedule'}</h1>
+            {!isEmpty(id) && (
+              <h1 className="font-medium uppercase">{watch('scheduleName') ?? 'New Schedule'}</h1>
+            )}
             {!isEmpty(id) && (
               <>
                 <Tippy content="View all members" placement="left" className="!text-xs">
@@ -471,23 +470,27 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
             )}
           </header>
           <header className="flex items-center justify-between px-4 pt-6 sm:px-8">
-            <section className="space-y-1 ">
-              <h3 className="text-xs font-medium">Schedule Shift:</h3>
-              <div className="w-full sm:w-56">
-                <ReactSelect
-                  className="text-xs"
-                  value={selectedShift}
-                  styles={customStyles}
-                  options={allSchedule}
-                  closeMenuOnSelect={true}
-                  isDisabled={isSubmitting}
-                  instanceId="scheduleShift"
-                  defaultValue={allSchedule[0]}
-                  components={animatedComponents}
-                  onChange={(option) => handleShiftChange(option as ReactSelectOption)}
-                />
-              </div>
-            </section>
+            {isEmpty(id) ? (
+              <section className="space-y-1 ">
+                <h3 className="text-xs font-medium">Schedule Shift:</h3>
+                <div className="w-full sm:w-56">
+                  <ReactSelect
+                    className="text-xs"
+                    value={selectedShift}
+                    styles={customStyles}
+                    options={allSchedule}
+                    closeMenuOnSelect={true}
+                    isDisabled={isSubmitting || !isEmpty(id)}
+                    instanceId="scheduleShift"
+                    defaultValue={allSchedule[-1]}
+                    components={animatedComponents}
+                    onChange={(option) => handleShiftChange(option as ReactSelectOption)}
+                  />
+                </div>
+              </section>
+            ) : (
+              <div></div>
+            )}
             <section className="mt-2">
               <ButtonAction
                 variant="secondary"
@@ -1359,7 +1362,7 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
                   </>
                 ) : (
                   <>
-                    <span>Save</span>
+                    <span>{isEmpty(id) ? 'Save' : 'Update'}</span>
                   </>
                 )}
               </ButtonAction>
