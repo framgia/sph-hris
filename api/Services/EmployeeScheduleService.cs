@@ -46,6 +46,12 @@ namespace api.Services
                 .ToListAsync();
         }
 
+        public async Task<List<ChangeScheduleRequest>?> GetEmployeeChangeScheduleRequest(int userId)
+        {
+            using HrisContext context = _contextFactory.CreateDbContext();
+            return await context.ChangeScheduleRequests.Where(x => x.UserId == userId).ToListAsync();
+        }
+
         public async Task<string> Create(CreateEmployeeScheduleRequest request, HrisContext context)
         {
             // validate inputs
