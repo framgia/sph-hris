@@ -653,5 +653,40 @@ namespace api.Utils
 
             return errors;
         }
+
+        public List<IError> checkListOfWorkingDays(List<WorkingDayTimesRequest> workingDays)
+        {
+            var errors = new List<IError>();
+
+            foreach (var workingDay in workingDays)
+            {
+                if (string.IsNullOrEmpty(workingDay.Day))
+                {
+                    errors.Add(buildError(nameof(workingDay.Day), InputValidationMessageEnum.INVALID_DAY));
+                }
+
+                if (string.IsNullOrEmpty(workingDay.From))
+                {
+                    errors.Add(buildError(nameof(workingDay.From), InputValidationMessageEnum.INVALID_START_TIME));
+                }
+
+                if (string.IsNullOrEmpty(workingDay.To))
+                {
+                    errors.Add(buildError(nameof(workingDay.To), InputValidationMessageEnum.INVALID_END_TIME));
+                }
+
+                if (string.IsNullOrEmpty(workingDay.BreakFrom))
+                {
+                    errors.Add(buildError(nameof(workingDay.BreakFrom), InputValidationMessageEnum.INVALID_END_TIME));
+                }
+
+                if (string.IsNullOrEmpty(workingDay.BreakTo))
+                {
+                    errors.Add(buildError(nameof(workingDay.BreakTo), InputValidationMessageEnum.INVALID_END_TIME));
+                }
+            }
+
+            return errors;
+        }
     }
 }

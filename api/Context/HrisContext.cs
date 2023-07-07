@@ -34,6 +34,7 @@ public partial class HrisContext : DbContext
     public DbSet<Overtime> Overtimes { get; set; } = default!;
     public DbSet<ChangeShiftRequest> ChangeShiftRequests { get; set; } = default!;
     public DbSet<ESLChangeShiftRequest> ESLChangeShiftRequests { get; set; } = default!;
+    public DbSet<ChangeScheduleRequest> ChangeScheduleRequests { get; set; } = default!;
     public DbSet<Position> Positions { get; set; } = default!;
     public DbSet<ESLOffset> ESLOffsets { get; set; } = default!;
     public DbSet<Form> Forms { get; set; } = default!;

@@ -461,6 +461,55 @@ namespace api.Services
             return newNotification;
         }
 
+        public async Task<List<Notification>> createChangeScheduleRequestNotification(ChangeSchedRequest request, ChangeScheduleRequest changeSchedule, HrisContext context)
+        {
+            List<Notification> notificationsList = new List<Notification>();
+
+            var manager = await context.Users.Where(x => x.PositionId == PositionEnum.ASSISTANT_MANAGER).FirstAsync();
+            var httpContext = _accessor.HttpContext!;
+            var user = (User)httpContext.Items["User"]!;
+
+
+            var data = JsonSerializer.Serialize(new ChangeScheduleData
+            {
+                User = new NotificationUser
+                {
+                    Id = user!.Id,
+                    Name = user.Name!,
+                    AvatarLink = _userService.GenerateAvatarLink(user?.ProfileImageId ?? default)
+                },
+                Type = NotificationDataTypeEnum.REQUEST,
+                Status = RequestStatus.PENDING,
+                WorkingDays = request.WorkingDays
+            }
+            );
+
+            var managerNotification = new Notification
+            {
+                RecipientId = manager.Id,
+                Type = NotificationTypeEnum.CHANGE_SCHEDULE,
+                Data = data,
+            };
+
+            foreach (var leaderId in request.LeaderIds)
+            {
+                var newNotification = new Notification
+                {
+                    RecipientId = leaderId,
+                    Type = NotificationTypeEnum.CHANGE_SCHEDULE,
+                    Data = data,
+                    RelatedEntityId = changeSchedule.Id
+                };
+                notificationsList.Add(newNotification);
+            }
+
+            notificationsList.Add(managerNotification);
+
+            await context.Notifications.AddRangeAsync(notificationsList);
+            await context.SaveChangesAsync();
+            return notificationsList;
+        }
+
         public async Task<List<Notification>> getByRecipientId(int id)
         {
             using (HrisContext context = _contextFactory.CreateDbContext())
@@ -668,6 +717,19 @@ namespace api.Services
             try
             {
                 string topic = $"{notif.RecipientId}_{nameof(SubscriptionObjectType.ESLOffsetCreated)}";
+                await _eventSender.SendAsync(topic, notif);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async void sendNotificationEvent(Notification notif)
+        {
+            try
+            {
+                string topic = $"{notif.RecipientId}_{nameof(SubscriptionObjectType.NotificationCreated)}";
                 await _eventSender.SendAsync(topic, notif);
             }
             catch (Exception)
