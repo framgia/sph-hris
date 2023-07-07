@@ -1,4 +1,5 @@
 using api.DTOs;
+using api.Entities;
 using api.Middlewares.Attributes;
 using api.Requests;
 using api.Services;
@@ -27,6 +28,11 @@ namespace api.Schema.Queries
         public async Task<List<UserDTO>> GetEmployeesBySchedule(int employeeScheduleId)
         {
             return await _employeeScheduleService.GetEmployeesBySchedule(employeeScheduleId);
+        }
+
+        public async Task<List<ChangeScheduleRequest>?> GetEmployeeChangeScheduleRequest(int userId)
+        {
+            return await _employeeScheduleService.GetEmployeeChangeScheduleRequest(userId);
         }
 
         [AdminUser]
