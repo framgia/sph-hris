@@ -30,6 +30,8 @@ export type WorkingDayTime = {
   from: string
   to: string
   day: string
+  breakFrom: string
+  breakTo: string
 }
 
 // MARK: - TimeEntry

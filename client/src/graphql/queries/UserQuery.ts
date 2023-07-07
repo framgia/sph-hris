@@ -42,6 +42,8 @@ export const GET_USER_QUERY = gql`
           day
           from
           to
+          breakFrom
+          breakTo
         }
       }
     }
