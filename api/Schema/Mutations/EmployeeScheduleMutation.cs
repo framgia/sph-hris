@@ -1,4 +1,5 @@
 using api.Context;
+using api.Entities;
 using api.Middlewares.Attributes;
 using api.Requests;
 using api.Services;
@@ -96,6 +97,32 @@ namespace api.Schema.Mutations
             catch (GraphQLException)
             {
                 throw;
+            }
+        }
+
+        public async Task<ChangeScheduleRequest> ChangeScheduleRequest([Service] IDbContextFactory<HrisContext> contextFactory, [Service] EmployeeScheduleService _employeeSchedueleService, [Service] NotificationService _notificationService, ChangeSchedRequest request)
+        {
+            using HrisContext context = contextFactory.CreateDbContext();
+            try
+            {
+                using var transaction = context.Database.BeginTransaction();
+                var scheduleRequest = await _employeeSchedueleService.ChangeSchedule(request, context);
+
+                var notificationsList = await _notificationService.createChangeScheduleRequestNotification(request, scheduleRequest, context);
+                notificationsList.ForEach(notif => _notificationService.sendNotificationEvent(notif));
+
+                transaction.Commit();
+                return scheduleRequest;
+            }
+            catch (GraphQLException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw new GraphQLException(ErrorBuilder.New()
+                .SetMessage(e.Message)
+                .Build());
             }
         }
     }

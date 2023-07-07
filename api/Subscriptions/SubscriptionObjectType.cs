@@ -50,6 +50,11 @@ namespace api.Subscriptions
             var topic = $"{id}_{nameof(OvertimeSummaryCreated)}";
             return eventReceiver.SubscribeAsync<Notification>(topic);
         }
+        public ValueTask<ISourceStream<Notification>> EventReceiver(int id, [Service] ITopicEventReceiver eventReceiver)
+        {
+            var topic = $"{id}_{nameof(NotificationCreated)}";
+            return eventReceiver.SubscribeAsync<Notification>(topic);
+        }
 
         // Resolver
         [Subscribe(With = nameof(OvertimeSummaryEventReceiver))]
@@ -84,6 +89,11 @@ namespace api.Subscriptions
 
         [Subscribe(With = nameof(SubscriptionObjectType.ESLOffsetEventReceiver))]
         public ESLOffsetNotification ESLOffsetCreated([EventMessage] ESLOffsetNotification notification)
+        {
+            return notification;
+        }
+        [Subscribe(With = nameof(EventReceiver))]
+        public Notification NotificationCreated([EventMessage] Notification notification)
         {
             return notification;
         }

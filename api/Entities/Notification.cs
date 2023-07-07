@@ -9,11 +9,11 @@ namespace api.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int? RecipientId { get; set; }
+        public int? RelatedEntityId { get; set; }
         public string Type { get; set; } = default!;
         public string Data { get; set; } = default!;
         public DateTime? ReadAt { get; set; } = default!;
         public bool IsRead { get; set; } = false;
-
         public User? Recipient { get; set; }
     }
 }
