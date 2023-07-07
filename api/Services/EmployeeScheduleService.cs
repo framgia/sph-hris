@@ -1,3 +1,4 @@
+using System.Text.Json;
 using api.Context;
 using api.DTOs;
 using api.Entities;
@@ -11,14 +12,16 @@ namespace api.Services
     public class EmployeeScheduleService
     {
         private readonly IDbContextFactory<HrisContext> _contextFactory = default!;
-        private readonly CustomInputValidation _customInputValidation;
+        private readonly EmployeeScheduleServiceInputValidation _customInputValidation;
         private readonly HttpContextService _httpService;
+        private readonly HttpContext? _httpContext;
 
         public EmployeeScheduleService(IDbContextFactory<HrisContext> contextFactory, IHttpContextAccessor accessor)
         {
             _contextFactory = contextFactory;
-            _customInputValidation = new CustomInputValidation(_contextFactory);
+            _customInputValidation = new EmployeeScheduleServiceInputValidation(_contextFactory);
             _httpService = new HttpContextService(accessor);
+            _httpContext = accessor.HttpContext;
         }
         public async Task<List<EmployeeScheduleDTO>> GetAllEmployeeScheduleDetails()
         {
@@ -154,6 +157,30 @@ namespace api.Services
             }
 
             return SuccessMessageEnum.EMPLOYEE_SCHEDULE_UPDATED;
+        }
+
+        public async Task<ChangeScheduleRequest> ChangeSchedule(ChangeSchedRequest request, HrisContext context)
+        {
+            // Validate input
+            var errors = _customInputValidation.checkChangeScheduleRequestInput(request).Result;
+            if (errors.Count > 0)
+            {
+                throw new GraphQLException(errors);
+            }
+
+            var user = (User)_httpContext?.Items["User"]!;
+            var serializedData = JsonSerializer.Serialize(request.WorkingDays);
+
+            ChangeScheduleRequest changeRequest = new ChangeScheduleRequest
+            {
+                UserId = user.Id,
+                Data = serializedData
+            };
+
+            await context.ChangeScheduleRequests.AddAsync(changeRequest);
+            await context.SaveChangesAsync();
+
+            return changeRequest;
         }
 
         private void UpdateMemberScheduleInputValidation(UpdateMemberScheduleRequest request, HrisContext context)
