@@ -56,5 +56,21 @@ namespace api.Services
                     .ToListAsync();
             }
         }
+
+        public async Task<List<Position>> GetAllPositions()
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.Positions.ToListAsync();
+            }
+        }
+
+        public async Task<List<Role>> GetAllRoles()
+        {
+            using (HrisContext context = _contextFactory.CreateDbContext())
+            {
+                return await context.Roles.ToListAsync();
+            }
+        }
     }
 }

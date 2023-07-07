@@ -20,7 +20,7 @@ const TextField: FC<Props> = (props): JSX.Element => {
   return (
     <label className={classNames('group space-y-0.5', className)}>
       {title} {isRequired === true ? <span className="text-rose-500">*</span> : ''}{' '}
-      {isOptional === true ? <span className="italic text-slate-500">({optionalText})</span> : ''}
+      {isOptional === true ? <small className="italic text-slate-500">({optionalText})</small> : ''}
       <div className="relative flex items-center">
         <div
           className={classNames(

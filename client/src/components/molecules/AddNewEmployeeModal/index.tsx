@@ -1,16 +1,23 @@
-import { useForm } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
+import toast from 'react-hot-toast'
+import isEmpty from 'lodash/isEmpty'
+import ReactSelect from 'react-select'
 import React, { FC, useEffect } from 'react'
-import { User, Save, Mail, Award, RefreshCcw, X } from 'react-feather'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { User, Save, Mail, RefreshCcw, X } from 'react-feather'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
 import TextField from './../TextField'
 import Input from '~/components/atoms/Input'
+import useEmployee from '~/hooks/useEmployee'
+import { queryClient } from '~/lib/queryClient'
+import useUserQuery from '~/hooks/useUserQuery'
 import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import { NewEmployeeSchema } from '~/utils/validation'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import { customStyles } from '~/utils/customReactSelectStyles'
 import ModalTemplate from '~/components/templates/ModalTemplate'
 import { NewEmployeeFormValues } from '~/utils/types/formValues'
+import { IEmployeeInput } from '~/utils/interfaces/employeeInterface'
 import ModalHeader from '~/components/templates/ModalTemplate/ModalHeader'
 import ModalFooter from '~/components/templates/ModalTemplate/ModalFooter'
 
@@ -20,8 +27,18 @@ type Props = {
 }
 
 const AddNewEmployeeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => {
+  // USER HOOKS -> Get Positions, Get Roles
+  const { getAllPositionQuery, getAllRoleQuery } = useUserQuery()
+  const positionData = getAllPositionQuery()
+  const roleData = getAllRoleQuery()
+
+  // EMPLOYEE HOOKS
+  const { handleAddNewEmployeeMutation } = useEmployee()
+  const addEmployeeMutation = handleAddNewEmployeeMutation()
+
   const {
     reset,
+    control,
     register,
     handleSubmit,
     formState: { errors, isSubmitting }
@@ -31,12 +48,27 @@ const AddNewEmployeeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => 
   })
 
   // This will handle Submit and Save New Overtime
-  const handleSave = async (data: NewEmployeeFormValues): Promise<void> => {
+  const handleSave: SubmitHandler<NewEmployeeFormValues> = async (data): Promise<void> => {
     return await new Promise((resolve) => {
-      setTimeout(() => {
-        alert(JSON.stringify({ ...data }, null, 2))
-        resolve()
-      }, 2000)
+      const request: IEmployeeInput = {
+        email: data.email,
+        firstName: data.first_name,
+        middleName: data.middle_name ?? '',
+        lastName: data.last_name,
+        positionId: parseInt(data.position.value),
+        roleId: parseInt(data.role.value)
+      }
+
+      addEmployeeMutation.mutate(request, {
+        onSuccess: () => {
+          // TODO: Please Specify the query key of all Employee
+          void queryClient.invalidateQueries().then(() => {
+            toast.success('Added New Employee Successfully!')
+            resolve()
+            closeModal()
+          })
+        }
+      })
     })
   }
 
@@ -58,9 +90,14 @@ const AddNewEmployeeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => 
   }, [isOpen])
 
   const handleReset = (): void => {
+    const emptySelect = {
+      value: '',
+      label: ''
+    }
     reset({
       email: '',
-      position: '',
+      position: emptySelect,
+      role: emptySelect,
       first_name: '',
       middle_name: '',
       last_name: ''
@@ -107,18 +144,73 @@ const AddNewEmployeeModal: FC<Props> = ({ isOpen, closeModal }): JSX.Element => 
 
           {/* Position */}
           <section className="col-span-2 overflow-visible">
-            <TextField title="Position" Icon={Award} isRequired className="flex-1">
-              <Input
-                type="text"
-                disabled={isSubmitting}
-                placeholder=""
-                {...register('position')}
-                className="py-2.5 pl-11 text-xs"
-                iserror={errors.position !== null && errors?.position !== undefined}
+            <TextField title="Position" Icon={Mail} isRequired className="flex-1">
+              <Controller
+                name="position"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <ReactSelect
+                    {...field}
+                    isClearable
+                    placeholder=""
+                    className="w-full"
+                    styles={customStyles}
+                    classNames={{
+                      control: (state) =>
+                        state.isFocused
+                          ? 'border-primary'
+                          : !isEmpty(errors.position)
+                          ? 'border-rose-500 ring-rose-500'
+                          : 'border-slate-300'
+                    }}
+                    value={field.value}
+                    onChange={field.onChange}
+                    isLoading={positionData.isLoading}
+                    isDisabled={isSubmitting || positionData.isLoading}
+                    options={positionData.data}
+                  />
+                )}
               />
             </TextField>
-            {errors?.position !== null && errors?.position !== undefined && (
-              <span className="error text-[10px]">{errors.position?.message}</span>
+            {errors.position !== null && errors.position !== undefined && (
+              <span className="error text-[10px]">Position is required</span>
+            )}
+          </section>
+
+          {/* Role */}
+          <section className="col-span-2 overflow-visible">
+            <TextField title="Role" isRequired className="flex-1">
+              <Controller
+                name="role"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <ReactSelect
+                    {...field}
+                    isClearable
+                    placeholder=""
+                    className="w-full"
+                    styles={customStyles}
+                    classNames={{
+                      control: (state) =>
+                        state.isFocused
+                          ? 'border-primary'
+                          : !isEmpty(errors.role)
+                          ? 'border-rose-500 ring-rose-500'
+                          : 'border-slate-300'
+                    }}
+                    value={field.value}
+                    onChange={field.onChange}
+                    isLoading={roleData.isLoading}
+                    isDisabled={isSubmitting || roleData.isLoading}
+                    options={roleData.data}
+                  />
+                )}
+              />
+            </TextField>
+            {errors.role !== null && errors.role !== undefined && (
+              <span className="error text-[10px]">Role is required</span>
             )}
           </section>
 

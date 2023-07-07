@@ -27,5 +27,15 @@ namespace api.Schema.Queries
         {
             return await _userService.ESLUsers(exceptUserId);
         }
+
+        public async Task<List<Position>> GetAllPositions()
+        {
+            return await _userService.GetAllPositions();
+        }
+
+        public async Task<List<Role>> GetAllRoles()
+        {
+            return await _userService.GetAllRoles();
+        }
     }
 }
