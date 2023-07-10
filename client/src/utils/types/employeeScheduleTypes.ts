@@ -62,3 +62,12 @@ export interface IReassignEmployeesScheduleRequestInput {
   employeeId: number
   scheduleId: number
 }
+
+export interface IAllFiledScheduleRequest {
+  id: number
+  userId: number
+  data: string
+  isManagerApproved: boolean
+  isLeaderApproved: boolean
+  createdAt: string
+}

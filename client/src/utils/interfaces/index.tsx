@@ -186,7 +186,7 @@ export interface IFiledOffsetTable {
 }
 
 export interface IMyFiledScheduleData {
-  id: string
+  id: number
   dateFiled: string
   status: string
   schedule: {
