@@ -75,7 +75,8 @@ const Notifications: NextPage = (): JSX.Element => {
           offsets: parsedData.Offsets,
           managerRemarks: parsedData.ManagerRemarks,
           startDate: parsedData.StartDate,
-          endDate: parsedData.EndDate
+          endDate: parsedData.EndDate,
+          workingDays: parsedData.WorkingDays
         }
         return mapped
       })

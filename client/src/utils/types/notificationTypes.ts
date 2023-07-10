@@ -37,8 +37,17 @@ export type NotificationData = {
   ManagerRemarks: string | null
   StartDate: string
   EndDate: string
+  WorkingDays: IWorkDayData[]
 }
 
 export type NotificationRequestInput = {
   id: number
+}
+
+export type IWorkDayData = {
+  Day: string
+  From: string
+  To: string
+  BreakFrom: string
+  BreakTo: string
 }

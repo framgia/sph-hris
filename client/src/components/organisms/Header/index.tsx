@@ -27,15 +27,16 @@ import useNotificationMutation from '~/hooks/useNotificationMutation'
 import UserMenuDropDown from '~/components/molecules/UserMenuDropdown'
 import NotificationPopover from '~/components/molecules/NotificationPopOver'
 import { NotificationRequestInput, NotificationData } from '~/utils/types/notificationTypes'
-import {
-  getChangeShiftNotificationSubQuery,
-  getLeaveNotificationSubQuery,
-  getOvertimeNotificationSubQuery,
-  getSummaryOvertimeNotification
-} from '~/graphql/subscriptions/leaveSubscription'
-import useScreenCondition from '~/hooks/useScreenCondition'
 import { getESLOffsetNotificationSubscription } from '~/graphql/subscriptions/eslOffsetSubscription'
 import { getFileOffsetNotificationSubscription } from '~/graphql/subscriptions/fileOffsetSubscription'
+import { getChangeScheduleNotificationSubscription } from '~/graphql/subscriptions/changeScheduleSubscription'
+import {
+  getLeaveNotificationSubQuery,
+  getSummaryOvertimeNotification,
+  getOvertimeNotificationSubQuery,
+  getChangeShiftNotificationSubQuery
+} from '~/graphql/subscriptions/leaveSubscription'
+import useScreenCondition from '~/hooks/useScreenCondition'
 
 const Tooltip = dynamic(async () => await import('rc-tooltip'), { ssr: false })
 
@@ -111,7 +112,8 @@ const Header: FC<Props> = (props): JSX.Element => {
           offsets: parsedData.Offsets,
           managerRemarks: parsedData.ManagerRemarks,
           startDate: parsedData.StartDate,
-          endDate: parsedData.EndDate
+          endDate: parsedData.EndDate,
+          workingDays: parsedData.WorkingDays
         }
         return mapped
       })
@@ -219,7 +221,7 @@ const Header: FC<Props> = (props): JSX.Element => {
         query: getOvertimeNotificationSubQuery(userId)
       },
       {
-        next: ({ data }: any) => {
+        next: () => {
           void queryClient.invalidateQueries({ queryKey: ['GET_ALL_USER_NOTIFICATION'] })
         },
         error: () => null,
@@ -232,7 +234,7 @@ const Header: FC<Props> = (props): JSX.Element => {
         query: getChangeShiftNotificationSubQuery(userId)
       },
       {
-        next: ({ data }: any) => {
+        next: () => {
           void queryClient.invalidateQueries({ queryKey: ['GET_ALL_USER_NOTIFICATION'] })
         },
         error: () => null,
@@ -245,7 +247,7 @@ const Header: FC<Props> = (props): JSX.Element => {
         query: getESLOffsetNotificationSubscription(userId)
       },
       {
-        next: ({ data }: any) => {
+        next: () => {
           void queryClient.invalidateQueries({ queryKey: ['GET_ALL_USER_NOTIFICATION'] })
         },
         error: () => null,
@@ -258,7 +260,7 @@ const Header: FC<Props> = (props): JSX.Element => {
         query: getFileOffsetNotificationSubscription(userId)
       },
       {
-        next: ({ data }: any) => {
+        next: () => {
           void queryClient.invalidateQueries({ queryKey: ['GET_ALL_USER_NOTIFICATION'] })
         },
         error: () => null,
@@ -271,7 +273,20 @@ const Header: FC<Props> = (props): JSX.Element => {
         query: getSummaryOvertimeNotification(userId)
       },
       {
-        next: ({ data }: any) => {
+        next: () => {
+          void queryClient.invalidateQueries({ queryKey: ['GET_ALL_USER_NOTIFICATION'] })
+        },
+        error: () => null,
+        complete: () => null
+      }
+    )
+
+    clientWebsocket.subscribe(
+      {
+        query: getChangeScheduleNotificationSubscription(userId)
+      },
+      {
+        next: () => {
           void queryClient.invalidateQueries({ queryKey: ['GET_ALL_USER_NOTIFICATION'] })
         },
         error: () => null,

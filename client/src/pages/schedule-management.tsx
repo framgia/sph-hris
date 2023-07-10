@@ -111,9 +111,9 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
   }, [allEmployeeSchedule])
 
   // THIS WILL SUBMIT TO EITHER SAVE OR UPDATE SCHEDULE
-  const handleSaveSchedule: SubmitHandler<any> = async (data): Promise<void> => {
+  const handleSaveSchedule: SubmitHandler<ScheduleFormData> = async (data): Promise<void> => {
     const workingDays: IWorkDay[] = []
-    const daysOfWeek = [
+    const daysOfWeek: string[] = [
       'monday',
       'tuesday',
       'wednesday',
@@ -122,9 +122,10 @@ const ScheduleManagement: NextPage = (): JSX.Element => {
       'saturday',
       'sunday'
     ]
+
     for (const day of daysOfWeek) {
       // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-      const dayData = data[`${day}Selected`] && data[day]
+      const dayData = (data as any)[`${day}Selected`] && (data as any)[day]
       // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       if (dayData) {
         workingDays.push({

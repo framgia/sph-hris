@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import { BsFileEarmarkText } from 'react-icons/bs'
 import { ThumbsDown, ThumbsUp } from 'react-feather'
@@ -20,6 +21,7 @@ import LeaveResolvedDetails from './LeaveResolvedDetails'
 import OffsetScheduleDetails from './OffsetScheduleDetails'
 import OffsetResolvedDetails from './OffsetResolvedDetails'
 import ESLChangeShiftDetails from './ESLChangeShiftDetails'
+import ChangeScheduleDetails from './ChangeScheduleDetails'
 import Button from '~/components/atoms/Buttons/ButtonAction'
 import ChangeShiftResolvedDetails from './ChangeShiftResolved'
 import OvertimeResolvedDetails from './OvertimeResolvedDetails'
@@ -139,6 +141,11 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
         }
       )
     }
+
+    if (row.type.toLowerCase() === NOTIFICATION_TYPE.CHANGE_SCHEDULE) {
+      // TODO: implement change schedule functionality
+      alert('No functionality yet!')
+    }
   }
 
   return (
@@ -148,7 +155,10 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
         closeModal: handleClose,
         status: row.status
       }}
-      className="w-full max-w-lg"
+      className={classNames(
+        'w-full',
+        row.type.toLowerCase() === NOTIFICATION_TYPE.CHANGE_SCHEDULE ? 'max-w-3xl' : 'max-w-lg'
+      )}
     >
       <ModalHeader
         {...{
@@ -260,6 +270,14 @@ const ViewDetailsModal: FC<Props> = ({ isOpen, row, user }): JSX.Element => {
           {(row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.ESL_CHANGE_SHIFT ||
             row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.ESL_CHANGE_SHIFT_RESOLVED) && (
             <ESLChangeShiftDetails
+              {...{
+                notification: row
+              }}
+            />
+          )}
+          {/* DETAILS FOR CHANGE SCHEDULE REQUEST */}
+          {row.type.toLocaleLowerCase() === NOTIFICATION_TYPE.CHANGE_SCHEDULE && (
+            <ChangeScheduleDetails
               {...{
                 notification: row
               }}

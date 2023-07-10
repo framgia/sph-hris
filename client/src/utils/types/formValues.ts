@@ -235,4 +235,5 @@ export type RequestNewScheduleFormData = {
   friday: TimeEntryWithBreak
   saturday: TimeEntryWithBreak
   sunday: TimeEntryWithBreak
+  teamLeaders: ReactSelectOption[]
 }
