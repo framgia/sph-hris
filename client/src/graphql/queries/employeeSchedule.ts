@@ -62,3 +62,15 @@ export const SEARCH_EMPLOYEES_BY_SCHEDULE = gql`
     }
   }
 `
+
+export const GET_ALL_EMPLOYEE_SCHEDULE_REQUESTS = gql`
+  query ($userId: Int!) {
+    employeeChangeScheduleRequest(userId: $userId) {
+      id
+      data
+      isManagerApproved
+      isLeaderApproved
+      createdAt
+    }
+  }
+`

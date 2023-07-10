@@ -15,7 +15,8 @@ const columnHelper = createColumnHelper<IMyFiledScheduleData>()
 export const columns = [
   columnHelper.accessor('id', {
     header: () => <CellHeader label="No." />,
-    footer: (info) => info.column.id
+    footer: (info) => info.column.id,
+    cell: (props) => Number(props.row.id) + 1
   }),
   columnHelper.accessor('dateFiled', {
     header: () => <CellHeader label="Date Filed" />,

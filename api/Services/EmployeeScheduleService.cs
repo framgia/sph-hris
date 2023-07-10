@@ -49,7 +49,7 @@ namespace api.Services
         public async Task<List<ChangeScheduleRequest>?> GetEmployeeChangeScheduleRequest(int userId)
         {
             using HrisContext context = _contextFactory.CreateDbContext();
-            return await context.ChangeScheduleRequests.Where(x => x.UserId == userId).ToListAsync();
+            return await context.ChangeScheduleRequests.Where(x => x.UserId == userId).OrderByDescending(x => x.CreatedAt).ToListAsync();
         }
 
         public async Task<string> Create(CreateEmployeeScheduleRequest request, HrisContext context)
