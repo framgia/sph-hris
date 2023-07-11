@@ -1,28 +1,33 @@
 import { NextPage } from 'next'
 import classNames from 'classnames'
+import toast from 'react-hot-toast'
 import isEmpty from 'lodash/isEmpty'
 import ReactSelect from 'react-select'
 import { CheckSquare } from 'react-feather'
 import makeAnimated from 'react-select/animated'
 import React, { useEffect, useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
 import Card from '~/components/atoms/Card'
+import useProject from '~/hooks/useProject'
 import Input from '~/components/atoms/Input'
 import Alert from '~/components/atoms/Alert'
-import SpinnerIcon from '~/utils/icons/SpinnerIcon'
 import FadeInOut from '~/components/templates/FadeInOut'
+import useChangeSchedule from '~/hooks/useChangeSchedule'
+import { LeaderDetails } from '~/utils/types/projectTypes'
+import { User as UserType } from '~/utils/types/userTypes'
 import DayButton from '~/components/atoms/Buttons/DayButton'
 import { RequestNewScheduleSchema } from '~/utils/validation'
+import useEmployeeSchedule from '~/hooks/useEmployeeSchedule'
 import { customStyles } from '~/utils/customReactSelectStyles'
-import { shiftSchedule } from '~/utils/constants/shiftSchedule'
+import { IWorkDay } from '~/utils/types/employeeScheduleTypes'
+import { generateUserSelect } from '~/utils/createLeaveHelpers'
 import ClearButton from '~/components/atoms/Buttons/ClearButton'
 import ButtonAction from '~/components/atoms/Buttons/ButtonAction'
 import MaxWidthContainer from '~/components/atoms/MaxWidthContainer'
 import ApplyToAllModal from '~/components/molecules/ApplyToAllModal'
 import MyScheduleLayout from '~/components/templates/MySchedulelayout'
-import UnderConstructionPage from '~/components/pages/UnderContructionPage'
 import {
   ReactSelectOption,
   TimeEntryWithBreak,
@@ -32,14 +37,34 @@ import {
 const animatedComponents = makeAnimated()
 
 const RequestNewSchedule: NextPage = (): JSX.Element => {
-  const [selectedShift, setSelectedShift] = useState<ReactSelectOption>()
-
+  const [leaders, setLeaders] = useState<LeaderDetails[]>([])
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const [allSchedule, setAllSchedule] = useState<ReactSelectOption[]>([])
+  const [selectedShift, setSelectedShift] = useState<ReactSelectOption>()
   const [isOpenApplyToAll, setIsOpenApplyToAll] = useState<boolean>(false)
+
+  // EMPLOYEE SCHEDULE HOOKS
+  const { getAllEmployeeScheduleQuery } = useEmployeeSchedule()
+  const { data: allEmployeeData } = getAllEmployeeScheduleQuery()
+  const allEmployeeSchedule = allEmployeeData?.allEmployeeScheduleDetails
+
+  // PROJECT HOOKS
+  const { getLeadersQuery } = useProject()
+  const {
+    data: leadersList,
+    isLoading: isLoadingLeaders,
+    isSuccess: isLeadersSuccess,
+    isFetching: isLeadersFetching
+  } = getLeadersQuery(undefined)
+
+  // CHANGE SCHEDULE HOOKS
+  const { handleChangeScheduleMutation } = useChangeSchedule()
+  const changeScheduleMutation = handleChangeScheduleMutation()
 
   const {
     reset,
     watch,
+    control,
     setValue,
     register,
     getValues,
@@ -62,14 +87,51 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
   const handleSaveSchedule: SubmitHandler<RequestNewScheduleFormData> = async (
     data
   ): Promise<void> => {
-    return await new Promise((resolve) => {
-      if (isButtonSelected) {
-        alert(JSON.stringify(data, null, 2))
-      } else {
-        setErrorMessage('Please select atleast one Day of the week button.')
+    const leaderIds = data?.teamLeaders?.map((item) => parseInt(item.value))
+    const workingDays: IWorkDay[] = []
+    const daysOfWeek: string[] = [
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday',
+      'sunday'
+    ]
+
+    for (const day of daysOfWeek) {
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+      const dayData = (data as any)[`${day}Selected`] && (data as any)[day]
+
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+      if (dayData) {
+        const workDay: IWorkDay = {
+          day: day.charAt(0).toUpperCase() + day.slice(1),
+          from: dayData.timeIn,
+          to: dayData.timeOut,
+          breakFrom: dayData.breakFrom,
+          breakTo: dayData.breakTo
+        }
+        workingDays.push(workDay)
       }
-      resolve()
-    })
+    }
+
+    if (isButtonSelected && !isEmpty(watch('teamLeaders'))) {
+      await changeScheduleMutation.mutateAsync(
+        {
+          leaderIds,
+          workingDays
+        },
+        {
+          onSettled: () => {
+            toast.success('Requested New Schedule Successfully.')
+            handleReset()
+          }
+        }
+      )
+    } else {
+      setErrorMessage('Please select atleast one Day of the week button.')
+    }
   }
 
   useEffect(() => {
@@ -77,6 +139,28 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
       setErrorMessage('')
     }
   }, [isButtonSelected])
+
+  useEffect(() => {
+    if (leadersList !== undefined) setLeaders(leadersList.allLeaders)
+  }, [leadersList])
+
+  useEffect(() => {
+    if (allEmployeeSchedule !== undefined) {
+      const empty = [{ value: '', label: '' }]
+      const customShift: ReactSelectOption = {
+        value: '0',
+        label: 'Custom Shift'
+      }
+      const filteredSchedule: ReactSelectOption[] | undefined = allEmployeeSchedule?.map(
+        (sched) => ({
+          value: sched?.id.toString(),
+          label: sched?.scheduleName
+        })
+      )
+      filteredSchedule?.unshift(customShift)
+      setAllSchedule(filteredSchedule ?? empty)
+    }
+  }, [allEmployeeSchedule])
 
   const empty = {
     timeIn: '',
@@ -86,8 +170,8 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
   }
 
   const handleReset = (): void => {
-    setSelectedShift(shiftSchedule[0])
     setErrorMessage('')
+    setSelectedShift(allSchedule[0])
     reset({
       mondaySelected: false,
       tuesdaySelected: false,
@@ -102,7 +186,8 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
       thursday: empty,
       friday: empty,
       saturday: empty,
-      sunday: empty
+      sunday: empty,
+      teamLeaders: []
     })
   }
 
@@ -116,95 +201,83 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
   }, [selectedShift])
 
   const getScheduleShiftData = (selectedShift: ReactSelectOption): void => {
-    const shiftSelect = {
-      mondaySelected: true,
-      tuesdaySelected: true,
-      wednesdaySelected: true,
-      thursdaySelected: true,
-      fridaySelected: true,
-      saturdaySelected: false,
-      sundaySelected: false
-    }
-    const morningShiftData = {
-      ...shiftSelect,
+    const newShiftData = allEmployeeSchedule?.find(
+      (item) => item.id.toString() === selectedShift.value
+    )
+
+    const { scheduleName, days } = newShiftData ?? {}
+
+    const mondayData = days?.[0]
+    const tuesdayData = days?.[1]
+    const wednesdayData = days?.[2]
+    const thursdayData = days?.[3]
+    const fridayData = days?.[4]
+    const saturdayData = days?.[5]
+    const sundayData = days?.[6]
+
+    const shiftData = {
+      scheduleName: scheduleName ?? '',
+      mondaySelected: mondayData?.isDaySelected ?? false,
       monday: {
-        timeIn: '09:30',
-        timeOut: '06:30',
-        breakFrom: '12:00',
-        breakTo: '13:00'
+        timeIn: mondayData?.timeIn ?? '',
+        timeOut: mondayData?.timeOut ?? '',
+        breakFrom: mondayData?.breakFrom ?? '',
+        breakTo: mondayData?.breakTo ?? ''
       },
+      tuesdaySelected: tuesdayData?.isDaySelected ?? false,
       tuesday: {
-        timeIn: '09:30',
-        timeOut: '06:30',
-        breakFrom: '12:00',
-        breakTo: '03:00'
+        timeIn: tuesdayData?.timeIn ?? '',
+        timeOut: tuesdayData?.timeOut ?? '',
+        breakFrom: tuesdayData?.breakFrom ?? '',
+        breakTo: tuesdayData?.breakTo ?? ''
       },
+      wednesdaySelected: wednesdayData?.isDaySelected ?? false,
       wednesday: {
-        timeIn: '09:30',
-        timeOut: '06:30',
-        breakFrom: '12:00',
-        breakTo: '03:00'
+        timeIn: wednesdayData?.timeIn ?? '',
+        timeOut: wednesdayData?.timeOut ?? '',
+        breakFrom: wednesdayData?.breakFrom ?? '',
+        breakTo: wednesdayData?.breakTo ?? ''
       },
+      thursdaySelected: thursdayData?.isDaySelected ?? false,
       thursday: {
-        timeIn: '09:30',
-        timeOut: '06:30',
-        breakFrom: '12:00',
-        breakTo: '03:00'
+        timeIn: thursdayData?.timeIn ?? '',
+        timeOut: thursdayData?.timeOut ?? '',
+        breakFrom: thursdayData?.breakFrom ?? '',
+        breakTo: thursdayData?.breakTo ?? ''
       },
+      fridaySelected: fridayData?.isDaySelected ?? false,
       friday: {
-        timeIn: '09:30',
-        timeOut: '06:30',
-        breakFrom: '12:00',
-        breakTo: '03:00'
+        timeIn: fridayData?.timeIn ?? '',
+        timeOut: fridayData?.timeOut ?? '',
+        breakFrom: fridayData?.breakFrom ?? '',
+        breakTo: fridayData?.breakTo ?? ''
+      },
+      saturdaySelected: saturdayData?.isDaySelected ?? false,
+      saturday: {
+        timeIn: saturdayData?.timeIn ?? '',
+        timeOut: saturdayData?.timeOut ?? '',
+        breakFrom: saturdayData?.breakFrom ?? '',
+        breakTo: saturdayData?.breakTo ?? ''
+      },
+      sundaySelected: sundayData?.isDaySelected ?? false,
+      sunday: {
+        timeIn: sundayData?.timeIn ?? '',
+        timeOut: sundayData?.timeOut ?? '',
+        breakFrom: sundayData?.breakFrom ?? '',
+        breakTo: sundayData?.breakTo ?? ''
       }
     }
-    const afternoonShiftData = {
-      ...shiftSelect,
-      monday: {
-        timeIn: '01:00',
-        timeOut: '10:00',
-        breakFrom: '05:00',
-        breakTo: '01:00'
-      },
-      tuesday: {
-        timeIn: '01:00',
-        timeOut: '10:00',
-        breakFrom: '05:00',
-        breakTo: '06:00'
-      },
-      wednesday: {
-        timeIn: '06:00',
-        timeOut: '10:00',
-        breakFrom: '05:00',
-        breakTo: '06:00'
-      },
-      thursday: {
-        timeIn: '06:00',
-        timeOut: '10:00',
-        breakFrom: '05:00',
-        breakTo: '06:00'
-      },
-      friday: {
-        timeIn: '06:00',
-        timeOut: '10:00',
-        breakFrom: '05:00',
-        breakTo: '06:00'
-      }
-    }
+
     switch (selectedShift.value) {
-      case '1':
+      case '0':
         handleReset()
-        break
-      case '2':
-        reset(morningShiftData)
-        break
-      case '3':
-        reset(afternoonShiftData)
         break
       default:
-        handleReset()
+        reset(shiftData)
         break
     }
+
+    setSelectedShift(selectedShift)
   }
 
   const handleOpenApplyToAllToggle = (): void => setIsOpenApplyToAll(!isOpenApplyToAll)
@@ -229,15 +302,11 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
     setIsOpenApplyToAll(false)
   }
 
-  if (process.env.NEXT_PUBLIC_DISPLAY_MY_SCHEDULE_PAGE === 'false') {
-    return <UnderConstructionPage />
-  }
-
   return (
     <MyScheduleLayout metaTitle="Request New Schedule">
       <FadeInOut className="default-scrollbar h-full overflow-y-auto">
         <MaxWidthContainer maxWidth="w-full max-w-[868px]" className="my-8 px-4">
-          <Card className="default-scrollbar overflow-auto text-sm">
+          <Card className="text-sm">
             <header className="flex items-center justify-between px-4 pt-6 sm:px-8">
               <section className="space-y-1 ">
                 <h3 className="text-xs font-medium">Schedule Shift:</h3>
@@ -246,11 +315,11 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                     className="text-xs"
                     value={selectedShift}
                     styles={customStyles}
-                    options={shiftSchedule}
+                    options={allSchedule}
                     closeMenuOnSelect={true}
                     isDisabled={isSubmitting}
                     instanceId="scheduleShift"
-                    defaultValue={shiftSchedule[0]}
+                    defaultValue={allSchedule[0]}
                     components={animatedComponents}
                     onChange={(option) => handleShiftChange(option as ReactSelectOption)}
                   />
@@ -1108,10 +1177,55 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                       )}
                     </label>
                   </section>
+
+                  {/* Team Leader Select */}
+                  <section className="space-y-1.5 py-4 text-xs">
+                    <label htmlFor="teamLeader" className="text-[13px] font-medium">
+                      Team Leaders
+                    </label>
+                    <Controller
+                      name="teamLeaders"
+                      control={control}
+                      rules={{ required: true }}
+                      render={({ field }) => (
+                        <ReactSelect
+                          {...field}
+                          isMulti
+                          isClearable
+                          placeholder=""
+                          menuPlacement="top"
+                          styles={customStyles}
+                          closeMenuOnSelect={false}
+                          isDisabled={
+                            isSubmitting ||
+                            isLeadersFetching ||
+                            !isLeadersSuccess ||
+                            isLoadingLeaders
+                          }
+                          classNames={{
+                            control: (state) =>
+                              state.isFocused
+                                ? 'border-primary'
+                                : !isEmpty(errors.teamLeaders)
+                                ? 'border-rose-500 ring-rose-500'
+                                : 'border-slate-300'
+                          }}
+                          backspaceRemovesValue={true}
+                          instanceId="teamLeaderReqNewShed"
+                          options={generateUserSelect(leaders as UserType[])}
+                          components={animatedComponents}
+                          className="w-full"
+                        />
+                      )}
+                    />
+                    {!isEmpty(errors.teamLeaders) && (
+                      <span className="error text-[11px]">{errors?.teamLeaders.message}</span>
+                    )}
+                  </section>
                 </main>
                 <footer className="flex justify-center space-x-2 py-2 sm:justify-end">
                   <ButtonAction
-                    type="button"
+                    type={!isButtonSelected ? 'submit' : 'button'}
                     variant="secondary"
                     onClick={handleReset}
                     disabled={isSubmitting || !isButtonSelected}
@@ -1123,18 +1237,9 @@ const RequestNewSchedule: NextPage = (): JSX.Element => {
                     type="submit"
                     variant={!isButtonSelected ? 'secondary' : 'primary'}
                     disabled={isSubmitting || !isButtonSelected}
-                    className="flex w-24 items-center justify-center space-x-2 rounded-md py-2 text-xs"
+                    className="w-24 rounded-md py-2 text-xs"
                   >
-                    {isSubmitting ? (
-                      <>
-                        <SpinnerIcon className="h-3 w-3 !fill-white" />
-                        <span>Saving...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Save</span>
-                      </>
-                    )}
+                    Save
                   </ButtonAction>
                 </footer>
               </form>

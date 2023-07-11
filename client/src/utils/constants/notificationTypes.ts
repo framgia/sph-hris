@@ -3,7 +3,7 @@ export const SpecificType = {
   APPROVAL: 'approve',
   DISAPPROVAL: 'disapprove',
   SUMMARY: 'summary'
-}
+} as const
 
 export const NOTIFICATION_TYPE = {
   OVERTIME: 'overtime',
@@ -19,5 +19,6 @@ export const NOTIFICATION_TYPE = {
   OFFSET: 'offset',
   OFFSET_RESOLVED: 'offset_resolved',
   ESL_CHANGE_SHIFT: 'esl change shift',
-  ESL_CHANGE_SHIFT_RESOLVED: 'esl change shift_resolved'
-}
+  ESL_CHANGE_SHIFT_RESOLVED: 'esl change shift_resolved',
+  CHANGE_SCHEDULE: 'change schedule'
+} as const

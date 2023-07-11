@@ -36,7 +36,7 @@ const CurrentSchedule: NextPage = (): JSX.Element => {
       const saturdayData = mySchedules?.find((item) => item?.day === 'Saturday') ?? empty
       const sundayData = mySchedules?.find((item) => item?.day === 'Sunday') ?? empty
 
-      const shitdata: WorkingDayTime[] = [
+      const shiftData: WorkingDayTime[] = [
         {
           ...mondayData,
           day: 'Monday'
@@ -67,7 +67,7 @@ const CurrentSchedule: NextPage = (): JSX.Element => {
         }
       ]
 
-      setCurrentSchedule(shitdata)
+      setCurrentSchedule(shiftData)
     }
   }, [mySchedules])
 

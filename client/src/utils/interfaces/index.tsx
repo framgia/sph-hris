@@ -1,6 +1,7 @@
 import * as Icons from 'react-feather'
 
 import { IESLOffset } from './eslOffsetInterface'
+import { IWorkDayData } from '../types/notificationTypes'
 import { ReactSelectOption, TimeEntryWithBreak } from './../types/formValues'
 
 export type IconName = keyof typeof Icons
@@ -66,6 +67,7 @@ export interface INotification {
   managerRemarks: string | null
   startDate: string
   endDate: string
+  workingDays: IWorkDayData[]
 }
 
 export interface IEmployeeManagement {

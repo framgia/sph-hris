@@ -34,13 +34,13 @@ export const getChangeShiftNotificationSubQuery = (id: number): string => `
   }
 `
 export const getSummaryOvertimeNotification = (id: number): string => `
-subscription {
-  overtimeSummaryCreated(id: ${id}) {
-    id
-    type
-    data
-    readAt
-    isRead
+  subscription {
+    overtimeSummaryCreated(id: ${id}) {
+      id
+      type
+      data
+      readAt
+      isRead
+    }
   }
-}
 `

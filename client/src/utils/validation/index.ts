@@ -1,4 +1,5 @@
 import * as yup from 'yup'
+import { ReactSelectOption } from '../types/formValues'
 
 import { WorkInterruptionType } from './../constants/work-status'
 
@@ -422,7 +423,26 @@ export const ReassignScheduleSchema = yup.object().shape({
   schedule: SelectSchema.label('Schedule')
 })
 
-export const RequestNewScheduleSchema = ScheduleSchema.omit(['scheduleName'])
+type RequestNewScheduleSchemaData = typeof ScheduleSchema & {
+  teamLeaders: ReactSelectOption[]
+}
+
+export const RequestNewScheduleSchema: RequestNewScheduleSchemaData = yup
+  .object()
+  .shape({
+    ...ScheduleSchema.fields, // Include existing fields from ScheduleSchema
+    teamLeaders: yup
+      .array()
+      .min(1, 'At least one team leader must be selected')
+      .of(
+        yup.object().shape({
+          value: yup.string().required(),
+          label: yup.string().required()
+        })
+      )
+      .required('Team leader is required')
+  })
+  .omit(['scheduleName'])
 
 export const ApplyToAllSchema = yup.object().shape({
   timeIn: yup.string().required('Time In is required'),
