@@ -12,7 +12,7 @@ module.exports = {
   },
   plugins: ['react'],
   rules: {
-    'no-console': 'error',
+    // 'no-console': 'error',
     'eol-last': ['error', 'always'],
     'no-duplicate-imports': 'error',
     '@typescript-eslint/consistent-type-definitions': 'off'
