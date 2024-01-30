@@ -76,6 +76,7 @@ const SignIn: FC<Props> = ({ cookies }): JSX.Element => {
                   : ''
               )}
               onClick={() => {
+                console.log({env: process.env.NEXT_PUBLIC_CLIENT_URL})
                 try {
                   signIn('google', {
                     callbackUrl: `${process.env.NEXT_PUBLIC_CLIENT_URL as string}/sign-in`
